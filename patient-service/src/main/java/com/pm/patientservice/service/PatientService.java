@@ -7,7 +7,6 @@ import com.pm.patientservice.exception.PatientNotFoundException;
 import com.pm.patientservice.model.Patient;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface PatientService {
     public List<PatientResponseDTO> getPatients();

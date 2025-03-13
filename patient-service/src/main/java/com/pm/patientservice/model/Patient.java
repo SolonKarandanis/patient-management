@@ -19,7 +19,7 @@ import java.util.UUID;
         query = "SELECT CASE WHEN COUNT(patient) > 0 THEN TRUE ELSE FALSE END " +
                 "FROM Patient  patient "+
                 "WHERE patient.email = :email " +
-                "AND patient.publicId != :publicId")
+                "AND patient.publicId <> :publicId")
 @NamedQuery(name = Patient.FIND_BY_PUBLIC_ID,
         query = "SELECT patient FROM Patient patient "
                 + "WHERE patient.publicId= :publicId ")

@@ -43,7 +43,6 @@ public class Patient {
     private Integer id;
 
     @NaturalId
-    @UuidGenerator
     @Column(name = "public_id",nullable = false, updatable = false, unique = true)
     private UUID publicId;
 

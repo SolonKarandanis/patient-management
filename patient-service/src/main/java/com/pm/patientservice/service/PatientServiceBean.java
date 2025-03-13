@@ -50,7 +50,11 @@ public class PatientServiceBean implements PatientService{
         if (patientRepository.existsByEmail(patientRequestDTO.getEmail())){
             throw new EmailAlreadyExistsException(PATIENT_WITH_EMAIL_EXISTS);
         }
-        Patient newPatient = patientRepository.save(convertToEntity(patientRequestDTO));
+        Patient newPatient =convertToEntity(patientRequestDTO);
+        UUID uuid = UUID.randomUUID();
+        newPatient.setPublicId(uuid);
+        newPatient = patientRepository.save(newPatient);
+
 //        billingServiceGrpcClient.createBillingAccount(newPatient.getId().toString(),
 //                newPatient.getName(), newPatient.getEmail());
 //

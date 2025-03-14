@@ -29,6 +29,8 @@
     <properties>
         <java.version>21</java.version>
         <grpc.version>1.71.0</grpc.version>
+        <protobuf.version>4.30.0</protobuf.version>
+        <protobuf-plugin.version>0.6.1</protobuf-plugin.version>
     </properties>
     <dependencies>
         <!-- Spring Dependencies Start-->
@@ -68,7 +70,7 @@
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
-            <version>4.29.1</version>
+            <version>${protobuf.version}</version>
         </dependency>
         <!-- GRPC Dependencies End-->
 
@@ -98,11 +100,11 @@
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
-                <version>0.6.1</version>
+                <version>${protobuf-plugin.version}</version>
                 <configuration>
-                    <protocArtifact>com.google.protobuf:protoc:3.25.5:exe:${os.detected.classifier}</protocArtifact>
+                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
                     <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.68.1:exe:${os.detected.classifier}</pluginArtifact>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
                 </configuration>
                 <executions>
                     <execution>

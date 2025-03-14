@@ -60,7 +60,7 @@ public class PatientServiceBean implements PatientService{
         newPatient.setPublicId(uuid);
         newPatient = patientRepository.save(newPatient);
 
-        billingServiceGrpcClient.createBillingAccount(newPatient.getId().toString(),
+        billingServiceGrpcClient.createBillingAccount(newPatient.getPublicId().toString(),
                 newPatient.getName(), newPatient.getEmail());
 //
 //        kafkaProducer.sendEvent(newPatient);

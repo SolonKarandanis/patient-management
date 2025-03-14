@@ -4,6 +4,7 @@ import com.pm.patientservice.dto.PatientRequestDTO;
 import com.pm.patientservice.dto.PatientResponseDTO;
 import com.pm.patientservice.exception.EmailAlreadyExistsException;
 import com.pm.patientservice.exception.PatientNotFoundException;
+import com.pm.patientservice.grpc.BillingServiceGrpcClient;
 import com.pm.patientservice.model.Patient;
 import com.pm.patientservice.repository.PatientRepository;
 import org.slf4j.Logger;
@@ -25,12 +26,16 @@ public class PatientServiceBean implements PatientService{
     protected static final String PATIENT_WITH_EMAIL_EXISTS="error.patient.email.exists";
 
     private final PatientRepository patientRepository;
-//    private final BillingServiceGrpcClient billingServiceGrpcClient;
+    private final BillingServiceGrpcClient billingServiceGrpcClient;
 //    private final KafkaProducer kafkaProducer;
 
 
-    public PatientServiceBean(PatientRepository patientRepository) {
+    public PatientServiceBean(
+            PatientRepository patientRepository,
+            BillingServiceGrpcClient billingServiceGrpcClient
+    ) {
         this.patientRepository = patientRepository;
+        this.billingServiceGrpcClient = billingServiceGrpcClient;
     }
 
     @Override
@@ -55,8 +60,8 @@ public class PatientServiceBean implements PatientService{
         newPatient.setPublicId(uuid);
         newPatient = patientRepository.save(newPatient);
 
-//        billingServiceGrpcClient.createBillingAccount(newPatient.getId().toString(),
-//                newPatient.getName(), newPatient.getEmail());
+        billingServiceGrpcClient.createBillingAccount(newPatient.getId().toString(),
+                newPatient.getName(), newPatient.getEmail());
 //
 //        kafkaProducer.sendEvent(newPatient);
         return convertToDTO(newPatient);

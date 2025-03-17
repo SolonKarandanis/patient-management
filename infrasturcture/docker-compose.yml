@@ -34,7 +34,7 @@ services:
 
   kafka:
     image: bitnami/kafka:3.9.0
-    container_name: kafka
+    container_name: kafka_patient_management
     ports:
       - '9094:9094'
       - '9092:9092'
@@ -43,10 +43,10 @@ services:
       - KAFKA_CFG_NODE_ID=0
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
       - ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka_patient_management:9093
       - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://kafka:9092,CONTROLLER://kafka:9093,EXTERNAL://kafka:9094
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://kafka_patient_management:9092,CONTROLLER://kafka_patient_management:9093,EXTERNAL://kafka_patient_management:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka_patient_management:9092,EXTERNAL://localhost:9094
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
     networks:
       - kafka-cluster

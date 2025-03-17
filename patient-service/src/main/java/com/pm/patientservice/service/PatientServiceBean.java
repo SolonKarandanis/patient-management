@@ -1,5 +1,6 @@
 package com.pm.patientservice.service;
 
+import com.pm.patientservice.broker.KafkaProducer;
 import com.pm.patientservice.dto.PatientRequestDTO;
 import com.pm.patientservice.dto.PatientResponseDTO;
 import com.pm.patientservice.exception.EmailAlreadyExistsException;
@@ -27,15 +28,17 @@ public class PatientServiceBean implements PatientService{
 
     private final PatientRepository patientRepository;
     private final BillingServiceGrpcClient billingServiceGrpcClient;
-//    private final KafkaProducer kafkaProducer;
+    private final KafkaProducer kafkaProducer;
 
 
     public PatientServiceBean(
             PatientRepository patientRepository,
-            BillingServiceGrpcClient billingServiceGrpcClient
+            BillingServiceGrpcClient billingServiceGrpcClient,
+            KafkaProducer kafkaProducer
     ) {
         this.patientRepository = patientRepository;
         this.billingServiceGrpcClient = billingServiceGrpcClient;
+        this.kafkaProducer = kafkaProducer;
     }
 
     @Override
@@ -63,7 +66,7 @@ public class PatientServiceBean implements PatientService{
         billingServiceGrpcClient.createBillingAccount(newPatient.getPublicId().toString(),
                 newPatient.getName(), newPatient.getEmail());
 //
-//        kafkaProducer.sendEvent(newPatient);
+        kafkaProducer.sendEvent(newPatient);
         return convertToDTO(newPatient);
     }
 

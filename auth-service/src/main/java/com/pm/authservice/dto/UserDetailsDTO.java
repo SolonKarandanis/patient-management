@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 public class UserDetailsDTO implements UserDetails {
 
+    private Integer id;
     private String publicId;
     private String username;
     private String password;
@@ -20,6 +21,7 @@ public class UserDetailsDTO implements UserDetails {
     private String firstName;
     private String email;
     private AccountStatus status;
+    private Boolean isEnabled;
 
 
     @Override
@@ -29,12 +31,12 @@ public class UserDetailsDTO implements UserDetails {
 
     @Override
     public String getPassword() {
-        return "";
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return this.username;
     }
 
     @Override
@@ -54,6 +56,6 @@ public class UserDetailsDTO implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return this.isEnabled;
     }
 }

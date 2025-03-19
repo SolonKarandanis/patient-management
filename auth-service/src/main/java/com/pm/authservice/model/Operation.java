@@ -31,6 +31,6 @@ public class Operation {
     private String name;
 
     //bidirectional many-to-one association to RoleOperation
-    @OneToMany(mappedBy="role", fetch=FetchType.LAZY )
+    @OneToMany(mappedBy="operation", fetch=FetchType.LAZY )
     private List<RoleOperation> roleOperations;
 }

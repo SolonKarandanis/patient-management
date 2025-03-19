@@ -21,5 +21,5 @@ public class RoleOperation {
     //bidirectional many-to-one association to Role
     @ManyToOne(fetch=FetchType.LAZY,optional = false)
     @JoinColumn(name="role_id" ,insertable=false, updatable=false)
-    private Role roles;
+    private Role role;
 }

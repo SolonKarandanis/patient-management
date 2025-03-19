@@ -11,8 +11,8 @@ import lombok.Setter;
 public class RoleOperationsPK {
 
     @Column(name = "role_id", nullable = false)
-    private String rolesId;
+    private Integer rolesId;
 
     @Column(name = "operation_id", nullable = false)
-    private String operationId;
+    private Integer operationId;
 }

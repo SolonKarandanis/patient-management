@@ -3,7 +3,7 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet id="00000000000001-seq" author="solon">
+    <changeSet id="00000000000001-users-seq" author="solon">
         <createSequence sequenceName="users_seq" startValue="1" incrementBy="1"/>
     </changeSet>
 
@@ -46,6 +46,10 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="00000000000001-roles-seq" author="solon">
+        <createSequence sequenceName="roles_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+
     <changeSet id="00000000000001-roles" author="solonk">
         <createTable tableName="roles">
             <column name="id" type="bigint">
@@ -78,6 +82,10 @@
                                  constraintName="fk_user_roles_users"
                                  referencedColumnNames="id"
                                  referencedTableName="users"/>
+    </changeSet>
+
+    <changeSet id="00000000000001-operations-seq" author="solon">
+        <createSequence sequenceName="operations_seq" startValue="1" incrementBy="1"/>
     </changeSet>
 
     <changeSet id="00000000000001-operations" author="solonk">

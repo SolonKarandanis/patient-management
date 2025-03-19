@@ -5,16 +5,25 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.NaturalId;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @Setter
+@NamedEntityGraph(name = User.GRAPH_USERS_ROLES,
+        attributeNodes = @NamedAttributeNode("roles")
+)
 @Entity
 @Table(name="users")
 public class User {
+
+    public static final String GRAPH_USERS_ROLES="graph.users.roles";
 
     @Id
     @GeneratedValue(
@@ -66,4 +75,30 @@ public class User {
     @Column(name = "last_modified_date")
     @NotNull
     private LocalDate lastModifiedDate;
+
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    },fetch = FetchType.LAZY)
+    @JoinTable(name="user_roles",
+            joinColumns=@JoinColumn(name="user_id"),
+            inverseJoinColumns=@JoinColumn(name="role_id"))
+    @BatchSize(size = 50) // Batch loading strategy
+    private Set<Role> roles= new HashSet<>();
+
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
+
+    public void removeRole(Role role) {
+        this.roles.remove(role);
+    }
+
+    public void removeRoles() {
+        Iterator<Role> iterator =this.roles.iterator();
+        while (iterator.hasNext()) {
+            iterator.next();
+            iterator.remove();
+        }
+    }
 }

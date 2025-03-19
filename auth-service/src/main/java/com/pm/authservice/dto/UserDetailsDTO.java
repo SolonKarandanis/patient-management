@@ -1,5 +1,6 @@
 package com.pm.authservice.dto;
 
+import com.pm.authservice.model.AccountStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +19,7 @@ public class UserDetailsDTO implements UserDetails {
     private String lastName;
     private String firstName;
     private String email;
+    private AccountStatus status;
 
 
     @Override

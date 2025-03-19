@@ -48,7 +48,7 @@ public class User {
     private String lastName;
 
     @Column(name = "status")
-    private String status;
+    private AccountStatus status;
 
     @Column(name = "is_enabled")
     private Boolean isEnabled;

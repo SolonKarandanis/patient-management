@@ -29,6 +29,7 @@
 	<properties>
 		<java.version>21</java.version>
 		<jwt.version>0.12.6</jwt.version>
+		<querydsl.version>5.0.0</querydsl.version>
 	</properties>
 	<dependencies>
 		<!-- Spring Dependencies Start-->
@@ -88,6 +89,21 @@
 			<optional>true</optional>
 		</dependency>
 		<!-- Utility Dependencies End-->
+		<!-- QueryDSL Dependencies Start-->
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+			<version>${querydsl.version}</version>
+			<classifier>jakarta</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+			<version>${querydsl.version}</version>
+			<classifier>jakarta</classifier>
+		</dependency>
+		<!-- QueryDSL Dependencies End-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

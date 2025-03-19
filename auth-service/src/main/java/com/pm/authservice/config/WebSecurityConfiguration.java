@@ -31,15 +31,15 @@ public class WebSecurityConfiguration {
 	
 	@Value("${security.jwt.key}")
     private String signKey;
-//	private final JwtAuthenticationFilter jwtAuthFilter;
+	private final JwtAuthenticationFilter jwtAuthFilter;
     private final NoAuthenticationRequestMatcher noAuthenticationRequestMatcher;
     private final CustomAuthProvider customAuthProvider;
 	
 	public WebSecurityConfiguration(
-//            JwtAuthenticationFilter jwtAuthFilter,
+            JwtAuthenticationFilter jwtAuthFilter,
             NoAuthenticationRequestMatcher noAuthenticationRequestMatcher,
             CustomAuthProvider customAuthProvider) {
-//        this.jwtAuthFilter=jwtAuthFilter;
+        this.jwtAuthFilter=jwtAuthFilter;
         this.noAuthenticationRequestMatcher=noAuthenticationRequestMatcher;
         this.customAuthProvider = customAuthProvider;
     }
@@ -55,7 +55,7 @@ public class WebSecurityConfiguration {
                 .anyRequest()
 //                .hasAnyAuthority(getAuthorityNames())
         )
-//        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
         .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .exceptionHandling(ex -> 
         	ex.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))

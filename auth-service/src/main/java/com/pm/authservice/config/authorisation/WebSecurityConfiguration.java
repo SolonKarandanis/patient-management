@@ -1,5 +1,7 @@
 package com.pm.authservice.config.authorisation;
 
+import com.pm.authservice.model.Role;
+import com.pm.authservice.repository.RoleRepository;
 import com.pm.authservice.util.SecurityConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +23,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 @Configuration
@@ -32,14 +35,17 @@ public class WebSecurityConfiguration {
 	private final JwtAuthenticationFilter jwtAuthFilter;
     private final NoAuthenticationRequestMatcher noAuthenticationRequestMatcher;
     private final CustomAuthProvider customAuthProvider;
+    private final RoleRepository roleRepository;
 	
 	public WebSecurityConfiguration(
             JwtAuthenticationFilter jwtAuthFilter,
             NoAuthenticationRequestMatcher noAuthenticationRequestMatcher,
-            CustomAuthProvider customAuthProvider) {
+            CustomAuthProvider customAuthProvider,
+            RoleRepository roleRepository) {
         this.jwtAuthFilter=jwtAuthFilter;
         this.noAuthenticationRequestMatcher=noAuthenticationRequestMatcher;
         this.customAuthProvider = customAuthProvider;
+        this.roleRepository = roleRepository;
     }
 	
 	@Bean
@@ -51,7 +57,7 @@ public class WebSecurityConfiguration {
                 .requestMatchers(mvc.matchers(SecurityConstants.AUTH_WHITELIST)).permitAll()
                 .requestMatchers(mvc.pattern(HttpMethod.POST, "/authenticate")).permitAll()
                 .anyRequest()
-//                .hasAnyAuthority(getAuthorityNames())
+                .hasAnyAuthority(getRoleNames())
         )
         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
         .sessionManagement(session-> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -84,5 +90,17 @@ public class WebSecurityConfiguration {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer(){
         return web -> web.ignoring().requestMatchers(noAuthenticationRequestMatcher);
+    }
+
+    private String[] getRoleNames()  {
+        List<String> roleNames = roleRepository.findAll().stream()
+                .map(Role::getName)
+                .toList();
+        int len = roleNames.size();
+        String[] roleNamesArr = new String[len];
+        for (int i = 0; i < len; i++) {
+            roleNamesArr[i] = roleNames.get(i);
+        }
+        return roleNamesArr;
     }
 }

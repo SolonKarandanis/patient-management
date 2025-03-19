@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="00000000000002-user_data" author="solon">
+        <sql endDelimiter=";">
+            INSERT INTO users (id, public_id, first_name,last_name,username,password, email, status,is_enabled, created_date, last_modified_date)
+            VALUES (nextval('users_seq'),
+                    '123e4567-e89b-12d3-a456-426614174000',
+                    'Solon',
+                    'Karandanis',
+                    'skaran',
+                    '$2b$12$7hoRZfJrRKD2nIm2vHLs7OBETy.LWenXXMLKf99W8M4PUwO6KB7fu',
+                    'skarandanis@gmail.com',
+                    'account.active',
+                    true,
+                    '2024-03-19',
+                    '2024-03-19');
+        </sql>
+    </changeSet>
+</databaseChangeLog>

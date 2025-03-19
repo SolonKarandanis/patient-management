@@ -1,4 +1,4 @@
-package com.pm.authservice.config;
+package com.pm.authservice.config.authorisation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;

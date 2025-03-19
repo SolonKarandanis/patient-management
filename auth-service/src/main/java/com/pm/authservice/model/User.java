@@ -16,12 +16,26 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NamedQuery(name = User.FIND_BY_EMAIL,
+        query = "SELECT u FROM User u "
+                + "WHERE u.email = :email ")
+@NamedQuery(name = User.FIND_BY_PUBLIC_ID,
+        query = "SELECT u FROM User u "
+                + "LEFT JOIN FETCH u.roles r " +
+                "WHERE u.publicId= :publicId ")
+@NamedQuery(name = User.FIND_BY_USERNAME,
+        query = "SELECT u FROM User u "
+                + "LEFT JOIN FETCH u.roles r " +
+                " WHERE u.username= :username ")
 @NamedEntityGraph(name = User.GRAPH_USERS_ROLES,
         attributeNodes = @NamedAttributeNode("roles")
 )
 @Entity
 @Table(name="users")
 public class User {
+    public static final String FIND_BY_EMAIL= "User.findByEmail";
+    public static final String FIND_BY_PUBLIC_ID= "User.findByPublicId";
+    public static final String FIND_BY_USERNAME= "User.findByUsername";
 
     public static final String GRAPH_USERS_ROLES="graph.users.roles";
 

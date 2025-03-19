@@ -16,11 +16,11 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<User,Integer> ,
         JpaSpecificationExecutor<User> {
+
+    @Query(name = User.FIND_BY_EMAIL)
     Optional<User> findByEmail(String email);
 
-    @Query("SELECT u FROM User u "
-            + "JOIN FETCH u.roles r "
-            + "WHERE u.publicId= :publicId ")
+    @Query(name = User.FIND_BY_PUBLIC_ID)
     Optional<User> findByPublicId(@Param("publicId") UUID publicId);
 
     @EntityGraph(value =  User.GRAPH_USERS_ROLES,type = EntityGraph.EntityGraphType.FETCH)

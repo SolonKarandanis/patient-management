@@ -1,4 +1,4 @@
-package com.pm.authservice.config;
+package com.pm.authservice.config.authorisation;
 
 
 import com.pm.authservice.dto.UserDetailsDTO;

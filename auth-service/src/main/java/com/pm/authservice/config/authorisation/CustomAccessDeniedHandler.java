@@ -1,4 +1,4 @@
-package com.pm.authservice.config;
+package com.pm.authservice.config.authorisation;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.pm.authservice.config;
+package com.pm.authservice.config.authorisation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

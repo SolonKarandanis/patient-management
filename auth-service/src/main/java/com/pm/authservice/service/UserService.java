@@ -17,7 +17,8 @@ public interface UserService {
     public User convertToEntity(UserDTO dto);
     public List<UserDTO> convertToDTOList(List<User> userList);
     public User findById(Integer id) throws NotFoundException;
-    public Optional<User> findByPublicId(String publicId)throws NotFoundException;
+    public User findByPublicId(String publicId)throws NotFoundException;
+    public User findByEmail(String email)throws NotFoundException;
     public void deleteUser(String publicId) throws NotFoundException;
     public Page<User> searchUsers(UsersSearchRequestDTO searchObj);
     public Long countUsers(UsersSearchRequestDTO searchObj);

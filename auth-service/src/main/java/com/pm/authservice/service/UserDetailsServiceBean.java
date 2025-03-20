@@ -44,6 +44,7 @@ public class UserDetailsServiceBean implements UserDetailsService {
         dto.setIsEnabled(user.getIsEnabled());
         dto.setPublicId(user.getPublicId().toString());
         dto.setStatus(user.getStatus());
+        dto.setRoleEntities(user.getRoles().stream().toList());
         return dto;
     }
 }

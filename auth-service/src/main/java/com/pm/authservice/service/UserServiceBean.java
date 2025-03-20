@@ -79,7 +79,7 @@ public class UserServiceBean implements UserService{
         String publicId=dto.getPublicId();
         user.setPublicId(UUID.fromString(publicId));
         if(StringUtils.hasLength(publicId)){
-            Integer userId=null;
+            Integer userId=userRepository.findIdByPublicId(UUID.fromString(publicId)).orElse(null);
             user.setId(userId);
         }
         user.setStatus(AccountStatus.valueOf(dto.getStatus()));

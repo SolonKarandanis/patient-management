@@ -28,6 +28,9 @@ import java.util.UUID;
         query = "SELECT u FROM User u "
                 + "LEFT JOIN FETCH u.roles r " +
                 " WHERE u.username= :username ")
+@NamedQuery(name = User.FIND_ID_BY_PUBLIC_ID,
+        query = "SELECT u.id FROM User u " +
+                "WHERE u.publicId=:publicId")
 @NamedEntityGraph(name = User.GRAPH_USERS_ROLES,
         attributeNodes = @NamedAttributeNode("roles")
 )
@@ -37,6 +40,7 @@ public class User {
     public static final String FIND_BY_EMAIL= "User.findByEmail";
     public static final String FIND_BY_PUBLIC_ID= "User.findByPublicId";
     public static final String FIND_BY_USERNAME= "User.findByUsername";
+    public static final String FIND_ID_BY_PUBLIC_ID= "User.findIdByPublicId";
 
     public static final String GRAPH_USERS_ROLES="graph.users.roles";
 

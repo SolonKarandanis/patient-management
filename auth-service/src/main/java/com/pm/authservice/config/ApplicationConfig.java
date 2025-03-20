@@ -1,6 +1,7 @@
 package com.pm.authservice.config;
 
 import com.pm.authservice.config.i18n.ChangeableLocaleResolver;
+import com.pm.authservice.util.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -30,7 +31,7 @@ public class ApplicationConfig {
         ResourceBundleMessageSource source = new ResourceBundleMessageSource();
         source.setBasenames("application_messages", "application_errors");
         source.setUseCodeAsDefaultMessage(true);
-        source.setDefaultEncoding("UTF-8");
+        source.setDefaultEncoding(AppConstants.UTF_8);
         source.setDefaultLocale(Locale.ENGLISH);
         return source;
     }
@@ -49,7 +50,7 @@ public class ApplicationConfig {
          */
         ReloadableResourceBundleMessageSource msgSource = new ReloadableResourceBundleMessageSource();
         msgSource.setBasenames("classpath:application_messages", "classpath:application_errors");
-        msgSource.setDefaultEncoding("UTF-8");
+        msgSource.setDefaultEncoding(AppConstants.UTF_8);
         msgSource.setDefaultLocale(Locale.ENGLISH);
         msgSource.setUseCodeAsDefaultMessage(true);
 

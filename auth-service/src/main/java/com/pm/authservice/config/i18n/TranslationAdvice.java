@@ -1,6 +1,7 @@
 package com.pm.authservice.config.i18n;
 
 
+import com.pm.authservice.util.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -79,7 +80,7 @@ public class TranslationAdvice implements ResponseBodyAdvice<Object> {
 
     protected String getLanguage(ServerHttpRequest request) {
         HttpHeaders headers = request.getHeaders();
-        return headers.getFirst("Lang-ISO");
+        return headers.getFirst(AppConstants.HEADER_NAME_LANGUAGE_ISO);
     }
     
     protected void processPath(Object bean, String fullpath, String targetPropertyName) {

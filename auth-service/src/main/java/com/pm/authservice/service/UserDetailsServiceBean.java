@@ -1,5 +1,6 @@
 package com.pm.authservice.service;
 
+import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.dto.UserDetailsDTO;
 import com.pm.authservice.model.User;
 import com.pm.authservice.repository.UserRepository;
@@ -10,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -44,7 +47,10 @@ public class UserDetailsServiceBean implements UserDetailsService {
         dto.setIsEnabled(user.getIsEnabled());
         dto.setPublicId(user.getPublicId().toString());
         dto.setStatus(user.getStatus());
-        dto.setRoleEntities(user.getRoles().stream().toList());
+        dto.setRoleEntities(user.getRoles()
+                .stream()
+                .map(role-> new RoleDTO(role.getId(), role.getName()))
+                .toList());
         return dto;
     }
 }

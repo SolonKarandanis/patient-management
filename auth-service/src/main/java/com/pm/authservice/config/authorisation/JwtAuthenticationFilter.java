@@ -1,6 +1,7 @@
 package com.pm.authservice.config.authorisation;
 
 
+import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.dto.UserDetailsDTO;
 import com.pm.authservice.exception.AuthException;
 import com.pm.authservice.model.AccountStatus;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -75,7 +75,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 				 user.setPublicId(claims.get("publicId", String.class));
 				 user.setStatus(AccountStatus.valueOf(claims.get("status", String.class)));
 				 if (user.getUsername() != null && jwtService.isTokenValid(jwt, user)) {
-					 List<SimpleGrantedAuthority> simpleGrantedAuthorities= new ArrayList<>();
+					 List<RoleDTO> roleClaims= (List<RoleDTO>)claims.get("roles");
+					 log.info("JwtAuthenticationFilter -> claims -> roles : {}",roleClaims);
+					 List<SimpleGrantedAuthority> simpleGrantedAuthorities= roleClaims.stream()
+							 .map(role->new SimpleGrantedAuthority(role.getName()))
+							 .toList();
 					 return new UsernamePasswordAuthenticationToken(user, null, simpleGrantedAuthorities);
 				 }
              } catch (AuthException e) {

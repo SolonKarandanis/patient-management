@@ -1,11 +1,16 @@
 package com.pm.authservice.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.pm.authservice.dto.serializer.CustomRoleDeserializer;
 import com.pm.authservice.model.AccountStatus;
+import com.pm.authservice.model.Role;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,11 +27,16 @@ public class UserDetailsDTO implements UserDetails {
     private String email;
     private AccountStatus status;
     private Boolean isEnabled;
+    private List<Role> roleEntities= new ArrayList<>();
+    private List<String> roleNames = new ArrayList<>();
 
 
+    @JsonDeserialize(using = CustomRoleDeserializer.class)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return roleEntities.stream()
+                .map(role-> new SimpleGrantedAuthority(role.getName()))
+                .toList();
     }
 
     @Override

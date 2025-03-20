@@ -11,5 +11,5 @@ public class UsersSearchRequestDTO extends SearchRequestDTO{
 	private String firstName;
 	private String email;
 	private String status;
-
+	private String roleName;
 }

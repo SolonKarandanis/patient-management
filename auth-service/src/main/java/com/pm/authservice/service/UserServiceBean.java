@@ -9,6 +9,7 @@ import com.pm.authservice.repository.RoleRepository;
 import com.pm.authservice.repository.UserRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -244,7 +245,30 @@ public class UserServiceBean implements UserService{
     protected Predicate getSearchPredicate(UsersSearchRequestDTO searchObj){
         QUser user = QUser.user;
         BooleanBuilder builder = new BooleanBuilder();
+        String email =searchObj.getEmail();
+        String username = searchObj.getUsername();
+        String firstName= searchObj.getFirstName();
+        String status = searchObj.getStatus();
+        String roleName = searchObj.getRoleName();
 
+        if(StringUtils.hasLength(email)){
+            builder.and(user.email.eq(email));
+        }
+        if(StringUtils.hasLength(username)){
+            builder.and(user.username.eq(username));
+        }
+        if(StringUtils.hasLength(firstName)){
+            builder.and(user.firstName.eq(firstName));
+        }
+        if(StringUtils.hasLength(status)){
+            builder.and(user.status.eq(AccountStatus.valueOf(status)));
+        }
+        if(StringUtils.hasLength(roleName)){
+            Role role = roleRepository.findByName(roleName);
+            if(role != null){
+                builder.and(user.roles.contains(role));
+            }
+        }
         return builder;
     }
 

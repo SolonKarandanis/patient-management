@@ -3,12 +3,11 @@ package com.pm.authservice.service;
 import com.pm.authservice.dto.*;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
-import com.pm.authservice.model.AccountStatus;
-import com.pm.authservice.model.Role;
-import com.pm.authservice.model.User;
-import com.pm.authservice.model.VerificationToken;
+import com.pm.authservice.model.*;
 import com.pm.authservice.repository.RoleRepository;
 import com.pm.authservice.repository.UserRepository;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -22,6 +21,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.StreamSupport;
 
 
 @Service
@@ -135,17 +135,27 @@ public class UserServiceBean implements UserService{
 
     @Override
     public Page<User> searchUsers(UsersSearchRequestDTO searchObj) {
-        return null;
+        PageRequest pageRequest = toPageRequest(searchObj.getPaging());
+        Predicate predicate = getSearchPredicate(searchObj);
+        return userRepository.findAll(predicate,pageRequest);
     }
 
     @Override
     public Long countUsers(UsersSearchRequestDTO searchObj) {
-        return 0L;
+        Predicate predicate = getSearchPredicate(searchObj);
+        return userRepository.count(predicate);
     }
 
     @Override
-    public List<User> findAllUsersForExport(UsersSearchRequestDTO searchObj) {
-        return List.of();
+    public List<UserDTO> findAllUsersForExport(UsersSearchRequestDTO searchObj) {
+        Predicate predicate = getSearchPredicate(searchObj);
+        List<User> users=StreamSupport.stream(userRepository.findAll(predicate).spliterator(), false).toList();
+        List<UserDTO> results=new ArrayList<>();
+        for(User user: users){
+            UserDTO dto = convertToDTO(user);
+            results.add(dto);
+        }
+        return results;
     }
 
     @Transactional
@@ -226,6 +236,13 @@ public class UserServiceBean implements UserService{
         }
     }
 
+    protected Predicate getSearchPredicate(UsersSearchRequestDTO searchObj){
+        QUser user = QUser.user;
+        BooleanBuilder builder = new BooleanBuilder();
+
+        return builder;
+    }
+
     protected PageRequest toPageRequest(Paging paging) {
         Sort sortBy = Sort.by(Sort.Direction.ASC,"id");
         if(Objects.nonNull(paging.getSortingDirection()) && Objects.nonNull(paging.getSortingColumn())){
@@ -235,12 +252,12 @@ public class UserServiceBean implements UserService{
     }
 
 
-    public String translate(String key) {
+    protected String translate(String key) {
         return Optional.ofNullable(messageSource.getMessage(key, null, getDefaultLocale())).orElse(key);
     }
 
 
-    public String translate(String key, Locale locale) {
+    protected String translate(String key, Locale locale) {
         return Optional.ofNullable(messageSource.getMessage(key, null, locale)).orElse(key);
     }
 

@@ -18,6 +18,7 @@ import java.util.UUID;
 @Setter
 @NamedQuery(name = User.FIND_BY_EMAIL,
         query = "SELECT u FROM User u "
+                + "LEFT JOIN FETCH u.roles r "
                 + "WHERE u.email = :email ")
 @NamedQuery(name = User.FIND_BY_PUBLIC_ID,
         query = "SELECT u FROM User u "

@@ -6,6 +6,7 @@ import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.model.AccountStatus;
 import com.pm.authservice.model.Role;
 import com.pm.authservice.model.User;
+import com.pm.authservice.model.VerificationToken;
 import com.pm.authservice.repository.RoleRepository;
 import com.pm.authservice.repository.UserRepository;
 import org.slf4j.Logger;
@@ -31,17 +32,20 @@ public class UserServiceBean implements UserService{
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final VerificationTokenService verificationTokenService;
     private final PasswordEncoder passwordEncoder;
     private final MessageSource messageSource;
 
     public UserServiceBean(
             UserRepository userRepository,
             RoleRepository roleRepository,
+            VerificationTokenService verificationTokenService,
             PasswordEncoder passwordEncoder,
             MessageSource messageSource
     ){
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.verificationTokenService = verificationTokenService;
         this.passwordEncoder = passwordEncoder;
         this.messageSource = messageSource;
     }
@@ -93,28 +97,40 @@ public class UserServiceBean implements UserService{
 
     @Override
     public List<UserDTO> convertToDTOList(List<User> userList) {
-        return List.of();
+        if(CollectionUtils.isEmpty(userList)){
+            return Collections.emptyList();
+        }
+        return userList.stream()
+                .map(this::convertToDTO)
+                .toList();
     }
 
     @Override
     public User findById(Integer id) throws NotFoundException {
-        return null;
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
     }
 
     @Override
     public User findByPublicId(String publicId) throws NotFoundException {
-        return null;
+        return userRepository.findByPublicId(UUID.fromString(publicId))
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
     }
 
     @Override
     public User findByEmail(String email) throws NotFoundException {
-        return null;
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
     }
 
     @Transactional
     @Override
     public void deleteUser(String publicId) throws NotFoundException {
-
+        Optional<User> usrOpt  =userRepository.findByPublicId(UUID.fromString(publicId));
+        usrOpt.ifPresentOrElse(
+                userRepository::delete,
+                ()-> new NotFoundException(USER_NOT_FOUND)
+        );
     }
 
     @Override
@@ -135,30 +151,79 @@ public class UserServiceBean implements UserService{
     @Transactional
     @Override
     public User registerUser(CreateUserDTO dto) throws BusinessException {
-        return null;
+        Optional<User> userNameMaybe  = userRepository.findByUsername(dto.getUsername());
+
+        if(userNameMaybe.isPresent()){
+            throw new BusinessException("error.username.exists");
+        }
+
+        Optional<User> emailMaybe  = userRepository.findByEmail(dto.getEmail());
+        if(emailMaybe.isPresent()){
+            throw new BusinessException("error.email.exists");
+        }
+
+        User user = new User();
+        user.setUsername(dto.getUsername());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setStatus(AccountStatus.INACTIVE);
+        user.setIsVerified(Boolean.FALSE);
+        UUID uuid = UUID.randomUUID();
+        user.setPublicId(uuid);
+        Role role = roleRepository.findByName(dto.getRole());
+        user.setRoles(Set.of(role));
+        user = userRepository.save(user);
+//        getPublisher().publishEvent(new UserRegistrationCompleteEvent(user, applicationUrl));
+        return user;
     }
 
     @Transactional
     @Override
     public User updateUser(String publicId, UpdateUserDTO dto) throws NotFoundException {
-        return null;
+        User user = findByPublicId(publicId);
+        user.setUsername(dto.getUsername());
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        return userRepository.save(user);
     }
 
     @Transactional
     @Override
     public User activateUser(User user) throws BusinessException {
-        return null;
+        if(AccountStatus.ACTIVE.equals(user.getStatus())){
+            throw new BusinessException("error.user.already.active");
+        }
+        user.setStatus(AccountStatus.ACTIVE);
+        user.setIsEnabled(Boolean.TRUE);
+        user.setIsVerified(Boolean.TRUE);
+        userRepository.save(user);
+        return user;
     }
 
     @Transactional
     @Override
     public User deactivateUser(User user) throws BusinessException {
-        return null;
+        if(AccountStatus.INACTIVE.equals(user.getStatus())){
+            throw new BusinessException("error.user.already.inactive");
+        }
+        user.setStatus(AccountStatus.INACTIVE);
+        user.setIsEnabled(Boolean.FALSE);
+        userRepository.save(user);
+        return user;
     }
 
     @Override
     public void verifyEmail(String token) throws BusinessException {
-
+        VerificationToken verificationToken = verificationTokenService.findByToken(token);
+        Boolean verificationResult = verificationTokenService.validateToken(verificationToken);
+        if(verificationResult){
+            User user = verificationToken.getUser();
+            user.setIsVerified(Boolean.TRUE);
+            userRepository.save(user);
+        }
     }
 
     protected PageRequest toPageRequest(Paging paging) {

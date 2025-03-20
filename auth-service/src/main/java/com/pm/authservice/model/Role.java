@@ -8,9 +8,17 @@ import java.util.List;
 
 @Getter
 @Setter
+@NamedQuery(name = Role.FIND_BY_IDS,
+        query = "SELECT r FROM Role r WHERE r.id in (:ids)")
+@NamedQuery(name = Role.FIND_BY_NAME,
+        query = "SELECT r FROM Role r " +
+                "WHERE r.name = :name")
 @Entity
 @Table(name="roles")
 public class Role {
+
+    public static final String FIND_BY_IDS= "Role.findByIds";
+    public static final String FIND_BY_NAME= "User.findByName";
 
     @Id
     @GeneratedValue(

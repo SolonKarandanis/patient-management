@@ -23,6 +23,9 @@ public interface UserRepository extends JpaRepository<User,Integer> ,
     @Query(name = User.FIND_BY_PUBLIC_ID)
     Optional<User> findByPublicId(@Param("publicId") UUID publicId);
 
+    @Query(name = User.FIND_ID_BY_PUBLIC_ID)
+    Optional<Integer> findIdByPublicId(@Param("publicId") UUID publicId);
+
     @EntityGraph(value =  User.GRAPH_USERS_ROLES,type = EntityGraph.EntityGraphType.FETCH)
     @Query("SELECT u FROM User u ")
     List<User> findUsersWithRoles(Specification<User> spec);

@@ -73,7 +73,7 @@ public class JwtServiceBean implements JwtService{
                 .claim("lastName", user.getLastName())
                 .claim("email", user.getEmail())
                 .claim("publicId", user.getPublicId())
-//                .claim("authorities", user.getAuthorityEntities().stream().map(Authority::getName).toList())
+                .claim("roles", user.getRoleEntities())
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))

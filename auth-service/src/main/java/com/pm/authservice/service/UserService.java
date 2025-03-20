@@ -22,7 +22,7 @@ public interface UserService {
     public void deleteUser(String publicId) throws NotFoundException;
     public Page<User> searchUsers(UsersSearchRequestDTO searchObj);
     public Long countUsers(UsersSearchRequestDTO searchObj);
-    public List<User> findAllUsersForExport(UsersSearchRequestDTO searchObj);
+    public List<UserDTO> findAllUsersForExport(UsersSearchRequestDTO searchObj);
     public User registerUser(CreateUserDTO dto) throws BusinessException;
     public User updateUser(String publicId, UpdateUserDTO dto) throws NotFoundException;
     public User activateUser(User user) throws BusinessException;

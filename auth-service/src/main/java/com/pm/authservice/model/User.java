@@ -95,6 +95,9 @@ public class User {
     @NotNull
     private LocalDate lastModifiedDate;
 
+    @Column(name = "is_verified")
+    private Boolean isVerified = false;
+
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE

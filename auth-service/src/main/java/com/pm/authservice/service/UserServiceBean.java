@@ -1,6 +1,7 @@
 package com.pm.authservice.service;
 
 import com.pm.authservice.dto.*;
+import com.pm.authservice.event.UserRegistrationCompleteEvent;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.model.*;
@@ -10,6 +11,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,19 +37,22 @@ public class UserServiceBean implements UserService{
     private final VerificationTokenService verificationTokenService;
     private final PasswordEncoder passwordEncoder;
     private final MessageSource messageSource;
+    private final ApplicationEventPublisher publisher;
 
     public UserServiceBean(
             UserRepository userRepository,
             RoleRepository roleRepository,
             VerificationTokenService verificationTokenService,
             PasswordEncoder passwordEncoder,
-            MessageSource messageSource
+            MessageSource messageSource,
+            ApplicationEventPublisher publisher
     ){
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.verificationTokenService = verificationTokenService;
         this.passwordEncoder = passwordEncoder;
         this.messageSource = messageSource;
+        this.publisher = publisher;
     }
 
 
@@ -160,7 +165,7 @@ public class UserServiceBean implements UserService{
 
     @Transactional
     @Override
-    public User registerUser(CreateUserDTO dto) throws BusinessException {
+    public User registerUser(CreateUserDTO dto,String applicationUrl) throws BusinessException {
         Optional<User> userNameMaybe  = userRepository.findByUsername(dto.getUsername());
 
         if(userNameMaybe.isPresent()){
@@ -185,7 +190,7 @@ public class UserServiceBean implements UserService{
         Role role = roleRepository.findByName(dto.getRole());
         user.setRoles(Set.of(role));
         user = userRepository.save(user);
-//        getPublisher().publishEvent(new UserRegistrationCompleteEvent(user, applicationUrl));
+        publisher.publishEvent(new UserRegistrationCompleteEvent(user, applicationUrl));
         return user;
     }
 

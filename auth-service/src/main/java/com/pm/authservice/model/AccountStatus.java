@@ -23,4 +23,19 @@ public enum AccountStatus {
 	public String getValue() {
         return value;
     }
+
+    public static AccountStatus fromValue(String value) {
+        switch(value){
+            case "account.active" -> {
+                return AccountStatus.valueOf(AccountStatus.ACTIVE.getValue());
+            }
+            case "account.inactive" -> {
+                return AccountStatus.valueOf(AccountStatus.INACTIVE.getValue());
+            }
+            case "account.deleted" -> {
+                return AccountStatus.valueOf(AccountStatus.DELETED.getValue());
+            }
+            default      -> throw new IllegalArgumentException("Invalid value " + value);
+        }
+    }
 }

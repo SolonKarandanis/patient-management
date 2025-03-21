@@ -73,7 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 				 user.setLastName(claims.get("lastName", String.class));
 				 user.setEmail(claims.get("email", String.class));
 				 user.setPublicId(claims.get("publicId", String.class));
-				 user.setStatus(AccountStatus.valueOf(claims.get("status", String.class)));
+				 user.setStatus(AccountStatus.fromValue(claims.get("status", String.class)));
 				 if (user.getUsername() != null && jwtService.isTokenValid(jwt, user)) {
 					 List<RoleDTO> roleClaims= (List<RoleDTO>)claims.get("roles");
 					 log.info("JwtAuthenticationFilter -> claims -> roles : {}",roleClaims);

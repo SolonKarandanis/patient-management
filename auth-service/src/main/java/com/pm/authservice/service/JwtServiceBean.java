@@ -1,6 +1,7 @@
 package com.pm.authservice.service;
 
 import com.pm.authservice.dto.JwtDTO;
+import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.dto.UserDetailsDTO;
 import com.pm.authservice.exception.AuthException;
 import com.pm.authservice.util.SecurityConstants;
@@ -72,6 +73,7 @@ public class JwtServiceBean implements JwtService{
                 .claim("lastName", user.getLastName())
                 .claim("email", user.getEmail())
                 .claim("publicId", user.getPublicId())
+                .claim("status", user.getStatus().getValue())
                 .claim("roles", user.getRoleEntities())
                 .signWith(getSigningKey())
                 .subject(user.getUsername())

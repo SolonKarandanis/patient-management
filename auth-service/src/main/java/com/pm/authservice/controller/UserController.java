@@ -69,7 +69,7 @@ public class UserController {
 
     @GetMapping(value="/account")
     public ResponseEntity<UserDTO> getUserByToken(Authentication authentication) throws NotFoundException{
-        UserDTO dto = (UserDTO)authentication.getPrincipal();
+        UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
         User user = usersService.findByPublicId(dto.getPublicId());
         log.info("UserController --> getUserByToken --> username: {}", user.getUsername());
         return ResponseEntity.ok(usersService.convertToDTO(user));

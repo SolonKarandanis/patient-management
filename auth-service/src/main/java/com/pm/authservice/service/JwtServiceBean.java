@@ -7,7 +7,6 @@ import com.pm.authservice.util.SecurityConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
@@ -47,10 +46,10 @@ public class JwtServiceBean implements JwtService{
         try{
             return Jwts
                     .parser()
-                    .setSigningKey(signKey.getBytes())
+                    .verifyWith(getSigningKey())
                     .build()
-                    .parseClaimsJws(token.replace(SecurityConstants.BEARER_TOKEN_PREFIX, ""))
-                    .getBody();
+                    .parseSignedClaims(token.replace(SecurityConstants.BEARER_TOKEN_PREFIX, ""))
+                    .getPayload();
 
         }catch (MalformedJwtException e) {
             log.error("Invalid  token: {}", e.getMessage());
@@ -74,11 +73,11 @@ public class JwtServiceBean implements JwtService{
                 .claim("email", user.getEmail())
                 .claim("publicId", user.getPublicId())
                 .claim("roles", user.getRoleEntities())
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .setSubject(user.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(expireDate)
-                .signWith(SignatureAlgorithm.HS512,signKey.getBytes())
+                .signWith(getSigningKey())
+                .subject(user.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(expireDate)
+                .signWith(getSigningKey())
                 .compact();
         return new JwtDTO(token, expireDate);
     }

@@ -55,7 +55,7 @@ public class WebSecurityConfiguration {
         .cors(c->c.configurationSource(corsConfigurationSource()))
         .authorizeHttpRequests(auth-> auth
                 .requestMatchers(mvc.matchers(SecurityConstants.AUTH_WHITELIST)).permitAll()
-                .requestMatchers(mvc.pattern(HttpMethod.POST, "/authenticate")).permitAll()
+                .requestMatchers(mvc.pattern(HttpMethod.POST, "/auth/login")).permitAll()
                 .anyRequest()
                 .hasAnyAuthority(getRoleNames())
         )

@@ -33,7 +33,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<JwtDTO> authenticate(@Valid @RequestBody LoginRequestDTO submitCredentialsDTO)
             throws AuthException {
-        log.info("AuthController->authenticate----------->username: {}   password: {}",submitCredentialsDTO.getEmail(),submitCredentialsDTO.getPassword());
+        log.info("AuthController->authenticate----------->username: {}",submitCredentialsDTO.getEmail());
         UserDetailsDTO authenticatedUser = authService.authenticate(submitCredentialsDTO);
         JwtDTO jwt = jwtService.generateToken(authenticatedUser);
         return ResponseEntity.ok().body(jwt);
@@ -44,11 +44,14 @@ public class AuthController {
     public ResponseEntity<Void> validateToken(
             @RequestHeader("Authorization") String authHeader,
             Authentication authentication) throws AuthException {
+        log.info("AuthController->validateToken");
         // Authorization: Bearer <token>
         if(authHeader == null || !authHeader.startsWith("Bearer ")) {
+            log.info("AuthController->validateToken-> Authentication header is invalid");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
+        log.info("AuthController->validateToken-> username: {} ", dto.getUsername());
         return jwtService.isTokenValid(authHeader,dto)?
                 ResponseEntity.ok().build() : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }

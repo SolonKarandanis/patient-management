@@ -1,7 +1,7 @@
 ### Creates a new patient entity
 POST http://localhost:4004/api/patients
 Content-Type: application/json
-#Authorization: Bearer {{token}}
+Authorization: Bearer {{token}}
 
 {
   "name": "John Doe Kafka Test",

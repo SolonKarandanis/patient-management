@@ -5,29 +5,29 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public class LoginRequestDTO {
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email should be a valid email address")
+    @NotBlank(message = "{error.generic.prefix} {prompt.user.email} {error.generic.required}")
+    @Email(message = "{error.generic.prefix} {prompt.user.email} {error.generic.valid}")
     private String email;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @NotBlank(message = "{error.generic.prefix} {prompt.user.password} {error.generic.required}")
+    @Size(min = 8, message = "{error.generic.prefix} {prompt.user.password} {error.generic.oversize.MAX}")
     private String password;
 
-    public @NotBlank(message = "Email is required") @Email(message = "Email should be a valid email address") String getEmail() {
+    public @NotBlank(message = "{error.generic.prefix} {prompt.user.email} {error.generic.required}") @Email(message = "{error.generic.prefix} {prompt.user.email} {error.generic.valid}") String getEmail() {
         return email;
     }
 
     public void setEmail(
-            @NotBlank(message = "Email is required") @Email(message = "Email should be a valid email address") String email) {
+            @NotBlank(message = "{error.generic.prefix} {prompt.user.email} {error.generic.required}") @Email(message = "{error.generic.prefix} {prompt.user.email} {error.generic.valid}") String email) {
         this.email = email;
     }
 
-    public @NotBlank(message = "Password is required") @Size(min = 8, message = "Password must be at least 8 characters long") String getPassword() {
+    public @NotBlank(message = "{error.generic.prefix} {prompt.user.password} {error.generic.required}") @Size(min = 8, message = "{error.generic.prefix} {prompt.user.password} {error.generic.oversize.MAX}") String getPassword() {
         return password;
     }
 
     public void setPassword(
-            @NotBlank(message = "Password is required") @Size(min = 8, message = "Password must be at least 8 characters long") String password) {
+            @NotBlank(message = "{error.generic.prefix} {prompt.user.password} {error.generic.required}") @Size(min = 8, message = "{error.generic.prefix} {prompt.user.password} {error.generic.oversize.MAX}") String password) {
         this.password = password;
     }
 }

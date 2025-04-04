@@ -18,6 +18,16 @@
     "target": "ES2022",
     "module": "ES2022"
   },
+  "paths": {
+    "@models/*" : ["src/app/core/models/*"],
+    "@layout/*" : ["src/app/core/layout/*"],
+    "@shared/*": ["src/app/shared/*"],
+    "@components/*": ["src/app/shared/components/*"],
+    "@directives/*": ["src/app/shared/directives/*"],
+    "@pipes/*": ["src/app/shared/pipes/*"],
+    "@core/*": ["src/app/core/*"],
+    "@i18n/*": ["src/app/i18n/*"]
+  },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,

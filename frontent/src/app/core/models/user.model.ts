@@ -17,7 +17,7 @@ export interface UserWithRole extends BaseUserModel{
   role:RolesConstants;
 }
 
-export interface UserModel extends UserWithRole{
+export interface User extends UserWithRole{
   publicId: string;
   status: UserAccountStatus;
   statusLabel:string;

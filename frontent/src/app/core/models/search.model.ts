@@ -75,7 +75,7 @@ export interface UserSearchRequest extends SearchRequest {
 export type SearchRequestCriteria = UserSearchRequest
 
 
-export interface SavedSearchModel {
+export interface SavedSearch {
   id?: number;
   userId: string;
   searchType: SearchTypeEnum;
@@ -93,7 +93,7 @@ export interface SearchConfigurationCriteria {
   canFieldBeDisplayed: boolean;
 }
 
-export interface SearchConfigurationModel {
+export interface SearchConfiguration {
   id?: number;
   userId: string;
   searchType: SearchTypeEnum;

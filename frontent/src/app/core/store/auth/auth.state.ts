@@ -1,4 +1,4 @@
-import {Operation, Role, User} from '../../models/user.model';
+import {Operation, Role, User} from '@models/user.model';
 
 export type AuthState ={
   readonly isLoggedIn: boolean,

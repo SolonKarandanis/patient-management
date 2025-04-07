@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
 import {BaseRepository} from './BaseRepository';
-import {JwtDTO, SubmitCredentialsDTO} from '../models/auth.model';
+import {JwtDTO, SubmitCredentialsDTO} from '@models/auth.model';
 import { Observable } from 'rxjs';
 import {ApiControllers} from './ApiControllers';
 import {AUTHENTICATE_REQUEST} from '../guards/SecurityConstants';
 import { HttpContext } from '@angular/common/http';
-import {User} from '../models/user.model';
+import {User} from '@models/user.model';
 
 @Injectable({
   providedIn: 'root',

@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
-import {ApiControllers} from '../repositories/ApiControllers';
 import {HttpErrorResponse, HttpHeaders, HttpStatusCode} from '@angular/common/http';
 import {API_BASE_URL} from '../token';
+import {ApiControllers} from '@core/repositories/ApiControllers';
 
 @Injectable({
   providedIn: 'root',

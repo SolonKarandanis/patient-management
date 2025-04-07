@@ -1,9 +1,10 @@
-import {User} from '../models/user.model';
+
 import { AuthStore } from '../store/auth/auth.store';
 import {effect, Injectable, Signal, untracked} from '@angular/core';
 import {GenericService} from './generic.service';
 import {Router} from '@angular/router';
-import {SubmitCredentialsDTO} from '../models/auth.model';
+import {User} from '@models/user.model';
+import {SubmitCredentialsDTO} from '@models/auth.model';
 
 export type UserType = User | undefined;
 type AuthStore = InstanceType<typeof AuthStore>;

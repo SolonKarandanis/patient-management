@@ -2,9 +2,9 @@ import {AuthRepository} from './auth.repository';
 import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
 import {TestBed} from '@angular/core/testing';
 import {provideHttpClient} from '@angular/common/http';
-import {mockJwt, mockLoginCredentials, mockUser} from '../../../../testing/mockData';
-import {JwtDTO} from '../models/auth.model';
-import {User} from '../models/user.model';
+import {mockJwt, mockLoginCredentials, mockUser} from '@testing/mockData';
+import {JwtDTO} from '@models/auth.model';
+import {User} from '@models/user.model';
 
 describe('AuthRepository', () =>{
   let repository: AuthRepository;

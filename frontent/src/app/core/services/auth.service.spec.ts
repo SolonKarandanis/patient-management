@@ -1,10 +1,11 @@
 import { TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
 import { AuthStore } from "../store/auth/auth.store";
-import {AuthService} from './auth.service';
-import {mockLoginCredentials} from '../../../../testing/mockData';
-import {RolesConstants} from '../guards/SecurityConstants';
+
 import {signal} from '@angular/core';
+import {AuthService} from '@core/services/auth.service';
+import {mockLoginCredentials} from '@testing/mockData';
+import {RolesConstants} from '@core/guards/SecurityConstants';
 
 type AuthStore = InstanceType<typeof AuthStore>;
 

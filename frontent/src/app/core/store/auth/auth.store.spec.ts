@@ -1,10 +1,10 @@
 import { AuthStore } from "./auth.store";
-import {AuthRepository} from '../repositories/auth.repository';
-import {JwtUtil} from '../services/jwt-util.service';
+import {AuthRepository} from '../../repositories/auth.repository';
+import {JwtUtil} from '../../services/jwt-util.service';
 import {TestBed} from '@angular/core/testing';
 import {of} from 'rxjs';
-import {mockJwt, mockLoginCredentials, mockUser} from '../../../../testing/mockData';
-import {RolesConstants} from '../guards/SecurityConstants';
+import {mockJwt, mockLoginCredentials, mockUser} from '../../../../../testing/mockData';
+import {RolesConstants} from '../../guards/SecurityConstants';
 type AuthStore = InstanceType<typeof AuthStore>;
 
 describe('AuthStore', () =>{

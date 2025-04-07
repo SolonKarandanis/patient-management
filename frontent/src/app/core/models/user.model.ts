@@ -1,5 +1,3 @@
-import {RolesConstants} from '../guards/SecurityConstants';
-
 export enum UserAccountStatus{
   ACTIVE ="account.active",
   INACTIVE="account.inactive",
@@ -13,8 +11,18 @@ export interface BaseUserModel{
   email: string;
 }
 
+export interface Role{
+  id:number;
+  name:string;
+}
+
+export interface Operation{
+  id:number;
+  name:string;
+}
+
 export interface UserWithRole extends BaseUserModel{
-  role:RolesConstants;
+  roles:Role[];
 }
 
 export interface User extends UserWithRole{
@@ -25,13 +33,23 @@ export interface User extends UserWithRole{
   lastModifiedDate:string;
   isEnabled:boolean;
   isVerified:boolean;
-  authorities:string[]
+  operations:Operation[];
 }
 
-export interface CreateUserRequest extends UserWithRole{
+export interface CreateUserRequest{
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
   password:string;
+  role:string;
 }
 
-export interface UpdateUserRequest extends UserWithRole{
+export interface UpdateUserRequest{
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role:string;
 }
 

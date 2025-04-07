@@ -1,6 +1,13 @@
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 
-import {CreateUserRequest, UpdateUserRequest, User, UserAccountStatus} from '../src/app/core/models/user.model';
+import {
+  CreateUserRequest,
+  Operation,
+  Role,
+  UpdateUserRequest,
+  User,
+  UserAccountStatus
+} from '../src/app/core/models/user.model';
 import {RolesConstants} from '../src/app/core/guards/SecurityConstants';
 import {
   Paging,
@@ -14,6 +21,16 @@ import {CreateUserForm, UpdateUserForm, UserSearchForm} from '../src/app/protect
 import {JwtDTO, SubmitCredentialsDTO} from '../src/app/core/models/auth.model';
 import {GenericFile} from '../src/app/core/models/file.model';
 
+export const mockRole:Role={
+  id:1,
+  name:RolesConstants.ROLE_ADMIN
+}
+
+export const mockOperation:Operation={
+  id:1,
+  name:RolesConstants.ROLE_ADMIN
+}
+
 export const mockUser: User ={
   username:"skaran",
   status:UserAccountStatus.ACTIVE,
@@ -21,8 +38,8 @@ export const mockUser: User ={
   email:"skarandanis@email.com",
   firstName:"solon",
   lastName:"karandanis",
-  authorities:[RolesConstants.ROLE_ADMIN],
-  role:RolesConstants.ROLE_ADMIN,
+  operations:[mockOperation],
+  roles:[mockRole],
   statusLabel:"Active",
   createdDate:"",
   lastModifiedDate:"",

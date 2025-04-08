@@ -8,8 +8,8 @@ import {HttpErrorResponse} from '@angular/common/http';
 })
 export class ErrorService{
 
-  private messageService = inject(MessageService);
-  private translate = inject(TranslateService);
+  private readonly messageService = inject(MessageService);
+  private readonly translate = inject(TranslateService);
 
   /**
    * Show an error message

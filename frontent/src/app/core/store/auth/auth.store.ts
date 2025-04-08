@@ -82,8 +82,8 @@ export const AuthStore = signalStore(
           tap(() => {
             state.setLoading(true)
           }),
-          switchMap((creadentials)=>
-            authRepo.login(creadentials).pipe(
+          switchMap((credentials)=>
+            authRepo.login(credentials).pipe(
               tapResponse({
                 next:({token,expires})=>{
                   state.setTokenDetails(token,expires);

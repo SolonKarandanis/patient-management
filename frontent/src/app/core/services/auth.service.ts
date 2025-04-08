@@ -19,8 +19,8 @@ export class AuthService extends GenericService{
   public loggedUser:Signal<User | undefined>;
 
   constructor(
-    private authStore:AuthStore,
-    private router:Router,
+    private readonly authStore:AuthStore,
+    private readonly router:Router,
   ){
     super()
     this.isLoading = this.authStore.loading;

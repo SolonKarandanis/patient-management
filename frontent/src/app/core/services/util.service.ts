@@ -20,12 +20,12 @@ export class UtilService{
   private readonly strongPasswordPattern = '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*"\'()+,-./:;<=>?[\\]^_`{|}~])(?=.{10,})';
 
 
-  private datePipe = new DatePipe('en');
+  private readonly datePipe = new DatePipe('en');
 
   constructor(
-    private router: Router,
-    private messageService:MessageService,
-    private translate:TranslateService,
+    private readonly router: Router,
+    private readonly messageService:MessageService,
+    private readonly translate:TranslateService,
   ) {}
 
   public get emailRegex():string{
@@ -49,13 +49,11 @@ export class UtilService{
   }
 
   public deepCopy(toBeCloned:object):object{
-    const copiedObject= structuredClone(toBeCloned);
-    return copiedObject;
+    return structuredClone(toBeCloned);
   }
 
   public shallowCopy(toBeCloned:object):object{
-    const copiedObject = Object.assign({}, toBeCloned);
-    return copiedObject;
+    return Object.assign({}, toBeCloned);
   }
 
   public nonNullObject(objectToTest:object):boolean{
@@ -65,13 +63,13 @@ export class UtilService{
   // Function definition with passing two arrays
   public findCommonElement<T>(array1:T[], array2:T[]):boolean {
     // Loop for array1
-    for(let i = 0; i < array1.length; i++) {
+    for(const element of array1) {
       // Loop for array2
-      for(let j = 0; j < array2.length; j++) {
+      for (let j = 0; j < array2.length; j++) {
         // Compare the element of each and
         // every element from both of the
         // arrays
-        if(array1[i] === array2[j]) {
+        if (element === array2[j]) {
           // Return if common element found
           return true;
         }

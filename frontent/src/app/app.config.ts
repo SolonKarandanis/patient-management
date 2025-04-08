@@ -8,8 +8,20 @@ import {TranslateHttpLoader} from '@ngx-translate/http-loader'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { routes } from './app.routes';
-import {HttpBackend, HttpClient, provideHttpClient} from "@angular/common/http";
+import {
+  HTTP_INTERCEPTORS,
+  HttpBackend,
+  HttpClient,
+  provideHttpClient,
+  withInterceptors,
+  withInterceptorsFromDi
+} from "@angular/common/http";
 import {firstValueFrom} from "rxjs";
+import {ErrorService} from '@core/services/error.service';
+import {BaseUrlInterceptor} from '@core/interceptors/base-url.interceptor';
+import {LanguageInterceptor} from '@core/interceptors/language.interceptor';
+import {httpError} from '@core/interceptors/http-error.interceptor';
+import {authExpired} from '@core/interceptors/auth-expired.interceptor';
 
 export const provideTranslation = () => ({
   defaultLanguage: 'en',
@@ -22,17 +34,34 @@ export const provideTranslation = () => ({
 
 export const appConfig: ApplicationConfig = {
   providers: [
-      MessageService,
-      provideZoneChangeDetection({ eventCoalescing: true }),
-      provideRouter(routes),
-      provideAnimationsAsync(),
-      providePrimeNG({
-        theme: {
-          preset: Aura
-        }
-      }),
-      provideHttpClient(),
-      importProvidersFrom(TranslateModule.forRoot(provideTranslation())),
+    MessageService,
+    ErrorService,
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+    provideAnimationsAsync(),
+    providePrimeNG({
+      theme: {
+        preset: Aura
+      }
+    }),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: BaseUrlInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LanguageInterceptor,
+      multi: true,
+    },
+    provideHttpClient(
+      withInterceptors([
+        httpError,
+        authExpired,
+      ]),
+      withInterceptorsFromDi(),
+    ),
+    importProvidersFrom(TranslateModule.forRoot(provideTranslation())),
   ]
 };
 

@@ -3,10 +3,14 @@ import { RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import {LanguageService} from '@core/services/language.service';
 import {PrimeNG} from 'primeng/config';
+import {ToastModule} from 'primeng/toast';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [
+    RouterOutlet,
+    ToastModule,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

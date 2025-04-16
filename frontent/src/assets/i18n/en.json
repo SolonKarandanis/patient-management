@@ -1,0 +1,191 @@
+{
+  "GLOBAL": {
+    "app-full-name": "AirBnb your home",
+    "login": "Login",
+    "UNAUTHORIZED": "You are not authorized to access this page",
+    "BUTTONS": {
+      "cancel": "Cancel",
+      "load": "Load",
+      "delete": "Delete",
+      "search": "Search",
+      "reset": "Reset",
+      "save-search": "Save Search",
+      "export-to-csv": "Export to CSV",
+      "validate-and-continue": "Validate and Continue",
+      "finish": "Finish",
+      "back": "Back",
+      "next":"Next",
+      "edit": "Edit",
+      "save": "Save",
+      "send": "Send",
+      "submit": "Submit",
+      "select": "Select",
+      "ok": "OK",
+      "yes": "Yes",
+      "no": "No",
+      "download": "Download",
+      "accept": "Accept",
+      "decline": "Decline",
+      "view-details": "View Details",
+      "approve": "Approve",
+      "reject": "Reject",
+      "choose-file": "Choose file",
+      "update": "Update",
+      "finalize": "Finalize",
+      "remove-items": "Remove Items",
+      "upload-file": "Upload File"
+    },
+    "FORMS": {
+      "ERRORS": {
+        "required": "This field is required",
+        "email": "Enter a valid email address",
+        "minlength": "Minimum characters required: {{ requiredLength }}",
+        "maxlength": "Maximum characters required: {{ requiredLength }}",
+        "samePassword": "Passwords don't match",
+        "strongPassword": "Password strength must be \"strong\"",
+        "forbiddenValue": "The given value is not allowed for this field"
+      },
+      "PLACEHOLDERS": {
+        "search": "Keywords",
+        "previous-value": "Previous value"
+      },
+      "ACTIONS": {
+        "title": "Actions"
+      }
+    },
+    "TABLES": {
+      "no-results": "No results found"
+    },
+    "TOOLTIPS": {
+      "no-image-found": "No image found",
+      "print-page": "Print this page"
+    },
+    "CONFIRM-DIALOG": {
+      "sure-proceed": "Are you sure you want to proceed?"
+    },
+    "EMAIL": {
+      "sent": "Email has been sent"
+    },
+    "ERRORS": {
+      "unauthorized": "You are not logged in. Please, login first and then try again.",
+      "server": "Something went wrong. Error code",
+      "forbidden": "You are not authorized to access this resource.",
+      "not-found": "Cannot find the resource you are looking for...",
+      "summary": "Error",
+      "generic": "An error occured"
+    },
+    "SUCCESS": {
+      "summary": "success"
+    },
+    "WARNING": {
+      "summary": "warning"
+    },
+    "OTHER": {
+      "verifyingAccess": "Verifying Access",
+      "not-available": "N/A",
+      "not-specified": "Not Specified"
+    },
+    "LABELS": {
+      "all": "All",
+      "id": "ID",
+      "date-created": "Date Created",
+      "status": "Status",
+      "downloads": "Downloads",
+      "auto-generated": "Auto Generated",
+      "comments": "Comments",
+      "chars-remaining": "{{chars}} characters remaining",
+      "remove-chars": "Maximum characters allowed: {{max}}. Remove {{chars}} characters.",
+      "loading-data-wait": "Loading data, please wait",
+      "remove-item-from-list": "Click to remove {{itemType}}",
+      "add-at-least-one-xx-in-list": "Add at least one {{itemType}}",
+      "searching": "Searching..."
+    }
+  },
+  "HEADER":{
+    "SEARCH":{
+      "title":"Search",
+      "anywhere":"Anywhere",
+      "any-week":"Any week",
+      "add-guests":"Add guests"
+    },
+    "MENU": {
+      "my-properties": "My properties",
+      "my-reservation": "My reservation",
+      "my-booking":"My booking",
+      "log-out":"Log out"
+    }
+  },
+  "FOOTER":{
+    "LABELS":{
+      "terms":"Terms",
+      "sitemap":"Sitemap",
+      "privacy":"Privacy",
+      "privacy-choices":"Your privacy choices"
+    }
+  },
+  "LOGIN": {
+    "title": "Login",
+    "LABELS": {
+      "username": "Username",
+      "password": "Password",
+      "agreement-header": "Terms of User Agreement"
+    },
+    "BUTTONS": {
+      "login": "Login",
+      "forgot-pass": "Forgot Password",
+      "register": "Register"
+    }
+  },
+  "REGISTER": {
+    "title": "Registration",
+    "LABELS": {
+      "username": "Username",
+      "email": "Email",
+      "password": "Password",
+      "confirm-password": "Confirm Password",
+      "first-name": "First Name",
+      "last-name": "Last Name",
+      "role": "Role",
+      "landlord": "Landlord",
+      "tenant": "Tenant"
+    },
+    "PLACEHOLDERS":{
+      "enter-username": "Enter your username",
+      "enter-email": "Enter your email",
+      "enter-password": "Enter your password",
+      "confirm-password": "Confirm your password",
+      "enter-first-name": "Enter your First Name",
+      "enter-last-name": "Enter your Last Name"
+    },
+    "BUTTONS": {
+      "register": "Register"
+    }
+  },
+  "SEARCH":{
+    "location":"Where do you want to go?",
+    "date":"When do you want to go?",
+    "guests":"What are you looking for?",
+    "guests-info":"Number of beds, guests, etc."
+  },
+  "LANDLORD":{
+    "CREATE-PROPERTY":{
+      "CATEGORY":{
+        "title":"Which of these best describe your place?"
+      },
+      "DESCRIPTION":{
+        "title":"Now, let's give your house a title and description",
+        "info":"Short titles work best. Have fun with it you can change it anytime"
+      },
+      "INFO":{
+        "guests":"Guests",
+        "bedrooms":"Bedrooms",
+        "beds":"Beds",
+        "bathrooms":"Bathrooms"
+      }
+    },
+    "PLACEHOLDERS":{
+      "title":"Title",
+      "summary":"Summary"
+    }
+  }
+}

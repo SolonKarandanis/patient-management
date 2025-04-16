@@ -1,4 +1,9 @@
-import {ApplicationConfig, importProvidersFrom, provideZoneChangeDetection} from '@angular/core';
+import {
+  ApplicationConfig,
+  importProvidersFrom, inject,
+  provideAppInitializer,
+  provideZoneChangeDetection
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
@@ -62,6 +67,8 @@ export const appConfig: ApplicationConfig = {
       withInterceptorsFromDi(),
     ),
     importProvidersFrom(TranslateModule.forRoot(provideTranslation())),
+    provideAppInitializer(appInitializerFactory),
+
   ]
 };
 
@@ -70,9 +77,8 @@ export function createTranslateLoader(httpHandler: HttpBackend): TranslateHttpLo
   return  new  TranslateHttpLoader(new HttpClient(httpHandler), './assets/i18n/', '.json');
 }
 
-export function appInitializerFactory(translate: TranslateService) {
-  return (): Promise<any> => {
-    translate.setDefaultLang('en');
-    return firstValueFrom(translate.use('en'));
-  };
+export function appInitializerFactory() {
+  const translate = inject(TranslateService);
+  translate.setDefaultLang('en');
+  return firstValueFrom(translate.use('en'));
 }

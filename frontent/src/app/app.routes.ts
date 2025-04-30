@@ -6,11 +6,11 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./auth/auth.module').then((m)=>m.AuthModule),
   },
-  // {
-  //   path: 'error',
-  //   loadChildren: () =>
-  //     import('./errors/errors.module').then((m) => m.ErrorsModule),
-  // },
+  {
+    path: 'error',
+    loadChildren: () =>
+      import('./errors/errors.module').then((m) => m.ErrorsModule),
+  },
   // {
   //   path:'',
   //   canActivate: [AuthGuard],

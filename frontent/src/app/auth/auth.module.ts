@@ -19,7 +19,7 @@ const routes: Routes =[
         data: { returnUrl: window.location.pathname },
       },
       {
-        path: 'registration',
+        path: 'register',
         loadComponent: () =>
           import('./register/register.component').then((m)=>m.RegisterComponent),
       },

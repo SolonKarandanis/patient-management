@@ -26,10 +26,7 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              {
-                "glob": "**/*",
-                "input": "src"
-              }
+              "src/assets"
             ],
             "styles": [
               "src/styles.css"

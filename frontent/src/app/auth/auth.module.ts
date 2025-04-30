@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import {AuthComponent} from './auth.component';
 import {RouterModule, Routes} from '@angular/router';
+import {FooterSmallComponent} from '../components/footer-small/footer-small.component';
 
 const routes: Routes =[
   {
@@ -41,6 +42,7 @@ const routes: Routes =[
   declarations:[AuthComponent],
   imports: [
     RouterModule.forChild(routes),
+    FooterSmallComponent,
   ],
   exports: [RouterModule],
 })

@@ -8,6 +8,7 @@ import { Component } from '@angular/core';
       <main>
         <section class="relative w-full h-full py-40 min-h-screen">
           <router-outlet></router-outlet>
+          <app-footer-small [absolute]="true"></app-footer-small>
         </section>
       </main>
     </div>

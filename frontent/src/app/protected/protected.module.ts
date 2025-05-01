@@ -4,6 +4,8 @@ import {ProtectedComponent} from './protected.component';
 import {RouterModule} from '@angular/router';
 import {protectedRoutes} from './protected.routes';
 import {SidebarComponent} from '../components/sidebar/sidebar.component';
+import {FooterSmallComponent} from '../components/footer-small/footer-small.component';
+import {HeaderComponent} from '../components/header/header.component';
 
 
 
@@ -13,6 +15,8 @@ import {SidebarComponent} from '../components/sidebar/sidebar.component';
     CommonModule,
     RouterModule.forChild(protectedRoutes),
     SidebarComponent,
+    FooterSmallComponent,
+    HeaderComponent,
   ],
   exports: [RouterModule],
 })

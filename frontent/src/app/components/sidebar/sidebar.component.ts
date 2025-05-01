@@ -7,7 +7,7 @@ import {NgClass} from '@angular/common';
   imports: [
     RouterLink,
     NgClass,
-    RouterLinkActive
+    RouterLinkActive,
   ],
   template: `
     <nav class="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row
@@ -27,15 +27,6 @@ import {NgClass} from '@angular/common';
           <span class="block sm:hidden"> Tailwind Angular </span>
           <span class="hidden sm:block"> Notus Angular </span>
         </a>
-        <!-- User -->
-        <ul class="md:hidden items-center flex flex-wrap list-none">
-          <li class="inline-block relative">
-<!--            <app-notification-dropdown class="block"></app-notification-dropdown>-->
-          </li>
-          <li class="inline-block relative">
-<!--            <app-user-dropdown class="block"></app-user-dropdown>-->
-          </li>
-        </ul>
         <!-- Collapse -->
         <div
           class="md:flex md:flex-col md:items-stretch md:opacity-100 md:relative md:mt-4 md:shadow-none shadow absolute top-0 left-0 right-0

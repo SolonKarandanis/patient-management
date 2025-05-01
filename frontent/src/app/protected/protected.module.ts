@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import {ProtectedComponent} from './protected.component';
 import {RouterModule} from '@angular/router';
 import {protectedRoutes} from './protected.routes';
+import {SidebarComponent} from '../components/sidebar/sidebar.component';
 
 
 
@@ -11,6 +12,7 @@ import {protectedRoutes} from './protected.routes';
   imports: [
     CommonModule,
     RouterModule.forChild(protectedRoutes),
+    SidebarComponent,
   ],
   exports: [RouterModule],
 })

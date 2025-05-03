@@ -9,9 +9,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       <div class="relative md:ml-64 bg-blueGray-100">
         <app-header></app-header>
         <div class="px-4 md:px-10 mx-auto w-full -m-24">
-
-          <router-outlet></router-outlet>
-          <app-footer></app-footer>
+          <div class="relative md:pt-32 pb-32 pt-12">
+            <router-outlet></router-outlet>
+            <app-footer></app-footer>
+          </div>
         </div>
       </div>
     </div>

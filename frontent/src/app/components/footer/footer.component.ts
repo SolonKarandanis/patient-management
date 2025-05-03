@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'app-footer',
   imports: [],
   template: `
-    <footer class="block py-4">
+    <footer class="block py-2 mt-16">
       <div class="container mx-auto px-4">
         <hr class="mb-4 border-b-1 border-blueGray-200" />
         <div class="flex flex-wrap items-center md:justify-between justify-center">
@@ -17,7 +17,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
                 href="https://www.creative-tim.com?ref=na-footer-admin"
                 class="text-blueGray-500 hover:text-blueGray-700 text-sm font-semibold py-1"
               >
-                Creative Tim
+                Solon Karandanis
               </a>
             </div>
           </div>
@@ -28,7 +28,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
                   href="https://www.creative-tim.com?ref=na-footer-admin"
                   class="text-blueGray-600 hover:text-blueGray-800 text-sm font-semibold block py-1 px-3"
                 >
-                  Creative Tim
+                  Solon Karandanis
                 </a>
               </li>
               <li>

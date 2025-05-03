@@ -14,7 +14,7 @@ export const routes: Routes = [
   },
   {
     path:'',
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     loadChildren: () =>
       import('./protected/protected.module').then((m)=>m.ProtectedModule),
   },

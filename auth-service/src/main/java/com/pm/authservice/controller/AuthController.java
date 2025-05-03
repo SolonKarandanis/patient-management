@@ -33,7 +33,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<JwtDTO> authenticate(@Valid @RequestBody LoginRequestDTO submitCredentialsDTO)
             throws AuthException {
-        log.info("AuthController->authenticate----------->username: {}",submitCredentialsDTO.getEmail());
+        log.info("AuthController->authenticate----------->email: {}",submitCredentialsDTO.getEmail());
         UserDetailsDTO authenticatedUser = authService.authenticate(submitCredentialsDTO);
         JwtDTO jwt = jwtService.generateToken(authenticatedUser);
         return ResponseEntity.ok().body(jwt);

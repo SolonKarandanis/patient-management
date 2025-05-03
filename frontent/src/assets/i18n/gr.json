@@ -124,6 +124,7 @@
     "title": "Σύνδεση",
     "LABELS": {
       "username": "Όνομα χρήστη",
+      "email": "Email",
       "password": "Κώδικας Πρόσβασης",
       "agreement-header": "Όροι Συμφωνίας Χρήστη"
     },

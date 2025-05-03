@@ -127,6 +127,7 @@
     "title": "Login",
     "LABELS": {
       "username": "Username",
+      "email": "Email",
       "password": "Password",
       "agreement-header": "Terms of User Agreement"
     },

@@ -1,5 +1,5 @@
 export interface SubmitCredentialsDTO{
-  username: string,
+  email: string,
   password: string
 }
 

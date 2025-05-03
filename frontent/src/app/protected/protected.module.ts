@@ -6,6 +6,7 @@ import {protectedRoutes} from './protected.routes';
 import {SidebarComponent} from '../components/sidebar/sidebar.component';
 import {FooterSmallComponent} from '../components/footer-small/footer-small.component';
 import {HeaderComponent} from '../components/header/header.component';
+import {FooterComponent} from '../components/footer/footer.component';
 
 
 
@@ -17,6 +18,7 @@ import {HeaderComponent} from '../components/header/header.component';
     SidebarComponent,
     FooterSmallComponent,
     HeaderComponent,
+    FooterComponent,
   ],
   exports: [RouterModule],
 })

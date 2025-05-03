@@ -4,9 +4,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'app-dashboard',
   imports: [],
   template: `
-    <p>
-      dashboard works!
-    </p>
+    <div class="flex flex-wrap">
+      <div class="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
+        dashboard
+      </div>
+    </div>
   `,
   styleUrl: './dashboard.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,13 +1,16 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {UserDropdownComponent} from '../user-dropdown/user-dropdown.component';
 
 @Component({
   selector: 'app-header',
-  imports: [],
+  imports: [
+    UserDropdownComponent
+  ],
   template: `
     <!-- Navbar -->
-    <nav class="absolute top-0 left-0 w-full z-10 bg-transparent md:flex-row
+    <nav class="relative bg-red-600 md:pt-10 pb-10 pt-10  top-0 left-0 w-full z-10  md:flex-row
         md:flex-nowrap md:justify-start flex items-center p-4">
-      <div class="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap md:px-10 px-4">
+      <div class=" w-full mx-auto items-center flex justify-between md:flex-nowrap flex-wrap md:px-10 px-4">
         <!-- Brand -->
         <a class="text-white text-sm uppercase hidden lg:inline-block font-semibold">
           Dashboard
@@ -17,7 +20,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
           <div class="relative flex w-full flex-wrap items-stretch">
         <span class="z-10 h-full leading-snug font-normal text-center text-blueGray-300
             absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-          <i class="fas fa-search"></i>
+          <i class="pi pi-search"></i>
         </span>
             <input type="text"
               placeholder="Search here..."
@@ -28,7 +31,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         </form>
         <!-- User -->
         <ul class="flex-col md:flex-row list-none items-center hidden md:flex">
-<!--          <app-user-dropdown class="block"></app-user-dropdown>-->
+          <app-user-dropdown class="block"></app-user-dropdown>
         </ul>
       </div>
     </nav>

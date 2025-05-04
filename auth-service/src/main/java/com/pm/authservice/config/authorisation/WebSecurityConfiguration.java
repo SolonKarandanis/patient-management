@@ -52,7 +52,9 @@ public class WebSecurityConfiguration {
     public SecurityFilterChain configure(HttpSecurity httpSecurity, RequestMatcherBuilder mvc) throws Exception {
 		httpSecurity
 		.csrf(AbstractHttpConfigurer::disable)
+//                .cors(AbstractHttpConfigurer::disable)
         .cors(c->c.configurationSource(corsConfigurationSource()))
+
         .authorizeHttpRequests(auth-> auth
                 .requestMatchers(mvc.matchers(SecurityConstants.AUTH_WHITELIST)).permitAll()
                 .requestMatchers(mvc.pattern(HttpMethod.POST, "/auth/login")).permitAll()

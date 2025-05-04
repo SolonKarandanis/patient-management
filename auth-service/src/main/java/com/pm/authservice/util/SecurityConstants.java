@@ -39,7 +39,7 @@ public class SecurityConstants {
             "X-Api-Key",
             "Content-Type",
             "Access-Control-Request-Method",
-            "Access-Control-Request-Headers",
+            "Access-Control-Allow-Origin",
             AUTHORIZATION_HEADER,
             "Connection",
             "Lang-ISO"

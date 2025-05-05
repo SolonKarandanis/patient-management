@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -52,7 +53,7 @@ public class WebSecurityConfiguration {
     public SecurityFilterChain configure(HttpSecurity httpSecurity, RequestMatcherBuilder mvc) throws Exception {
 		httpSecurity
 		.csrf(AbstractHttpConfigurer::disable)
-//                .cors(AbstractHttpConfigurer::disable)
+//                .cors(Customizer.withDefaults())
         .cors(c->c.configurationSource(corsConfigurationSource()))
 
         .authorizeHttpRequests(auth-> auth

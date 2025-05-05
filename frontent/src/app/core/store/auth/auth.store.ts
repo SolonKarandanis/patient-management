@@ -1,4 +1,4 @@
-import {patchState, signalStore, withComputed, withMethods, withProps, withState} from '@ngrx/signals';
+import {patchState, signalStore, withComputed, withHooks, withMethods, withProps, withState} from '@ngrx/signals';
 import {AuthState, initialAuthState} from './auth.state';
 import {computed, inject, Signal} from '@angular/core';
 import {Operation, User} from '@models/user.model';
@@ -130,4 +130,21 @@ export const AuthStore = signalStore(
       )
     })
   }),
+  withHooks((state)=>{
+    const {jwtUtil,setAccountInfoFromStorage}= state;
+    const setAccountInfoToStore =():void =>{
+      const token = jwtUtil.getToken();
+      const expirationDate = jwtUtil.getTokenExpiration();
+      const userFromStorage = jwtUtil.getUser(token);
+      const isExpired =jwtUtil.isJwtExpired();
+      if(!isExpired && token && expirationDate && userFromStorage){
+        setAccountInfoFromStorage(token,expirationDate,userFromStorage);
+      }
+    }
+    return {
+      onInit(){
+        setAccountInfoToStore();
+      }
+    }
+  })
 );

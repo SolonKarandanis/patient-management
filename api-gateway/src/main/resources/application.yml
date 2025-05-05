@@ -13,33 +13,13 @@ spring:
   cloud:
     gateway:
 #      default-filters:
-#        - DedupeResponseHeader=Access-Control-Allow-Origin, RETAIN_UNIQUE
+#        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins:
-              - "http://localhost:4200"
-            allowedMethods:
-              - "GET"
-              - "HEAD"
-              - "PUT"
-              - "POST"
-              - "PATCH"
-              - "DELETE"
-              - "OPTIONS"
-            allowedHeaders:
-              - "Access-Control-Allow-Headers"
-              - "Access-Control-Allow-Origin"
-              - "Origin"
-              - "Accept"
-              - "X-Requested-With"
-              - "X-Api-Key"
-              - "Content-Type"
-              - "Access-Control-Request-Method"
-              - "Authorization"
-              - "Connection"
-              - "Lang-ISO"
-            allowCredentials: true
+            allowedOrigins: "http://localhost:4200"
+            allowedHeaders: "*"
+            allowedMethods: "*"
 
       httpserver:
         wiretap: true
@@ -48,12 +28,14 @@ spring:
           uri: http://localhost:4005
           predicates:
             - Path=/auth/**
+
         - id: api-docs-auth-route
           uri: http://localhost:4005
           predicates:
             - Path=/api-docs/auth
           filters:
             - RewritePath=/api-docs/auth,/v3/api-docs
+
         # Route for /api/patients/** to patient-service
         - id: patient-service-route
           uri: http://localhost:4000

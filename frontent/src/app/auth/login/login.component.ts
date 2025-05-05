@@ -49,6 +49,7 @@ import {TranslatePipe} from '@ngx-translate/core';
                   <label for="email">{{ 'LOGIN.LABELS.email' | translate }}</label>
                 </p-float-label>
                 <p-float-label variant="on" class="w-full mb-3">
+
                   <p-password
                     id="password"
                     inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"

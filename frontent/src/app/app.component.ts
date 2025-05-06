@@ -4,12 +4,14 @@ import { TranslateService } from '@ngx-translate/core';
 import {LanguageService} from '@core/services/language.service';
 import {PrimeNG} from 'primeng/config';
 import {ToastModule} from 'primeng/toast';
+import {LoaderComponent} from '@components/loader/loader.component';
 
 @Component({
   selector: 'app-root',
   imports: [
     RouterOutlet,
     ToastModule,
+    LoaderComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'

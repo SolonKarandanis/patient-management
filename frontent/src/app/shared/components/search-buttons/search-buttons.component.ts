@@ -2,14 +2,42 @@ import {ChangeDetectionStrategy, Component, inject, input, output, TemplateRef} 
 import {AuthService} from '@core/services/auth.service';
 import {SavedSearch, SearchTypeEnum} from '@models/search.model';
 import {FormGroup} from '@angular/forms';
+import {ButtonDirective, ButtonIcon} from 'primeng/button';
+import {Ripple} from 'primeng/ripple';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {MessageService} from 'primeng/api';
+import {SearchService} from '@core/services/search.service';
 
 @Component({
   selector: 'app-search-buttons',
-  imports: [],
+  imports: [
+    ButtonDirective,
+    Ripple,
+    TranslatePipe,
+    ButtonIcon
+  ],
   template: `
-    <p>
-      search-buttons works!
-    </p>
+    <div class="grid">
+      <div class="columns-12 sm:columns-3 md:columns-2 lg:columns-2 xl:columns-2">
+        <button
+            pButton
+            pRipple
+            type="submit"
+            (click)="handleSearchClick($event)"
+            [disabled]="isDisabled() || isLoading()"
+            [loading]="isLoading()"
+            pButtonIcon="pi pi-search">
+          {{'GLOBAL.BUTTONS,search' | translate}}
+        </button>
+      </div>
+      <div class="columns-12 sm:columns-9 md:columns-8 lg:columns-8 xl:columns-8">
+        @if (enableSaveSearch()){
+          <div class="grid">
+
+          </div>
+        }
+      </div>
+    </div>
   `,
   styleUrl: './search-buttons.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -17,11 +45,15 @@ import {FormGroup} from '@angular/forms';
 export class SearchButtonsComponent {
 
   private authService= inject(AuthService);
+  private searchService= inject(SearchService);
+  private messageService= inject(MessageService);
+  private translate= inject(TranslateService);
 
   protected saveSearchTitle = '';
 
   isLoading = input(false);
   isDisabled = input(false);
+  enableSaveSearch = input(false);
   searchType = input.required<SearchTypeEnum>();
   searchForm = input.required<FormGroup>();
   resetBtnTemplate = input.required<TemplateRef<Record<string, unknown>>>();
@@ -34,6 +66,7 @@ export class SearchButtonsComponent {
     this.searchClicked.emit(event);
   }
   protected handleResetClick(event: MouseEvent): void{
+    this.resetSearchTitle();
     this.resetClicked.emit(event);
   }
 
@@ -55,5 +88,14 @@ export class SearchButtonsComponent {
   }
   private resetSearchTitle(): void {
     this.saveSearchTitle = '';
+  }
+
+  private showSuccessMessage():void{
+    const detailMsg = `${this.translate.instant('ADVANCED-SEARCH.SAVED-SEARCHES.MESSAGES.detail-success')} ${this.saveSearchTitle}`;
+    this.messageService.add({
+      summary: this.translate.instant('ADVANCED-SEARCH.SAVED-SEARCHES.MESSAGES.summary'),
+      detail:detailMsg,
+      severity:'success'
+    });
   }
 }

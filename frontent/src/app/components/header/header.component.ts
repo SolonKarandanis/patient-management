@@ -16,7 +16,7 @@ import {UserDropdownComponent} from '../user-dropdown/user-dropdown.component';
           Dashboard
         </a>
         <!-- Form -->
-        <form class="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
+        <form class="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3" role="search">
           <div class="relative flex w-full flex-wrap items-stretch">
         <span class="z-10 h-full leading-snug font-normal text-center text-blueGray-300
             absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">

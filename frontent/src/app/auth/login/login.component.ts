@@ -11,6 +11,7 @@ import {BaseComponent} from '@shared/abstract/BaseComponent';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {SubmitCredentialsDTO} from '@models/auth.model';
 import {TranslatePipe} from '@ngx-translate/core';
+import {FormErrorComponent} from '@components/form-error/form-error.component';
 
 @Component({
   selector: 'app-login',
@@ -23,7 +24,8 @@ import {TranslatePipe} from '@ngx-translate/core';
     ButtonDirective,
     Ripple,
     TranslatePipe,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormErrorComponent
   ],
   template: `
     <div class="container mx-auto px-4 h-full">
@@ -38,27 +40,35 @@ import {TranslatePipe} from '@ngx-translate/core';
                 <small>Or sign in with credentials</small>
               </div>
               <form [formGroup]="form">
-                <p-float-label variant="on" class="w-full mb-3">
-                  <input
-                    id="email"
-                    pInputText
-                    type="email"
-                    class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                    formControlName="email"
-                    autocomplete="email"/>
-                  <label for="email">{{ 'LOGIN.LABELS.email' | translate }}</label>
-                </p-float-label>
-                <p-float-label variant="on" class="w-full mb-3">
-
-                  <p-password
-                    id="password"
-                    inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
-                    formControlName="password"
-                    [feedback]="false"
-                    [toggleMask]="true" />
-                  <label for="password">{{ 'LOGIN.LABELS.password' | translate }}</label>
-                </p-float-label>
-
+                <div class="mb-6">
+                  <p-float-label variant="on" class="w-full mb-3">
+                    <input
+                      id="email"
+                      pInputText
+                      type="email"
+                      class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                      formControlName="email"
+                      autocomplete="email"/>
+                    <label for="email">{{ 'LOGIN.LABELS.email' | translate }}</label>
+                  </p-float-label>
+                  <app-form-error
+                    [displayLabels]="isFieldValid('email')"
+                    [validationErrors]="form.get('email')?.errors" />
+                </div>
+                <div class="mb-6">
+                  <p-float-label variant="on" class="w-full mb-3">
+                    <p-password
+                      id="password"
+                      inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
+                      formControlName="password"
+                      [feedback]="false"
+                      [toggleMask]="true" />
+                    <label for="password">{{ 'LOGIN.LABELS.password' | translate }}</label>
+                  </p-float-label>
+                  <app-form-error
+                    [displayLabels]="isFieldValid('password')"
+                    [validationErrors]="form.get('password')?.errors" />
+                </div>
                 <div class="text-center mt-6">
                   <button
                     pButton

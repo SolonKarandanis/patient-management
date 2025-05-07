@@ -13,7 +13,7 @@ import {TranslatePipe} from '@ngx-translate/core';
        <p class="mt-2 text-sm text-red-600 dark:text-red-500">
          @if(validationErrors(); as errors){
            {{
-             (validationErrorsTranslationPrefix()[errorName]?? 'GLOBAL.FORMS.ERRORS') + errorName
+             (validationErrorsTranslationPrefix()[errorName]?? 'GLOBAL.FORMS.ERRORS.') + errorName
                | translate :{requiredLength: errors['minLength']? errors['minLength']?.requiredLength: errors['maxLength']?.requiredLength}
            }}
          }
@@ -25,7 +25,7 @@ import {TranslatePipe} from '@ngx-translate/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormErrorComponent {
-  displayLabels = input<boolean>(false);
+  displayLabels = input<boolean | undefined>(false);
   validationErrors = input<ValidationErrors| null| undefined>();
   validationErrorsTranslationPrefix = input<any>({});
 

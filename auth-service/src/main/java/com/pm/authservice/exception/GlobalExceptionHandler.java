@@ -85,6 +85,18 @@ public class GlobalExceptionHandler {
         }
     }
 
+    @ExceptionHandler(value = { AuthException.class })
+    public ResponseEntity<Object> handleAuthException(final AuthException e, final WebRequest request) {
+        log.debug(" HANDLER: handleAuthException [message: {}, class: {}] ", e.getMessage(), e.getClass().getName());
+        if (e instanceof AuthException) {
+            /* Validation error, handle as HTTP 400 and translate the error message. */
+            return ResponseEntity.badRequest().body(serializeErrorMessageToJson(getTranslatedErrorMessage(e, request)));
+
+        } else {
+            return getInternalServerErrorResponse(e, request);
+        }
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     ProblemDetail handleResourceNotFoundException(ResourceNotFoundException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.getMessage());

@@ -10,6 +10,7 @@ import {SearchService} from '@core/services/search.service';
 import {Tooltip} from 'primeng/tooltip';
 import {FloatLabel} from 'primeng/floatlabel';
 import {InputText} from 'primeng/inputtext';
+import {NgTemplateOutlet} from '@angular/common';
 
 @Component({
   selector: 'app-search-buttons',
@@ -22,7 +23,8 @@ import {InputText} from 'primeng/inputtext';
     FloatLabel,
     InputText,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    NgTemplateOutlet
   ],
   template: `
     <div class="grid">
@@ -82,7 +84,10 @@ import {InputText} from 'primeng/inputtext';
           [loading]="saveSearchLoading()"
           pButtonIcon="pi pi-refresh"
           (click)="handleResetClick($event)">
-          {{ "GLOBAL.BUTTONS.reset" | translate }}
+            <ng-container *ngTemplateOutlet="resetBtnTemplate() || defaultResetBtnLabel"></ng-container>
+            <ng-template #defaultResetBtnLabel>
+              {{ "GLOBAL.BUTTONS.reset" | translate }}
+            </ng-template>
         </button>
       </div>
     </div>

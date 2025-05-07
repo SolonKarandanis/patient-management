@@ -1,12 +1,15 @@
-import {ChangeDetectionStrategy, Component, inject, input, output, TemplateRef} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, input, output, signal, TemplateRef} from '@angular/core';
 import {AuthService} from '@core/services/auth.service';
 import {SavedSearch, SearchTypeEnum} from '@models/search.model';
-import {FormGroup} from '@angular/forms';
+import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ButtonDirective, ButtonIcon} from 'primeng/button';
 import {Ripple} from 'primeng/ripple';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';
 import {SearchService} from '@core/services/search.service';
+import {Tooltip} from 'primeng/tooltip';
+import {FloatLabel} from 'primeng/floatlabel';
+import {InputText} from 'primeng/inputtext';
 
 @Component({
   selector: 'app-search-buttons',
@@ -14,7 +17,12 @@ import {SearchService} from '@core/services/search.service';
     ButtonDirective,
     Ripple,
     TranslatePipe,
-    ButtonIcon
+    ButtonIcon,
+    Tooltip,
+    FloatLabel,
+    InputText,
+    ReactiveFormsModule,
+    FormsModule
   ],
   template: `
     <div class="grid">
@@ -27,15 +35,55 @@ import {SearchService} from '@core/services/search.service';
             [disabled]="isDisabled() || isLoading()"
             [loading]="isLoading()"
             pButtonIcon="pi pi-search">
-          {{'GLOBAL.BUTTONS,search' | translate}}
+          {{'GLOBAL.BUTTONS.search' | translate}}
         </button>
       </div>
       <div class="columns-12 sm:columns-9 md:columns-8 lg:columns-8 xl:columns-8">
         @if (enableSaveSearch()){
           <div class="grid">
-
+            <div class="columns-12 sm:columns-4 md:columns-4 lg:columns-4 xl:columns-3">
+              <span class="w-full"
+                    pTooltip="{{'ADVANCED-SEARCH.SAVED-SEARCHES.LABELS.enter-title-first' | translate}}"
+                    [tooltipDisabled]="!!saveSearchTitle()">
+                <button
+                  pButton
+                  pRipple
+                  type="button"
+                  [disabled]="!saveSearchTitle() || saveSearchLoading()"
+                  [loading]="saveSearchLoading()"
+                  pButtonIcon="pi pi-save"
+                  (click)="handleSaveSearchClick()">
+                  {{'GLOBAL.BUTTONS.save-search' | translate}}
+                </button>
+              </span>
+            </div>
+            <div class="columns-12 sm:columns-8 md:columns-8 lg:columns-8 xl:columns-9 pl-2 sm:pl-2 md:pl-2 lg:pl-2 xl:pl-2 pt-3
+                sm:pt-0 md:pt-0 lg:pt-0 xl:pt-0">
+              <p-float-label variant="on" class="w-full mb-3">
+                <input
+                  id="saveSearchTitle"
+                  pInputText
+                  type="text"
+                  class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                  [(ngModel)]="saveSearchTitle"
+                  autocomplete="saved-searches"/>
+                <label for="saveSearchTitle">{{ 'SAVED_SEARCHES.LABELS.with-title' | translate }}:</label>
+              </p-float-label>
+            </div>
           </div>
         }
+      </div>
+      <div class="columns-12 sm:columns-3 md:columns-2 lg:columns-2 xl:columns-2">
+        <button
+          pButton
+          pRipple
+          type="button"
+          [disabled]="!saveSearchTitle() || saveSearchLoading()"
+          [loading]="saveSearchLoading()"
+          pButtonIcon="pi pi-refresh"
+          (click)="handleResetClick($event)">
+          {{ "GLOBAL.BUTTONS.reset" | translate }}
+        </button>
       </div>
     </div>
   `,
@@ -49,7 +97,8 @@ export class SearchButtonsComponent {
   private messageService= inject(MessageService);
   private translate= inject(TranslateService);
 
-  protected saveSearchTitle = '';
+  protected saveSearchTitle = signal('');
+  protected saveSearchLoading = signal(false);
 
   isLoading = input(false);
   isDisabled = input(false);
@@ -87,7 +136,7 @@ export class SearchButtonsComponent {
     this.resetSearchTitle();
   }
   private resetSearchTitle(): void {
-    this.saveSearchTitle = '';
+    this.saveSearchTitle.set('');
   }
 
   private showSuccessMessage():void{

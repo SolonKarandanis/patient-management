@@ -1,10 +1,12 @@
+import {BaseModel} from '@models/base.model';
+
 export enum UserAccountStatus{
   ACTIVE ="account.active",
   INACTIVE="account.inactive",
   DELETED="account.deleted"
 }
 
-export interface BaseUserModel{
+export interface BaseUserModel extends BaseModel{
   username: string;
   firstName: string;
   lastName: string;
@@ -26,7 +28,6 @@ export interface UserWithRole extends BaseUserModel{
 }
 
 export interface User extends UserWithRole{
-  publicId: string;
   status: UserAccountStatus;
   statusLabel:string;
   createdDate:string;

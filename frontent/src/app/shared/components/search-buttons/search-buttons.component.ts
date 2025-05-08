@@ -69,7 +69,7 @@ import {NgTemplateOutlet} from '@angular/common';
                   class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
                   [(ngModel)]="saveSearchTitle"
                   autocomplete="saved-searches"/>
-                <label for="saveSearchTitle">{{ 'SAVED_SEARCHES.LABELS.with-title' | translate }}:</label>
+                <label for="saveSearchTitle">{{ 'SAVED-SEARCHES.LABELS.with-title' | translate }}:</label>
               </p-float-label>
             </div>
           </div>

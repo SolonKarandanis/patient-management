@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 import {NgClass} from '@angular/common';
+import {SplitButton} from 'primeng/splitbutton';
+import {MenuItem} from 'primeng/api';
 
 @Component({
   selector: 'app-sidebar',
@@ -8,6 +10,7 @@ import {NgClass} from '@angular/common';
     RouterLink,
     NgClass,
     RouterLinkActive,
+    SplitButton,
   ],
   template: `
     <nav class="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row
@@ -19,7 +22,7 @@ import {NgClass} from '@angular/common';
             rounded border border-solid border-transparent"
           type="button"
           (click)="toggleCollapseShow('bg-white m-2 py-3 px-6')">
-          <i class="fas fa-bars"></i>
+          <i class="pi pi-bars"></i>
         </button>
         <!-- Brand -->
         <a [routerLink]="['/']"
@@ -27,6 +30,14 @@ import {NgClass} from '@angular/common';
           <span class="block sm:hidden"> Tailwind Angular </span>
           <span class="hidden sm:block"> Notus Angular </span>
         </a>
+        <ul class="md:hidden items-center flex flex-wrap list-none">
+          <li class="inline-block relative">
+<!--            <p-splitbutton icon="pi pi-bell" [model]="menuItems" />-->
+          </li>
+          <li class="inline-block relative">
+<!--            <app-user-dropdown class="block"></app-user-dropdown>-->
+          </li>
+        </ul>
         <!-- Collapse -->
         <div
           class="md:flex md:flex-col md:items-stretch md:opacity-100 md:relative md:mt-4 md:shadow-none shadow absolute top-0 left-0 right-0
@@ -48,7 +59,7 @@ import {NgClass} from '@angular/common';
                   class="cursor-pointer text-black opacity-50 md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border
                   border-solid border-transparent"
                   (click)="toggleCollapseShow('hidden')">
-                  <i class="fas fa-times"></i>
+                  <i class="pi pi-times"></i>
                 </button>
               </div>
             </div>
@@ -94,6 +105,37 @@ import {NgClass} from '@angular/common';
 })
 export class SidebarComponent {
   collapseShow = "hidden";
+
+  menuItems!:MenuItem[];
+
+  constructor() {
+    this.menuItems=[
+      {
+        label: 'Update',
+        icon: 'pi pi-refresh',
+        // command: () => {
+        //   this.messageService.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated', life: 3000 });
+        // },
+      },
+      {
+        label: 'Delete',
+        icon: 'pi pi-times',
+        // command: () => {
+        //   this.messageService.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 });
+        // },
+      },
+      {
+        separator: true,
+      },
+      {
+        label: 'Quit',
+        icon: 'pi pi-power-off',
+        // command: () => {
+        //   window.open('https://angular.io/', '_blank');
+        // },
+      },
+    ];
+  }
 
   protected toggleCollapseShow(classes:string):void {
     this.collapseShow = classes;

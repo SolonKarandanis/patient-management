@@ -5,30 +5,37 @@ import {
   withState,
 } from '@ngrx/signals';
 
-export type CallState = 'init' | 'loading' | 'loaded' | { error: string };
+export type CallState ={
+  loading:boolean,
+  error:string|null;
+  showError:boolean;
+};
+
+export const initialCallState: CallState={
+  loading:false,
+  error:null,
+  showError:false,
+}
 
 export function withCallState() {
   return signalStoreFeature(
-    withState<{ callState: CallState }>({ callState: 'init' }),
-    withComputed(({ callState }) => ({
-      loading: computed(() => callState() === 'loading'),
-      loaded: computed(() => callState() === 'loaded'),
-      error: computed(() => {
-        const status = callState();
-        return typeof status === 'object' ? status.error : null;
-      }),
+    withState<CallState>(initialCallState),
+    withComputed(({loading,error}) => ({
+      loading: computed(() => loading()=== true),
+      loaded: computed(() => loading() == false),
+      error: computed(() => error()),
     }))
   );
 }
 
-export function setLoading(): { callState: CallState } {
-  return { callState: 'loading' };
+export function setLoading(): CallState {
+  return { loading: true, error: null, showError:false};
 }
 
-export function setLoaded(): { callState: CallState } {
-  return { callState: 'loaded' };
+export function setLoaded(): CallState {
+  return { loading: false, error: null, showError:false};
 }
 
-export function setError(error: string): { callState: CallState } {
-  return { callState: { error } };
+export function setError(error: string): CallState {
+  return { loading: false, error, showError:true};
 }

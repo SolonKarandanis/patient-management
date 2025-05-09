@@ -1,10 +1,8 @@
 import {Operation, Role, User} from '@models/user.model';
+import {CallState, initialCallState} from '@core/store/features/call-state.feature';
 
-export type AuthState ={
+export interface AuthState extends CallState{
   readonly isLoggedIn: boolean,
-  readonly loading: boolean,
-  readonly errorMessage: string| null;
-  readonly showError: boolean;
   readonly authToken: string| undefined;
   readonly expires: string|undefined;
   readonly user: User | undefined;
@@ -14,12 +12,10 @@ export type AuthState ={
 
 export const initialAuthState: AuthState = {
   isLoggedIn: false,
-  loading: false,
-  errorMessage:null,
-  showError:false,
   authToken: undefined,
   expires:undefined,
   user: undefined,
   roles:undefined,
-  operations:undefined
+  operations:undefined,
+  ...initialCallState,
 };

@@ -62,6 +62,15 @@ export const AuthStore = signalStore(
       setAccount(user:User){
         patchState(state,{isLoggedIn:true,user })
       },
+      setLoadingState(){
+        patchState(state, setLoading());
+      },
+      setLoadedState(){
+        patchState(state, setLoaded());
+      },
+      setErrorState(error:string){
+        patchState(state, setError(error));
+      },
       logout(){
         jwtUtil.destroyToken();
         jwtUtil.destroyTokenExpiration();
@@ -75,7 +84,7 @@ export const AuthStore = signalStore(
       login: rxMethod<SubmitCredentialsDTO>(
         pipe(
           tap(() => {
-            setLoading();
+            state.setLoadingState();
           }),
           switchMap((credentials)=>
             authRepo.login(credentials).pipe(
@@ -84,7 +93,7 @@ export const AuthStore = signalStore(
                   state.setTokenDetails(token,expires);
                 },
                 error: (error:string) =>{
-                  setError(error);
+                  state.setErrorState(error);
                 }
               }),
               switchMap(()=>
@@ -92,10 +101,10 @@ export const AuthStore = signalStore(
                   tapResponse({
                     next:(response:User)=>{
                       state.setAccount(response)
-                      setLoaded();
+                      state.setLoadedState();
                     },
                     error: (error:string) =>{
-                      setError(error);
+                      state.setErrorState(error);
                     }
                   })
                 )
@@ -107,16 +116,17 @@ export const AuthStore = signalStore(
       getUserAccount: rxMethod<void>(
         pipe(
           tap(() => {
-            setLoading();
+            state.setLoadingState();
           }),
           switchMap(()=>
             authRepo.getUserByToken().pipe(
               tapResponse({
                 next:(response:User)=>{
                   state.setAccount(response)
+                  state.setLoadedState();
                 },
                 error: (error:string) =>{
-                  setError(error);
+                  state.setErrorState(error);
                 }
               })
             )

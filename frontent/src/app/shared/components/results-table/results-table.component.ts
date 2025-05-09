@@ -3,11 +3,15 @@ import {Table, TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {BaseModel} from '@models/base.model';
 import {SearchTableColumn} from '@models/search.model';
 import {UtilService} from '@core/services/util.service';
+import {Paginator} from 'primeng/paginator';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-results-table',
   imports: [
-    TableModule
+    TableModule,
+    Paginator,
+    TranslatePipe
   ],
   template: `
     <p-table
@@ -28,7 +32,36 @@ import {UtilService} from '@core/services/util.service';
       [rowsPerPageOptions]="rowsPerPageOptions"
       [showCurrentPageReport]="showTablePaginator"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
-
+      <ng-template pTemplate="caption" >
+        <div class="flex justify-between">
+          @if(showTableFilter){
+            <div class="relative w-[30vw]">
+              <div class="search">
+                <input
+                  #searchInput type="search"
+                  class="search__input"
+                  aria-label="search"
+                  placeholder="search in results....."
+                  (input)="applyFilterGlobal($event, 'contains',td)">
+                <button class="search__submit" aria-label="submit search">
+                  <i id="icon" class="pi pi-search"></i>
+                </button>
+              </div>
+            </div>
+          }
+          @if(!showTablePaginator){
+            <p-paginator
+              [rows]="resultsPerPage()"
+              [first]="first()"
+              [totalRecords]="totalRecords()"
+              [rowsPerPageOptions]="rowsPerPageOptions"
+              [showCurrentPageReport]="true"
+              (onPageChange)="handleLazyLoad($event)">
+            </p-paginator>
+            {{ 'GLOBAL.TABLES.RESULT_SUMMARY'  | translate: {totalRecords} }}
+          }
+        </div>
+      </ng-template>
     </p-table>
   `,
   styleUrl: './results-table.component.css',

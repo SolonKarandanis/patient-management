@@ -8,10 +8,12 @@ import {SubmitCredentialsDTO} from '@models/auth.model';
 import {tapResponse} from '@ngrx/operators';
 import {JwtUtil} from '@core/services/jwt-util.service';
 import {AuthRepository} from '@core/repositories/auth.repository';
+import {setError, setLoaded, setLoading, withCallState} from '@core/store/features/call-state.feature';
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
   withState<AuthState>(initialAuthState),
+  withCallState(),
   withProps(()=>({
     jwtUtil:inject(JwtUtil),
     authRepo:inject(AuthRepository),
@@ -19,7 +21,7 @@ export const AuthStore = signalStore(
   withComputed((
     {
       user,
-      expires
+      expires,
     },
   )=>({
     getUsername: computed(()=>user()?.username),
@@ -52,26 +54,19 @@ export const AuthStore = signalStore(
       setTokenDetails(authToken:string,expires:string){
         jwtUtil.saveToken(authToken);
         jwtUtil.saveTokenExpiration(expires);
-        patchState(state,{authToken,expires,errorMessage:null,showError:false,loading:false})
+        patchState(state,{authToken,expires})
       },
       setAccountInfoFromStorage(token:string,expires:string,user:User){
         patchState(state,{authToken:token,expires,isLoggedIn:true,user});
       },
       setAccount(user:User){
-        patchState(state,{isLoggedIn:true,errorMessage:null,showError:false,loading:false,user })
+        patchState(state,{isLoggedIn:true,user })
       },
       logout(){
         jwtUtil.destroyToken();
         jwtUtil.destroyTokenExpiration();
         patchState(state,initialAuthState)
       },
-
-      setLoading(loading:boolean){
-        patchState(state,{loading:loading,showError:false});
-      },
-      setError(error:string){
-        patchState(state,{loading:false,showError:true,errorMessage:'Error'});
-      }
     })
   }),
   withMethods((state)=>{
@@ -80,17 +75,16 @@ export const AuthStore = signalStore(
       login: rxMethod<SubmitCredentialsDTO>(
         pipe(
           tap(() => {
-            state.setLoading(true)
+            setLoading();
           }),
           switchMap((credentials)=>
             authRepo.login(credentials).pipe(
               tapResponse({
                 next:({token,expires})=>{
                   state.setTokenDetails(token,expires);
-
                 },
                 error: (error:string) =>{
-                  state.setError(error)
+                  setError(error);
                 }
               }),
               switchMap(()=>
@@ -98,9 +92,10 @@ export const AuthStore = signalStore(
                   tapResponse({
                     next:(response:User)=>{
                       state.setAccount(response)
+                      setLoaded();
                     },
                     error: (error:string) =>{
-                      state.setError(error)
+                      setError(error);
                     }
                   })
                 )
@@ -112,7 +107,7 @@ export const AuthStore = signalStore(
       getUserAccount: rxMethod<void>(
         pipe(
           tap(() => {
-            state.setLoading(true)
+            setLoading();
           }),
           switchMap(()=>
             authRepo.getUserByToken().pipe(
@@ -121,7 +116,7 @@ export const AuthStore = signalStore(
                   state.setAccount(response)
                 },
                 error: (error:string) =>{
-                  state.setError(error)
+                  setError(error);
                 }
               })
             )

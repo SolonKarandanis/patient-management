@@ -1,5 +1,6 @@
-import { computed } from '@angular/core';
+import {computed, Signal} from '@angular/core';
 import {
+  SignalStoreFeature,
   signalStoreFeature,
   withComputed,
   withState,
@@ -16,6 +17,31 @@ export const initialCallState: CallState={
   errorMessage:null,
   showError:false,
 }
+
+export type NamedCallStateSignals<Prop extends string> = {
+  [K in Prop as `${K}Loading`]: Signal<boolean>;
+} & {
+  [K in Prop as `${K}Loaded`]: Signal<boolean>;
+} & {
+  [K in Prop as `${K}Error`]: Signal<string | null>;
+};
+
+export type CallStateSignals = {
+  loading: Signal<boolean>;
+  loaded: Signal<boolean>;
+  error: Signal<string | null>
+}
+
+export function getCallStateKeys(config?: { collection?: string }) {
+  const prop = config?.collection;
+  return {
+    loadingKey: prop ? `${config.collection}Loading` : 'loading',
+    loadedKey: prop ? `${config.collection}Loaded` : 'loaded',
+    errorKey: prop ? `${config.collection}Error` : 'error',
+  };
+}
+
+
 
 export function withCallState() {
   return signalStoreFeature(

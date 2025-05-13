@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, inject, input, output} from '@angular/core';
-import {Table, TableLazyLoadEvent, TableModule} from 'primeng/table';
+import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {BaseModel} from '@models/base.model';
 import {SearchTableColumn} from '@models/search.model';
 import {UtilService} from '@core/services/util.service';
@@ -101,7 +101,7 @@ export class ResultsTableComponent {
     return li ? li.publicId : undefined;
   }
 
-  protected applyFilterGlobal($event:Event, stringVal:string,td:Table) {
+  protected applyFilterGlobal($event:Event, stringVal:string,td:any) {
     td.filterGlobal(($event.target as HTMLInputElement).value, 'contains');
   }
 

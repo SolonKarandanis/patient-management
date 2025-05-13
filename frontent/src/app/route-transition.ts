@@ -12,10 +12,10 @@ export const routeTransition = trigger('routeTransition',[
       style({opacity: 0, scale:0.9})
     ], {optional:true}),
     query(':leave',[
-      animate('1s',style({opacity:0 , scale:0.9}))
+      animate('0.5s',style({opacity:0 , scale:0.9}))
     ], {optional:true}),
     query(':enter',[
-      animate('1s',style({opacity:1 , scale:1}))
+      animate('0.5s',style({opacity:1 , scale:1}))
     ],{optional:true}),
   ])
 ]);

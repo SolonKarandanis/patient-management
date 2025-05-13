@@ -1,4 +1,4 @@
-import {UserAccountStatus} from './user.model';
+import {UserAccountStatus} from '@models/user.model';
 
 export type SearchResult<T>={
   list:T[],
@@ -38,21 +38,27 @@ export interface SearchTableColumnAction{
   callbackFn?:(args?: any) => void;
 }
 
-export enum ActionTypes{
-  VIEW='VIEW',
-  EDIT='EDIT',
-  DELETE='DELETE'
-}
+const ActionTypesEnum = {
+  VIEW: "VIEW",
+  EDIT: "EDIT",
+  DELETE: "DELETE",
+} as const satisfies Record<string, string>;
+
+export type ActionTypes = (typeof ActionTypesEnum)[keyof typeof ActionTypesEnum];
+
 
 export interface SearchTableColumnLinkRouterConf {
   preRoutes?: string[];
   postRoutes?: string[];
 }
 
-export enum SortDirection {
-  ASC = 'ASC',
-  DESC = 'DESC',
-}
+const SortDirectionEnum = {
+  ASC: "ASC",
+  DESC: "DESC",
+  DELETE: "DELETE",
+} as const satisfies Record<string, string>;
+
+export type SortDirection = (typeof SortDirectionEnum)[keyof typeof SortDirectionEnum];
 
 export interface Paging {
   page: number;
@@ -78,7 +84,7 @@ export type SearchRequestCriteria = UserSearchRequest
 export interface SavedSearch {
   id?: number;
   userId: string;
-  searchType: SearchTypeEnum;
+  searchType: SearchType;
   savedSearchName: string;
   criteria: SearchRequestCriteria;
 }
@@ -96,14 +102,18 @@ export interface SearchConfigurationCriteria {
 export interface SearchConfiguration {
   id?: number;
   userId: string;
-  searchType: SearchTypeEnum;
+  searchType: SearchType;
   resultCount: number;
   sortColumnKey?: string;
   sortDirection?: SortDirection;
   criteria: SearchConfigurationCriteria[];
 }
 
-export enum SearchTypeEnum {
-  USERS = 'search.type.users',
-  PATIENTS= 'search.type.patients',
-}
+const SearchTypeEnum = {
+  USERS: "search.type.users",
+  PATIENTS: "search.type.patients",
+} as const satisfies Record<string, string>;
+
+export type SearchType = (typeof SearchTypeEnum)[keyof typeof SearchTypeEnum];
+
+

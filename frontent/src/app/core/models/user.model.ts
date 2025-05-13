@@ -1,10 +1,12 @@
 import {BaseModel} from '@models/base.model';
 
-export enum UserAccountStatus{
-  ACTIVE ="account.active",
-  INACTIVE="account.inactive",
-  DELETED="account.deleted"
-}
+const UserAccountStatusEnum = {
+  ACTIVE: "account.active",
+  INACTIVE: "account.inactive",
+  DELETED: "account.deleted",
+} as const satisfies Record<string, string>;
+
+export type UserAccountStatus = (typeof UserAccountStatusEnum)[keyof typeof UserAccountStatusEnum];
 
 export interface BaseUserModel extends BaseModel{
   username: string;

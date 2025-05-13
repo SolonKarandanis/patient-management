@@ -5,13 +5,17 @@ import {SearchTableColumn} from '@models/search.model';
 import {UtilService} from '@core/services/util.service';
 import {Paginator} from 'primeng/paginator';
 import {TranslatePipe} from '@ngx-translate/core';
+import {ButtonDirective} from 'primeng/button';
+import {Ripple} from 'primeng/ripple';
 
 @Component({
   selector: 'app-results-table',
   imports: [
     TableModule,
     Paginator,
-    TranslatePipe
+    TranslatePipe,
+    ButtonDirective,
+    Ripple
   ],
   template: `
     <p-table
@@ -61,6 +65,52 @@ import {TranslatePipe} from '@ngx-translate/core';
             {{ 'GLOBAL.TABLES.RESULT_SUMMARY'  | translate: {totalRecords} }}
           }
         </div>
+        @if(showTableToolBar){
+          <button
+            pButton
+            pRipple
+            type="button"
+            (click)="tableToolBarAction()">
+          {{ 'GLOBAL.TABLES.ACTIONS.ADD' | translate }}
+          </button>
+        }
+      </ng-template>
+      <ng-template
+        pTemplate="header"
+        let-columns>
+        <tr>
+          @for(colTitle of columns; track colTitle.field){
+            <th [pSortableColumn]="colTitle.enableSorting ? colTitle.field : null"
+                [pSortableColumnDisabled]="!colTitle.enableSorting"
+                [style]="colTitle.style">
+              @if (!colTitle.isCheckbox){
+                <span>{{ colTitle.title }}</span>
+              }
+              @else{
+                <span><p-tableHeaderCheckbox></p-tableHeaderCheckbox></span>
+              }
+              @if (colTitle.enableSorting){
+                <p-sortIcon field="{{ colTitle.field }}"></p-sortIcon>
+              }
+            </th>
+          }
+        </tr>
+      </ng-template>
+      <ng-template
+        pTemplate="emptymessage"
+        let-columns>
+        <tr>
+          <td [attr.colspan]="columns.length">
+            {{ 'GLOBAL.TABLES.NO_RESULTS' | translate }}
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template
+        pTemplate="body"
+        let-tableItem>
+        <tr>
+
+        </tr>
       </ng-template>
     </p-table>
   `,
@@ -132,6 +182,11 @@ export class ResultsTableComponent {
   protected getDateAsString(date: Date): string {
     // return this.getFormattedDate(this.utilService.convertDateObjectsToCcmFormat(date));
     return ''
+  }
+
+  protected tableToolBarAction(uuid?:string){
+    // const fun = this.callbackFunctionToolBar(uuid);
+    // console.log(fun);
   }
 
 }

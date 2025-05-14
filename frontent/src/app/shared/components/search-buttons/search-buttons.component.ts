@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, inject, input, output, signal, TemplateRef} from '@angular/core';
 import {AuthService} from '@core/services/auth.service';
-import {SavedSearch, SearchTypeEnum} from '@models/search.model';
+import {SavedSearch, SearchType} from '@models/search.model';
 import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ButtonDirective, ButtonIcon} from 'primeng/button';
 import {Ripple} from 'primeng/ripple';
@@ -108,7 +108,7 @@ export class SearchButtonsComponent {
   isLoading = input(false);
   isDisabled = input(false);
   enableSaveSearch = input(false);
-  searchType = input.required<SearchTypeEnum>();
+  searchType = input.required<SearchType>();
   searchForm = input.required<FormGroup>();
   resetBtnTemplate = input.required<TemplateRef<Record<string, unknown>>>();
 

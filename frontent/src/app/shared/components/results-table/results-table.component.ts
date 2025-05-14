@@ -5,9 +5,11 @@ import {SearchTableColumn} from '@models/search.model';
 import {UtilService} from '@core/services/util.service';
 import {Paginator} from 'primeng/paginator';
 import {TranslatePipe} from '@ngx-translate/core';
-import {ButtonDirective} from 'primeng/button';
+import {ButtonDirective, ButtonIcon} from 'primeng/button';
 import {Ripple} from 'primeng/ripple';
 import {LinkComponent} from '@components/link/link.component';
+import {DatePipe, NgClass, NgTemplateOutlet} from '@angular/common';
+import {Tooltip} from 'primeng/tooltip';
 
 @Component({
   selector: 'app-results-table',
@@ -17,7 +19,12 @@ import {LinkComponent} from '@components/link/link.component';
     TranslatePipe,
     ButtonDirective,
     Ripple,
-    LinkComponent
+    LinkComponent,
+    NgClass,
+    DatePipe,
+    NgTemplateOutlet,
+    Tooltip,
+    ButtonIcon
   ],
   template: `
     <p-table
@@ -84,6 +91,8 @@ import {LinkComponent} from '@components/link/link.component';
           @for(colTitle of columns; track colTitle.field){
             <th [pSortableColumn]="colTitle.enableSorting ? colTitle.field : null"
                 [pSortableColumnDisabled]="!colTitle.enableSorting"
+                [pTooltip]="colTitle.headerTooltip"
+                [tooltipDisabled]="!colTitle.headerTooltip"
                 [style]="colTitle.style">
               @if (!colTitle.isCheckbox){
                 <span>{{ colTitle.title }}</span>
@@ -113,7 +122,74 @@ import {LinkComponent} from '@components/link/link.component';
         <tr>
           @for(col of colTitles(); track col.field;){
             <td [style]="col.style">
+              @if(!col.isCheckbox){
+                <span>
+                  @if(col.isLink){
+                    <app-link [config]="col" [tableItem]="tableItem">
+                          @if(col.onlyIcon){
+                            <span class="{{ col.icon }}"></span>
+                          }
+                      @if(!col.onlyIcon){
+                        <span>
+                          @if(col.icon){
+                            <span class="{{ col.icon }} mr-2"></span>
+                          }
+                          {{ col.field ? tableItem[col.field] : '' }}
+                        </span>
+                      }
+                      </app-link>
+                  }
+                  @if(!col.isStatus &&!col.isLink && !col.isDate && !col.isImage  && col.isTranslatable){
+                    <span>{{ col.field ? (tableItem[col.field]) : '' }}</span>
+                  }
+                  @if(!col.isLink && !col.isDate && !col.isImage  && !col.isTranslatable ){
+                    <span>{{ col.field ? tableItem[col.field] : '' }}</span>
+                  }
+                  @if(!col.isLink && col.isDate && !col.isImage){
+                    <span>{{ (col.field ? tableItem[col.field] : '') | date : 'dd/MM/yyyy' }}</span>
+                  }
+                  @if(!col.isLink && !col.isDate && !col.isImage  && col.isTranslatable && col.isStatus && statusClasses()){
+                    <span class="badge" [ngClass]="getClass(col.field ? tableItem[col.field] : '')">
+                        {{col.field ? tableItem[col.field] : '' }}
+                    </span>
+                  }
+                </span>
+              }
+              @if(col.isCheckbox){
+                <span>
+                    <p-tableCheckbox [value]="tableItem"></p-tableCheckbox>
+                </span>
+              }
+              @if(col.isButton){
+                <span>
+                </span>
+              }
+              @if(col.isTableActions){
+                <span class="text-dark fw-bolder mb-1 fs-6">
+                  @for(action of col.actions; track action.type;){
+                    @switch(action.type){
+                      @case ('VIEW'){
+                        <ng-container
+                          *ngTemplateOutlet="viewBlock; context: {tableItem:tableItem, action:action }">
+                              </ng-container>
+                      }
+                      @case ('EDIT'){
+                        <ng-container
+                          *ngTemplateOutlet="editBlock; context: { tableItem:tableItem,action:action }">
+                              </ng-container>
+                      }
+                      @case ('DELETE'){
+                        <ng-container
+                          *ngTemplateOutlet="deleteBlock; context: {uuid:tableItem['uuid'] ,action:action }">
+                              </ng-container>
+                      }
+                      @default{
 
+                      }
+                    }
+                  }
+                </span>
+              }
             </td>
           }
           <ng-template let-tableItem="tableItem" let-action="action" #viewBlock>
@@ -154,6 +230,29 @@ import {LinkComponent} from '@components/link/link.component';
           </ng-template>
         </tr>
       </ng-template>
+      <ng-template
+        pTemplate="summary">
+        <button
+          pButton
+          pRipple
+          type="button"
+          pButtonIcon="pi pi-file-export"
+          (click)="overrideDefaultExport() ? exportParentFunction() : td.exportCSV()"
+          [disabled]="totalRecords() >= maxResultsCsvExport || loading || !tableItems || tableItems.length === 0"
+        >
+          {{ (overrideDefaultExport() ? exportLabel() : exportButtonLabel) | translate }}
+        </button>
+        <button
+          pButton
+          pRipple
+          type="button"
+          pButtonIcon="{{ selectButtonIcon }}"
+          (click)="handleSelectItemsClicked()"
+          [disabled]="!selectedItems || selectedItems.length === 0"
+        >
+          {{ selectButtonLabelKey() | translate }}
+        </button>
+      </ng-template>
     </p-table>
   `,
   styleUrl: './results-table.component.css',
@@ -169,7 +268,7 @@ export class ResultsTableComponent {
   public showTableFilter = false;
   public showTableToolBar=false;
   protected exportButtonLabel: string = 'GLOBAL.BUTTONS.export-to-csv';
-  // protected maxResultsCsvExport = MAX_RESULTS_CSV_EXPORT;
+  protected maxResultsCsvExport = 100;
 
 
   tableItems = input.required<BaseModel[]>();
@@ -183,6 +282,9 @@ export class ResultsTableComponent {
   statusClasses = input<Map<string,string>>();
   exportFunction = input<Function>();
   callbackFunctionToolBar = input<Function>();
+  selectButtonLabelKey = input('GLOBAL.BUTTONS.select');
+  selectButtonIcon = input('pi pi-check');
+  overrideDefaultExport = input(false);
 
   tableStateChanged = output<TableLazyLoadEvent>();
   itemsSelected = output<BaseModel[]>();

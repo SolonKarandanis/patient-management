@@ -7,6 +7,7 @@ import {Paginator} from 'primeng/paginator';
 import {TranslatePipe} from '@ngx-translate/core';
 import {ButtonDirective} from 'primeng/button';
 import {Ripple} from 'primeng/ripple';
+import {LinkComponent} from '@components/link/link.component';
 
 @Component({
   selector: 'app-results-table',
@@ -15,7 +16,8 @@ import {Ripple} from 'primeng/ripple';
     Paginator,
     TranslatePipe,
     ButtonDirective,
-    Ripple
+    Ripple,
+    LinkComponent
   ],
   template: `
     <p-table
@@ -109,7 +111,47 @@ import {Ripple} from 'primeng/ripple';
         pTemplate="body"
         let-tableItem>
         <tr>
+          @for(col of colTitles(); track col.field;){
+            <td [style]="col.style">
 
+            </td>
+          }
+          <ng-template let-tableItem="tableItem" let-action="action" #viewBlock>
+            <app-link
+              [config]="action"
+              [tableItem]="tableItem">
+                    <span class="svg-icon svg-icon-3"></span>
+            </app-link>
+          </ng-template>
+          <ng-template let-tableItem="tableItem" let-action="action" #editBlock>
+            <button
+              pButton
+              pRipple
+              data-tool-tip="Edit"
+              type="button"
+              (click)="action.callbackFn(tableItem)">
+              <span class="svg-icon svg-icon-3"></span>
+            </button>
+          </ng-template>
+          <ng-template let-uuid="uuid" let-action="action" #deleteBlock>
+            @if(action.isButton){
+              <button
+                pButton
+                pRipple
+                data-tool-tip="Delete"
+                type="button"
+                (click)="action.callbackFn(uuid)">
+                <span class="svg-icon svg-icon-3"></span>
+              </button>
+            }
+            @if(action.isLink){
+              <app-link
+                [config]="action"
+                [tableItem]="tableItem" >
+                        <span class="svg-icon svg-icon-3"></span>
+              </app-link>
+            }
+          </ng-template>
         </tr>
       </ng-template>
     </p-table>

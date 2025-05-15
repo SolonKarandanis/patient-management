@@ -1,4 +1,5 @@
-import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
+import {AuthService} from '@core/services/auth.service';
 
 @Component({
   selector: 'app-user-dropdown',
@@ -19,22 +20,27 @@ import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
          class="z-10 absolute top-16 right-3 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600"
          [class.hidden]="dropDownHidden()">
       <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-        <div>Solon Karandannis</div>
-        <div class="font-medium truncate">skarandanisgmail.com</div>
+        <div>{{ fullName() }}</div>
+        <div class="font-medium truncate">{{ loggedInUser()?.email }}</div>
       </div>
       <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownUserAvatarButton">
         <li>
-          <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
+          <a href="#"
+             class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
         </li>
         <li>
-          <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
+          <a href="#"
+             class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
         </li>
         <li>
-          <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
+          <a href="#"
+             class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
         </li>
       </ul>
       <div class="py-2">
-        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
+        <a href="#"
+           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign
+          out</a>
       </div>
     </div>
   `,
@@ -42,10 +48,19 @@ import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserDropdownComponent {
+  private authService = inject(AuthService);
+
+  protected loggedInUser =this.authService.loggedUser;
+
+  protected fullName = computed(()=> `${this.loggedInUser()?.firstName} ${this.loggedInUser()?.lastName}`);
 
   dropDownHidden = signal(true);
 
   public toggleDropdown():void{
     this.dropDownHidden.set(!this.dropDownHidden());
+  }
+
+  public logout():void{
+    this.authService.logout();
   }
 }

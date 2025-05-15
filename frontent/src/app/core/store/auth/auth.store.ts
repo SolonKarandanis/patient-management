@@ -26,6 +26,14 @@ export const AuthStore = signalStore(
   )=>({
     getUsername: computed(()=>user()?.username),
     getUser: computed(()=> user()),
+    getRoleIds: computed(()=> {
+      const loggedUser = user();
+      if(loggedUser) {
+        return loggedUser.roles.map((role)=> role.id)
+      }
+      return [];
+
+    }),
     isJwtExpired: computed(()=>{
       const  date= expires()
       if(date){

@@ -147,8 +147,26 @@ export class UtilService{
    * @param date The date object to convert
    * @returns The converted date string or null
    */
-  convertDateObjectsToAirbnbFormat(date: Date): string | null {
+  convertDateObjectsToAppFormat(date: Date): string | null {
     return this.datePipe.transform(date, 'dd-MM-yyyy HH:mm:ss Z');
+  }
+
+  /**
+   * Convert a Date object to the CCM specific format (this function is a wrapper of the Angular Date Pipe)
+   * @param date The date object to convert
+   * @returns The converted date string or null
+   */
+  convertDateObjectsToAppReportFormat(date: Date): string | null {
+    return this.datePipe.transform(date, 'dd/MM/yyyy');
+  }
+
+  /**
+   * Convert a Date string to the CCM specific format needed for PrimeNG calendars
+   * @param date The date string to convert
+   * @returns The converted date string or null
+   */
+  convertDateStringToCalendarFormat(date: string): string | null {
+    return this.convertDateObjectsToAppReportFormat(new Date(date));
   }
 
   showMessage(severity:string, details:string|string[]):void{
@@ -185,4 +203,57 @@ export class UtilService{
       }
     }
   }
+
+  /**
+   * Checks if the provided objects are equal
+   * @param objects An array of JS objects
+   * @returns Whether the provided objects are equal
+   */
+  isEqualObjects(...objects: object[]): boolean {
+    return objects.every((obj) => JSON.stringify(obj) === JSON.stringify(objects[0]));
+  }
+
+  /**
+   * Convert a UInt8 array to Base64
+   * @param arr The array to convert
+   * @returns A Base64 string based on the input array
+   */
+  convertUint8ToBase64(arr: Uint8Array): string {
+    return btoa(
+      Array(arr.length)
+        .fill('')
+        .map((_, i) => String.fromCharCode(arr[i]))
+        .join('')
+    );
+  }
+
+  getSelectedItemsLabels(items: SelectItem[], selectedValues: any[]): string {
+    return items
+      .filter((item) => selectedValues.includes(item.value))
+      .map((item) => item.label)
+      .join(',');
+  }
+
+  /**
+   * Convert a value into a string
+   * @param value The value to be converted
+   * @returns A string representation of the input value
+   */
+  getValueAsStringOrNA(value: ValueAsStringOrNA): string {
+    if (value !== undefined && value !== null) {
+      return value as string;
+    } else {
+      return this.translate.instant('GLOBAL.OTHER.not-available');
+    }
+  }
+
+  isDecimalNumber(value: any): boolean {
+    return !isNaN(parseFloat(value)) && isFinite(value) && typeof value !== 'string' && !Number.isInteger(value);
+  }
+
+  megabytesToBytes(megabytes: number): number {
+    return megabytes * 1024 * 1024;
+  }
 }
+
+type ValueAsStringOrNA = string | number | boolean | null | undefined;

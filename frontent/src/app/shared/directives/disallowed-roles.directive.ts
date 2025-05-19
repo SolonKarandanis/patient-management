@@ -2,7 +2,8 @@ import {Directive, effect, input, TemplateRef, ViewContainerRef} from '@angular/
 import {AuthService} from '@core/services/auth.service';
 
 @Directive({
-  selector: '[appDisallowedRoles]'
+  selector: '[appDisallowedRoles]',
+  standalone:true
 })
 export class DisallowedRolesDirective {
   appDisallowedRoles = input<number[]>([]);

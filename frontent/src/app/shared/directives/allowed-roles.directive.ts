@@ -3,7 +3,8 @@ import {Role} from '@models/user.model';
 import {AuthService} from '@core/services/auth.service';
 
 @Directive({
-  selector: '[appAllowedRoles]'
+  selector: '[appAllowedRoles]',
+  standalone:true
 })
 export class AllowedRolesDirective {
   appAllowedRoles = input<number[]>([]);

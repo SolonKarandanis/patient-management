@@ -1,5 +1,4 @@
 import {Routes} from '@angular/router';
-import {DashboardComponent} from './dashboard/dashboard.component';
 import {ProtectedComponent} from './protected.component';
 
 export const protectedRoutes: Routes =[
@@ -16,6 +15,11 @@ export const protectedRoutes: Routes =[
         path:'dashboard',
         loadComponent: () =>
           import('./dashboard/dashboard.component').then((m)=>m.DashboardComponent),
+      },
+      {
+        path: 'users',
+        loadChildren: () =>
+          import('./user/user.module').then((m)=>m.UserModule),
       }
     ]
   },

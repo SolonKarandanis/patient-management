@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 import {NgClass} from '@angular/common';
-import {SplitButton} from 'primeng/splitbutton';
 import {MenuItem} from 'primeng/api';
 
 @Component({
@@ -10,7 +9,6 @@ import {MenuItem} from 'primeng/api';
     RouterLink,
     NgClass,
     RouterLinkActive,
-    SplitButton,
   ],
   template: `
     <nav class="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row

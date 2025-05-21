@@ -8,6 +8,8 @@ import {FloatLabel} from 'primeng/floatlabel';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {InputText} from 'primeng/inputtext';
 import {TranslatePipe} from '@ngx-translate/core';
+import {SelectItem} from 'primeng/api';
+import {Select} from 'primeng/select';
 
 @Component({
   selector: 'app-search-users',
@@ -17,7 +19,8 @@ import {TranslatePipe} from '@ngx-translate/core';
     FloatLabel,
     FormErrorComponent,
     InputText,
-    TranslatePipe
+    TranslatePipe,
+    Select
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
@@ -73,6 +76,16 @@ import {TranslatePipe} from '@ngx-translate/core';
                   [displayLabels]="isFieldValid('name')"
                   [validationErrors]="form.get('name')?.errors" />
               </div>
+              <div class="mb-6">
+                <p-select
+                  formControlName="status"
+                  [options]="userStatuses"
+                  placeholder="Select a Role"
+                  class="border-0 !bg-white text-sm shadow w-full !text-black"/>
+                <app-form-error
+                  [displayLabels]="isFieldValid('status')"
+                  [validationErrors]="form.get('status')?.errors" />
+              </div>
             </div>
           </form>
         </div>
@@ -85,8 +98,13 @@ import {TranslatePipe} from '@ngx-translate/core';
 export class SearchUsersComponent extends BaseComponent implements OnInit{
   private fb= inject(FormBuilder);
 
+  protected userRoles:SelectItem[]=[];
+  protected userStatuses:SelectItem[]=[];
+
   ngOnInit(): void {
     this.initForm();
+    this.initUserRoles();
+    this.initUserStatuses();
   }
 
   private initForm():void{
@@ -99,6 +117,20 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
       rows:new FormControl(10,{nonNullable: true}),
       first: new FormControl(0,{nonNullable: true}),
     });
+  }
+
+  private initUserRoles():void{
+    // this.userRoles=[
+    //   {label:''}
+    // ];
+  }
+
+  private initUserStatuses():void{
+    this.userStatuses=[
+      {label:'Active',value:'account.active'},
+      {label:'Inactive',value:'account.inactive'},
+      {label:'Deleted',value:'account.deleted'}
+    ];
   }
 
 }

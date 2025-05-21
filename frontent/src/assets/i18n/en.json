@@ -101,20 +101,6 @@
       "searching": "Searching..."
     }
   },
-  "HEADER":{
-    "SEARCH":{
-      "title":"Search",
-      "anywhere":"Anywhere",
-      "any-week":"Any week",
-      "add-guests":"Add guests"
-    },
-    "MENU": {
-      "my-properties": "My properties",
-      "my-reservation": "My reservation",
-      "my-booking":"My booking",
-      "log-out":"Log out"
-    }
-  },
   "FOOTER":{
     "LABELS":{
       "terms":"Terms",
@@ -162,31 +148,16 @@
       "register": "Register"
     }
   },
-  "SEARCH":{
-    "location":"Where do you want to go?",
-    "date":"When do you want to go?",
-    "guests":"What are you looking for?",
-    "guests-info":"Number of beds, guests, etc."
-  },
-  "LANDLORD":{
-    "CREATE-PROPERTY":{
-      "CATEGORY":{
-        "title":"Which of these best describe your place?"
-      },
-      "DESCRIPTION":{
-        "title":"Now, let's give your house a title and description",
-        "info":"Short titles work best. Have fun with it you can change it anytime"
-      },
-      "INFO":{
-        "guests":"Guests",
-        "bedrooms":"Bedrooms",
-        "beds":"Beds",
-        "bathrooms":"Bathrooms"
+  "USER":{
+    "SEARCH":{
+      "title": "Search Users",
+      "LABELS": {
+        "username": "Username",
+        "email": "Email",
+        "name": "First/Last name",
+        "status": "Status",
+        "role": "Role"
       }
-    },
-    "PLACEHOLDERS":{
-      "title":"Title",
-      "summary":"Summary"
     }
   }
 }

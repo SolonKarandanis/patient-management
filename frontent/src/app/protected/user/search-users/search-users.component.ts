@@ -1,31 +1,77 @@
 import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
-import {FormBuilder, FormControl} from '@angular/forms';
+import {FormBuilder, FormControl, ReactiveFormsModule} from '@angular/forms';
 import {UserSearchForm} from '../forms';
 import {UserAccountStatus} from '@models/user.model';
+import {FloatLabel} from 'primeng/floatlabel';
+import {FormErrorComponent} from '@components/form-error/form-error.component';
+import {InputText} from 'primeng/inputtext';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-search-users',
   imports: [
-    PageHeaderComponent
+    PageHeaderComponent,
+    ReactiveFormsModule,
+    FloatLabel,
+    FormErrorComponent,
+    InputText,
+    TranslatePipe
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
       <app-page-header>
-        Search Users
+        {{ 'USER.SEARCH.title' | translate }}
       </app-page-header>
       <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
         <div role="search">
-          <form>
+          <form [formGroup]="form">
             <div class="grid gap-6 mb-6 md:grid-cols-2 mt-4">
-              <div>
-                <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First name</label>
-                <input type="text" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required />
+              <div class="mb-6">
+                <p-float-label variant="on" class="w-full mb-3">
+                  <input
+                    id="email"
+                    pInputText
+                    type="email"
+                    class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                    formControlName="email"
+                    autocomplete="email"/>
+                  <label for="email">{{ 'USER.SEARCH.LABELS.email' | translate }}</label>
+                </p-float-label>
+                <app-form-error
+                  [displayLabels]="isFieldValid('email')"
+                  [validationErrors]="form.get('email')?.errors" />
               </div>
-              <div>
-                <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last name</label>
-                <input type="text" id="last_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Doe" required />
+              <div class="mb-6">
+                <p-float-label variant="on" class="w-full mb-3">
+                  <input
+                    id="username"
+                    pInputText
+                    type="text"
+                    class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                    formControlName="username"
+                    autocomplete="username"/>
+                  <label for="username">{{ 'USER.SEARCH.LABELS.username' | translate }}</label>
+                </p-float-label>
+                <app-form-error
+                  [displayLabels]="isFieldValid('username')"
+                  [validationErrors]="form.get('username')?.errors" />
+              </div>
+              <div class="mb-6">
+                <p-float-label variant="on" class="w-full mb-3">
+                  <input
+                    id="name"
+                    pInputText
+                    type="text"
+                    class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                    formControlName="name"
+                    autocomplete="name"/>
+                  <label for="name">{{ 'USER.SEARCH.LABELS.name' | translate }}</label>
+                </p-float-label>
+                <app-form-error
+                  [displayLabels]="isFieldValid('name')"
+                  [validationErrors]="form.get('name')?.errors" />
               </div>
             </div>
           </form>

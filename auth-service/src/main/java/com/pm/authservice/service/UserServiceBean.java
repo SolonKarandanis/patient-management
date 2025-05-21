@@ -246,7 +246,7 @@ public class UserServiceBean implements UserService{
         BooleanBuilder builder = new BooleanBuilder();
         String email =searchObj.getEmail();
         String username = searchObj.getUsername();
-        String firstName= searchObj.getFirstName();
+        String name= searchObj.getName();
         String status = searchObj.getStatus();
         String roleName = searchObj.getRoleName();
 
@@ -256,8 +256,8 @@ public class UserServiceBean implements UserService{
         if(StringUtils.hasLength(username)){
             builder.and(user.username.eq(username));
         }
-        if(StringUtils.hasLength(firstName)){
-            builder.and(user.firstName.eq(firstName));
+        if(StringUtils.hasLength(name)){
+            builder.and(user.firstName.eq(name).or(user.lastName.eq(name)));
         }
         if(StringUtils.hasLength(status)){
             builder.and(user.status.eq(AccountStatus.valueOf(status)));

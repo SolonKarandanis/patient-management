@@ -8,7 +8,7 @@ import lombok.Setter;
 public class UsersSearchRequestDTO extends SearchRequestDTO{
 	
 	private String username;
-	private String firstName;
+	private String name;
 	private String email;
 	private String status;
 	private String roleName;

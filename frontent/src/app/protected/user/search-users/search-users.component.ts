@@ -1,6 +1,9 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
+import {FormBuilder, FormControl} from '@angular/forms';
+import {UserSearchForm} from '../forms';
+import {UserAccountStatus} from '@models/user.model';
 
 @Component({
   selector: 'app-search-users',
@@ -34,14 +37,22 @@ import {BaseComponent} from '@shared/abstract/BaseComponent';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchUsersComponent extends BaseComponent implements OnInit{
+  private fb= inject(FormBuilder);
 
-
-    ngOnInit(): void {
-      this.initForm();
-    }
+  ngOnInit(): void {
+    this.initForm();
+  }
 
   private initForm():void{
-
+    this.form = this.fb.group<UserSearchForm>({
+      email: new FormControl(null),
+      name: new FormControl(null),
+      status: new FormControl("account.active",{nonNullable: true}),
+      username: new FormControl(null),
+      role: new FormControl(null),
+      rows:new FormControl(10,{nonNullable: true}),
+      first: new FormControl(0,{nonNullable: true}),
+    });
   }
 
 }

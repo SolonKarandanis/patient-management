@@ -77,11 +77,15 @@ import {Select} from 'primeng/select';
                   [validationErrors]="form.get('name')?.errors" />
               </div>
               <div class="mb-6">
-                <p-select
-                  formControlName="status"
-                  [options]="userStatuses"
-                  placeholder="Select a Role"
-                  class="border-0 !bg-white text-sm shadow w-full !text-black"/>
+                <p-float-label variant="on" class="w-full mb-3">
+                  <p-select
+                    formControlName="status"
+                    [options]="userStatuses"
+                    [checkmark]="true"
+                    [showClear]="true"
+                    class="border-0 !bg-white text-sm shadow w-full"/>
+                  <label for="name">{{ 'USER.SEARCH.LABELS.status' | translate }}</label>
+                </p-float-label>
                 <app-form-error
                   [displayLabels]="isFieldValid('status')"
                   [validationErrors]="form.get('status')?.errors" />

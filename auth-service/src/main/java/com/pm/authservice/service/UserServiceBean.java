@@ -281,12 +281,12 @@ public class UserServiceBean implements UserService{
 
 
     protected String translate(String key) {
-        return Optional.ofNullable(messageSource.getMessage(key, null, getDefaultLocale())).orElse(key);
+        return Optional.of(messageSource.getMessage(key, null, getDefaultLocale())).orElse(key);
     }
 
 
     protected String translate(String key, Locale locale) {
-        return Optional.ofNullable(messageSource.getMessage(key, null, locale)).orElse(key);
+        return Optional.of(messageSource.getMessage(key, null, locale)).orElse(key);
     }
 
     protected Locale getDefaultLocale() {

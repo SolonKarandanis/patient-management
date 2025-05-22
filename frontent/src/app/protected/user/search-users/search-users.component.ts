@@ -10,6 +10,7 @@ import {InputText} from 'primeng/inputtext';
 import {TranslatePipe} from '@ngx-translate/core';
 import {SelectItem} from 'primeng/api';
 import {Select} from 'primeng/select';
+import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.component';
 
 @Component({
   selector: 'app-search-users',
@@ -20,7 +21,8 @@ import {Select} from 'primeng/select';
     FormErrorComponent,
     InputText,
     TranslatePipe,
-    Select
+    Select,
+    SearchButtonsComponent
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
@@ -30,7 +32,7 @@ import {Select} from 'primeng/select';
       <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
         <div role="search">
           <form [formGroup]="form">
-            <div class="grid gap-6 mb-6 md:grid-cols-2 mt-4">
+            <div class="grid gap-6 mt-6 md:grid-cols-3 mt-4">
               <div class="mb-6">
                 <p-float-label variant="on" class="w-full mb-3">
                   <input
@@ -76,6 +78,8 @@ import {Select} from 'primeng/select';
                   [displayLabels]="isFieldValid('name')"
                   [validationErrors]="form.get('name')?.errors" />
               </div>
+            </div>
+            <div class="grid gap-6 mt-6 md:grid-cols-2 mt-4">
               <div class="mb-6">
                 <p-float-label variant="on" class="w-full mb-3">
                   <p-select
@@ -90,7 +94,22 @@ import {Select} from 'primeng/select';
                   [displayLabels]="isFieldValid('status')"
                   [validationErrors]="form.get('status')?.errors" />
               </div>
+              <div class="mb-6">
+                <p-float-label variant="on" class="w-full mb-3">
+                  <p-select
+                    formControlName="role"
+                    [options]="userStatuses"
+                    [checkmark]="true"
+                    [showClear]="true"
+                    class="border-0 !bg-white text-sm shadow w-full"/>
+                  <label for="name">{{ 'USER.SEARCH.LABELS.role' | translate }}</label>
+                </p-float-label>
+                <app-form-error
+                  [displayLabels]="isFieldValid('role')"
+                  [validationErrors]="form.get('role')?.errors" />
+              </div>
             </div>
+<!--            <app-search-buttons />-->
           </form>
         </div>
       </div>

@@ -33,10 +33,10 @@ export class SearchService extends GenericService{
    * @returns A UserSearchRequest
    */
   public toUserSearchRequest(searchForm: FormGroup<UserSearchForm>):UserSearchRequest{
-    const {email,firstName,status,username,rows,first} = searchForm.value;
+    const {email,name,status,username,rows,first} = searchForm.value;
     const request:UserSearchRequest={
       email,
-      firstName,
+      name,
       status:status!,
       username,
       paging:{

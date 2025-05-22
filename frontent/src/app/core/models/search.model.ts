@@ -73,7 +73,7 @@ export interface SearchRequest {
 
 export interface UserSearchRequest extends SearchRequest {
   username: string|null|undefined;
-  firstName: string|null|undefined;
+  name: string|null|undefined;
   email: string|null|undefined;
   status: UserAccountStatus;
 }

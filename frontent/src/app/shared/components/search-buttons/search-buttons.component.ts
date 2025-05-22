@@ -110,7 +110,7 @@ export class SearchButtonsComponent {
   enableSaveSearch = input(false);
   searchType = input.required<SearchType>();
   searchForm = input.required<FormGroup>();
-  resetBtnTemplate = input.required<TemplateRef<Record<string, unknown>>>();
+  resetBtnTemplate = input<TemplateRef<Record<string, unknown>>>();
 
   searchClicked = output<MouseEvent>();
   resetClicked = output<MouseEvent>();

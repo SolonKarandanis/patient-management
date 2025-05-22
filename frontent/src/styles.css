@@ -4080,3 +4080,9 @@ select {
 
 @media (min-width: 1536px) {
 }
+
+.app-required-label::after {
+  color: red;
+  content: '*';
+  margin-left: 5px;
+}

@@ -101,6 +101,10 @@
       "searching": "Searching..."
     }
   },
+  "REQUIRED-FIELDS-LABEL": {
+    "part1": "All fields marked with an asterisk",
+    "part2": "are mandatory"
+  },
   "FOOTER":{
     "LABELS":{
       "terms":"Terms",

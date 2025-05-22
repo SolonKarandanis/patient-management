@@ -32,7 +32,7 @@ import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.
       <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
         <div role="search">
           <form [formGroup]="form">
-            <div class="grid gap-6 mt-6 md:grid-cols-3 mt-4">
+            <div class="grid gap-6 mt-6 md:grid-cols-3">
               <div class="mb-6">
                 <p-float-label variant="on" class="w-full mb-3">
                   <input
@@ -79,7 +79,7 @@ import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.
                   [validationErrors]="form.get('name')?.errors" />
               </div>
             </div>
-            <div class="grid gap-6 mt-6 md:grid-cols-2 mt-4">
+            <div class="grid gap-6 mt-6 md:grid-cols-2">
               <div class="mb-6">
                 <p-float-label variant="on" class="w-full mb-3">
                   <p-select

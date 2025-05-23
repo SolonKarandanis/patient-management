@@ -7,19 +7,18 @@ import {
   UpdateUserRequest,
   User,
   UserAccountStatus
-} from '../src/app/core/models/user.model';
-import {RolesConstants} from '../src/app/core/guards/SecurityConstants';
+} from '@models/user.model';
+import {RolesConstants} from '@core/guards/SecurityConstants';
 import {
   Paging,
-  SavedSearch, SearchConfiguration,
-  SearchTypeEnum,
-  SortDirection,
+  SavedSearch,
+  SearchConfiguration,
   UserSearchRequest
-} from '../src/app/core/models/search.model';
+} from '@models/search.model';
 import {FormControl, FormGroup} from '@angular/forms';
 import {CreateUserForm, UpdateUserForm, UserSearchForm} from '../src/app/protected/user/forms';
-import {JwtDTO, SubmitCredentialsDTO} from '../src/app/core/models/auth.model';
-import {GenericFile} from '../src/app/core/models/file.model';
+import {JwtDTO, SubmitCredentialsDTO} from '@models/auth.model';
+import {GenericFile} from '@models/file.model';
 
 export const mockRole:Role={
   id:1,
@@ -33,7 +32,7 @@ export const mockOperation:Operation={
 
 export const mockUser: User ={
   username:"skaran",
-  status:UserAccountStatus.ACTIVE,
+  status:"account.active",
   publicId:"test",
   email:"skarandanis@email.com",
   firstName:"solon",
@@ -68,11 +67,11 @@ export const mockUserSearchRequest:UserSearchRequest={
     page: 1,
     limit: 10,
     sortField: 'name',
-    sortDirection: SortDirection.ASC,
+    sortDirection: "ASC",
   },
   username: 'org123',
-  firstName: 'John',
-  status:UserAccountStatus.ACTIVE,
+  name: 'John',
+  status:"account.active",
   email:'skarandanis@gmail.com',
 }
 
@@ -80,26 +79,27 @@ export const mockSearchUserForm:FormGroup= new FormGroup<UserSearchForm>({
   email: new FormControl(''),
   first: new FormControl(0,{nonNullable: true}),
   rows: new FormControl(10,{nonNullable: true}),
-  firstName: new FormControl(''),
-  status:new FormControl(UserAccountStatus.ACTIVE,{nonNullable: true}),
+  name: new FormControl(''),
+  status:new FormControl("account.active",{nonNullable: true}),
+  role: new FormControl(),
   username: new FormControl(''),
 });
 
 export const mockSavedSearch: SavedSearch = {
   id: 123,
   userId: '456',
-  searchType: SearchTypeEnum.USERS,
+  searchType: "search.type.users",
   savedSearchName: 'My Saved Item Search',
   criteria: {
     paging: {
       page: 1,
       limit: 10,
       sortField: 'name',
-      sortDirection: SortDirection.ASC,
+      sortDirection: "ASC",
     },
     username: 'org123',
-    firstName: 'John',
-    status:UserAccountStatus.ACTIVE,
+    name: 'John',
+    status:"account.active",
     email:'skarandanis@gmail.com',
   },
 };
@@ -107,10 +107,10 @@ export const mockSavedSearch: SavedSearch = {
 export const mockSearchConfiguration: SearchConfiguration = {
   id: 789,
   userId: '456',
-  searchType: SearchTypeEnum.USERS,
+  searchType: "search.type.users",
   resultCount: 50,
   sortColumnKey: 'name',
-  sortDirection: SortDirection.ASC,
+  sortDirection: "ASC",
   criteria: [
     {
       canFieldBeDisplayed: true,
@@ -125,7 +125,7 @@ export const mockSearchConfiguration: SearchConfiguration = {
 
 export const mockLoginCredentials: SubmitCredentialsDTO = {
   password: 'test',
-  username: 'test',
+  email: 'test',
 };
 
 export const mockJwt: JwtDTO = {
@@ -145,10 +145,10 @@ export const mockGenericFile: GenericFile = {
 export const mockUserSearchConfiguration: SearchConfiguration = {
   id: 1,
   userId: '5',
-  sortDirection: SortDirection.ASC,
+  sortDirection: "ASC",
   sortColumnKey: 'test',
   resultCount: 10,
-  searchType: SearchTypeEnum.USERS,
+  searchType: "search.type.users",
   criteria: [],
 }
 

@@ -3,7 +3,6 @@ import {PageHeaderComponent} from '@components/page-header/page-header.component
 import {BaseComponent} from '@shared/abstract/BaseComponent';
 import {FormBuilder, FormControl, ReactiveFormsModule} from '@angular/forms';
 import {UserSearchForm} from '../forms';
-import {UserAccountStatus} from '@models/user.model';
 import {FloatLabel} from 'primeng/floatlabel';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {InputText} from 'primeng/inputtext';
@@ -11,6 +10,8 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {SelectItem} from 'primeng/api';
 import {Select} from 'primeng/select';
 import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.component';
+import {TableLazyLoadEvent} from 'primeng/table';
+import {SavedSearch} from '@models/search.model';
 
 @Component({
   selector: 'app-search-users',
@@ -154,6 +155,14 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
       {label:'Inactive',value:'account.inactive'},
       {label:'Deleted',value:'account.deleted'}
     ];
+  }
+
+  protected handleTableLazyLoad(event: TableLazyLoadEvent): void{
+
+  }
+
+  protected handleLoadSavedSearch(event: SavedSearch):void{
+
   }
 
 }

@@ -118,11 +118,11 @@ import {RequiredFieldsLabelComponent} from '@components/required-fields-label/re
               </div>
             </div>
             <app-search-buttons #searchBtns
-            [searchType]="searchType"
+                [searchType]="searchType"
                                 [enableSaveSearch]="true"
-            [searchForm]="form"
-            (searchClicked)="search()"
-            (resetClicked)="resetForm()"/>
+                [searchForm]="form"
+                (searchClicked)="search()"
+                (resetClicked)="resetForm()"/>
           </form>
         </div>
       </div>

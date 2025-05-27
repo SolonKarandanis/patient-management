@@ -9,10 +9,17 @@ import {Divider} from 'primeng/divider';
     Divider
   ],
   template: `
-    <div>
-      <span>{{ 'REQUIRED-FIELDS-LABEL.part1' | translate }}</span>
-      <span> (<label class="app-required-label mr-1"></label>) </span>
-      <span>{{ 'REQUIRED-FIELDS-LABEL.part2' | translate }}</span>
+    <p-divider></p-divider>
+    <div class="p-2 m-2 text-black">
+      <span>
+        {{ 'REQUIRED-FIELDS-LABEL.part1' | translate }}
+      </span>
+      <span>
+        (<label class="app-required-label mr-1"></label>)
+      </span>
+      <span>
+        {{ 'REQUIRED-FIELDS-LABEL.part2' | translate }}
+      </span>
     </div>
     <p-divider></p-divider>
   `,

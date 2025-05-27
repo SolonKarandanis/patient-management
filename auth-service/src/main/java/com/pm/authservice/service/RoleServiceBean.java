@@ -9,6 +9,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -34,7 +35,7 @@ public class RoleServiceBean implements RoleService {
     }
 
     @Override
-    public List<RoleDTO> convertToDtoList(List<Role> roles) {
+    public List<RoleDTO> convertToDtoList(Set<Role> roles) {
         List<RoleDTO> roleDTOS = new ArrayList<>();
         if(!CollectionUtils.isEmpty(roles)){
             for (Role role : roles) {

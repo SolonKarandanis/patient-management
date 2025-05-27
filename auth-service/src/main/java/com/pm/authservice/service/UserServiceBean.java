@@ -5,7 +5,6 @@ import com.pm.authservice.event.UserRegistrationCompleteEvent;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.model.*;
-import com.pm.authservice.repository.RoleRepository;
 import com.pm.authservice.repository.UserRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
@@ -33,7 +32,7 @@ public class UserServiceBean implements UserService{
     private static final Logger log = LoggerFactory.getLogger(UserServiceBean.class);
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
     private final VerificationTokenService verificationTokenService;
     private final PasswordEncoder passwordEncoder;
     private final MessageSource messageSource;
@@ -41,14 +40,14 @@ public class UserServiceBean implements UserService{
 
     public UserServiceBean(
             UserRepository userRepository,
-            RoleRepository roleRepository,
+            RoleService roleService,
             VerificationTokenService verificationTokenService,
             PasswordEncoder passwordEncoder,
             MessageSource messageSource,
             ApplicationEventPublisher publisher
     ){
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+        this.roleService = roleService;
         this.verificationTokenService = verificationTokenService;
         this.passwordEncoder = passwordEncoder;
         this.messageSource = messageSource;
@@ -66,14 +65,7 @@ public class UserServiceBean implements UserService{
         dto.setEmail(user.getEmail());
         dto.setPublicId(user.getPublicId().toString());
         dto.setStatus(user.getStatus().toString());
-        if(!CollectionUtils.isEmpty(user.getRoles())) {
-            List<RoleDTO> roleDTOS = new ArrayList<>();
-            for(Role role: user.getRoles()){
-                RoleDTO roleDTO = new RoleDTO(role.getId(),role.getName());
-                roleDTOS.add(roleDTO);
-            }
-            dto.setRoles(roleDTOS);
-        }
+        dto.setRoles(roleService.convertToDtoList(user.getRoles()));
         return dto;
     }
 
@@ -94,7 +86,7 @@ public class UserServiceBean implements UserService{
         user.setStatus(AccountStatus.valueOf(dto.getStatus()));
         if(!CollectionUtils.isEmpty(dto.getRoles())){
             List<Integer> roleIds= dto.getRoles().stream().map(RoleDTO::getId).toList();
-            Set<Role> roles = new HashSet<>(roleRepository.findAllById(roleIds));
+            Set<Role> roles = new HashSet<>(roleService.findByIds(roleIds));
             user.setRoles(roles);
         }
         return user;
@@ -187,7 +179,7 @@ public class UserServiceBean implements UserService{
         user.setIsVerified(Boolean.FALSE);
         UUID uuid = UUID.randomUUID();
         user.setPublicId(uuid);
-        Role role = roleRepository.findByName(dto.getRole());
+        Role role = roleService.findByName(dto.getRole());
         user.setRoles(Set.of(role));
         user = userRepository.save(user);
         publisher.publishEvent(new UserRegistrationCompleteEvent(user, applicationUrl));
@@ -263,7 +255,7 @@ public class UserServiceBean implements UserService{
             builder.and(user.status.eq(AccountStatus.valueOf(status)));
         }
         if(StringUtils.hasLength(roleName)){
-            Role role = roleRepository.findByName(roleName);
+            Role role = roleService.findByName(roleName);
             if(role != null){
                 builder.and(user.roles.contains(role));
             }

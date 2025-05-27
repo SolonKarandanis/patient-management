@@ -12,6 +12,7 @@ import {Select} from 'primeng/select';
 import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.component';
 import {TableLazyLoadEvent} from 'primeng/table';
 import {SavedSearch} from '@models/search.model';
+import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
 
 @Component({
   selector: 'app-search-users',
@@ -23,13 +24,15 @@ import {SavedSearch} from '@models/search.model';
     InputText,
     TranslatePipe,
     Select,
-    SearchButtonsComponent
+    SearchButtonsComponent,
+    RequiredFieldsLabelComponent
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
       <app-page-header>
         {{ 'USER.SEARCH.title' | translate }}
       </app-page-header>
+      <app-required-fields-label></app-required-fields-label>
       <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
         <div role="search">
           <form [formGroup]="form">

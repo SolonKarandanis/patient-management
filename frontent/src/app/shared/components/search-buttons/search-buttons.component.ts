@@ -27,9 +27,10 @@ import {NgTemplateOutlet} from '@angular/common';
     NgTemplateOutlet
   ],
   template: `
-    <div class="grid sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-12 gap-4">
-      <div class="">
+    <div class="grid sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-10 xl:grid-cols-12 gap-4">
+      <div class="sm:col-span-1 md:col-span-1 lg:col-span-2">
         <button
+            class="w-full"
             pButton
             pRipple
             type="submit"
@@ -40,14 +41,15 @@ import {NgTemplateOutlet} from '@angular/common';
           {{'GLOBAL.BUTTONS.search' | translate}}
         </button>
       </div>
-      <div class="sm:col-span-2 md:col-span-2 lg:col-span-2 xl:col-span-10">
+      <div class="sm:col-span-1 md:col-span-2 lg:col-span-6 xl:col-span-8">
         @if (enableSaveSearch()){
-          <div class="grid sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-12">
-            <div class="">
+          <div class="grid sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-12 gap-4">
+            <div class="col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-4">
               <span class="w-full"
                     pTooltip="{{'SAVED-SEARCHES.LABELS.enter-title-first' | translate}}"
                     [tooltipDisabled]="!!saveSearchTitle()">
                 <button
+                  class="w-full"
                   pButton
                   pRipple
                   type="button"
@@ -59,7 +61,7 @@ import {NgTemplateOutlet} from '@angular/common';
                 </button>
               </span>
             </div>
-            <div class="">
+            <div class="col-span-3 sm:col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-5">
               <p-float-label variant="on" class="w-full mb-3">
                 <input
                   id="saveSearchTitle"
@@ -74,8 +76,9 @@ import {NgTemplateOutlet} from '@angular/common';
           </div>
         }
       </div>
-      <div class="">
+      <div class="sm:col-span-1 md:col-span-1 lg:col-span-2">
         <button
+          class="w-full"
           pButton
           pRipple
           type="button"

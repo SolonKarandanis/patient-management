@@ -11,7 +11,7 @@ import {SelectItem} from 'primeng/api';
 import {Select} from 'primeng/select';
 import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.component';
 import {TableLazyLoadEvent} from 'primeng/table';
-import {SavedSearch} from '@models/search.model';
+import {SavedSearch, SearchType} from '@models/search.model';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
 
 @Component({
@@ -92,7 +92,9 @@ import {RequiredFieldsLabelComponent} from '@components/required-fields-label/re
                     [checkmark]="true"
                     [showClear]="true"
                     class="border-0 !bg-white text-sm shadow w-full"/>
-                  <label for="name">{{ 'USER.SEARCH.LABELS.status' | translate }}</label>
+                  <label class="app-required-label" for="name">
+                    {{ 'USER.SEARCH.LABELS.status' | translate }}
+                  </label>
                 </p-float-label>
                 <app-form-error
                   [displayLabels]="isFieldValid('status')"
@@ -106,14 +108,20 @@ import {RequiredFieldsLabelComponent} from '@components/required-fields-label/re
                     [checkmark]="true"
                     [showClear]="true"
                     class="border-0 !bg-white text-sm shadow w-full"/>
-                  <label for="name">{{ 'USER.SEARCH.LABELS.role' | translate }}</label>
+                  <label class="app-required-label" for="name">
+                    {{ 'USER.SEARCH.LABELS.role' | translate }}
+                  </label>
                 </p-float-label>
                 <app-form-error
                   [displayLabels]="isFieldValid('role')"
                   [validationErrors]="form.get('role')?.errors" />
               </div>
             </div>
-<!--            <app-search-buttons />-->
+            <app-search-buttons #searchBtns
+            [searchType]="searchType"
+            [searchForm]="form"
+            (searchClicked)="search()"
+            (resetClicked)="resetForm()"/>
           </form>
         </div>
       </div>
@@ -123,15 +131,32 @@ import {RequiredFieldsLabelComponent} from '@components/required-fields-label/re
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchUsersComponent extends BaseComponent implements OnInit{
-  private fb= inject(FormBuilder);
+  protected fb= inject(FormBuilder);
 
   protected userRoles:SelectItem[]=[];
   protected userStatuses:SelectItem[]=[];
+  protected readonly searchType:SearchType = "search.type.users";
 
   ngOnInit(): void {
     this.initForm();
     this.initUserRoles();
     this.initUserStatuses();
+  }
+
+  protected search():void{
+
+  }
+
+  protected resetForm():void{
+
+  }
+
+  protected handleTableLazyLoad(event: TableLazyLoadEvent): void{
+
+  }
+
+  protected handleLoadSavedSearch(event: SavedSearch):void{
+
   }
 
   private initForm():void{
@@ -158,14 +183,6 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
       {label:'Inactive',value:'account.inactive'},
       {label:'Deleted',value:'account.deleted'}
     ];
-  }
-
-  protected handleTableLazyLoad(event: TableLazyLoadEvent): void{
-
-  }
-
-  protected handleLoadSavedSearch(event: SavedSearch):void{
-
   }
 
 }

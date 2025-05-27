@@ -27,8 +27,8 @@ import {NgTemplateOutlet} from '@angular/common';
     NgTemplateOutlet
   ],
   template: `
-    <div class="grid">
-      <div class="columns-12 sm:columns-3 md:columns-2 lg:columns-2 xl:columns-2">
+    <div class="grid sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-12 gap-4">
+      <div class="">
         <button
             pButton
             pRipple
@@ -40,10 +40,10 @@ import {NgTemplateOutlet} from '@angular/common';
           {{'GLOBAL.BUTTONS.search' | translate}}
         </button>
       </div>
-      <div class="columns-12 sm:columns-9 md:columns-8 lg:columns-8 xl:columns-8">
+      <div class="sm:col-span-2 md:col-span-2 lg:col-span-2 xl:col-span-10">
         @if (enableSaveSearch()){
-          <div class="grid">
-            <div class="columns-12 sm:columns-4 md:columns-4 lg:columns-4 xl:columns-3">
+          <div class="grid sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-12">
+            <div class="">
               <span class="w-full"
                     pTooltip="{{'ADVANCED-SEARCH.SAVED-SEARCHES.LABELS.enter-title-first' | translate}}"
                     [tooltipDisabled]="!!saveSearchTitle()">
@@ -59,8 +59,7 @@ import {NgTemplateOutlet} from '@angular/common';
                 </button>
               </span>
             </div>
-            <div class="columns-12 sm:columns-8 md:columns-8 lg:columns-8 xl:columns-9 pl-2 sm:pl-2 md:pl-2 lg:pl-2 xl:pl-2 pt-3
-                sm:pt-0 md:pt-0 lg:pt-0 xl:pt-0">
+            <div class="">
               <p-float-label variant="on" class="w-full mb-3">
                 <input
                   id="saveSearchTitle"
@@ -75,7 +74,7 @@ import {NgTemplateOutlet} from '@angular/common';
           </div>
         }
       </div>
-      <div class="columns-12 sm:columns-3 md:columns-2 lg:columns-2 xl:columns-2">
+      <div class="">
         <button
           pButton
           pRipple

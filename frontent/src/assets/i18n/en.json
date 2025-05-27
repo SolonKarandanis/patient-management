@@ -163,5 +163,21 @@
         "role": "Role"
       }
     }
+  },
+  "SAVED-SEARCHES": {
+    "title": "Saved Searches",
+    "CONFIRM-DIALOG": {
+      "header": "Delete Saved Search",
+      "message": "Do you really want to delete this saved search?"
+    },
+    "MESSAGES": {
+      "summary": "Save Search",
+      "detail-success": "Search was saved successfully"
+    },
+    "LABELS": {
+      "load-saved-search-placeholder": "Select a saved search",
+      "enter-title-first": "Enter a title first",
+      "with-title": "with title"
+    }
   }
 }

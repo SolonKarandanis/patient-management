@@ -45,7 +45,7 @@ import {NgTemplateOutlet} from '@angular/common';
           <div class="grid sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-12">
             <div class="">
               <span class="w-full"
-                    pTooltip="{{'ADVANCED-SEARCH.SAVED-SEARCHES.LABELS.enter-title-first' | translate}}"
+                    pTooltip="{{'SAVED-SEARCHES.LABELS.enter-title-first' | translate}}"
                     [tooltipDisabled]="!!saveSearchTitle()">
                 <button
                   pButton

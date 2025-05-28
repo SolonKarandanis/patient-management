@@ -63,6 +63,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     @Translate(path = "status", targetProperty = "statusLabel")
+    @Translate(path = "roles[*].name", targetProperty = "nameLabel")
     public ResponseEntity<UserDTO> viewUser(@PathVariable(name= "id", required=true) String publicId)
             throws NotFoundException {
         User user = usersService.findByPublicId(publicId);
@@ -72,6 +73,7 @@ public class UserController {
 
     @GetMapping(value="/account")
     @Translate(path = "status", targetProperty = "statusLabel")
+    @Translate(path = "roles[*].name", targetProperty = "nameLabel")
     public ResponseEntity<UserDTO> getUserByToken(Authentication authentication) throws NotFoundException{
         UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
         User user = usersService.findByPublicId(dto.getPublicId());

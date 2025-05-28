@@ -18,6 +18,7 @@ export interface BaseUserModel extends BaseModel{
 export interface Role{
   id:number;
   name:string;
+  nameLabel?:string;
 }
 
 export interface Operation{

@@ -1,5 +1,6 @@
 package com.pm.authservice.controller;
 
+import com.pm.authservice.config.i18n.Translate;
 import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.model.Role;
 import com.pm.authservice.service.RoleService;
@@ -23,6 +24,7 @@ public class RoleController {
     }
 
     @GetMapping
+    @Translate(path = "[*].name", targetProperty = "nameLabel")
     public ResponseEntity<List<RoleDTO>> findAllRoles(){
         Set<Role> roles = new HashSet<>(roleService.findAll());
         List<RoleDTO> dtos = roleService.convertToDtoList(roles);

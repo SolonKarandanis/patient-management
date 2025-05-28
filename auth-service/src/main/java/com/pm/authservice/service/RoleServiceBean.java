@@ -23,7 +23,10 @@ public class RoleServiceBean implements RoleService {
 
     @Override
     public RoleDTO convertToDto(Role role) {
-        return new RoleDTO(role.getId(), role.getName());
+        RoleDTO dto = new RoleDTO();
+        dto.setId(role.getId());
+        dto.setName(role.getName());
+        return dto;
     }
 
     @Override

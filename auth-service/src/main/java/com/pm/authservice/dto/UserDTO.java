@@ -16,6 +16,7 @@ public class UserDTO {
     private String firstName;
     private String email;
     private String status;
+    private String statusLabel;
     private Boolean isEnabled;
     private List<RoleDTO> roles;
     private List<OperationDTO> operations;

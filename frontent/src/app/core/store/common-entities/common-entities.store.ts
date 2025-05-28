@@ -5,9 +5,10 @@ import {CommonEntitiesState, initialCommonEntitiesState} from '@core/store/commo
 import {CommonEntitiesRepository} from '@core/repositories/common-entities.repository';
 import {Role} from '@models/user.model';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
-import {pipe, switchMap, tap} from 'rxjs';
+import {forkJoin, pipe, switchMap, tap} from 'rxjs';
 import {tapResponse} from '@ngrx/operators';
 import {SelectItem} from 'primeng/api';
+import {UiService} from '@core/services/ui.service';
 
 export const CommonEntitiesStore = signalStore(
   { providedIn: 'root' },
@@ -15,6 +16,7 @@ export const CommonEntitiesStore = signalStore(
   withCallState(),
   withProps(()=>({
     commonEntitiesRepo:inject(CommonEntitiesRepository),
+    uiService:inject(UiService),
   })),
   withComputed(({
     roles
@@ -47,6 +49,7 @@ export const CommonEntitiesStore = signalStore(
   }),
   withMethods((state)=>{
     const commonEntitiesRepo = state.commonEntitiesRepo;
+    const uiService = state.uiService;
     return ({
       getAllRoles: rxMethod<void>(
         pipe(
@@ -66,6 +69,19 @@ export const CommonEntitiesStore = signalStore(
               })
             )
           ),
+        )
+      ),
+      initializeCommonEntities: rxMethod<void>(
+        pipe(
+          tap(() => {
+            state.setLoadingState();
+            uiService.showScreenLoader();
+          }),
+          switchMap(()=>{
+            return forkJoin({
+              roles:commonEntitiesRepo.getAllRoles()
+            });
+          })
         )
       )
     })

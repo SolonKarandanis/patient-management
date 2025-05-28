@@ -1,6 +1,7 @@
 package com.pm.authservice.controller;
 
 import com.pm.authservice.config.authorisation.NoAuthentication;
+import com.pm.authservice.config.i18n.Translate;
 import com.pm.authservice.dto.*;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
@@ -53,6 +54,7 @@ public class UserController {
     }
 
     @PostMapping("/search")
+    @Translate(path = "list[*].status", targetProperty = "statusLabel")
     public ResponseEntity<SearchResults<UserDTO>> findAllUsers(@RequestBody @Valid UsersSearchRequestDTO searchObj){
         Page<User> results = usersService.searchUsers(searchObj);
         List<UserDTO> dtos=usersService.convertToDTOList(results.getContent());
@@ -60,6 +62,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> viewUser(@PathVariable(name= "id", required=true) String publicId)
             throws NotFoundException {
         User user = usersService.findByPublicId(publicId);
@@ -68,6 +71,7 @@ public class UserController {
     }
 
     @GetMapping(value="/account")
+    @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> getUserByToken(Authentication authentication) throws NotFoundException{
         UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
         User user = usersService.findByPublicId(dto.getPublicId());
@@ -77,6 +81,7 @@ public class UserController {
 
     @NoAuthentication
     @PostMapping
+    @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> registerUser(@RequestBody @Valid CreateUserDTO user, final HttpServletRequest request)
             throws BusinessException{
         log.info("UserController->registerUser->RequestBody: {}" , user);
@@ -85,6 +90,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable(name = "id", required=true) String publicId,
             @RequestBody @Valid UpdateUserDTO user)throws NotFoundException{
@@ -102,6 +108,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/activate")
+    @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> activateUser(
             @PathVariable(name= "id", required=true) String publicId )
             throws NotFoundException, BusinessException{
@@ -112,6 +119,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/deactivate")
+    @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> deactivateUser(
             @PathVariable(name= "id", required=true) String publicId )
             throws NotFoundException, BusinessException{

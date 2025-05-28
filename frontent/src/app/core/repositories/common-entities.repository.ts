@@ -9,6 +9,10 @@ import {ApiControllers} from '@core/repositories/ApiControllers';
 })
 export class CommonEntitiesRepository extends BaseRepository{
 
+  /**
+   * Get all Roles
+   * @returns An observable with a list of all roles found
+   */
   public getAllRoles():Observable<Role[]> {
     return this.http.get<Role[]>(`${ApiControllers.ROLES}`);
   }

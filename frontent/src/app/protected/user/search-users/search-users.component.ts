@@ -13,6 +13,8 @@ import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.
 import {TableLazyLoadEvent} from 'primeng/table';
 import {SavedSearch, SearchType} from '@models/search.model';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
+import {UserService} from '../data/services/user.service';
+import {CommonEntitiesService} from '@core/services/common-entities.service';
 
 @Component({
   selector: 'app-search-users',
@@ -133,6 +135,8 @@ import {RequiredFieldsLabelComponent} from '@components/required-fields-label/re
 })
 export class SearchUsersComponent extends BaseComponent implements OnInit{
   protected fb= inject(FormBuilder);
+  protected userService = inject(UserService);
+  protected commonEntitiesService = inject(CommonEntitiesService);
 
   protected userRoles:SelectItem[]=[];
   protected userStatuses:SelectItem[]=[];
@@ -173,9 +177,7 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
   }
 
   private initUserRoles():void{
-    // this.userRoles=[
-    //   {label:''}
-    // ];
+    this.userRoles = this.commonEntitiesService.rolesAsSelectItems();
   }
 
   private initUserStatuses():void{

@@ -1,12 +1,13 @@
 import {patchState, signalStore, withComputed, withMethods, withProps, withState} from '@ngrx/signals';
 import {setError, setLoaded, setLoading, withCallState} from '@core/store/features/call-state.feature';
-import {inject} from '@angular/core';
+import {computed, inject} from '@angular/core';
 import {CommonEntitiesState, initialCommonEntitiesState} from '@core/store/common-entities/common-entities.state';
 import {CommonEntitiesRepository} from '@core/repositories/common-entities.repository';
 import {Role} from '@models/user.model';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
 import {pipe, switchMap, tap} from 'rxjs';
 import {tapResponse} from '@ngrx/operators';
+import {SelectItem} from 'primeng/api';
 
 export const CommonEntitiesStore = signalStore(
   { providedIn: 'root' },
@@ -18,7 +19,15 @@ export const CommonEntitiesStore = signalStore(
   withComputed(({
     roles
   })=>({
-
+    getRolesAsSelectItems: computed(()=>{
+      const roleArray = roles();
+      if(roleArray && Array.isArray(roleArray) && roleArray.length > 0){
+        return roleArray.map((role: Role) => {
+          return {label: role.nameLabel, value: role.name} as SelectItem;
+        });
+      }
+      return [];
+    })
   })),
   withMethods((state)=>{
     return ({

@@ -22,7 +22,7 @@ public class RoleController {
         this.roleService = roleService;
     }
 
-    @GetMapping("/roles")
+    @GetMapping
     public ResponseEntity<List<RoleDTO>> findAllRoles(){
         Set<Role> roles = new HashSet<>(roleService.findAll());
         List<RoleDTO> dtos = roleService.convertToDtoList(roles);

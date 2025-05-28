@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {CommonEntitiesService} from '@core/services/common-entities.service';
 
 @Component({
   selector: 'app-protected',
@@ -23,5 +24,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProtectedComponent {
+  protected commonEntitiesService = inject(CommonEntitiesService);
 
 }

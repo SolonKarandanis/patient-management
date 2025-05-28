@@ -12,10 +12,10 @@ export class CommonEntitiesService extends GenericService{
   public rolesAsSelectItems = this.commonEntitiesStore.getRolesAsSelectItems;
 
   /**
-   * Get all the Roles
+   * Initialize All Common Entities
    * @returns nothing
    */
-  public executeGetRoles():void{
-    this.commonEntitiesStore.getAllRoles();
+  public initializeCommonEntities():void{
+    this.commonEntitiesStore.initializeCommonEntities();
   }
 }

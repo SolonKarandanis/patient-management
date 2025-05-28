@@ -76,6 +76,7 @@ export interface UserSearchRequest extends SearchRequest {
   name: string|null|undefined;
   email: string|null|undefined;
   status: UserAccountStatus;
+  roleName: string;
 }
 
 export type SearchRequestCriteria = UserSearchRequest

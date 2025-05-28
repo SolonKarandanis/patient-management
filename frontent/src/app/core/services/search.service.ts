@@ -17,14 +17,13 @@ export class SearchService extends GenericService{
    */
   public toUpdateUserRequest(searchForm: FormGroup<UpdateUserForm>):UpdateUserRequest{
     const {email,firstName,username,lastName,role} = searchForm.value;
-    const request:UpdateUserRequest={
-      email:email!,
-      firstName:firstName!,
-      username:username!,
-      lastName:lastName!,
-      role:role!
-    }
-    return request;
+    return {
+      email: email!,
+      firstName: firstName!,
+      username: username!,
+      lastName: lastName!,
+      role: role!
+    };
   }
 
   /**
@@ -33,18 +32,18 @@ export class SearchService extends GenericService{
    * @returns A UserSearchRequest
    */
   public toUserSearchRequest(searchForm: FormGroup<UserSearchForm>):UserSearchRequest{
-    const {email,name,status,username,rows,first} = searchForm.value;
-    const request:UserSearchRequest={
+    const {email,name,status,role,username,rows,first} = searchForm.value;
+    return {
       email,
       name,
-      status:status!,
+      status: status!,
+      roleName:role!,
       username,
-      paging:{
-        limit:rows!,
-        page:first!
+      paging: {
+        limit: rows!,
+        page: first!
       }
-    }
-    return request;
+    };
   }
 
   /**
@@ -54,14 +53,13 @@ export class SearchService extends GenericService{
    */
   public toCreateUserRequest(searchForm: FormGroup<CreateUserForm>):CreateUserRequest{
     const {email,firstName,username,lastName,password,role} = searchForm.value;
-    const request:CreateUserRequest={
-      email:email!,
-      firstName:firstName!,
-      lastName:lastName!,
-      password:password!,
-      role:role!,
-      username:username!
+    return {
+      email: email!,
+      firstName: firstName!,
+      lastName: lastName!,
+      password: password!,
+      role: role!,
+      username: username!
     };
-    return request;
   }
 }

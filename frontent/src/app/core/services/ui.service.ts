@@ -1,25 +1,25 @@
-import { Injectable } from '@angular/core';
+import {Injectable, signal} from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UiService {
-  public screenLoaderVisible:boolean = false;
-  public loaderMessage:string|null = null;
+  public screenLoaderVisible= signal<boolean>(false);
+  public loaderMessage=signal<string|null>(null);
 
   constructor() { }
 
   public showScreenLoader():void{
-    this.screenLoaderVisible = true;
+    this.screenLoaderVisible.set(true);
   }
 
   public showScreenLoaderWithMessage(message:string):void{
-    this.screenLoaderVisible = true;
-    this.loaderMessage=message;
+    this.screenLoaderVisible.set(true);
+    this.loaderMessage.set(message);
   }
 
   public hideScreenLoader():void{
-    this.screenLoaderVisible = false;
-    this.loaderMessage=null;
+    this.screenLoaderVisible.set(false);
+    this.loaderMessage.set(null);
   }
 }

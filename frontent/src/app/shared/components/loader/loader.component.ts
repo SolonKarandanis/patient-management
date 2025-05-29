@@ -13,10 +13,12 @@ import {TranslatePipe} from '@ngx-translate/core';
   ],
   template: `
     <div class="on-top">
-        <p-block-ui [blocked]="uiService.screenLoaderVisible" >
-          <p-progressSpinner [style]="{width:'80px',height:'80px'}"></p-progressSpinner>
-          <div class="text-3xl text-white txt-shadow">
-            {{uiService.loaderMessage ?? 'SCREEN-LOADER.loading'| translate}}
+        <p-block-ui [blocked]="uiService.screenLoaderVisible()" >
+          <div class="flex flex-row place-content-center  absolute left-[50%] top-[50%]">
+            <p-progressSpinner [style]="{width:'80px',height:'50px'}"></p-progressSpinner>
+            <div class="text-3xl text-white txt-shadow">
+              {{uiService.loaderMessage() ?? 'SCREEN-LOADER.loading'| translate}}
+            </div>
           </div>
         </p-block-ui>
     </div>

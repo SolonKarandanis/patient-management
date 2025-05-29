@@ -60,8 +60,8 @@ export const CommonEntitiesStore = signalStore(
             commonEntitiesRepo.getAllRoles().pipe(
               tapResponse({
                 next:(result)=>{
-                  state.setRoles(result);
                   state.setLoadedState();
+                  state.setRoles(result);
                 },
                 error: (error:string) =>{
                   state.setErrorState(error);
@@ -79,11 +79,36 @@ export const CommonEntitiesStore = signalStore(
           }),
           switchMap(()=>{
             return forkJoin({
-              roles:commonEntitiesRepo.getAllRoles()
-            });
+              roles:commonEntitiesRepo.getAllRoles().pipe(
+                tapResponse({
+                  next:(result)=>{
+                    state.setRoles(result);
+                  },
+                  error: (error:string) =>{
+                    state.setErrorState(error);
+                  }
+                })
+              )
+            }).pipe(
+              tapResponse({
+                next:(result)=>{},
+                error: (error:string) =>{
+                  state.setErrorState(error);
+                },
+                complete:()=>{
+                  state.setLoadedState();
+                  uiService.hideScreenLoader();
+                }
+              })
+            );
           })
         )
       )
     })
   }),
+  withMethods((state)=>{
+    return ({
+
+    })
+  })
 );

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit, signal} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
 import {FormBuilder, FormControl, ReactiveFormsModule} from '@angular/forms';
@@ -106,7 +106,7 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
                 <p-float-label variant="on" class="w-full mb-3">
                   <p-select
                     formControlName="role"
-                    [options]="userRoles"
+                    [options]="commonEntitiesService.rolesAsSelectItems()"
                     [checkmark]="true"
                     [showClear]="true"
                     class="border-0 !bg-white text-sm shadow w-full"/>
@@ -138,13 +138,12 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
   protected userService = inject(UserService);
   protected commonEntitiesService = inject(CommonEntitiesService);
 
-  protected userRoles:SelectItem[]=[];
+  protected userRoles= signal<SelectItem[]>([])
   protected userStatuses:SelectItem[]=[];
   protected readonly searchType:SearchType = "search.type.users";
 
   ngOnInit(): void {
     this.initForm();
-    this.initUserRoles();
     this.initUserStatuses();
   }
 
@@ -174,10 +173,6 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
       rows:new FormControl(10,{nonNullable: true}),
       first: new FormControl(0,{nonNullable: true}),
     });
-  }
-
-  private initUserRoles():void{
-    this.userRoles = this.commonEntitiesService.rolesAsSelectItems();
   }
 
   private initUserStatuses():void{

@@ -51,26 +51,6 @@ export const CommonEntitiesStore = signalStore(
     const commonEntitiesRepo = state.commonEntitiesRepo;
     const uiService = state.uiService;
     return ({
-      getAllRoles: rxMethod<void>(
-        pipe(
-          tap(() => {
-            state.setLoadingState();
-          }),
-          switchMap(()=>
-            commonEntitiesRepo.getAllRoles().pipe(
-              tapResponse({
-                next:(result)=>{
-                  state.setLoadedState();
-                  state.setRoles(result);
-                },
-                error: (error:string) =>{
-                  state.setErrorState(error);
-                }
-              })
-            )
-          ),
-        )
-      ),
       initializeCommonEntities: rxMethod<void>(
         pipe(
           tap(() => {
@@ -106,9 +86,4 @@ export const CommonEntitiesStore = signalStore(
       )
     })
   }),
-  withMethods((state)=>{
-    return ({
-
-    })
-  })
 );

@@ -106,7 +106,7 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
                 <p-float-label variant="on" class="w-full mb-3">
                   <p-select
                     formControlName="role"
-                    [options]="userStatuses"
+                    [options]="userRoles"
                     [checkmark]="true"
                     [showClear]="true"
                     class="border-0 !bg-white text-sm shadow w-full"/>

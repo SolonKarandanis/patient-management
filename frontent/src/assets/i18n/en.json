@@ -105,6 +105,9 @@
     "part1": "All fields marked with an asterisk",
     "part2": "are mandatory"
   },
+  "SCREEN-LOADER": {
+    "loading": "loading"
+  },
   "FOOTER":{
     "LABELS":{
       "terms":"Terms",

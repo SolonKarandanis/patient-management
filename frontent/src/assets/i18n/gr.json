@@ -102,6 +102,9 @@
     "part1": "Όλα τα πεδία που σημειώνονται με αστερίσκο",
     "part2": "είναι υποχρεωτικά"
   },
+  "SCREEN-LOADER": {
+    "loading": "Φορτωση"
+  },
   "FOOTER":{
     "LABELS":{
       "terms":"Οροι",
@@ -162,19 +165,19 @@
     }
   },
   "SAVED-SEARCHES": {
-    "title": "Saved Searches",
+    "title": "Αποθηκευμένες αναζητήσεις",
     "CONFIRM-DIALOG": {
-      "header": "Delete Saved Search",
-      "message": "Do you really want to delete this saved search?"
+      "header": "Διαγραφή αποθηκευμένης αναζήτησης",
+      "message": "Θέλετε πραγματικά να διαγράψετε αυτήν την αποθηκευμένη αναζήτηση;"
     },
     "MESSAGES": {
-      "summary": "Save Search",
-      "detail-success": "Search was saved successfully"
+      "summary": "Αποθήκευση αναζήτησης",
+      "detail-success": "Η αναζήτηση αποθηκεύτηκε με επιτυχία"
     },
     "LABELS": {
-      "load-saved-search-placeholder": "Select a saved search",
-      "enter-title-first": "Enter a title first",
-      "with-title": "with title"
+      "load-saved-search-placeholder": "Επιλέξτε μια αποθηκευμένη αναζήτηση",
+      "enter-title-first": "Εισαγάγετε πρώτα έναν τίτλο",
+      "with-title": "με τίτλο"
     }
   }
 }

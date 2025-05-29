@@ -138,7 +138,6 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
   protected userService = inject(UserService);
   protected commonEntitiesService = inject(CommonEntitiesService);
 
-  protected userRoles= signal<SelectItem[]>([])
   protected userStatuses:SelectItem[]=[];
   protected readonly searchType:SearchType = "search.type.users";
 

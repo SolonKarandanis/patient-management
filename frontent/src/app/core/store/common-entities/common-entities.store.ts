@@ -5,7 +5,7 @@ import {CommonEntitiesState, initialCommonEntitiesState} from '@core/store/commo
 import {CommonEntitiesRepository} from '@core/repositories/common-entities.repository';
 import {Role} from '@models/user.model';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
-import {forkJoin, pipe, switchMap, tap} from 'rxjs';
+import {delay, forkJoin, pipe, switchMap, tap} from 'rxjs';
 import {tapResponse} from '@ngrx/operators';
 import {SelectItem} from 'primeng/api';
 import {UiService} from '@core/services/ui.service';
@@ -70,6 +70,7 @@ export const CommonEntitiesStore = signalStore(
                 })
               )
             }).pipe(
+              delay(500),
               tapResponse({
                 next:(result)=>{},
                 error: (error:string) =>{
@@ -79,7 +80,7 @@ export const CommonEntitiesStore = signalStore(
                   state.setLoadedState();
                   uiService.hideScreenLoader();
                 }
-              })
+              }),
             );
           })
         )

@@ -4,8 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import {LanguageService} from '@core/services/language.service';
 import {PrimeNG} from 'primeng/config';
 import {ToastModule} from 'primeng/toast';
-import {LoaderComponent} from '@components/loader/loader.component';
 import {routeTransition} from './route-transition';
+import {LoaderComponent} from '@components/loader/loader.component';
 
 @Component({
   selector: 'app-root',

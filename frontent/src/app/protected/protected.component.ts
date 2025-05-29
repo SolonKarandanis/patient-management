@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject} from '@angular/core';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
 
 @Component({
@@ -25,5 +25,11 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
 })
 export class ProtectedComponent {
   protected commonEntitiesService = inject(CommonEntitiesService);
+
+  constructor() {
+    effect(() => {
+      this.commonEntitiesService.initializeCommonEntities();
+    });
+  }
 
 }

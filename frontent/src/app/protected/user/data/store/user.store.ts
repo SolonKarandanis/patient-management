@@ -12,11 +12,13 @@ import {map, pipe, switchMap, tap} from 'rxjs';
 import {tapResponse} from '@ngrx/operators';
 import {HttpResponse} from '@angular/common/http';
 import {GenericFile} from '@models/file.model';
+import {setTableLoaded, setTableLoading, withSearchState} from '@core/store/features/search-state.feature';
 
 export const UserStore = signalStore(
   {providedIn:'root'},
   withState<UserState>(initialUserState),
   withCallState(),
+  withSearchState(),
   withProps(()=>({
     userRepo:inject(UserRepository),
     utilService:inject(UtilService),
@@ -41,8 +43,14 @@ export const UserStore = signalStore(
     setLoadingState(){
       patchState(state, setLoading());
     },
+    setTableLoadingState(){
+      patchState(state, setTableLoading());
+    },
     setLoadedState(){
       patchState(state, setLoaded());
+    },
+    setTableLoadedState(){
+      patchState(state, setTableLoaded());
     },
     setErrorState(error:string){
       patchState(state, setError(error));
@@ -75,6 +83,7 @@ export const UserStore = signalStore(
         pipe(
           tap(() => {
             state.setLoadingState();
+            state.setTableLoadingState();
           }),
           switchMap((request)=>
             userRepo.searchUsers(request).pipe(
@@ -82,9 +91,11 @@ export const UserStore = signalStore(
                 next:({list,countRows})=>{
                   state.setSearchResults(list,countRows);
                   state.setLoadedState();
+                  state.setTableLoadedState();
                 },
                 error: (error:string) =>{
                   state.setErrorState(error);
+                  state.setTableLoadedState();
                 }
               })
             )
@@ -95,6 +106,7 @@ export const UserStore = signalStore(
         pipe(
           tap(() => {
             state.setLoadingState();
+            state.setTableLoadingState();
           }),
           switchMap((request)=>
             userRepo.exportUsersToCsv(request).pipe(
@@ -108,9 +120,11 @@ export const UserStore = signalStore(
                 next:(fileData:GenericFile)=>{
                   utilService.triggerFileDownLoad(fileData.arrayBuffer, fileData.mimeType!, fileData.filename);
                   state.setLoadedState();
+                  state.setTableLoadedState();
                 },
                 error: (error:string) =>{
                   state.setErrorState(error);
+                  state.setTableLoadedState();
                 }
               })
             )

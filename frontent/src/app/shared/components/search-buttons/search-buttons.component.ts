@@ -34,6 +34,7 @@ import {NgTemplateOutlet} from '@angular/common';
             pButton
             pRipple
             type="submit"
+            severity="info"
             (click)="handleSearchClick($event)"
             [disabled]="isDisabled() || isLoading()"
             [loading]="isLoading()"
@@ -53,6 +54,7 @@ import {NgTemplateOutlet} from '@angular/common';
                   pButton
                   pRipple
                   type="button"
+                  severity="success"
                   [disabled]="!saveSearchTitle() || saveSearchLoading()"
                   [loading]="saveSearchLoading()"
                   pButtonIcon="pi pi-save"
@@ -82,7 +84,8 @@ import {NgTemplateOutlet} from '@angular/common';
           pButton
           pRipple
           type="button"
-          [disabled]="!saveSearchTitle() || saveSearchLoading()"
+          severity="danger"
+          [disabled]="saveSearchLoading()"
           [loading]="saveSearchLoading()"
           pButtonIcon="pi pi-refresh"
           (click)="handleResetClick($event)">

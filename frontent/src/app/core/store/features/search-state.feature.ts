@@ -1,5 +1,4 @@
-import {signalStoreFeature, withComputed, withState} from '@ngrx/signals';
-import {computed} from '@angular/core';
+import {signalStoreFeature, withState} from '@ngrx/signals';
 
 
 export type SearchState ={
@@ -15,13 +14,9 @@ export const initialSearchState: SearchState={
 export function withSearchState() {
   return signalStoreFeature(
     withState<SearchState>(initialSearchState),
-    withComputed(({criteriaCollapsed,tableLoading}) => ({
-      criteriaCollapsed: computed(() => criteriaCollapsed()=== true),
-      tableLoading: computed(() => tableLoading() == false),
-    }))
+
   );
 }
-
 
 export function setTableLoading(): SearchState {
   return { tableLoading: true,criteriaCollapsed:true};

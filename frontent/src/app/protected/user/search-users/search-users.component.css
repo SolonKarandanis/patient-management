@@ -1,3 +1,14 @@
 ::ng-deep .p-select-label{
   color: black !important;
 }
+
+::ng-deep .p-fieldset{
+  --tw-bg-opacity: 1;
+  background-color: rgba(226, 232, 240, var(--tw-bg-opacity)) !important;
+}
+
+::ng-deep .p-fieldset-legend{
+  --tw-bg-opacity: 1;
+  background-color: rgba(248, 250, 252, var(--tw-bg-opacity)) !important;
+  color: black !important;
+}

@@ -114,6 +114,10 @@
     }
   },
   "SEARCH": {
+    "COMMON": {
+      "search-criteria": "Κριτηρια Αναζητησης",
+      "search-results": "Αποτελεσματα Αναζητησης"
+    },
     "ERRORS": {
       "search-failed": "Αποτυχια Αναζητησης"
     }

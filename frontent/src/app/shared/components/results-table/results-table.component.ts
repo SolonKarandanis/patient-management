@@ -71,7 +71,7 @@ import {Tooltip} from 'primeng/tooltip';
               [showCurrentPageReport]="true"
               (onPageChange)="handleLazyLoad($event)">
             </p-paginator>
-            {{ 'GLOBAL.TABLES.RESULT_SUMMARY'  | translate: {totalRecords} }}
+            {{ 'GLOBAL.TABLES.result-summary'  | translate: {totalRecords} }}
           }
         </div>
         @if(showTableToolBar){
@@ -80,7 +80,7 @@ import {Tooltip} from 'primeng/tooltip';
             pRipple
             type="button"
             (click)="tableToolBarAction()">
-          {{ 'GLOBAL.TABLES.ACTIONS.ADD' | translate }}
+          {{ 'GLOBAL.TABLES.ACTIONS.add' | translate }}
           </button>
         }
       </ng-template>
@@ -112,7 +112,7 @@ import {Tooltip} from 'primeng/tooltip';
         let-columns>
         <tr>
           <td [attr.colspan]="columns.length">
-            {{ 'GLOBAL.TABLES.NO_RESULTS' | translate }}
+            {{ 'GLOBAL.TABLES.no-results' | translate }}
           </td>
         </tr>
       </ng-template>

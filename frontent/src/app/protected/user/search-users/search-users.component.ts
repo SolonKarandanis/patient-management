@@ -18,6 +18,8 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {User} from '@models/user.model';
 import {FieldsetModule} from 'primeng/fieldset';
 import {ResultsTableComponent} from '@components/results-table/results-table.component';
+import {ResultsTableFilterDirective} from '@directives/results-table-filter.directive';
+import {ResultsTablePaginatorDirective} from '@directives/results-table-paginator.directive';
 
 @Component({
   selector: 'app-search-users',
@@ -33,6 +35,8 @@ import {ResultsTableComponent} from '@components/results-table/results-table.com
     RequiredFieldsLabelComponent,
     FieldsetModule,
     ResultsTableComponent,
+    ResultsTableFilterDirective,
+    ResultsTablePaginatorDirective,
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
@@ -139,6 +143,8 @@ import {ResultsTableComponent} from '@components/results-table/results-table.com
           @if (hasSearched()){
             <div>
                 <app-results-table
+                    tableFilter
+                    tablePaginator
                     [colTitles]="tableColumns"
                     [tableItems]="results()"
                     [totalRecords]="totalCount()"

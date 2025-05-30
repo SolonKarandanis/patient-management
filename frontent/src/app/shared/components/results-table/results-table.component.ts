@@ -238,7 +238,7 @@ import {Tooltip} from 'primeng/tooltip';
           type="button"
           pButtonIcon="pi pi-file-export"
           (click)="overrideDefaultExport() ? exportParentFunction() : td.exportCSV()"
-          [disabled]="totalRecords() >= maxResultsCsvExport || loading || !tableItems || tableItems.length === 0"
+          [disabled]="totalRecords() >= maxResultsCsvExport || loading() || !tableItems() || tableItems().length === 0"
         >
           {{ (overrideDefaultExport() ? exportLabel() : exportButtonLabel) | translate }}
         </button>

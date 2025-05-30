@@ -189,7 +189,7 @@ export class UserService extends GenericService{
    * @returns The columns of the table
    */
   public getSearchUserTableColumns(): SearchTableColumn[] {
-    const translationPrefix: string = 'USER.SEARCH-USERS.RESULTS-TABLE.COLS';
+    const translationPrefix: string = 'USER.SEARCH.RESULTS-TABLE.COLS';
     return [
       {
         field: 'username',
@@ -199,7 +199,7 @@ export class UserService extends GenericService{
           preRoutes: ['/', 'users'],
           postRoutes: ['details'],
         },
-        dataFieldForRoute: 'id',
+        dataFieldForRoute: 'publicId',
       },
       {
         field: 'firstName',
@@ -215,6 +215,12 @@ export class UserService extends GenericService{
       {
         field: 'email',
         title: this.translateService.instant(`${translationPrefix}.email`),
+        isLink: false,
+        enableSorting: true,
+      },
+      {
+        field: 'statusLabel',
+        title: this.translateService.instant(`${translationPrefix}.status`),
         isLink: false,
         enableSorting: true,
       },

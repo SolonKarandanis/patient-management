@@ -99,9 +99,9 @@ export const UserStore = signalStore(
             userRepo.searchUsers(request).pipe(
               tapResponse({
                 next:({list,countRows})=>{
-                  state.setSearchResults(list,countRows);
                   state.setLoadedState();
                   state.setTableLoadedState();
+                  state.setSearchResults(list,countRows);
                 },
                 error: (error:string) =>{
                   state.setErrorState(error);

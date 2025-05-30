@@ -13,6 +13,7 @@ import {tapResponse} from '@ngrx/operators';
 import {HttpResponse} from '@angular/common/http';
 import {GenericFile} from '@models/file.model';
 import {setTableLoaded, setTableLoading, withSearchState} from '@core/store/features/search-state.feature';
+import {TranslateService} from '@ngx-translate/core';
 
 export const UserStore = signalStore(
   {providedIn:'root'},
@@ -23,6 +24,7 @@ export const UserStore = signalStore(
     userRepo:inject(UserRepository),
     utilService:inject(UtilService),
     httpUtil:inject(HttpUtil),
+    translate:inject(TranslateService),
   })),
   withComputed((
     {
@@ -77,7 +79,7 @@ export const UserStore = signalStore(
     },
   })),
   withMethods((state)=>{
-    const {userRepo,httpUtil,utilService} = state;
+    const {userRepo,httpUtil,utilService, translate} = state;
     return ({
       searchUsers: rxMethod<UserSearchRequest>(
         pipe(
@@ -96,6 +98,7 @@ export const UserStore = signalStore(
                 error: (error:string) =>{
                   state.setErrorState(error);
                   state.setTableLoadedState();
+                  utilService.showMessage("error",translate.instant('SEARCH.ERRORS.search-failed'))
                 }
               })
             )

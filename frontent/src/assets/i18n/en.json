@@ -116,6 +116,11 @@
       "privacy-choices":"Your privacy choices"
     }
   },
+  "SEARCH": {
+    "ERRORS": {
+      "search-failed": "Search failed"
+    }
+  },
   "LOGIN": {
     "title": "Login",
     "LABELS": {

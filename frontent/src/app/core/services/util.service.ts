@@ -169,7 +169,9 @@ export class UtilService{
     return this.convertDateObjectsToAppReportFormat(new Date(date));
   }
 
-  showMessage(severity:string, details:string|string[]):void{
+
+
+  showMessage(severity:SeverityMessage, details:string|string[]):void{
     if(!Array.isArray(details)){
       details =[details];
     }
@@ -257,3 +259,5 @@ export class UtilService{
 }
 
 type ValueAsStringOrNA = string | number | boolean | null | undefined;
+
+type SeverityMessage = 'error' | 'success' | 'warn';

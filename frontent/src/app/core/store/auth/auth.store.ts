@@ -9,6 +9,7 @@ import {tapResponse} from '@ngrx/operators';
 import {JwtUtil} from '@core/services/jwt-util.service';
 import {AuthRepository} from '@core/repositories/auth.repository';
 import {setError, setLoaded, setLoading, withCallState} from '@core/store/features/call-state.feature';
+import {UtilService} from '@core/services/util.service';
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
@@ -17,6 +18,7 @@ export const AuthStore = signalStore(
   withProps(()=>({
     jwtUtil:inject(JwtUtil),
     authRepo:inject(AuthRepository),
+    utilService:inject(UtilService),
   })),
   withComputed((
     {

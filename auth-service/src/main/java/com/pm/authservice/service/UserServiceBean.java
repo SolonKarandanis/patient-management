@@ -56,7 +56,7 @@ public class UserServiceBean implements UserService{
 
 
     @Override
-    public UserDTO convertToDTO(User user) {
+    public UserDTO convertToDTO(User user, Boolean withRoles) {
         UserDTO dto = new UserDTO();
         dto.setUsername(user.getUsername());
         dto.setPassword(user.getPassword());
@@ -65,7 +65,9 @@ public class UserServiceBean implements UserService{
         dto.setEmail(user.getEmail());
         dto.setPublicId(user.getPublicId().toString());
         dto.setStatus(user.getStatus().toString());
-        dto.setRoles(roleService.convertToDtoList(user.getRoles()));
+        if(withRoles){
+            dto.setRoles(roleService.convertToDtoList(user.getRoles()));
+        }
         return dto;
     }
 
@@ -93,12 +95,12 @@ public class UserServiceBean implements UserService{
     }
 
     @Override
-    public List<UserDTO> convertToDTOList(List<User> userList) {
+    public List<UserDTO> convertToDTOList(List<User> userList, Boolean withRoles) {
         if(CollectionUtils.isEmpty(userList)){
             return Collections.emptyList();
         }
         return userList.stream()
-                .map(this::convertToDTO)
+                .map(user->convertToDTO(user,withRoles))
                 .toList();
     }
 
@@ -149,7 +151,7 @@ public class UserServiceBean implements UserService{
         List<User> users=StreamSupport.stream(userRepository.findAll(predicate).spliterator(), false).toList();
         List<UserDTO> results=new ArrayList<>();
         for(User user: users){
-            UserDTO dto = convertToDTO(user);
+            UserDTO dto = convertToDTO(user,true);
             results.add(dto);
         }
         return results;

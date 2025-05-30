@@ -33,4 +33,5 @@ public interface UserRepository extends JpaRepository<User,Integer> ,
     @EntityGraph(value =  User.GRAPH_USERS_ROLES,type = EntityGraph.EntityGraphType.FETCH)
     @Query("SELECT u FROM User u ")
     List<User> findUsersWithRoles(Specification<User> spec);
+
 }

@@ -12,9 +12,9 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface UserService {
-    public UserDTO convertToDTO(User user);
+    public UserDTO convertToDTO(User user,Boolean withRoles);
     public User convertToEntity(UserDTO dto);
-    public List<UserDTO> convertToDTOList(List<User> userList);
+    public List<UserDTO> convertToDTOList(List<User> userList, Boolean withRoles);
     public User findById(Integer id) throws NotFoundException;
     public User findByPublicId(String publicId)throws NotFoundException;
     public User findByEmail(String email)throws NotFoundException;

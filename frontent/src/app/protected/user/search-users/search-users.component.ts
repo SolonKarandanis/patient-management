@@ -149,6 +149,7 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
   protected criteriaCollapsed=this.userService.criteriaCollapsed;
   protected tableLoading=this.userService.tableLoading;
   protected loading = this.userService.isLoading;
+  protected hasSearched = this.userService.hasSearched;
 
   protected userStatuses:SelectItem[]=[];
   protected readonly searchType:SearchType = "search.type.users";
@@ -164,6 +165,7 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
 
   protected resetForm():void{
     this.form.reset();
+    this.userService.resetSearchState();
     this.results.set([]);
   }
 

@@ -22,6 +22,7 @@ export class UserService extends GenericService{
   public userId = this.userStore.getUserId;
   public isLoading = this.userStore.loading;
   public criteriaCollapsed = this.userStore.criteriaCollapsed;
+  public hasSearched = this.userStore.hasSearched;
   public tableLoading = this.userStore.tableLoading;
   public searchResults = this.userStore.searchResults;
   public totalCount = this.userStore.totalCount;
@@ -100,6 +101,10 @@ export class UserService extends GenericService{
   public executeSearchUsers(searchForm: FormGroup<UserSearchForm>):void{
     const request = this.searchService.toUserSearchRequest(searchForm);
     this.userStore.searchUsers(request);
+  }
+
+  public resetSearchState():void{
+    this.userStore.resetSearchState();
   }
 
   /**

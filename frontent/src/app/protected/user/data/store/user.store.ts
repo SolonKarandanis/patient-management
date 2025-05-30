@@ -12,7 +12,12 @@ import {map, pipe, switchMap, tap} from 'rxjs';
 import {tapResponse} from '@ngrx/operators';
 import {HttpResponse} from '@angular/common/http';
 import {GenericFile} from '@models/file.model';
-import {setTableLoaded, setTableLoading, withSearchState} from '@core/store/features/search-state.feature';
+import {
+  resetSearchState,
+  setTableLoaded,
+  setTableLoading,
+  withSearchState
+} from '@core/store/features/search-state.feature';
 import {TranslateService} from '@ngx-translate/core';
 
 export const UserStore = signalStore(
@@ -56,6 +61,9 @@ export const UserStore = signalStore(
     },
     setErrorState(error:string){
       patchState(state, setError(error));
+    },
+    resetSearchState(){
+      patchState(state, resetSearchState());
     },
     setSearchResults(searchResults:User[],totalCount:number){
       patchState(state,{

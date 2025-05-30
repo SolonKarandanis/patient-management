@@ -252,7 +252,7 @@ public class UserServiceBean implements UserService{
             builder.and(user.firstName.eq(name).or(user.lastName.eq(name)));
         }
         if(StringUtils.hasLength(status)){
-            builder.and(user.status.eq(AccountStatus.valueOf(status)));
+            builder.and(user.status.eq(AccountStatus.fromValue(status)));
         }
         if(StringUtils.hasLength(roleName)){
             Role role = roleService.findByName(roleName);

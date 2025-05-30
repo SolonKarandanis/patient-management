@@ -54,7 +54,8 @@
       }
     },
     "TABLES": {
-      "no-results": "No results found"
+      "no-results": "No results found",
+      "result-summary": "Result Summary"
     },
     "TOOLTIPS": {
       "no-image-found": "No image found",

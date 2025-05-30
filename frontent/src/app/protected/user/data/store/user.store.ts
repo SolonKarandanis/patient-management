@@ -61,15 +61,11 @@ export const UserStore = signalStore(
       patchState(state,{
         searchResults,
         totalCount,
-        errorMessage:null,
-        showError:false,
       })
     },
     setSelectedUser(selectedUser:User| null){
       patchState(state,{
         selectedUser,
-        errorMessage:null,
-        showError:false,
       })
     },
     setCreatedUserId(createdUserId:string | null){

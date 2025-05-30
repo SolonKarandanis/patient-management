@@ -21,6 +21,8 @@ export class UserService extends GenericService{
   public user = this.userStore.getUser;
   public userId = this.userStore.getUserId;
   public isLoading = this.userStore.loading;
+  public criteriaCollapsed = this.userStore.criteriaCollapsed;
+  public tableLoading = this.userStore.tableLoading;
   public searchResults = this.userStore.searchResults;
   public totalCount = this.userStore.totalCount;
   public createdUserId = this.userStore.createdUserId;

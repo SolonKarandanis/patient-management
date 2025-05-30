@@ -117,6 +117,10 @@
     }
   },
   "SEARCH": {
+    "COMMON": {
+      "search-criteria": "Search Criteria",
+      "search-results": "Search Results"
+    },
     "ERRORS": {
       "search-failed": "Search failed"
     }

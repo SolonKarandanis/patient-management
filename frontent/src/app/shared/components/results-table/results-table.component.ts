@@ -38,7 +38,7 @@ import {Tooltip} from 'primeng/tooltip';
       [lazy]="lazy()"
       [lazyLoadOnInit]="false"
       [(selection)]="selectedItems"
-      [loading]="loading"
+      [loading]="loading()"
       [rowTrackBy]="trackById"
       [rowHover]="true"
       [paginator]="showTablePaginator"
@@ -246,7 +246,7 @@ import {Tooltip} from 'primeng/tooltip';
           pButton
           pRipple
           type="button"
-          pButtonIcon="{{ selectButtonIcon }}"
+          pButtonIcon="pi pi-check"
           (click)="handleSelectItemsClicked()"
           [disabled]="!selectedItems || selectedItems.length === 0"
         >
@@ -283,7 +283,6 @@ export class ResultsTableComponent {
   exportFunction = input<Function>();
   callbackFunctionToolBar = input<Function>();
   selectButtonLabelKey = input('GLOBAL.BUTTONS.select');
-  selectButtonIcon = input('pi pi-check');
   overrideDefaultExport = input(false);
 
   tableStateChanged = output<TableLazyLoadEvent>();

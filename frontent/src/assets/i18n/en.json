@@ -173,6 +173,15 @@
         "name": "First/Last name",
         "status": "Status",
         "role": "Role"
+      },
+      "RESULTS-TABLE": {
+        "COLS": {
+          "username": "Username",
+          "firstName": "First Name",
+          "lastName": "Last Name",
+          "email": "Email",
+          "status": "Status"
+        }
       }
     }
   },

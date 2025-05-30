@@ -170,6 +170,15 @@
         "name": "Ονομα/Επώνυμο",
         "status": "Κατάσταση χρήστη",
         "role": "Ρόλος"
+      },
+      "RESULTS-TABLE": {
+        "COLS": {
+          "username": "Όνομα χρήστη",
+          "firstName": "Ονομα",
+          "lastName": "Επώνυμο",
+          "email": "Email",
+          "status": "Κατάσταση χρήστη"
+        }
       }
     }
   },

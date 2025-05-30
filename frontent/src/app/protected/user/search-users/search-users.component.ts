@@ -11,12 +11,13 @@ import {SelectItem} from 'primeng/api';
 import {Select} from 'primeng/select';
 import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.component';
 import {TableLazyLoadEvent} from 'primeng/table';
-import {SavedSearch, SearchType} from '@models/search.model';
+import {SavedSearch, SearchTableColumn, SearchType} from '@models/search.model';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
 import {UserService} from '../data/services/user.service';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {User} from '@models/user.model';
 import {FieldsetModule} from 'primeng/fieldset';
+import {ResultsTableComponent} from '@components/results-table/results-table.component';
 
 @Component({
   selector: 'app-search-users',
@@ -31,6 +32,7 @@ import {FieldsetModule} from 'primeng/fieldset';
     SearchButtonsComponent,
     RequiredFieldsLabelComponent,
     FieldsetModule,
+    ResultsTableComponent,
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
@@ -133,6 +135,20 @@ import {FieldsetModule} from 'primeng/fieldset';
                                   (resetClicked)="resetForm()"/>
             </form>
           </p-fieldset>
+
+          @if (hasSearched()){
+            <div>
+                <app-results-table
+                    [colTitles]="tableColumns"
+                    [tableItems]="results()"
+                    [totalRecords]="totalCount()"
+                    [resultsPerPage]="form.controls['rows'].value"
+                    [first]="form.controls['first'].value"
+                    [lazy]="true"
+                    [loading]="tableLoading()"
+                />
+            </div>
+          }
         </div>
       </div>
     </div>
@@ -145,7 +161,8 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
   private userService = inject(UserService);
   protected commonEntitiesService = inject(CommonEntitiesService);
 
-  protected results=signal<User[]>([]);
+  protected results=this.userService.searchResults;
+  protected totalCount=this.userService.totalCount;
   protected criteriaCollapsed=this.userService.criteriaCollapsed;
   protected tableLoading=this.userService.tableLoading;
   protected loading = this.userService.isLoading;
@@ -153,9 +170,11 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
 
   protected userStatuses:SelectItem[]=[];
   protected readonly searchType:SearchType = "search.type.users";
+  protected tableColumns:SearchTableColumn[]=[];
 
   ngOnInit(): void {
     this.initForm();
+    this.initTableColumns();
     this.initUserStatuses();
   }
 
@@ -166,7 +185,6 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
   protected resetForm():void{
     this.form.reset();
     this.userService.resetSearchResults();
-    this.results.set([]);
   }
 
   protected handleTableLazyLoad(event: TableLazyLoadEvent): void{
@@ -195,6 +213,10 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
       {label:'Inactive',value:'account.inactive'},
       {label:'Deleted',value:'account.deleted'}
     ];
+  }
+
+  private initTableColumns():void{
+    this.tableColumns= this.userService.getSearchUserTableColumns();
   }
 
 }

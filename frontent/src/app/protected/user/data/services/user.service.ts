@@ -103,8 +103,8 @@ export class UserService extends GenericService{
     this.userStore.searchUsers(request);
   }
 
-  public resetSearchState():void{
-    this.userStore.resetSearchState();
+  public resetSearchResults():void{
+    this.userStore.resetSearchResults();
   }
 
   /**

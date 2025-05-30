@@ -62,8 +62,12 @@ export const UserStore = signalStore(
     setErrorState(error:string){
       patchState(state, setError(error));
     },
-    resetSearchState(){
+    resetSearchResults(){
       patchState(state, resetSearchState());
+      patchState(state,{
+        searchResults:[],
+        totalCount:0,
+      });
     },
     setSearchResults(searchResults:User[],totalCount:number){
       patchState(state,{

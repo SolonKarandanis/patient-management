@@ -165,7 +165,7 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
 
   protected resetForm():void{
     this.form.reset();
-    this.userService.resetSearchState();
+    this.userService.resetSearchResults();
     this.results.set([]);
   }
 

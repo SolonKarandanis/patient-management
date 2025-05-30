@@ -57,7 +57,7 @@ public class UserController {
     @Translate(path = "list[*].status", targetProperty = "statusLabel")
     public ResponseEntity<SearchResults<UserDTO>> findAllUsers(@RequestBody @Valid UsersSearchRequestDTO searchObj){
         Page<User> results = usersService.searchUsers(searchObj);
-        List<UserDTO> dtos=usersService.convertToDTOList(results.getContent());
+        List<UserDTO> dtos=usersService.convertToDTOList(results.getContent(),false);
         return ResponseEntity.ok().body(new SearchResults<UserDTO>(Math.toIntExact(results.getTotalElements()), dtos));
     }
 
@@ -68,7 +68,7 @@ public class UserController {
             throws NotFoundException {
         User user = usersService.findByPublicId(publicId);
         log.info("UserController --> viewUser --> username: {}", user.getUsername());
-        return ResponseEntity.ok(usersService.convertToDTO(user));
+        return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
 
     @GetMapping(value="/account")
@@ -78,7 +78,7 @@ public class UserController {
         UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
         User user = usersService.findByPublicId(dto.getPublicId());
         log.info("UserController --> getUserByToken --> username: {}", user.getUsername());
-        return ResponseEntity.ok(usersService.convertToDTO(user));
+        return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
 
     @NoAuthentication
@@ -88,7 +88,7 @@ public class UserController {
             throws BusinessException{
         log.info("UserController->registerUser->RequestBody: {}" , user);
         User userSaved=usersService.registerUser(user, applicationUrl(request));
-        return ResponseEntity.ok(usersService.convertToDTO(userSaved));
+        return ResponseEntity.ok(usersService.convertToDTO(userSaved,true));
     }
 
     @PutMapping("/{id}")
@@ -98,7 +98,7 @@ public class UserController {
             @RequestBody @Valid UpdateUserDTO user)throws NotFoundException{
         log.info("UserController->updateUser->RequestBody: {}" , user);
         User userSaved=usersService.updateUser(publicId,user);
-        return ResponseEntity.ok(usersService.convertToDTO(userSaved));
+        return ResponseEntity.ok(usersService.convertToDTO(userSaved,true));
     }
 
     @DeleteMapping("/{id}")
@@ -117,7 +117,7 @@ public class UserController {
         log.info("UserController->activateUser->publicId: {}" , publicId);
         User user = usersService.findByPublicId(publicId);
         user = usersService.activateUser(user);
-        return ResponseEntity.ok(usersService.convertToDTO(user));
+        return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
 
     @PutMapping("/{id}/deactivate")
@@ -128,7 +128,7 @@ public class UserController {
         log.info("UserController->deactivateUser->publicId: {}" , publicId);
         User user = usersService.findByPublicId(publicId);
         user = usersService.deactivateUser(user);
-        return ResponseEntity.ok(usersService.convertToDTO(user));
+        return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
 
     @GetMapping("/verifyEmail")

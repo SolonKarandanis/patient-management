@@ -15,6 +15,7 @@ import {SavedSearch, SearchType} from '@models/search.model';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
 import {UserService} from '../data/services/user.service';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
+import {User} from '@models/user.model';
 
 @Component({
   selector: 'app-search-users',
@@ -135,8 +136,13 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
 })
 export class SearchUsersComponent extends BaseComponent implements OnInit{
   protected fb= inject(FormBuilder);
-  protected userService = inject(UserService);
+  private userService = inject(UserService);
   protected commonEntitiesService = inject(CommonEntitiesService);
+
+  protected results=signal<User[]>([]);
+  protected criteriaCollapsed=signal<boolean>(false);
+  protected tableLoading=signal<boolean>(false);
+  protected loading = this.userService.isLoading;
 
   protected userStatuses:SelectItem[]=[];
   protected readonly searchType:SearchType = "search.type.users";
@@ -151,7 +157,8 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
   }
 
   protected resetForm():void{
-
+    this.form.reset();
+    this.results.set([]);
   }
 
   protected handleTableLazyLoad(event: TableLazyLoadEvent): void{

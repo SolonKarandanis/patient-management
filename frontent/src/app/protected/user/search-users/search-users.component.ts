@@ -159,7 +159,7 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
   }
 
   protected search():void{
-
+    this.userService.executeSearchUsers(this.form);
   }
 
   protected resetForm():void{

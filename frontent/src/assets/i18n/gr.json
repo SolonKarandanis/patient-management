@@ -113,6 +113,11 @@
       "privacy-choices":"Η επιλογή απορρήτου σας"
     }
   },
+  "SEARCH": {
+    "ERRORS": {
+      "search-failed": "Αποτυχια Αναζητησης"
+    }
+  },
   "LOGIN": {
     "title": "Σύνδεση",
     "LABELS": {

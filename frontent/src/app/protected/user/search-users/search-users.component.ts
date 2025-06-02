@@ -141,7 +141,7 @@ import {ResultsTablePaginatorDirective} from '@directives/results-table-paginato
           </p-fieldset>
 
           @if (hasSearched()){
-            <div>
+            <div class="mt-6">
                 <app-results-table
                     tableFilter
                     tablePaginator

@@ -89,3 +89,9 @@
   color: black !important;
 }
 
+::ng-deep .p-paginator-rpp-dropdown{
+  --tw-bg-opacity: 1;
+  background-color: rgba(226, 232, 240, var(--tw-bg-opacity)) !important;
+  color: black !important;
+}
+

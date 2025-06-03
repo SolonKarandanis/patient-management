@@ -15,7 +15,6 @@ import {SavedSearch, SearchTableColumn, SearchType} from '@models/search.model';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
 import {UserService} from '../data/services/user.service';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
-import {User} from '@models/user.model';
 import {FieldsetModule} from 'primeng/fieldset';
 import {ResultsTableComponent} from '@components/results-table/results-table.component';
 import {ResultsTableFilterDirective} from '@directives/results-table-filter.directive';

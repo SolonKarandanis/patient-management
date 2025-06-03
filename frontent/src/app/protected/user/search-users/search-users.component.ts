@@ -20,6 +20,7 @@ import {ResultsTableComponent} from '@components/results-table/results-table.com
 import {ResultsTableFilterDirective} from '@directives/results-table-filter.directive';
 import {ResultsTablePaginatorDirective} from '@directives/results-table-paginator.directive';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
+import {fadeAnimation} from '@shared/animations/fadeAnimation';
 
 @Component({
   selector: 'app-search-users',
@@ -141,7 +142,7 @@ import {FieldsetComponent} from '@components/fieldset/fieldset.component';
             </form>
           </app-fieldset>
           @if (hasSearched()){
-            <div class="mt-6">
+            <div @fadeAnimation class="mt-6">
                 <app-results-table
                     tableFilter
                     tablePaginator
@@ -160,6 +161,7 @@ import {FieldsetComponent} from '@components/fieldset/fieldset.component';
     </div>
   `,
   styleUrl: './search-users.component.css',
+  animations:[fadeAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchUsersComponent extends BaseComponent implements OnInit{

@@ -19,3 +19,10 @@ const listAnimation = trigger('listAnimation', [
     )
   ])
 ]);
+
+
+// <ul [@listAnimation]="items.length" class="items">
+// <li *ngFor="let item of items" class="item">
+//   Item {{ item }}
+// </li>
+// </ul>

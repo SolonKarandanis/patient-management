@@ -87,15 +87,16 @@ import {Tooltip} from 'primeng/tooltip';
       <ng-template
         pTemplate="header"
         let-columns>
-        <tr>
+        <tr >
           @for(colTitle of columns; track colTitle.field){
             <th [pSortableColumn]="colTitle.enableSorting ? colTitle.field : null"
                 [pSortableColumnDisabled]="!colTitle.enableSorting"
                 [pTooltip]="colTitle.headerTooltip"
                 [tooltipDisabled]="!colTitle.headerTooltip"
-                [style]="colTitle.style">
+                [style]="colTitle.style"
+                class="bg-blueGray-100">
               @if (!colTitle.isCheckbox){
-                <span>{{ colTitle.title }}</span>
+                <span >{{ colTitle.title }}</span>
               }
               @else{
                 <span><p-tableHeaderCheckbox></p-tableHeaderCheckbox></span>

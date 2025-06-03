@@ -19,6 +19,7 @@ import {FieldsetModule} from 'primeng/fieldset';
 import {ResultsTableComponent} from '@components/results-table/results-table.component';
 import {ResultsTableFilterDirective} from '@directives/results-table-filter.directive';
 import {ResultsTablePaginatorDirective} from '@directives/results-table-paginator.directive';
+import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 
 @Component({
   selector: 'app-search-users',
@@ -36,6 +37,7 @@ import {ResultsTablePaginatorDirective} from '@directives/results-table-paginato
     ResultsTableComponent,
     ResultsTableFilterDirective,
     ResultsTablePaginatorDirective,
+    FieldsetComponent,
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
@@ -45,9 +47,9 @@ import {ResultsTablePaginatorDirective} from '@directives/results-table-paginato
       <app-required-fields-label></app-required-fields-label>
       <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
         <div role="search">
-          <p-fieldset legend="{{ 'SEARCH.COMMON.search-criteria' | translate }}"
-            [toggleable]="true"
-            [collapsed]="criteriaCollapsed()" >
+          <app-fieldset legend="{{ 'SEARCH.COMMON.search-criteria' | translate }}"
+                        [toggleable]="true"
+                        [collapsed]="criteriaCollapsed()">
             <form [formGroup]="form">
               <div class="grid gap-6 mt-6 md:grid-cols-3">
                 <div class="mb-6">
@@ -137,8 +139,7 @@ import {ResultsTablePaginatorDirective} from '@directives/results-table-paginato
                                   (searchClicked)="search()"
                                   (resetClicked)="resetForm()"/>
             </form>
-          </p-fieldset>
-
+          </app-fieldset>
           @if (hasSearched()){
             <div class="mt-6">
                 <app-results-table

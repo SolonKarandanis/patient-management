@@ -117,4 +117,12 @@ const SearchTypeEnum = {
 
 export type SearchType = (typeof SearchTypeEnum)[keyof typeof SearchTypeEnum];
 
+const SearchModesEnum = {
+  NORMAL: "normal",
+  SELECTION: "selection",
+  NO_BUTTONS: "no-buttons",
+} as const satisfies Record<string, string>;
+
+export type SearchModes = (typeof SearchModesEnum)[keyof typeof SearchModesEnum];
+
 

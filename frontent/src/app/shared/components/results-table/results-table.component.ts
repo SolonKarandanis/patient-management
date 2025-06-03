@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, inject, input, output} from '@angular/core';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {BaseModel} from '@models/base.model';
-import {SearchTableColumn} from '@models/search.model';
+import {SearchModes, SearchTableColumn} from '@models/search.model';
 import {UtilService} from '@core/services/util.service';
 import {Paginator} from 'primeng/paginator';
 import {TranslatePipe} from '@ngx-translate/core';
@@ -233,26 +233,31 @@ import {Tooltip} from 'primeng/tooltip';
       </ng-template>
       <ng-template
         pTemplate="summary">
-        <button
-          pButton
-          pRipple
-          type="button"
-          pButtonIcon="pi pi-file-export"
-          (click)="overrideDefaultExport() ? exportParentFunction() : td.exportCSV()"
-          [disabled]="totalRecords() >= maxResultsCsvExport || loading() || !tableItems() || tableItems().length === 0"
-        >
-          {{ (overrideDefaultExport() ? exportLabel() : exportButtonLabel) | translate }}
-        </button>
-        <button
-          pButton
-          pRipple
-          type="button"
-          pButtonIcon="pi pi-check"
-          (click)="handleSelectItemsClicked()"
-          [disabled]="!selectedItems || selectedItems.length === 0"
-        >
-          {{ selectButtonLabelKey() | translate }}
-        </button>
+        @if(mode() !== 'no-buttons'){
+          <div class="flex gap-5 mt-4">
+            <button
+              pButton
+              pRipple
+              type="button"
+              pButtonIcon="pi pi-file-export"
+              severity="info"
+              (click)="overrideDefaultExport() ? exportParentFunction() : td.exportCSV()"
+              [disabled]="totalRecords() >= maxResultsCsvExport || loading() || !tableItems() || tableItems().length === 0"
+            >
+              {{ (overrideDefaultExport() ? exportLabel() : exportButtonLabel) | translate }}
+            </button>
+            <button
+              pButton
+              pRipple
+              type="button"
+              pButtonIcon="pi pi-check"
+              (click)="handleSelectItemsClicked()"
+              [disabled]="!selectedItems || selectedItems.length === 0"
+            >
+              {{ selectButtonLabelKey() | translate }}
+            </button>
+          </div>
+        }
       </ng-template>
     </p-table>
   `,
@@ -271,7 +276,7 @@ export class ResultsTableComponent {
   protected exportButtonLabel: string = 'GLOBAL.BUTTONS.export-to-csv';
   protected maxResultsCsvExport = 100;
 
-
+  mode = input<SearchModes>("normal");
   tableItems = input.required<BaseModel[]>();
   colTitles = input.required<SearchTableColumn[]>();
   totalRecords = input.required<number>();

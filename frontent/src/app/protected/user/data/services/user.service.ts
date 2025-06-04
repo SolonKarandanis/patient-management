@@ -143,6 +143,8 @@ export class UserService extends GenericService{
       role: new FormControl(null),
       rows:new FormControl(10,{nonNullable: true}),
       first: new FormControl(0,{nonNullable: true}),
+      sortField: new FormControl('',{nonNullable: true}),
+      sortOrder: new FormControl('ASC',{nonNullable: true})
     })
   }
 

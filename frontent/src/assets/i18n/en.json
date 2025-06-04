@@ -166,6 +166,11 @@
     }
   },
   "USER":{
+    "STATUSES":{
+      "active": "Active",
+      "inactive": "Inactive",
+      "deleted": "Deleted"
+    },
     "SEARCH":{
       "title": "Search Users",
       "LABELS": {

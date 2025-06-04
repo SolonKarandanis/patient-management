@@ -11,7 +11,13 @@ import {SelectItem} from 'primeng/api';
 import {Select} from 'primeng/select';
 import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.component';
 import {TableLazyLoadEvent} from 'primeng/table';
-import {SavedSearch, SearchTableColumn, SearchType} from '@models/search.model';
+import {
+  SavedSearch,
+  SearchRequestCriteria,
+  SearchTableColumn,
+  SearchType,
+  UserSearchRequest
+} from '@models/search.model';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
 import {UserService} from '../data/services/user.service';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
@@ -202,8 +208,21 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
     this.search();
   }
 
-  protected handleLoadSavedSearch(event: SavedSearch):void{
+  protected handleLoadSavedSearch(selectedSavedSearch: SavedSearch):void{
+    const {criteria} = selectedSavedSearch;
+    this.loadSavedSearch(criteria);
+  }
 
+  private loadSavedSearch(searchRequest:SearchRequestCriteria):void{
+    const {email,name,status,roleName,username} = searchRequest as UserSearchRequest;
+    this.form.patchValue({
+      email,
+      status,
+      roleName,
+      username,
+      name
+    });
+    this.search();
   }
 
   private initForm():void{

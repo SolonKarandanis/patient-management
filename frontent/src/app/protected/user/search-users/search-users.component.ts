@@ -160,6 +160,8 @@ import {fadeAnimation} from '@shared/animations/fadeAnimation';
                     [first]="form.controls['first'].value"
                     [lazy]="true"
                     [loading]="tableLoading()"
+                    [overrideDefaultExport]="true"
+                    [exportFunction]="exportReport.bind(this)"
                 />
             </div>
           }
@@ -200,6 +202,10 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
   protected resetForm():void{
     this.form.reset();
     this.userService.resetSearchResults();
+  }
+
+  protected exportReport():void{
+    this.userService.exportUsersToCsv(this.form);
   }
 
   protected handleTableLazyLoad(event: TableLazyLoadEvent): void{

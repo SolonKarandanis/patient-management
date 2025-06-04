@@ -103,6 +103,20 @@ export class UserService extends GenericService{
     this.userStore.searchUsers(request);
   }
 
+  /**
+   * Export users to csv
+   * @param searchForm The search criteria
+   * @returns nothing
+   */
+  public exportUsersToCsv(searchForm: FormGroup<UserSearchForm>):void{
+    const request = this.searchService.toUserSearchRequest(searchForm);
+    this.userStore.exportUsersToCsv(request);
+  }
+
+  /**
+   * Reset search results
+   * @returns nothing
+   */
   public resetSearchResults():void{
     this.userStore.resetSearchResults();
   }

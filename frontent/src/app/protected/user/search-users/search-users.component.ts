@@ -205,6 +205,7 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
   }
 
   protected exportReport():void{
+    console.log("exportReport");
     this.userService.exportUsersToCsv(this.form);
   }
 

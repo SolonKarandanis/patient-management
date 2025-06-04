@@ -317,7 +317,10 @@ export class ResultsTableComponent {
   }
 
   protected exportParentFunction(): void {
-    this.exportFunction();
+    const suppliedFunction = this.exportFunction();
+    if(suppliedFunction){
+      suppliedFunction();
+    }
   }
 
   protected getFormattedDate(dateStr: string | null): string {

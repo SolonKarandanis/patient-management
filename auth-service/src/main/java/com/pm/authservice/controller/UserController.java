@@ -36,7 +36,7 @@ public class UserController {
         this.usersService = usersService;
     }
 
-    @GetMapping("/export/csv")
+    @PostMapping("/export/csv")
     public void exportUsersToCsv(
             @RequestBody @Valid UsersSearchRequestDTO searchObj,
             HttpServletResponse response) throws Exception{

@@ -163,6 +163,11 @@
     }
   },
   "USER":{
+    "STATUSES":{
+      "active": "Ενεργός",
+      "inactive": "Ανενεργός",
+      "deleted": "Διαγραμμένος"
+    },
     "SEARCH":{
       "title": "Αναζήτηση χρηστών",
       "LABELS": {

@@ -1,6 +1,7 @@
 import { FormControl } from "@angular/forms";
 import {UserAccountStatus} from '@models/user.model';
 import {RolesConstants} from '@core/guards/SecurityConstants';
+import {SortDirection} from '@models/search.model';
 
 
 export interface UserSearchForm{
@@ -11,6 +12,8 @@ export interface UserSearchForm{
   role:FormControl<RolesConstants|null>
   rows:FormControl<number>;
   first:FormControl<number>;
+  sortField:FormControl<string>;
+  sortOrder:FormControl<SortDirection>;
 }
 
 export interface UpdateUserForm{

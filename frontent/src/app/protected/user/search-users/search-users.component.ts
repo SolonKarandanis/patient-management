@@ -150,6 +150,7 @@ import {fadeAnimation} from '@shared/animations/fadeAnimation';
                     [tableItems]="results()"
                     [totalRecords]="totalCount()"
                     [resultsPerPage]="form.controls['rows'].value"
+                    (tableStateChanged)="handleTableLazyLoad($event)"
                     [first]="form.controls['first'].value"
                     [lazy]="true"
                     [loading]="tableLoading()"
@@ -196,7 +197,9 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
   }
 
   protected handleTableLazyLoad(event: TableLazyLoadEvent): void{
-
+    const {first,rows,sortField,sortOrder} = event;
+    this.form.patchValue({first, rows,sortField,sortOrder});
+    this.search();
   }
 
   protected handleLoadSavedSearch(event: SavedSearch):void{
@@ -212,6 +215,8 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
       role: new FormControl(null),
       rows:new FormControl(10,{nonNullable: true}),
       first: new FormControl(0,{nonNullable: true}),
+      sortField: new FormControl('',{nonNullable: true}),
+      sortOrder: new FormControl('ASC',{nonNullable: true})
     });
   }
 

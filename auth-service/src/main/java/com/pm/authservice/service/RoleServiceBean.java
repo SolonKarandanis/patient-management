@@ -13,7 +13,7 @@ import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
-public class RoleServiceBean implements RoleService {
+public class RoleServiceBean extends GenericServiceBean implements RoleService {
 
     private final RoleRepository roleRepository;
 
@@ -26,6 +26,7 @@ public class RoleServiceBean implements RoleService {
         RoleDTO dto = new RoleDTO();
         dto.setId(role.getId());
         dto.setName(role.getName());
+        dto.setNameLabel(translate(role.getName()));
         return dto;
     }
 

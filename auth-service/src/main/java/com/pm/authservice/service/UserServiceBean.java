@@ -10,8 +10,6 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -27,7 +25,7 @@ import java.util.stream.StreamSupport;
 
 @Service
 @Transactional(readOnly = true)
-public class UserServiceBean implements UserService{
+public class UserServiceBean extends GenericServiceBean implements UserService{
     protected static final String USER_NOT_FOUND="error.user.not.found";
     private static final Logger log = LoggerFactory.getLogger(UserServiceBean.class);
 
@@ -35,23 +33,17 @@ public class UserServiceBean implements UserService{
     private final RoleService roleService;
     private final VerificationTokenService verificationTokenService;
     private final PasswordEncoder passwordEncoder;
-    private final MessageSource messageSource;
-    private final ApplicationEventPublisher publisher;
 
     public UserServiceBean(
             UserRepository userRepository,
             RoleService roleService,
             VerificationTokenService verificationTokenService,
-            PasswordEncoder passwordEncoder,
-            MessageSource messageSource,
-            ApplicationEventPublisher publisher
+            PasswordEncoder passwordEncoder
     ){
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.verificationTokenService = verificationTokenService;
         this.passwordEncoder = passwordEncoder;
-        this.messageSource = messageSource;
-        this.publisher = publisher;
     }
 
 
@@ -184,7 +176,7 @@ public class UserServiceBean implements UserService{
         Role role = roleService.findByName(dto.getRole());
         user.setRoles(Set.of(role));
         user = userRepository.save(user);
-        publisher.publishEvent(new UserRegistrationCompleteEvent(user, applicationUrl));
+        getPublisher().publishEvent(new UserRegistrationCompleteEvent(user, applicationUrl));
         return user;
     }
 
@@ -271,19 +263,5 @@ public class UserServiceBean implements UserService{
             sortBy = Sort.by(Sort.Direction.valueOf(paging.getSortingDirection()), paging.getSortingColumn());
         }
         return PageRequest.of(paging.getPagingStart(), paging.getPagingSize(), sortBy);
-    }
-
-
-    protected String translate(String key) {
-        return Optional.of(messageSource.getMessage(key, null, getDefaultLocale())).orElse(key);
-    }
-
-
-    protected String translate(String key, Locale locale) {
-        return Optional.of(messageSource.getMessage(key, null, locale)).orElse(key);
-    }
-
-    protected Locale getDefaultLocale() {
-        return Locale.ENGLISH;
     }
 }

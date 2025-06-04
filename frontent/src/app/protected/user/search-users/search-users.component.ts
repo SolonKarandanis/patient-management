@@ -207,17 +207,7 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
   }
 
   private initForm():void{
-    this.form = this.fb.group<UserSearchForm>({
-      email: new FormControl(null),
-      name: new FormControl(null),
-      status: new FormControl("account.active",{nonNullable: true}),
-      username: new FormControl(null),
-      role: new FormControl(null),
-      rows:new FormControl(10,{nonNullable: true}),
-      first: new FormControl(0,{nonNullable: true}),
-      sortField: new FormControl('',{nonNullable: true}),
-      sortOrder: new FormControl('ASC',{nonNullable: true})
-    });
+    this.form = this.userService.initSearchUserForm();
   }
 
   private initUserStatuses():void{

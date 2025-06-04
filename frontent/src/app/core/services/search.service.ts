@@ -32,7 +32,7 @@ export class SearchService extends GenericService{
    * @returns A UserSearchRequest
    */
   public toUserSearchRequest(searchForm: FormGroup<UserSearchForm>):UserSearchRequest{
-    const {email,name,status,role,username,rows,first} = searchForm.value;
+    const {email,name,status,role,username,rows,first,sortField,sortOrder} = searchForm.value;
     return {
       email,
       name,
@@ -41,7 +41,9 @@ export class SearchService extends GenericService{
       username,
       paging: {
         limit: rows!,
-        page: first!
+        page: first!,
+        sortField: sortField!,
+        sortDirection: sortOrder!,
       }
     };
   }

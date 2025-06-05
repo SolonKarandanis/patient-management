@@ -271,6 +271,20 @@ import {Calendar} from 'primeng/calendar';
                   (click)="col.buttonAction(col.dataFieldForButtonAction ? tableItem[col.dataFieldForButtonAction] : null)"
                 ></button>
               }
+              @if(col.isButtonGroup){
+                @for(groupButton of  col.buttonGroup; track groupButton.icon){
+                  <button
+                    pButton
+                    pRipple
+                    type="button"
+                    pButtonIcon="{{ col.icon }}"
+                    class="p-button-rounded p-button-outlined"
+                    pTooltip="{{ col.toolTip ? col.toolTip : col.title }}"
+                    [disabled]="groupButton.dataFieldForButtonDisabled && tableItem[groupButton.dataFieldForButtonDisabled]"
+                    (click)="groupButton.action(groupButton.dataFieldForButtonAction ? tableItem[groupButton.dataFieldForButtonAction] : null)"
+                  ></button>
+                }
+              }
               @if(col.isTableActions){
                 <span class="text-dark fw-bolder mb-1 fs-6">
                   @for(action of col.actions; track action.type;){

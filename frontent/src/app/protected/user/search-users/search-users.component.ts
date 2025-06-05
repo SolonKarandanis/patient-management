@@ -1,8 +1,7 @@
 import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
-import {FormBuilder, FormControl, ReactiveFormsModule} from '@angular/forms';
-import {UserSearchForm} from '../forms';
+import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {FloatLabel} from 'primeng/floatlabel';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {InputText} from 'primeng/inputtext';

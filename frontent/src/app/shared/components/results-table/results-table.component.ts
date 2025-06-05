@@ -12,6 +12,12 @@ import {DatePipe, DecimalPipe, NgClass, NgTemplateOutlet} from '@angular/common'
 import {Tooltip} from 'primeng/tooltip';
 import {ImageModule} from 'primeng/image';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
+import {Checkbox, CheckboxModule} from 'primeng/checkbox';
+import {FormsModule} from '@angular/forms';
+import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
+import {InputText} from 'primeng/inputtext';
+import {InputNumber, InputNumberModule} from 'primeng/inputnumber';
+import {Calendar} from 'primeng/calendar';
 
 @Component({
   selector: 'app-results-table',
@@ -28,7 +34,13 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
     Tooltip,
     ButtonIcon,
     ImageModule,
-    DecimalPipe
+    DecimalPipe,
+    FormsModule,
+    FormControlWrapComponent,
+    InputText,
+    Calendar,
+    InputNumber,
+    Checkbox,
   ],
   template: `
     <p-table
@@ -194,9 +206,70 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
                     </p-tableCheckbox>
                 </span>
               }
-              @if(col.isButton){
-                <span>
-                </span>
+              @if(col.isRadioButton){
+                <p-tableRadioButton
+                  [value]="tableItem"
+                  [disabled]="col.dataFieldForRadioButtonDisabled && tableItem[col.dataFieldForRadioButtonDisabled]"
+                ></p-tableRadioButton>
+              }
+              @if(col.isStaticCheckbox){
+                <p-checkbox
+                  [binary]="true"
+                  [ngModel]="col.field && tableItem[col.field]"
+                  [readonly]="true"
+                ></p-checkbox>
+              }
+              @if(col.isInputText && col.inputTextModelField){
+                <app-form-control-wrap
+                  [editMode]="!(col.dataFieldForInputDisabled && tableItem[col.dataFieldForInputDisabled])"
+                  [displayValue]="tableItem[col.inputTextModelField]"
+                >
+                  <input
+                    type="text"
+                    pInputText
+                    [disabled]="col.dataFieldForInputDisabled && tableItem[col.dataFieldForInputDisabled]"
+                    [(ngModel)]="tableItem[col.inputTextModelField]"
+                  />
+                </app-form-control-wrap>
+              }
+              @if(col.isInputNumber && col.inputNumberModelField){
+                <app-form-control-wrap
+                  [editMode]="!(col.dataFieldForInputDisabled && tableItem[col.dataFieldForInputDisabled])"
+                  [displayValue]="tableItem[col.inputNumberModelField]"
+                >
+                  <p-inputNumber
+                    [disabled]="col.dataFieldForInputDisabled && tableItem[col.dataFieldForInputDisabled]"
+                    [max]="col.inputNumberMaxModelField ? tableItem[col.inputNumberMaxModelField] : null"
+                    [min]="col.inputNumberMinModelField ? tableItem[col.inputNumberMinModelField] : 0"
+                    [(ngModel)]="tableItem[col.inputNumberModelField]"
+                  >
+                  </p-inputNumber>
+                </app-form-control-wrap>
+              }
+              @if(col.isInputDate && col.inputDateModelField){
+                <app-form-control-wrap
+                  [editMode]="!(col.dataFieldForInputDateDisabled && tableItem[col.dataFieldForInputDateDisabled])"
+                  [displayValue]="getDateAsString(tableItem[col.inputDateModelField])"
+                >
+                  <p-calendar
+                    [(ngModel)]="tableItem[col.inputDateModelField]"
+                    dateFormat="dd/mm/yy"
+                    [showTime]="false"
+                    [readonlyInput]="true"
+                    appendTo="body"
+                  ></p-calendar>
+                </app-form-control-wrap>
+              }
+              @if(col.isButton && (col.fieldForButtonVisibility !== undefined ? !!tableItem[col.fieldForButtonVisibility] : true)){
+                <button
+                  pButton
+                  pRipple
+                  type="button"
+                  pButtonIcon="{{ col.icon }}"
+                  class="p-button-rounded p-button-outlined"
+                  pTooltip="{{ col.toolTip ? col.toolTip : col.title }}"
+                  (click)="col.buttonAction(col.dataFieldForButtonAction ? tableItem[col.dataFieldForButtonAction] : null)"
+                ></button>
               }
               @if(col.isTableActions){
                 <span class="text-dark fw-bolder mb-1 fs-6">

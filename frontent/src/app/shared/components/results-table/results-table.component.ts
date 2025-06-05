@@ -246,16 +246,18 @@ import {Tooltip} from 'primeng/tooltip';
             >
               {{ (overrideDefaultExport() ? exportLabel() : exportButtonLabel) | translate }}
             </button>
-            <button
-              pButton
-              pRipple
-              type="button"
-              pButtonIcon="pi pi-check"
-              (click)="handleSelectItemsClicked()"
-              [disabled]="!selectedItems || selectedItems.length === 0"
-            >
-              {{ selectButtonLabelKey() | translate }}
-            </button>
+            @if(selectionEnabled){
+              <button
+                pButton
+                pRipple
+                type="button"
+                pButtonIcon="pi pi-check"
+                (click)="handleSelectItemsClicked()"
+                [disabled]="!selectedItems || selectedItems.length === 0"
+              >
+                {{ selectButtonLabelKey() | translate }}
+              </button>
+            }
           </div>
         }
       </ng-template>
@@ -273,6 +275,7 @@ export class ResultsTableComponent {
   public showTablePaginator = false;
   public showTableFilter = false;
   public showTableToolBar=false;
+  public selectionEnabled=false;
   protected exportButtonLabel: string = 'GLOBAL.BUTTONS.export-to-csv';
   protected maxResultsCsvExport = 100;
 

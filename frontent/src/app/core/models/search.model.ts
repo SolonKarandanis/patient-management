@@ -12,7 +12,9 @@ export interface SearchTableColumn {
   routerLinkConfig?: SearchTableColumnLinkRouterConf;
   dataFieldForRoute?: string;
   isCheckbox?: boolean;
+  isStaticCheckbox?:boolean;
   isButton?: boolean;
+  isCurrencyValue?:boolean;
   icon?: string;
   style?:string;
   enableSorting?: boolean;
@@ -23,7 +25,15 @@ export interface SearchTableColumn {
   isStatus?:boolean;
   isTableActions?:boolean;
   toolTip?:string;
+  isInputDate?:boolean;
+  inputDateModelField?:string;
+  dataFieldForIsEdit?:boolean;
   dataForToolTip?:string;
+  dataFieldForInputDisabled?:string;
+  dataFieldForButtonDisabled?:string;
+  dataFieldForCheckboxDisabled?:string;
+  dataFieldForInputDateDisabled?:string;
+  dataFieldForRadioButtonDisabled?:string;
   actions?:SearchTableColumnAction[];
 }
 

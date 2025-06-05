@@ -18,4 +18,10 @@ export class CommonEntitiesService extends GenericService{
   public initializeCommonEntities():void{
     this.commonEntitiesStore.initializeCommonEntities();
   }
+
+  getBigDecimalScale(): string {
+    // const bigDecimalPlaces = this.applicationConfig ? this.applicationConfig.BIG_DECIMAL_SCALE : this.publicApplicationConfig.BIG_DECIMAL_SCALE;
+    // return `1.${bigDecimalPlaces}-${bigDecimalPlaces}`;
+    return `1.`;
+  }
 }

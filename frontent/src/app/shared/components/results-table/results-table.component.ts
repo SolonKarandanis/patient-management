@@ -8,9 +8,10 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {ButtonDirective, ButtonIcon} from 'primeng/button';
 import {Ripple} from 'primeng/ripple';
 import {LinkComponent} from '@components/link/link.component';
-import {DatePipe, NgClass, NgTemplateOutlet} from '@angular/common';
+import {DatePipe, DecimalPipe, NgClass, NgTemplateOutlet} from '@angular/common';
 import {Tooltip} from 'primeng/tooltip';
 import {ImageModule} from 'primeng/image';
+import {CommonEntitiesService} from '@core/services/common-entities.service';
 
 @Component({
   selector: 'app-results-table',
@@ -26,7 +27,8 @@ import {ImageModule} from 'primeng/image';
     NgTemplateOutlet,
     Tooltip,
     ButtonIcon,
-    ImageModule
+    ImageModule,
+    DecimalPipe
   ],
   template: `
     <p-table
@@ -179,6 +181,11 @@ import {ImageModule} from 'primeng/image';
                   }
                 </span>
               }
+              @if(col.isCurrencyValue){
+                <span>
+                    {{ col.field ? (tableItem[col.field] | number: currencyDecimalsFormat) : '' }}
+                </span>
+              }
               @if(col.isCheckbox){
                 <span>
                     <p-tableCheckbox
@@ -294,6 +301,7 @@ import {ImageModule} from 'primeng/image';
 })
 export class ResultsTableComponent {
   private utilService= inject(UtilService);
+  private commonEntitiesService= inject(CommonEntitiesService);
 
   protected selectedItems!:BaseModel[];
   protected arrayObj = Array;
@@ -402,6 +410,10 @@ export class ResultsTableComponent {
 
   private getInitialSelectAll(checked?: boolean): any {
     return { originalEvent: null, checked: !!checked };
+  }
+
+  get currencyDecimalsFormat(): string {
+    return this.commonEntitiesService.getBigDecimalScale();
   }
 
 }

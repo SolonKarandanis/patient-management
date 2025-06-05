@@ -14,6 +14,7 @@ export interface SearchTableColumn {
   isCheckbox?: boolean;
   isStaticCheckbox?:boolean;
   isButton?: boolean;
+  isButtonGroup?: boolean;
   isRadioButton?:boolean;
   isCurrencyValue?:boolean;
   icon?: string;
@@ -45,6 +46,17 @@ export interface SearchTableColumn {
   fieldForButtonVisibility?:string
   dataFieldForButtonAction?:string;
   actions?:SearchTableColumnAction[];
+  buttonGroup?:SearchTableButtonGroup[];
+}
+
+export interface SearchTableButtonGroup{
+  icon?:string;
+  label?:string;
+  class?:string;
+  tooltip?:string;
+  action:any;
+  dataFieldForButtonAction?:string;
+  dataFieldForButtonDisabled?:string;
 }
 
 export interface SearchTableColumnAction{

@@ -10,6 +10,7 @@ import {Ripple} from 'primeng/ripple';
 import {LinkComponent} from '@components/link/link.component';
 import {DatePipe, NgClass, NgTemplateOutlet} from '@angular/common';
 import {Tooltip} from 'primeng/tooltip';
+import {ImageModule} from 'primeng/image';
 
 @Component({
   selector: 'app-results-table',
@@ -24,7 +25,8 @@ import {Tooltip} from 'primeng/tooltip';
     DatePipe,
     NgTemplateOutlet,
     Tooltip,
-    ButtonIcon
+    ButtonIcon,
+    ImageModule
   ],
   template: `
     <p-table
@@ -34,7 +36,6 @@ import {Tooltip} from 'primeng/tooltip';
       [rows]="resultsPerPage()"
       [first]="first()"
       [columns]="colTitles()"
-      (onLazyLoad)="handleLazyLoad($event)"
       [lazy]="lazy()"
       [lazyLoadOnInit]="false"
       [(selection)]="selectedItems"
@@ -44,6 +45,11 @@ import {Tooltip} from 'primeng/tooltip';
       [paginator]="showTablePaginator"
       [rowsPerPageOptions]="rowsPerPageOptions"
       [showCurrentPageReport]="showTablePaginator"
+      (onLazyLoad)="handleLazyLoad($event)"
+      (onRowSelect)="handleRowSelectionChange()"
+      (onRowUnselect)="handleRowSelectionChange()"
+      [selectAll]="selectAll.checked"
+      (selectAllChange)="handleSelectAllChange($event)"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
       <ng-template pTemplate="caption" >
         <div class="flex justify-between">
@@ -95,11 +101,14 @@ import {Tooltip} from 'primeng/tooltip';
                 [tooltipDisabled]="!colTitle.headerTooltip"
                 [style]="colTitle.style"
                 class="bg-blueGray-100">
-              @if (!colTitle.isCheckbox){
+              @if (!colTitle.isCheckbox && !colTitle.headerIsIcon){
                 <span >{{ colTitle.title }}</span>
               }
-              @else{
-                <span><p-tableHeaderCheckbox></p-tableHeaderCheckbox></span>
+              @if(!colTitle.isCheckbox && colTitle.headerIsIcon){
+                <span><span class="{{ colTitle.headerIcon }}"></span></span>
+              }
+              @if(colTitle.isCheckbox){
+                <span><p-tableHeaderCheckbox [disabled]="isCheckboxColumnDisabled"></p-tableHeaderCheckbox></span>
               }
               @if (colTitle.enableSorting){
                 <p-sortIcon field="{{ colTitle.field }}"></p-sortIcon>
@@ -123,7 +132,7 @@ import {Tooltip} from 'primeng/tooltip';
         <tr>
           @for(col of colTitles(); track col.field;){
             <td [style]="col.style">
-              @if(!col.isCheckbox){
+              @if(!col.isCheckbox && !col.isStaticCheckbox && !col.isCurrencyValue){
                 <span>
                   @if(col.isLink){
                     <app-link [config]="col" [tableItem]="tableItem">
@@ -141,7 +150,7 @@ import {Tooltip} from 'primeng/tooltip';
                       </app-link>
                   }
                   @if(!col.isStatus &&!col.isLink && !col.isDate && !col.isImage  && col.isTranslatable){
-                    <span>{{ col.field ? (tableItem[col.field]) : '' }}</span>
+                    <span>{{ col.field ? (tableItem[col.field] | translate) : '' }}</span>
                   }
                   @if(!col.isLink && !col.isDate && !col.isImage  && !col.isTranslatable ){
                     <span>{{ col.field ? tableItem[col.field] : '' }}</span>
@@ -149,16 +158,33 @@ import {Tooltip} from 'primeng/tooltip';
                   @if(!col.isLink && col.isDate && !col.isImage){
                     <span>{{ (col.field ? tableItem[col.field] : '') | date : 'dd/MM/yyyy' }}</span>
                   }
-                  @if(!col.isLink && !col.isDate && !col.isImage  && col.isTranslatable && col.isStatus && statusClasses()){
+                  @if(!col.isLink && !col.isDate && !col.isImage  && !col.isTranslatable && col.isStatus && statusClasses()){
                     <span class="badge" [ngClass]="getClass(col.field ? tableItem[col.field] : '')">
                         {{col.field ? tableItem[col.field] : '' }}
                     </span>
+                  }
+                  @if(col.isImage){
+                    @let field= col.field ? tableItem[col.field] : '';
+                    @if(field){
+                      <p-image
+                        src="{{ field }}"
+                        width="50"
+                        [preview]="true"
+                      ></p-image>
+                      <span
+                        class="pi pi-image text-3xl"
+                        pTooltip="{{ 'GLOBAL.TOOLTIPS.no-image-found' | translate }}"
+                      ></span>
+                    }
                   }
                 </span>
               }
               @if(col.isCheckbox){
                 <span>
-                    <p-tableCheckbox [value]="tableItem"></p-tableCheckbox>
+                    <p-tableCheckbox
+                      [value]="tableItem"
+                      [disabled]="isCheckboxColumnDisabled || (col.dataFieldForCheckboxDisabled && tableItem[col.dataFieldForCheckboxDisabled])">
+                    </p-tableCheckbox>
                 </span>
               }
               @if(col.isButton){
@@ -272,12 +298,17 @@ export class ResultsTableComponent {
   protected selectedItems!:BaseModel[];
   protected arrayObj = Array;
   protected rowsPerPageOptions:number[]=[10,20,50,100];
+
   public showTablePaginator = false;
   public showTableFilter = false;
   public showTableToolBar=false;
   public selectionEnabled=false;
+  public isCheckboxColumnDisabled = false;
+  public enablePaging = false;
+
   protected exportButtonLabel: string = 'GLOBAL.BUTTONS.export-to-csv';
   protected maxResultsCsvExport = 100;
+  protected selectAll: any = this.getInitialSelectAll();
 
   mode = input<SearchModes>("normal");
   tableItems = input.required<BaseModel[]>();
@@ -293,6 +324,7 @@ export class ResultsTableComponent {
   callbackFunctionToolBar = input<Function>();
   selectButtonLabelKey = input('GLOBAL.BUTTONS.select');
   overrideDefaultExport = input(false);
+  selectionMode= input<PrimeNGTableSelectionMode>('multiple');
 
   tableStateChanged = output<TableLazyLoadEvent>();
   itemsSelected = output<BaseModel[]>();
@@ -315,6 +347,30 @@ export class ResultsTableComponent {
     this.itemsSelected.emit(this.selectedItems);
   }
 
+  protected handleSelectAllChange(event: any): void {
+    this.selectAll = event;
+    this.selectedItems = event.checked ? this.tableItems() : [];
+
+    this.handleRowSelectionChange();
+  }
+
+  protected handleRowSelectionChange(): void {
+    if (this.selectionMode() === 'single') {
+      this.rowSingleSelectionChanged.emit(this.selectedItems);
+      return;
+    }
+
+    if (this.selectAll.checked === true && this.selectedItems.length < this.tableItems.length) {
+      this.selectAll = this.getInitialSelectAll();
+    }
+
+    if (this.selectAll.checked === false && this.selectedItems.length === this.tableItems.length) {
+      this.selectAll = this.getInitialSelectAll(true);
+    }
+
+    this.rowSelectionChanged.emit(this.selectedItems);
+  }
+
   protected getClass(field:string):string|undefined{
     return this.statusClasses()?.get(field);
   }
@@ -329,7 +385,7 @@ export class ResultsTableComponent {
   protected getFormattedDate(dateStr: string | null): string {
     let retVal: string | null = '';
     if (dateStr !== null) {
-      // retVal = this.utilService.convertDateStringToCalendarFormat(dateStr);
+      retVal = this.utilService.convertDateStringToCalendarFormat(dateStr);
     }
     return retVal !== null ? retVal : '';
   }
@@ -344,6 +400,12 @@ export class ResultsTableComponent {
     // console.log(fun);
   }
 
+  private getInitialSelectAll(checked?: boolean): any {
+    return { originalEvent: null, checked: !!checked };
+  }
+
 }
 
 type Function = (args?: any) => void;
+
+type PrimeNGTableSelectionMode = 'single' | 'multiple' | null | undefined;

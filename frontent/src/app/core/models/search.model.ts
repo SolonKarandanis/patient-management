@@ -14,6 +14,7 @@ export interface SearchTableColumn {
   isCheckbox?: boolean;
   isStaticCheckbox?:boolean;
   isButton?: boolean;
+  isRadioButton?:boolean;
   isCurrencyValue?:boolean;
   icon?: string;
   style?:string;
@@ -24,6 +25,12 @@ export interface SearchTableColumn {
   onlyIcon?:boolean;
   isStatus?:boolean;
   isTableActions?:boolean;
+  isInputText?: boolean;
+  inputTextModelField?:string;
+  isInputNumber?: boolean;
+  inputNumberModelField?:string;
+  inputNumberMinModelField?:string;
+  inputNumberMaxModelField?:string;
   toolTip?:string;
   isInputDate?:boolean;
   inputDateModelField?:string;
@@ -34,6 +41,9 @@ export interface SearchTableColumn {
   dataFieldForCheckboxDisabled?:string;
   dataFieldForInputDateDisabled?:string;
   dataFieldForRadioButtonDisabled?:string;
+  buttonAction?:any;
+  fieldForButtonVisibility?:string
+  dataFieldForButtonAction?:string;
   actions?:SearchTableColumnAction[];
 }
 

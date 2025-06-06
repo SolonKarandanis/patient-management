@@ -265,7 +265,7 @@ import {Calendar} from 'primeng/calendar';
                   pButton
                   pRipple
                   type="button"
-                  pButtonIcon="{{ col.icon }}"
+                  icon="{{ col.icon }}"
                   class="p-button-rounded p-button-outlined"
                   pTooltip="{{ col.toolTip ? col.toolTip : col.title }}"
                   (click)="col.buttonAction(col.dataFieldForButtonAction ? tableItem[col.dataFieldForButtonAction] : null)"
@@ -277,7 +277,7 @@ import {Calendar} from 'primeng/calendar';
                     pButton
                     pRipple
                     type="button"
-                    pButtonIcon="{{ col.icon }}"
+                    icon="{{ col.icon }}"
                     class="p-button-rounded p-button-outlined"
                     pTooltip="{{ col.toolTip ? col.toolTip : col.title }}"
                     [disabled]="groupButton.dataFieldForButtonDisabled && tableItem[groupButton.dataFieldForButtonDisabled]"

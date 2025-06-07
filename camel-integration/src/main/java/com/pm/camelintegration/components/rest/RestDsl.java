@@ -31,6 +31,7 @@ public class RestDsl extends RouteBuilder {
                 .component("servlet")
                 .bindingMode(RestBindingMode.auto);
 
+        // http://localhost:4007/camel-integration/camel/weather/London
         rest()
                 .consumes(MediaType.APPLICATION_JSON_VALUE).produces(MediaType.APPLICATION_JSON_VALUE)
                 .get("/weather/{city}").outType(WeatherDto.class).to("direct:get-weather-data")

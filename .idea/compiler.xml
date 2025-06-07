@@ -19,6 +19,7 @@
         <module name="analytics-service" />
         <module name="api-gateway" />
         <module name="auth-service" />
+        <module name="camel-integration" />
         <module name="integration-tests" />
         <module name="billing-service" />
       </profile>
@@ -30,6 +31,7 @@
       <module name="api-gateway" options="-parameters" />
       <module name="auth-service" options="-parameters" />
       <module name="billing-service" options="-parameters" />
+      <module name="camel-integration" options="-parameters" />
       <module name="patient-service" options="-parameters" />
     </option>
   </component>

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
+import static com.pm.camelintegration.config.CamelConfiguration.RABBIT_URI;
 import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -41,9 +42,9 @@ public class RestDsl extends RouteBuilder {
                 .process(this::saveWeatherDataAndSetToExchange)
                 .wireTap("direct:write-to-rabbit");
 
-//        from("direct:write-to-rabbit")
-//                .marshal().json(JsonLibrary.Jackson, WeatherDto.class)
-//                .toF(RABBIT_URI, "weather-event", "weather-event");
+        from("direct:write-to-rabbit")
+                .marshal().json(JsonLibrary.Jackson, WeatherDto.class)
+                .toF(RABBIT_URI, "weather-event", "weather-event");
     }
 
     private void saveWeatherDataAndSetToExchange(Exchange exchange) {

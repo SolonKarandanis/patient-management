@@ -1,4 +1,4 @@
-package com.pm.camelintegration.components.rest;
+package com.pm.camelintegration.dto;
 
 public class WeatherDto {
     private Integer id;

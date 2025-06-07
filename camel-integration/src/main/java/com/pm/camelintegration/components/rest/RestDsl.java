@@ -1,9 +1,10 @@
 package com.pm.camelintegration.components.rest;
 
+import com.pm.camelintegration.dto.WeatherDataProvider;
+import com.pm.camelintegration.dto.WeatherDto;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.support.DefaultMessage;
 import org.springframework.http.MediaType;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-import static com.pm.camelintegration.config.CamelConfiguration.RABBIT_URI;
 import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 

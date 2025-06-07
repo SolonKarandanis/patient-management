@@ -1,5 +1,7 @@
 package com.pm.camelintegration.components.rest;
 
+import com.pm.camelintegration.dto.WeatherDataProvider;
+import com.pm.camelintegration.dto.WeatherDto;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;

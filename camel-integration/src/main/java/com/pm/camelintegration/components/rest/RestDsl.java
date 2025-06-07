@@ -42,9 +42,9 @@ public class RestDsl extends RouteBuilder {
                 .process(this::saveWeatherDataAndSetToExchange)
                 .wireTap("direct:write-to-rabbit");
 
-        from("direct:write-to-rabbit")
-                .marshal().json(JsonLibrary.Jackson, WeatherDto.class)
-                .toF(RABBIT_URI, "weather-event", "weather-event");
+//        from("direct:write-to-rabbit")
+//                .marshal().json(JsonLibrary.Jackson, WeatherDto.class)
+//                .toF(RABBIT_URI, "weather-event", "weather-event");
     }
 
     private void saveWeatherDataAndSetToExchange(Exchange exchange) {

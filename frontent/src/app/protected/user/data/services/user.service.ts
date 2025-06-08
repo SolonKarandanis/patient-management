@@ -8,6 +8,7 @@ import {CreateUserForm, UpdateUserForm, UserSearchForm} from '../../forms';
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SearchTableColumn} from '@models/search.model';
+import {UserAccountStatusEnum} from '@models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -152,7 +153,7 @@ export class UserService extends GenericService{
     return this.formBuilder.group<UserSearchForm>({
       email: new FormControl(null),
       name: new FormControl(null),
-      status: new FormControl("account.active",{nonNullable: true}),
+      status: new FormControl(UserAccountStatusEnum.ACTIVE,{nonNullable: true}),
       username: new FormControl(null),
       role: new FormControl(null),
       rows:new FormControl(10,{nonNullable: true}),

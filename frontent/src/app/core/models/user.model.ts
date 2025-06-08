@@ -1,6 +1,6 @@
 import {BaseModel} from '@models/base.model';
 
-const UserAccountStatusEnum = {
+export const UserAccountStatusEnum = {
   ACTIVE: "account.active",
   INACTIVE: "account.inactive",
   DELETED: "account.deleted",

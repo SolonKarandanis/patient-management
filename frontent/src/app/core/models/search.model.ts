@@ -70,7 +70,7 @@ export interface SearchTableColumnAction{
   callbackFn?:(args?: any) => void;
 }
 
-const ActionTypesEnum = {
+export const ActionTypesEnum = {
   VIEW: "VIEW",
   EDIT: "EDIT",
   DELETE: "DELETE",
@@ -84,7 +84,7 @@ export interface SearchTableColumnLinkRouterConf {
   postRoutes?: string[];
 }
 
-const SortDirectionEnum = {
+export const SortDirectionEnum = {
   ASC: "ASC",
   DESC: "DESC",
   DELETE: "DELETE",
@@ -142,14 +142,14 @@ export interface SearchConfiguration {
   criteria: SearchConfigurationCriteria[];
 }
 
-const SearchTypeEnum = {
+export const SearchTypeEnum = {
   USERS: "search.type.users",
   PATIENTS: "search.type.patients",
 } as const satisfies Record<string, string>;
 
 export type SearchType = (typeof SearchTypeEnum)[keyof typeof SearchTypeEnum];
 
-const SearchModesEnum = {
+export const SearchModesEnum = {
   NORMAL: "normal",
   SELECTION: "selection",
   NO_BUTTONS: "no-buttons",

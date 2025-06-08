@@ -14,7 +14,7 @@ import {
   SavedSearch,
   SearchRequestCriteria,
   SearchTableColumn,
-  SearchType,
+  SearchType, SearchTypeEnum,
   UserSearchRequest
 } from '@models/search.model';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
@@ -185,7 +185,7 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
   protected hasSearched = this.userService.hasSearched;
 
   protected userStatuses:SelectItem[]=[];
-  protected readonly searchType:SearchType = "search.type.users";
+  protected readonly searchType:SearchType = SearchTypeEnum.USERS;
   protected tableColumns:SearchTableColumn[]=[];
 
   ngOnInit(): void {

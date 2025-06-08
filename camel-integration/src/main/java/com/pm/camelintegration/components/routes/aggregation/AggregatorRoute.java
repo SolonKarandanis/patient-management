@@ -23,6 +23,6 @@ public class AggregatorRoute extends RouteBuilder {
                 })
                 .aggregate(header(CORRELATION_ID), new MyAggregationStrategy())
                 .completionSize(5)
-                .log(LoggingLevel.ERROR, "${header." + CORRELATION_ID + "} ${body}");
+                .log(LoggingLevel.INFO, "${header." + CORRELATION_ID + "} ${body}");
     }
 }

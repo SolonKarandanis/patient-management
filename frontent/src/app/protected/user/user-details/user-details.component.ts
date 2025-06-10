@@ -3,7 +3,6 @@ import {PageHeaderComponent} from '@components/page-header/page-header.component
 import {TranslatePipe} from '@ngx-translate/core';
 import {ActivatedRoute} from '@angular/router';
 import {UserService} from '../data/services/user.service';
-import {injectParams} from '@shared/utils/injectParams';
 import {USER_DETAILS_PROVIDERS, USERS_DETAILS} from './user-details.provider';
 
 @Component({
@@ -30,11 +29,9 @@ export class UserDetailsComponent implements OnInit{
   private activatedRoute = inject(ActivatedRoute);
   private userService = inject(UserService);
   private user = inject(USERS_DETAILS);
-  userId = injectParams('id');
 
 
   ngOnInit(): void {
-   console.log(this.userId());
    console.log(this.user())
   }
 

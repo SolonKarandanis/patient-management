@@ -1,5 +1,4 @@
 import {computed, InjectionToken, Provider, signal, Signal} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
 import {UserService} from '../data/services/user.service';
 import {User} from '@models/user.model';
 import {injectParams} from '@shared/utils/injectParams';
@@ -17,13 +16,12 @@ export const USERS_DETAILS = new InjectionToken<Signal<UserDetailsVM| undefined>
 export const USER_DETAILS_PROVIDERS: Provider[] =[
   {
     provide: USERS_DETAILS,
-    deps: [ActivatedRoute,UserService ],
+    deps: [UserService ],
     useFactory:usersDetailsFactory
   }
 ];
 
-export function usersDetailsFactory(
-  params: ActivatedRoute,userService:UserService
+export function usersDetailsFactory(userService:UserService
 ): Signal<UserDetailsVM| undefined>{
   const userId = injectParams('id')();
   if(typeof userId==='string'){

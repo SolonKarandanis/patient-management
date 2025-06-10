@@ -1,9 +1,8 @@
-import { InjectionToken, Provider, Signal} from '@angular/core';
-import {ActivatedRoute, ParamMap} from '@angular/router';
+import {computed, InjectionToken, Provider, signal, Signal} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import {UserService} from '../data/services/user.service';
-import {map} from 'rxjs';
-import {toSignal} from '@angular/core/rxjs-interop';
 import {User} from '@models/user.model';
+import {injectParams} from '@shared/utils/injectParams';
 
 export interface UserDetailsVM{
   user:User|null;
@@ -26,10 +25,10 @@ export const USER_DETAILS_PROVIDERS: Provider[] =[
 export function usersDetailsFactory(
   params: ActivatedRoute,userService:UserService
 ): Signal<UserDetailsVM| undefined>{
-  return toSignal(params.paramMap.pipe(
-    map((paramMap:ParamMap)=>{
-      const publicId = paramMap.get('id');
-      userService.executeGetUserById(publicId as string);
+  const userId = injectParams('id')();
+  if(typeof userId==='string'){
+    userService.executeGetUserById(userId);
+    return computed(() => {
       const loading = userService.isLoading();
       const user = userService.user();
       return {
@@ -37,5 +36,19 @@ export function usersDetailsFactory(
         loading
       }
     })
-  ));
+  }
+  return signal(undefined);
+
+  // return toSignal(params.paramMap.pipe(
+  //   map((paramMap:ParamMap)=>{
+  //     const publicId = paramMap.get('id');
+  //     userService.executeGetUserById(publicId as string);
+  //     const loading = userService.isLoading();
+  //     const user = userService.user();
+  //     return {
+  //       user,
+  //       loading
+  //     }
+  //   })
+  // ));
 }

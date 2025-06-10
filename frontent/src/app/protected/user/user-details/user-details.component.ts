@@ -3,6 +3,7 @@ import {PageHeaderComponent} from '@components/page-header/page-header.component
 import {TranslatePipe} from '@ngx-translate/core';
 import {ActivatedRoute} from '@angular/router';
 import {UserService} from '../data/services/user.service';
+import {injectParams} from '@shared/utils/injectParams';
 
 @Component({
   selector: 'app-user-details',
@@ -24,10 +25,11 @@ import {UserService} from '../data/services/user.service';
 export class UserDetailsComponent implements OnInit{
   private activatedRoute = inject(ActivatedRoute);
   private userService = inject(UserService);
+  userId = injectParams('id');
 
 
   ngOnInit(): void {
-    throw new Error('Method not implemented.');
+   console.log(this.userId())
   }
 
 }

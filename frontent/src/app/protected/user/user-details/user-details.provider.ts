@@ -5,7 +5,7 @@ import {map} from 'rxjs';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {User} from '@models/user.model';
 
-interface UserDetailsVM{
+export interface UserDetailsVM{
   user:User|null;
   loading:boolean;
 }

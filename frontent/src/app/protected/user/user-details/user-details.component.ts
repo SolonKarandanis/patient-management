@@ -1,30 +1,42 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit, signal} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {UserService} from '../data/services/user.service';
 import {USER_DETAILS_PROVIDERS, USERS_DETAILS} from './user-details.provider';
-import {Skeleton} from 'primeng/skeleton';
+import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
+import {BaseComponent} from '@shared/abstract/BaseComponent';
+
 
 @Component({
   selector: 'app-user-details',
   imports: [
     PageHeaderComponent,
     TranslatePipe,
-    Skeleton
+    RequiredFieldsLabelComponent,
+
   ],
   template: `
-    <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
+    <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
       <app-page-header>
         {{ 'USER.DETAILS.title' | translate }}
       </app-page-header>
+      <app-required-fields-label/>
       @if(vm(); as vm){
-        @defer(when vm.loading){
-          {{ vm.user?.email }}
-        } @placeholder {
-          <p-skeleton
-            width="10rem"
-            height="2rem"/>
-        }
+        @let user =vm.user;
+        <form>
+          <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
+            <div class="grid gap-6 mb-6 md:grid-cols-2">
+              <div>
+                <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First name</label>
+                <input type="text" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required />
+              </div>
+              <div>
+                <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last name</label>
+                <input type="text" id="last_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Doe" required />
+              </div>
+            </div>
+          </div>
+        </form>
       }
     </div>
   `,
@@ -34,12 +46,17 @@ import {Skeleton} from 'primeng/skeleton';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserDetailsComponent implements OnInit{
+export class UserDetailsComponent extends BaseComponent implements OnInit{
   private userService = inject(UserService);
   protected vm = inject(USERS_DETAILS);
+  protected editMode= signal(false);
 
 
   ngOnInit(): void {
+    this.initForm();
+  }
+
+  private initForm():void{
 
   }
 

@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
-import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {FloatLabel} from 'primeng/floatlabel';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {InputText} from 'primeng/inputtext';
@@ -26,6 +25,7 @@ import {ResultsTableFilterDirective} from '@directives/results-table-filter.dire
 import {ResultsTablePaginatorDirective} from '@directives/results-table-paginator.directive';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 import {fadeAnimation} from '@shared/animations/fadeAnimation';
+import {ReactiveFormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-search-users',
@@ -46,11 +46,11 @@ import {fadeAnimation} from '@shared/animations/fadeAnimation';
     FieldsetComponent,
   ],
   template: `
-    <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
+    <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
       <app-page-header>
         {{ 'USER.SEARCH.title' | translate }}
       </app-page-header>
-      <app-required-fields-label></app-required-fields-label>
+      <app-required-fields-label/>
       <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
         <div role="search">
           <app-fieldset legend="{{ 'SEARCH.COMMON.search-criteria' | translate }}"
@@ -173,7 +173,6 @@ import {fadeAnimation} from '@shared/animations/fadeAnimation';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchUsersComponent extends BaseComponent implements OnInit{
-  protected fb= inject(FormBuilder);
   private userService = inject(UserService);
   protected commonEntitiesService = inject(CommonEntitiesService);
 

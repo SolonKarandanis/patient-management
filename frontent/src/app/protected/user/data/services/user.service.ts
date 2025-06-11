@@ -19,7 +19,7 @@ export class UserService extends GenericService{
   private translateService = inject(TranslateService);
   private utilService = inject(UtilService);
 
-  public user = this.userStore.getUser;
+  public user = this.userStore.selectedUser;
   public userId = this.userStore.getUserId;
   public isLoading = this.userStore.loading;
   public criteriaCollapsed = this.userStore.criteriaCollapsed;

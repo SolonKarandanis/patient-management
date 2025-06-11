@@ -51,7 +51,6 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     public UserDTO convertToDTO(User user, Boolean withRoles) {
         UserDTO dto = new UserDTO();
         dto.setUsername(user.getUsername());
-        dto.setPassword(user.getPassword());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());

@@ -43,7 +43,7 @@ import {InputText} from 'primeng/inputtext';
                     type="text"
                     class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
                     formControlName="username"
-                    autocomplete="email"/>
+                    autocomplete="username"/>
                   <label for="email">{{ 'USER.SEARCH.LABELS.email' | translate }}</label>
                 </p-float-label>
                 <app-form-error

@@ -36,17 +36,4 @@ export function usersDetailsFactory(userService:UserService
     })
   }
   return signal(undefined);
-
-  // return toSignal(params.paramMap.pipe(
-  //   map((paramMap:ParamMap)=>{
-  //     const publicId = paramMap.get('id');
-  //     userService.executeGetUserById(publicId as string);
-  //     const loading = userService.isLoading();
-  //     const user = userService.user();
-  //     return {
-  //       user,
-  //       loading
-  //     }
-  //   })
-  // ));
 }

@@ -33,7 +33,6 @@ import {InputText} from 'primeng/inputtext';
       <app-required-fields-label/>
       @if (vm(); as vm) {
         @let user = vm.user;
-        {{ user?.email }}
         <form [formGroup]="form">
           <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
             <div class="grid gap-6 mb-6 md:grid-cols-2">
@@ -89,6 +88,15 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
     const user = this.user();
     const editMode = this.editMode();
 
+    if(user){
+      this.form.patchValue({
+        username: user.username,
+        firstName:user.firstName,
+        lastName:user.lastName,
+        email:user.email
+      });
+    }
+
     return {
       user,
       loading,
@@ -101,10 +109,7 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
   }
 
   private initForm():void{
-    // if(){
-    //
-    // }
-    this.form = this.userService.initUpdateUserForm(this.vm().user);
+    this.form = this.userService.initUpdateUserForm();
   }
 
 }

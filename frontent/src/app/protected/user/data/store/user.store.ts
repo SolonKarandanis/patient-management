@@ -151,7 +151,6 @@ export const UserStore = signalStore(
             userRepo.getUserById(id).pipe(
               tapResponse({
                 next:(result)=>{
-                  console.log(result)
                   state.setSelectedUser(result);
                   state.setLoadedState();
                 },

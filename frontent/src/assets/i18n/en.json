@@ -189,6 +189,9 @@
           "status": "Status"
         }
       }
+    },
+    "DETAILS": {
+      "title": "User Details"
     }
   },
   "SAVED-SEARCHES": {

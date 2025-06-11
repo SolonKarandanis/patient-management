@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, OnInit, signal} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {UserService} from '../data/services/user.service';
@@ -25,13 +25,15 @@ import {InputText} from 'primeng/inputtext';
 
   ],
   template: `
-    <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
+    <div
+      class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
       <app-page-header>
         {{ 'USER.DETAILS.title' | translate }}
       </app-page-header>
       <app-required-fields-label/>
-      @if(vm(); as vm){
-        @let user =vm.user;
+      @if (vm(); as vm) {
+        @let user = vm.user;
+        {{ user?.email }}
         <form [formGroup]="form">
           <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
             <div class="grid gap-6 mb-6 md:grid-cols-2">
@@ -48,15 +50,21 @@ import {InputText} from 'primeng/inputtext';
                 </p-float-label>
                 <app-form-error
                   [displayLabels]="isFieldValid('username')"
-                  [validationErrors]="form.get('username')?.errors" />
+                  [validationErrors]="form.get('username')?.errors"/>
               </div>
               <div>
-                <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First name</label>
-                <input type="text" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required />
+                <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First
+                  name</label>
+                <input type="text" id="first_name"
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                       placeholder="John" required/>
               </div>
               <div>
-                <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last name</label>
-                <input type="text" id="last_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Doe" required />
+                <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last
+                  name</label>
+                <input type="text" id="last_name"
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                       placeholder="Doe" required/>
               </div>
             </div>
           </div>
@@ -72,20 +80,31 @@ import {InputText} from 'primeng/inputtext';
 })
 export class UserDetailsComponent extends BaseComponent implements OnInit{
   private userService = inject(UserService);
-  protected vm = inject(USERS_DETAILS);
+  protected user = inject(USERS_DETAILS);
   protected editMode= signal(false);
+  protected loading = this.userService.isLoading;
 
+  protected vm = computed(()=>{
+    const loading = this.loading();
+    const user = this.user();
+    const editMode = this.editMode();
+
+    return {
+      user,
+      loading,
+      editMode
+    }
+  });
 
   ngOnInit(): void {
     this.initForm();
   }
 
   private initForm():void{
-    console.log(this.vm());
     // if(){
     //
     // }
-    this.form = this.userService.initUpdateUserForm(this.vm()?.user);
+    this.form = this.userService.initUpdateUserForm(this.vm().user);
   }
 
 }

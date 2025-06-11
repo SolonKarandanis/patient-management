@@ -25,12 +25,4 @@ export function usersDetailsFactory(userService:UserService
   const userId = injectParams('id')();
     userService.executeGetUserById(userId as string);
     return userService.user;
-    // return computed(() => {
-    //   const user = userService.user;
-    //   return {
-    //     user,
-    //     loading
-    //   }
-    // })
-
 }

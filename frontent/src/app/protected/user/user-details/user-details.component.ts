@@ -5,6 +5,10 @@ import {UserService} from '../data/services/user.service';
 import {USER_DETAILS_PROVIDERS, USERS_DETAILS} from './user-details.provider';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
+import {FloatLabel} from 'primeng/floatlabel';
+import {FormErrorComponent} from '@components/form-error/form-error.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {InputText} from 'primeng/inputtext';
 
 
 @Component({
@@ -13,6 +17,11 @@ import {BaseComponent} from '@shared/abstract/BaseComponent';
     PageHeaderComponent,
     TranslatePipe,
     RequiredFieldsLabelComponent,
+    FloatLabel,
+    FormErrorComponent,
+    FormsModule,
+    InputText,
+    ReactiveFormsModule,
 
   ],
   template: `
@@ -23,9 +32,24 @@ import {BaseComponent} from '@shared/abstract/BaseComponent';
       <app-required-fields-label/>
       @if(vm(); as vm){
         @let user =vm.user;
-        <form>
+        <form [formGroup]="form">
           <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
             <div class="grid gap-6 mb-6 md:grid-cols-2">
+              <div class="mb-6">
+                <p-float-label variant="on" class="w-full mb-3">
+                  <input
+                    id="username"
+                    pInputText
+                    type="text"
+                    class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                    formControlName="username"
+                    autocomplete="email"/>
+                  <label for="email">{{ 'USER.SEARCH.LABELS.email' | translate }}</label>
+                </p-float-label>
+                <app-form-error
+                  [displayLabels]="isFieldValid('username')"
+                  [validationErrors]="form.get('username')?.errors" />
+              </div>
               <div>
                 <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First name</label>
                 <input type="text" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="John" required />
@@ -57,7 +81,11 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
   }
 
   private initForm():void{
-
+    console.log(this.vm());
+    // if(){
+    //
+    // }
+    this.form = this.userService.initUpdateUserForm(this.vm()?.user);
   }
 
 }

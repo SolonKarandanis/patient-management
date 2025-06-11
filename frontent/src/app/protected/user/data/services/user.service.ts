@@ -8,7 +8,7 @@ import {CreateUserForm, UpdateUserForm, UserSearchForm} from '../../forms';
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SearchTableColumn} from '@models/search.model';
-import {UserAccountStatusEnum} from '@models/user.model';
+import {User, UserAccountStatusEnum} from '@models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -134,13 +134,12 @@ export class UserService extends GenericService{
    * Initialize the reactive form for updating a user
    * @returns A FormGroup with the appropriate fields
    */
-  public initUpdateUserForm(): FormGroup<UpdateUserForm>{
-    const user = this.user();
+  public initUpdateUserForm(user:User | null | undefined): FormGroup<UpdateUserForm>{
     return this.formBuilder.group<UpdateUserForm>({
-      username: new FormControl(user!.username),
-      firstName: new FormControl(user!.firstName),
-      lastName: new FormControl(user!.lastName),
-      email: new FormControl(user!.email),
+      username: new FormControl(user?.username),
+      firstName: new FormControl(user?.firstName),
+      lastName: new FormControl(user?.lastName),
+      email: new FormControl(user?.email),
       role: new FormControl(RolesConstants.ROLE_NO_ROLE,{nonNullable: true}),
     })
   }

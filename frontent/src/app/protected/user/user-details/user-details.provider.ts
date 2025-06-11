@@ -4,11 +4,10 @@ import {User} from '@models/user.model';
 import {injectParams} from '@shared/utils/injectParams';
 
 export interface UserDetailsVM{
-  user:User|null;
-  loading:boolean;
+  user:Signal<User | null>
 }
 
-export const USERS_DETAILS = new InjectionToken<Signal<UserDetailsVM| undefined>>(
+export const USERS_DETAILS = new InjectionToken<Signal<User | null>>(
   'A stream with selected user information',
 );
 
@@ -22,18 +21,16 @@ export const USER_DETAILS_PROVIDERS: Provider[] =[
 ];
 
 export function usersDetailsFactory(userService:UserService
-): Signal<UserDetailsVM| undefined>{
+): Signal<User | null>{
   const userId = injectParams('id')();
-  if(typeof userId==='string'){
-    userService.executeGetUserById(userId);
-    return computed(() => {
-      const loading = userService.isLoading();
-      const user = userService.user();
-      return {
-        user,
-        loading
-      }
-    })
-  }
-  return signal(undefined);
+    userService.executeGetUserById(userId as string);
+    return userService.user;
+    // return computed(() => {
+    //   const user = userService.user;
+    //   return {
+    //     user,
+    //     loading
+    //   }
+    // })
+
 }

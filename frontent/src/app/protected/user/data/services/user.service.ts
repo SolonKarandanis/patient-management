@@ -134,7 +134,7 @@ export class UserService extends GenericService{
    * Initialize the reactive form for updating a user
    * @returns A FormGroup with the appropriate fields
    */
-  public initUpdateUserForm(user:User | null | undefined): FormGroup<UpdateUserForm>{
+  public initUpdateUserForm(user:User | null ): FormGroup<UpdateUserForm>{
     return this.formBuilder.group<UpdateUserForm>({
       username: new FormControl(user?.username),
       firstName: new FormControl(user?.firstName),

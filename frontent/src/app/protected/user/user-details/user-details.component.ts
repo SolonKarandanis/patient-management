@@ -5,7 +5,6 @@ import {UserService} from '../data/services/user.service';
 import {USER_DETAILS_PROVIDERS, USERS_DETAILS} from './user-details.provider';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
-import {FloatLabel} from 'primeng/floatlabel';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {InputText} from 'primeng/inputtext';
@@ -19,7 +18,6 @@ import {NgClass} from '@angular/common';
     PageHeaderComponent,
     TranslatePipe,
     RequiredFieldsLabelComponent,
-    FloatLabel,
     FormErrorComponent,
     FormsModule,
     InputText,

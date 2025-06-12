@@ -24,6 +24,11 @@ export interface UpdateUserForm{
   role:FormControl<RolesConstants>;
 }
 
+export interface ChangePasswordForm{
+  password: FormControl<string|null>;
+  confirmPassword: FormControl<string|null>;
+}
+
 export interface CreateUserForm{
   username: FormControl<string|null>;
   password: FormControl<string|null>;

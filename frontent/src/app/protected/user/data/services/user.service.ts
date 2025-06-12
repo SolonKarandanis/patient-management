@@ -4,7 +4,7 @@ import {UserStore} from '../store/user.store';
 import {SearchService} from '@core/services/search.service';
 import {TranslateService} from '@ngx-translate/core';
 import {UtilService} from '@core/services/util.service';
-import {CreateUserForm, UpdateUserForm, UserSearchForm} from '../../forms';
+import {ChangePasswordForm, CreateUserForm, UpdateUserForm, UserSearchForm} from '../../forms';
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SearchTableColumn} from '@models/search.model';
@@ -142,6 +142,13 @@ export class UserService extends GenericService{
       email: new FormControl(),
       role: new FormControl(RolesConstants.ROLE_NO_ROLE,{nonNullable: true}),
     })
+  }
+
+  public initChangePasswordForm():FormGroup<ChangePasswordForm>{
+    return this.formBuilder.group<ChangePasswordForm>({
+      password:new FormControl(null,[Validators.required,]),
+      confirmPassword:new FormControl(null,[Validators.required,]),
+    });
   }
 
   /**

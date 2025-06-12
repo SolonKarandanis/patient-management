@@ -9,6 +9,7 @@ import {FloatLabel} from 'primeng/floatlabel';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {InputText} from 'primeng/inputtext';
+import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
 
 
 @Component({
@@ -22,6 +23,7 @@ import {InputText} from 'primeng/inputtext';
     FormsModule,
     InputText,
     ReactiveFormsModule,
+    FormControlWrapComponent,
 
   ],
   template: `
@@ -38,14 +40,21 @@ import {InputText} from 'primeng/inputtext';
             <div class="grid gap-6 mb-6 md:grid-cols-2">
               <div class="mt-6">
                 <p-float-label variant="on" class="w-full mb-3">
-                  <input
-                    id="username"
-                    pInputText
-                    type="text"
-                    class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                    formControlName="username"
-                    autocomplete="username"/>
-                  <label for="email">{{ 'USER.SEARCH.LABELS.email' | translate }}</label>
+                  <app-form-control-wrap
+                    [editMode]="form.enabled"
+                    [displayValue]="form.get('username')?.value"
+                    [fetchingData]="vm.loading">
+                    <input
+                      id="username"
+                      pInputText
+                      type="text"
+                      class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                      formControlName="username"
+                      autocomplete="username"/>
+                  </app-form-control-wrap>
+                  @if(form.enabled){
+                    <label for="username">{{ 'USER.SEARCH.LABELS.email' | translate }}</label>
+                  }
                 </p-float-label>
                 <app-form-error
                   [displayLabels]="isFieldValid('username')"
@@ -80,13 +89,11 @@ import {InputText} from 'primeng/inputtext';
 export class UserDetailsComponent extends BaseComponent implements OnInit{
   private userService = inject(UserService);
   protected user = inject(USERS_DETAILS);
-  protected editMode= signal(false);
   protected loading = this.userService.isLoading;
 
   protected vm = computed(()=>{
     const loading = this.loading();
     const user = this.user();
-    const editMode = this.editMode();
 
     if(user){
       this.form.patchValue({
@@ -99,13 +106,13 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
 
     return {
       user,
-      loading,
-      editMode
+      loading
     }
   });
 
   ngOnInit(): void {
     this.initForm();
+    this.form.disable();
   }
 
   private initForm():void{

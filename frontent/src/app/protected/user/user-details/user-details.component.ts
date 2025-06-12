@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, Component, computed, inject, OnInit, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {UserService} from '../data/services/user.service';
-import {USER_DETAILS_PROVIDERS, USERS_DETAILS} from './user-details.provider';
+import {USER_DETAILS_PROVIDER,  USERS_DETAILS} from './user-details.provider';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
@@ -130,7 +130,7 @@ import {NgClass} from '@angular/common';
   `,
   styleUrl: './user-details.component.css',
   providers:[
-    USER_DETAILS_PROVIDERS
+    USER_DETAILS_PROVIDER
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

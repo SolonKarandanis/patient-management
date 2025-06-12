@@ -1,4 +1,4 @@
-import {computed, InjectionToken, Provider, signal, Signal} from '@angular/core';
+import {InjectionToken, Provider, Signal} from '@angular/core';
 import {UserService} from '../data/services/user.service';
 import {User} from '@models/user.model';
 import {injectParams} from '@shared/utils/injectParams';
@@ -12,7 +12,7 @@ export const USERS_DETAILS = new InjectionToken<Signal<User | null>>(
 );
 
 
-export const USER_DETAILS_PROVIDERS: Provider[] =[
+export const USER_DETAILS_PROVIDER: Provider[] =[
   {
     provide: USERS_DETAILS,
     deps: [UserService ],

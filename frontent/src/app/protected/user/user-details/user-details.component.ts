@@ -38,7 +38,60 @@ import {FormControlWrapComponent} from '@components/form-control-wrap/form-contr
         <form [formGroup]="form">
           <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
             <div class="grid gap-6 mb-6 md:grid-cols-2">
-              <div class="mt-6">
+              <div class="mt-4">
+                @if(!form.enabled){
+                  <label for="firstName">{{ 'USER.DETAILS.LABELS.firstName' | translate }}</label>
+                }
+                <p-float-label variant="on" class="w-full mb-3">
+                  <app-form-control-wrap
+                    [editMode]="form.enabled"
+                    [displayValue]="form.get('firstName')?.value"
+                    [fetchingData]="vm.loading">
+                    <input
+                      id="firstName"
+                      pInputText
+                      type="text"
+                      class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                      formControlName="firstName"
+                      autocomplete="firstName"/>
+                  </app-form-control-wrap>
+                  @if(form.enabled){
+                    <label for="firstName">{{ 'USER.DETAILS.LABELS.firstName' | translate }}</label>
+                  }
+                </p-float-label>
+                <app-form-error
+                  [displayLabels]="isFieldValid('firstName')"
+                  [validationErrors]="form.get('firstName')?.errors"/>
+              </div>
+              <div class="mt-4">
+                @if(!form.enabled){
+                  <label for="lastName">{{ 'USER.DETAILS.LABELS.lastName' | translate }}</label>
+                }
+                <p-float-label variant="on" class="w-full mb-3">
+                  <app-form-control-wrap
+                    [editMode]="form.enabled"
+                    [displayValue]="form.get('lastName')?.value"
+                    [fetchingData]="vm.loading">
+                    <input
+                      id="lastName"
+                      pInputText
+                      type="text"
+                      class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                      formControlName="lastName"
+                      autocomplete="lastName"/>
+                  </app-form-control-wrap>
+                  @if(form.enabled){
+                    <label for="lastName">{{ 'USER.DETAILS.LABELS.lastName' | translate }}</label>
+                  }
+                </p-float-label>
+                <app-form-error
+                  [displayLabels]="isFieldValid('lastName')"
+                  [validationErrors]="form.get('lastName')?.errors"/>
+              </div>
+              <div class="mt-4">
+                @if(!form.enabled){
+                  <label for="username">{{ 'USER.DETAILS.LABELS.username' | translate }}</label>
+                }
                 <p-float-label variant="on" class="w-full mb-3">
                   <app-form-control-wrap
                     [editMode]="form.enabled"
@@ -53,26 +106,37 @@ import {FormControlWrapComponent} from '@components/form-control-wrap/form-contr
                       autocomplete="username"/>
                   </app-form-control-wrap>
                   @if(form.enabled){
-                    <label for="username">{{ 'USER.SEARCH.LABELS.email' | translate }}</label>
+                    <label for="username">{{ 'USER.DETAILS.LABELS.username' | translate }}</label>
                   }
                 </p-float-label>
                 <app-form-error
                   [displayLabels]="isFieldValid('username')"
                   [validationErrors]="form.get('username')?.errors"/>
               </div>
-              <div>
-                <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">First
-                  name</label>
-                <input type="text" id="first_name"
-                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                       placeholder="John" required/>
-              </div>
-              <div>
-                <label for="last_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last
-                  name</label>
-                <input type="text" id="last_name"
-                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                       placeholder="Doe" required/>
+              <div class="mt-4">
+                @if(!form.enabled){
+                  <label for="username">{{ 'USER.DETAILS.LABELS.email' | translate }}</label>
+                }
+                <p-float-label variant="on" class="w-full mb-3">
+                  <app-form-control-wrap
+                    [editMode]="form.enabled"
+                    [displayValue]="form.get('email')?.value"
+                    [fetchingData]="vm.loading">
+                    <input
+                      id="username"
+                      pInputText
+                      type="email"
+                      class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                      formControlName="email"
+                      autocomplete="email"/>
+                  </app-form-control-wrap>
+                  @if(form.enabled){
+                    <label for="email">{{ 'USER.DETAILS.LABELS.email' | translate }}</label>
+                  }
+                </p-float-label>
+                <app-form-error
+                  [displayLabels]="isFieldValid('email')"
+                  [validationErrors]="form.get('email')?.errors"/>
               </div>
             </div>
           </div>

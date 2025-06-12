@@ -191,7 +191,15 @@
       }
     },
     "DETAILS": {
-      "title": "User Details"
+      "title": "User Details",
+      "LABELS": {
+        "username": "Username",
+        "email": "Email",
+        "firstName": "First name",
+        "lastName": "Last name",
+        "status": "Status",
+        "role": "Role"
+      }
     }
   },
   "SAVED-SEARCHES": {

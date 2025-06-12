@@ -144,11 +144,15 @@ export class UserService extends GenericService{
     })
   }
 
+  /**
+   * Initialize the reactive form for changing a user password
+   * @returns A FormGroup with the appropriate fields
+   */
   public initChangePasswordForm():FormGroup<ChangePasswordForm>{
     return this.formBuilder.group<ChangePasswordForm>({
       password:new FormControl(null,[Validators.required,]),
       confirmPassword:new FormControl(null,[Validators.required,]),
-    });
+    },{validators: this.samePasswords()});
   }
 
   /**

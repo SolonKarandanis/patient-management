@@ -188,7 +188,15 @@
       }
     },
     "DETAILS": {
-      "title": "Στοιχεία χρήστη"
+      "title": "Στοιχεία χρήστη",
+      "LABELS": {
+        "username": "Όνομα χρήστη",
+        "email": "Email",
+        "firstName": "Ονομα",
+        "lastName": "Επώνυμο",
+        "status": "Κατάσταση χρήστη",
+        "role": "Ρόλος"
+      }
     }
   },
   "SAVED-SEARCHES": {

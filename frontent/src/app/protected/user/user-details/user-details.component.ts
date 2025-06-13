@@ -33,7 +33,6 @@ import {FieldsetComponent} from '@components/fieldset/fieldset.component';
         <app-fieldset legend="Details" [toggleable]="false" >
           <app-user-details-form [formGroup]="form" [fetchingData]="vm.loading" />
         </app-fieldset>
-        <app-user-details-form [formGroup]="form" [fetchingData]="vm.loading" />
       }
     </div>
   `,

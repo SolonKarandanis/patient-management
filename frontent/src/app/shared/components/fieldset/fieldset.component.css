@@ -1,6 +1,7 @@
 ::ng-deep .p-fieldset{
   --tw-bg-opacity: 1;
   background-color: rgba(241, 245, 249, var(--tw-bg-opacity)) !important;
+  color: black !important;
 }
 
 ::ng-deep .p-fieldset-legend{

@@ -9,7 +9,7 @@ import {Fieldset} from 'primeng/fieldset';
   template: `
     <p-fieldset [legend]="legend()"
                 [toggleable]="toggleable()"
-                [collapsed]="collapsed()" >
+                [collapsed]="collapsed()">
       <ng-content></ng-content>
     </p-fieldset>
   `,

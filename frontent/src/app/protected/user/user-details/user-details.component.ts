@@ -30,7 +30,7 @@ import {FieldsetComponent} from '@components/fieldset/fieldset.component';
       </app-page-header>
       <app-required-fields-label/>
       @if (vm(); as vm) {
-        <app-fieldset legend="Details" [toggleable]="false">
+        <app-fieldset legend="Details" [toggleable]="false" >
           <app-user-details-form [formGroup]="form" [fetchingData]="vm.loading" />
         </app-fieldset>
         <app-user-details-form [formGroup]="form" [fetchingData]="vm.loading" />

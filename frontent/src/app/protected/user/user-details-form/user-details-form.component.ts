@@ -5,7 +5,6 @@ import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {InputText} from 'primeng/inputtext';
 import {TranslatePipe} from '@ngx-translate/core';
 import {NgClass} from '@angular/common';
-import {BaseComponent} from '@shared/abstract/BaseComponent';
 
 @Component({
   selector: 'app-user-details-form',
@@ -20,7 +19,7 @@ import {BaseComponent} from '@shared/abstract/BaseComponent';
   template: `
     @let form = formGroup();
     <form [formGroup]="form">
-      <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
+      <div class="flex-auto px-4 lg:px-10 py-10 pt-0 ">
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           <div class="mt-4">
             <label for="firstName"

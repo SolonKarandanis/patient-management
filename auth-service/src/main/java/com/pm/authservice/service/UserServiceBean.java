@@ -187,6 +187,8 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
+        Role role = roleService.findByName(dto.getRole());
+        user.setRoles(Set.of(role));
         return userRepository.save(user);
     }
 

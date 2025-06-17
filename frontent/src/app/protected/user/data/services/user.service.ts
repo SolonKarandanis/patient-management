@@ -28,6 +28,7 @@ export class UserService extends GenericService{
   public searchResults = this.userStore.searchResults;
   public totalCount = this.userStore.totalCount;
   public createdUserId = this.userStore.createdUserId;
+  public rolesAsSelectItems = this.userStore.getUserRolesAsSelectItems;
 
   /**
    * Get the details of a specific user

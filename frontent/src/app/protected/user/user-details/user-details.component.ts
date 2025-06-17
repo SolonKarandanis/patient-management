@@ -20,7 +20,6 @@ import {FieldsetComponent} from '@components/fieldset/fieldset.component';
     ReactiveFormsModule,
     UserDetailsFormComponent,
     FieldsetComponent,
-
   ],
   template: `
     <div
@@ -31,7 +30,10 @@ import {FieldsetComponent} from '@components/fieldset/fieldset.component';
       <app-required-fields-label/>
       @if (vm(); as vm) {
         <app-fieldset legend="Details" [toggleable]="false" >
-          <app-user-details-form [formGroup]="form" [fetchingData]="vm.loading" />
+          <app-user-details-form
+            [formGroup]="form"
+            [fetchingData]="vm.loading"
+            [userRoles]="vm.userRoles"/>
         </app-fieldset>
       }
     </div>
@@ -50,27 +52,28 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
   protected vm = computed(()=>{
     const loading = this.loading();
     const user = this.user();
+    const userRoles=this.userService.rolesAsSelectItems();
 
     if(user){
-      console.log(this.userService.rolesAsSelectItems())
       this.form.patchValue({
         username: user.username,
         firstName:user.firstName,
         lastName:user.lastName,
         email:user.email,
-        role:this.userService.rolesAsSelectItems(),
+        // role:userRoles[0].value,
       });
     }
 
     return {
       user,
-      loading
+      loading,
+      userRoles
     }
   });
 
   ngOnInit(): void {
     this.initForm();
-    this.form.disable();
+    // this.form.disable();
   }
 
   private initForm():void{

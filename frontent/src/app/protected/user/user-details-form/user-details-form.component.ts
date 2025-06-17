@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, input} from '@angular/core';
 import {FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
@@ -7,6 +7,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {NgClass} from '@angular/common';
 import {Select} from 'primeng/select';
 import {SelectItem} from 'primeng/api';
+import {CommonEntitiesService} from '@core/services/common-entities.service';
 
 @Component({
   selector: 'app-user-details-form',
@@ -128,6 +129,8 @@ import {SelectItem} from 'primeng/api';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserDetailsFormComponent  {
+
+  protected commonEntitiesService = inject(CommonEntitiesService);
 
   fetchingData = input<boolean>(false);
   formGroup = input.required<FormGroup>();

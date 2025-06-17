@@ -4,7 +4,7 @@ import {computed, inject} from '@angular/core';
 import {UserRepository} from '../repositories/user.repository';
 import {UtilService} from '@core/services/util.service';
 import {HttpUtil} from '@core/services/http-util.service';
-import {CreateUserRequest, UpdateUserRequest, User} from '@models/user.model';
+import {CreateUserRequest, Role, UpdateUserRequest, User} from '@models/user.model';
 import {setError, setLoaded, setLoading, withCallState} from '@core/store/features/call-state.feature';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
 import {UserSearchRequest} from '@models/search.model';
@@ -19,6 +19,7 @@ import {
   withSearchState
 } from '@core/store/features/search-state.feature';
 import {TranslateService} from '@ngx-translate/core';
+import {SelectItem} from 'primeng/api';
 
 export const UserStore = signalStore(
   {providedIn:'root'},
@@ -45,6 +46,19 @@ export const UserStore = signalStore(
     getUser: computed(()=>{
       return selectedUser();
     }),
+    getUserRolesAsSelectItems:computed(()=>{
+      const user = selectedUser();
+      if(!user){
+        return [];
+      }
+      const roles = user.roles;
+      if(roles && Array.isArray(roles) && roles.length > 0){
+        return roles.map((role: Role) => {
+          return {label: role.nameLabel, value: role.name} as SelectItem;
+        });
+      }
+      return [];
+    })
   })),
   withMethods((state)=>({
     setLoadingState(){

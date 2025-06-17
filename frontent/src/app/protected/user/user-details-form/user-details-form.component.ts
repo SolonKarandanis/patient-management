@@ -105,6 +105,18 @@ import {NgClass} from '@angular/common';
               [displayLabels]="isFieldValid('email')"
               [validationErrors]="form.get('email')?.errors"/>
           </div>
+          <div class="mt-4">
+            <label for="role"
+                   [ngClass]="{'app-required-label': form.enabled}">
+              {{ 'USER.DETAILS.LABELS.role' | translate }}
+            </label>
+            <app-form-control-wrap
+              [editMode]="form.enabled"
+              [displayValue]="form.get('role')?.value"
+              [fetchingData]="fetchingData()">
+
+            </app-form-control-wrap>
+          </div>
         </div>
       </div>
     </form>

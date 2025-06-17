@@ -52,11 +52,13 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
     const user = this.user();
 
     if(user){
+      console.log(this.userService.rolesAsSelectItems())
       this.form.patchValue({
         username: user.username,
         firstName:user.firstName,
         lastName:user.lastName,
-        email:user.email
+        email:user.email,
+        role:this.userService.rolesAsSelectItems(),
       });
     }
 

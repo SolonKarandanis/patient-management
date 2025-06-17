@@ -5,6 +5,8 @@ import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {InputText} from 'primeng/inputtext';
 import {TranslatePipe} from '@ngx-translate/core';
 import {NgClass} from '@angular/common';
+import {Select} from 'primeng/select';
+import {SelectItem} from 'primeng/api';
 
 @Component({
   selector: 'app-user-details-form',
@@ -14,7 +16,8 @@ import {NgClass} from '@angular/common';
     InputText,
     ReactiveFormsModule,
     TranslatePipe,
-    NgClass
+    NgClass,
+    Select
   ],
   template: `
     @let form = formGroup();
@@ -110,12 +113,12 @@ import {NgClass} from '@angular/common';
                    [ngClass]="{'app-required-label': form.enabled}">
               {{ 'USER.DETAILS.LABELS.role' | translate }}
             </label>
-            <app-form-control-wrap
-              [editMode]="form.enabled"
-              [displayValue]="form.get('role')?.value"
-              [fetchingData]="fetchingData()">
-
-            </app-form-control-wrap>
+            <p-select
+              formControlName="role"
+              [options]="userRoles()"
+              [checkmark]="true"
+              [showClear]="true"
+              class="border-0 !bg-white text-sm shadow w-full"/>
           </div>
         </div>
       </div>
@@ -128,6 +131,7 @@ export class UserDetailsFormComponent  {
 
   fetchingData = input<boolean>(false);
   formGroup = input.required<FormGroup>();
+  userRoles = input.required<SelectItem[]>();
 
   protected isFieldValid(field: string): boolean | undefined {
     const control = this.formGroup().get(field);

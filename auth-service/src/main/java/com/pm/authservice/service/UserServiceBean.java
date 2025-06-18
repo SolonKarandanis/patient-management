@@ -195,12 +195,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     @Transactional
     @Override
     public User activateUser(User user) throws BusinessException {
-        if(AccountStatus.ACTIVE.equals(user.getStatus())){
-            throw new BusinessException("error.user.already.active");
-        }
-        user.setStatus(AccountStatus.ACTIVE);
-        user.setIsEnabled(Boolean.TRUE);
-        user.setIsVerified(Boolean.TRUE);
+        user.activate();
         userRepository.save(user);
         return user;
     }
@@ -208,11 +203,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     @Transactional
     @Override
     public User deactivateUser(User user) throws BusinessException {
-        if(AccountStatus.INACTIVE.equals(user.getStatus())){
-            throw new BusinessException("error.user.already.inactive");
-        }
-        user.setStatus(AccountStatus.INACTIVE);
-        user.setIsEnabled(Boolean.FALSE);
+        user.deactivate();
         userRepository.save(user);
         return user;
     }

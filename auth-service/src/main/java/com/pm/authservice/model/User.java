@@ -1,5 +1,6 @@
 package com.pm.authservice.model;
 
+import com.pm.authservice.exception.BusinessException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -122,5 +123,23 @@ public class User {
             iterator.next();
             iterator.remove();
         }
+    }
+
+    //Domain Logic to be moved
+    public void activate() throws BusinessException {
+        if(AccountStatus.ACTIVE.equals(this.status)){
+            throw new BusinessException("error.user.already.active");
+        }
+        setStatus(AccountStatus.ACTIVE);
+        setIsEnabled(Boolean.TRUE);
+        setIsVerified(Boolean.TRUE);
+    }
+
+    public void deactivate() throws BusinessException {
+        if(AccountStatus.INACTIVE.equals(this.status)){
+            throw new BusinessException("error.user.already.inactive");
+        }
+        setStatus(AccountStatus.INACTIVE);
+        setIsEnabled(Boolean.FALSE);
     }
 }

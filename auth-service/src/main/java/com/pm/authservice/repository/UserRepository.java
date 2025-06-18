@@ -1,6 +1,6 @@
 package com.pm.authservice.repository;
 
-import com.pm.authservice.model.User;
+import com.pm.authservice.model.UserEntity;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,23 +15,23 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<User,Integer> ,
-        JpaSpecificationExecutor<User>, QuerydslPredicateExecutor<User> {
+public interface UserRepository extends JpaRepository<UserEntity,Integer> ,
+        JpaSpecificationExecutor<UserEntity>, QuerydslPredicateExecutor<UserEntity> {
 
-    @Query(name = User.FIND_BY_EMAIL)
-    Optional<User> findByEmail(String email);
+    @Query(name = UserEntity.FIND_BY_EMAIL)
+    Optional<UserEntity> findByEmail(String email);
 
-    @Query(name = User.FIND_BY_PUBLIC_ID)
-    Optional<User> findByPublicId(@Param("publicId") UUID publicId);
+    @Query(name = UserEntity.FIND_BY_PUBLIC_ID)
+    Optional<UserEntity> findByPublicId(@Param("publicId") UUID publicId);
 
-    @Query(name = User.FIND_ID_BY_PUBLIC_ID)
+    @Query(name = UserEntity.FIND_ID_BY_PUBLIC_ID)
     Optional<Integer> findIdByPublicId(@Param("publicId") UUID publicId);
 
-    @Query(name = User.FIND_BY_USERNAME)
-    Optional<User> findByUsername(String username);
+    @Query(name = UserEntity.FIND_BY_USERNAME)
+    Optional<UserEntity> findByUsername(String username);
 
-    @EntityGraph(value =  User.GRAPH_USERS_ROLES,type = EntityGraph.EntityGraphType.FETCH)
-    @Query("SELECT u FROM User u ")
-    List<User> findUsersWithRoles(Specification<User> spec);
+    @EntityGraph(value =  UserEntity.GRAPH_USERS_ROLES,type = EntityGraph.EntityGraphType.FETCH)
+    @Query("SELECT u FROM UserEntity u ")
+    List<UserEntity> findUsersWithRoles(Specification<UserEntity> spec);
 
 }

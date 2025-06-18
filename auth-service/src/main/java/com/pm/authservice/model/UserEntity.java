@@ -17,27 +17,27 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@NamedQuery(name = User.FIND_BY_EMAIL,
-        query = "SELECT u FROM User u "
+@NamedQuery(name = UserEntity.FIND_BY_EMAIL,
+        query = "SELECT u FROM UserEntity u "
                 + "LEFT JOIN FETCH u.roles r "
                 + "WHERE u.email = :email ")
-@NamedQuery(name = User.FIND_BY_PUBLIC_ID,
-        query = "SELECT u FROM User u "
+@NamedQuery(name = UserEntity.FIND_BY_PUBLIC_ID,
+        query = "SELECT u FROM UserEntity u "
                 + "LEFT JOIN FETCH u.roles r " +
                 "WHERE u.publicId= :publicId ")
-@NamedQuery(name = User.FIND_BY_USERNAME,
-        query = "SELECT u FROM User u "
+@NamedQuery(name = UserEntity.FIND_BY_USERNAME,
+        query = "SELECT u FROM UserEntity u "
                 + "LEFT JOIN FETCH u.roles r " +
                 " WHERE u.username= :username ")
-@NamedQuery(name = User.FIND_ID_BY_PUBLIC_ID,
-        query = "SELECT u.id FROM User u " +
+@NamedQuery(name = UserEntity.FIND_ID_BY_PUBLIC_ID,
+        query = "SELECT u.id FROM UserEntity u " +
                 "WHERE u.publicId=:publicId")
-@NamedEntityGraph(name = User.GRAPH_USERS_ROLES,
+@NamedEntityGraph(name = UserEntity.GRAPH_USERS_ROLES,
         attributeNodes = @NamedAttributeNode("roles")
 )
 @Entity
 @Table(name="users")
-public class User {
+public class UserEntity {
     public static final String FIND_BY_EMAIL= "User.findByEmail";
     public static final String FIND_BY_PUBLIC_ID= "User.findByPublicId";
     public static final String FIND_BY_USERNAME= "User.findByUsername";
@@ -107,25 +107,25 @@ public class User {
             joinColumns=@JoinColumn(name="user_id"),
             inverseJoinColumns=@JoinColumn(name="role_id"))
     @BatchSize(size = 50) // Batch loading strategy
-    private Set<Role> roles= new HashSet<>();
+    private Set<RoleEntity> roles= new HashSet<>();
 
-    public void addRole(Role role) {
+    public void addRole(RoleEntity role) {
         this.roles.add(role);
     }
 
-    public void removeRole(Role role) {
+    public void removeRole(RoleEntity role) {
         this.roles.remove(role);
     }
 
     public void removeRoles() {
-        Iterator<Role> iterator =this.roles.iterator();
+        Iterator<RoleEntity> iterator =this.roles.iterator();
         while (iterator.hasNext()) {
             iterator.next();
             iterator.remove();
         }
     }
 
-    //Domain Logic to be moved
+    //Domain Logic to be moved to UserDomain
     public void activate() throws BusinessException {
         if(AccountStatus.ACTIVE.equals(this.status)){
             throw new BusinessException("error.user.already.active");

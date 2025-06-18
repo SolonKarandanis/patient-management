@@ -2,14 +2,14 @@ package com.pm.authservice.service;
 
 
 import com.pm.authservice.exception.BusinessException;
-import com.pm.authservice.model.User;
-import com.pm.authservice.model.VerificationToken;
+import com.pm.authservice.model.UserEntity;
+import com.pm.authservice.model.VerificationTokenEntity;
 
 public interface VerificationTokenService {
 
-    public Boolean validateToken(VerificationToken verificationToken) throws BusinessException;
+    public Boolean validateToken(VerificationTokenEntity verificationToken) throws BusinessException;
 
-    public VerificationToken findByToken(String theToken);
+    public VerificationTokenEntity findByToken(String theToken);
 
-    public void saveUserVerificationToken(User theUser, String token);
+    public void saveUserVerificationToken(UserEntity theUser, String token);
 }

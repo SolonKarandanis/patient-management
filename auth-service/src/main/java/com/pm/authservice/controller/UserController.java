@@ -5,7 +5,7 @@ import com.pm.authservice.config.i18n.Translate;
 import com.pm.authservice.dto.*;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
-import com.pm.authservice.model.User;
+import com.pm.authservice.model.UserEntity;
 import com.pm.authservice.service.UserService;
 import com.pm.authservice.util.AppConstants;
 import com.pm.authservice.util.HttpUtil;
@@ -56,7 +56,7 @@ public class UserController {
     @PostMapping("/search")
     @Translate(path = "list[*].status", targetProperty = "statusLabel")
     public ResponseEntity<SearchResults<UserDTO>> findAllUsers(@RequestBody @Valid UsersSearchRequestDTO searchObj){
-        Page<User> results = usersService.searchUsers(searchObj);
+        Page<UserEntity> results = usersService.searchUsers(searchObj);
         List<UserDTO> dtos=usersService.convertToDTOList(results.getContent(),false);
         return ResponseEntity.ok().body(new SearchResults<UserDTO>(Math.toIntExact(results.getTotalElements()), dtos));
     }
@@ -66,7 +66,7 @@ public class UserController {
     @Translate(path = "roles[*].name", targetProperty = "nameLabel")
     public ResponseEntity<UserDTO> viewUser(@PathVariable(name= "id", required=true) String publicId)
             throws NotFoundException {
-        User user = usersService.findByPublicId(publicId);
+        UserEntity user = usersService.findByPublicId(publicId);
         log.info("UserController --> viewUser --> username: {}", user.getUsername());
         return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
@@ -76,7 +76,7 @@ public class UserController {
     @Translate(path = "roles[*].name", targetProperty = "nameLabel")
     public ResponseEntity<UserDTO> getUserByToken(Authentication authentication) throws NotFoundException{
         UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
-        User user = usersService.findByPublicId(dto.getPublicId());
+        UserEntity user = usersService.findByPublicId(dto.getPublicId());
         log.info("UserController --> getUserByToken --> username: {}", user.getUsername());
         return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
@@ -87,7 +87,7 @@ public class UserController {
     public ResponseEntity<UserDTO> registerUser(@RequestBody @Valid CreateUserDTO user, final HttpServletRequest request)
             throws BusinessException{
         log.info("UserController->registerUser->RequestBody: {}" , user);
-        User userSaved=usersService.registerUser(user, applicationUrl(request));
+        UserEntity userSaved=usersService.registerUser(user, applicationUrl(request));
         return ResponseEntity.ok(usersService.convertToDTO(userSaved,true));
     }
 
@@ -97,7 +97,7 @@ public class UserController {
             @PathVariable(name = "id", required=true) String publicId,
             @RequestBody @Valid UpdateUserDTO user)throws NotFoundException{
         log.info("UserController->updateUser->RequestBody: {}" , user);
-        User userSaved=usersService.updateUser(publicId,user);
+        UserEntity userSaved=usersService.updateUser(publicId,user);
         return ResponseEntity.ok(usersService.convertToDTO(userSaved,true));
     }
 
@@ -115,7 +115,7 @@ public class UserController {
             @PathVariable(name= "id", required=true) String publicId )
             throws NotFoundException, BusinessException{
         log.info("UserController->activateUser->publicId: {}" , publicId);
-        User user = usersService.findByPublicId(publicId);
+        UserEntity user = usersService.findByPublicId(publicId);
         user = usersService.activateUser(user);
         return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
@@ -126,7 +126,7 @@ public class UserController {
             @PathVariable(name= "id", required=true) String publicId )
             throws NotFoundException, BusinessException{
         log.info("UserController->deactivateUser->publicId: {}" , publicId);
-        User user = usersService.findByPublicId(publicId);
+        UserEntity user = usersService.findByPublicId(publicId);
         user = usersService.deactivateUser(user);
         return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }

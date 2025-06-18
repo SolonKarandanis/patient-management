@@ -48,7 +48,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
 
 
     @Override
-    public UserDTO convertToDTO(User user, Boolean withRoles) {
+    public UserDTO convertToDTO(UserEntity user, Boolean withRoles) {
         UserDTO dto = new UserDTO();
         dto.setUsername(user.getUsername());
         dto.setFirstName(user.getFirstName());
@@ -64,8 +64,8 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
 
     @Transactional
     @Override
-    public User convertToEntity(UserDTO dto) {
-        User user = new User();
+    public UserEntity convertToEntity(UserDTO dto) {
+        UserEntity user = new UserEntity();
         user.setUsername(dto.getUsername());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
@@ -79,14 +79,14 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         user.setStatus(AccountStatus.valueOf(dto.getStatus()));
         if(!CollectionUtils.isEmpty(dto.getRoles())){
             List<Integer> roleIds= dto.getRoles().stream().map(RoleDTO::getId).toList();
-            Set<Role> roles = new HashSet<>(roleService.findByIds(roleIds));
+            Set<RoleEntity> roles = new HashSet<>(roleService.findByIds(roleIds));
             user.setRoles(roles);
         }
         return user;
     }
 
     @Override
-    public List<UserDTO> convertToDTOList(List<User> userList, Boolean withRoles) {
+    public List<UserDTO> convertToDTOList(List<UserEntity> userList, Boolean withRoles) {
         if(CollectionUtils.isEmpty(userList)){
             return Collections.emptyList();
         }
@@ -96,19 +96,19 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     }
 
     @Override
-    public User findById(Integer id) throws NotFoundException {
+    public UserEntity findById(Integer id) throws NotFoundException {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
     }
 
     @Override
-    public User findByPublicId(String publicId) throws NotFoundException {
+    public UserEntity findByPublicId(String publicId) throws NotFoundException {
         return userRepository.findByPublicId(UUID.fromString(publicId))
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
     }
 
     @Override
-    public User findByEmail(String email) throws NotFoundException {
+    public UserEntity findByEmail(String email) throws NotFoundException {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
     }
@@ -116,7 +116,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     @Transactional
     @Override
     public void deleteUser(String publicId) throws NotFoundException {
-        Optional<User> usrOpt  =userRepository.findByPublicId(UUID.fromString(publicId));
+        Optional<UserEntity> usrOpt  =userRepository.findByPublicId(UUID.fromString(publicId));
         usrOpt.ifPresentOrElse(
                 userRepository::delete,
                 ()-> new NotFoundException(USER_NOT_FOUND)
@@ -124,7 +124,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     }
 
     @Override
-    public Page<User> searchUsers(UsersSearchRequestDTO searchObj) {
+    public Page<UserEntity> searchUsers(UsersSearchRequestDTO searchObj) {
         PageRequest pageRequest = toPageRequest(searchObj.getPaging());
         Predicate predicate = getSearchPredicate(searchObj);
         return userRepository.findAll(predicate,pageRequest);
@@ -139,9 +139,9 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     @Override
     public List<UserDTO> findAllUsersForExport(UsersSearchRequestDTO searchObj) {
         Predicate predicate = getSearchPredicate(searchObj);
-        List<User> users=StreamSupport.stream(userRepository.findAll(predicate).spliterator(), false).toList();
+        List<UserEntity> users=StreamSupport.stream(userRepository.findAll(predicate).spliterator(), false).toList();
         List<UserDTO> results=new ArrayList<>();
-        for(User user: users){
+        for(UserEntity user: users){
             UserDTO dto = convertToDTO(user,true);
             results.add(dto);
         }
@@ -150,19 +150,19 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
 
     @Transactional
     @Override
-    public User registerUser(CreateUserDTO dto,String applicationUrl) throws BusinessException {
-        Optional<User> userNameMaybe  = userRepository.findByUsername(dto.getUsername());
+    public UserEntity registerUser(CreateUserDTO dto, String applicationUrl) throws BusinessException {
+        Optional<UserEntity> userNameMaybe  = userRepository.findByUsername(dto.getUsername());
 
         if(userNameMaybe.isPresent()){
             throw new BusinessException("error.username.exists");
         }
 
-        Optional<User> emailMaybe  = userRepository.findByEmail(dto.getEmail());
+        Optional<UserEntity> emailMaybe  = userRepository.findByEmail(dto.getEmail());
         if(emailMaybe.isPresent()){
             throw new BusinessException("error.email.exists");
         }
 
-        User user = new User();
+        UserEntity user = new UserEntity();
         user.setUsername(dto.getUsername());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setFirstName(dto.getFirstName());
@@ -172,7 +172,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         user.setIsVerified(Boolean.FALSE);
         UUID uuid = UUID.randomUUID();
         user.setPublicId(uuid);
-        Role role = roleService.findByName(dto.getRole());
+        RoleEntity role = roleService.findByName(dto.getRole());
         user.setRoles(Set.of(role));
         user = userRepository.save(user);
         getPublisher().publishEvent(new UserRegistrationCompleteEvent(user, applicationUrl));
@@ -181,20 +181,20 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
 
     @Transactional
     @Override
-    public User updateUser(String publicId, UpdateUserDTO dto) throws NotFoundException {
-        User user = findByPublicId(publicId);
+    public UserEntity updateUser(String publicId, UpdateUserDTO dto) throws NotFoundException {
+        UserEntity user = findByPublicId(publicId);
         user.setUsername(dto.getUsername());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
-        Role role = roleService.findByName(dto.getRole());
+        RoleEntity role = roleService.findByName(dto.getRole());
         user.setRoles(Set.of(role));
         return userRepository.save(user);
     }
 
     @Transactional
     @Override
-    public User activateUser(User user) throws BusinessException {
+    public UserEntity activateUser(UserEntity user) throws BusinessException {
         user.activate();
         userRepository.save(user);
         return user;
@@ -202,7 +202,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
 
     @Transactional
     @Override
-    public User deactivateUser(User user) throws BusinessException {
+    public UserEntity deactivateUser(UserEntity user) throws BusinessException {
         user.deactivate();
         userRepository.save(user);
         return user;
@@ -210,17 +210,17 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
 
     @Override
     public void verifyEmail(String token) throws BusinessException {
-        VerificationToken verificationToken = verificationTokenService.findByToken(token);
+        VerificationTokenEntity verificationToken = verificationTokenService.findByToken(token);
         Boolean verificationResult = verificationTokenService.validateToken(verificationToken);
         if(verificationResult){
-            User user = verificationToken.getUser();
+            UserEntity user = verificationToken.getUser();
             user.setIsVerified(Boolean.TRUE);
             userRepository.save(user);
         }
     }
 
     protected Predicate getSearchPredicate(UsersSearchRequestDTO searchObj){
-        QUser user = QUser.user;
+        QUserEntity user = QUserEntity.userEntity;
         BooleanBuilder builder = new BooleanBuilder();
         String email =searchObj.getEmail();
         String username = searchObj.getUsername();
@@ -241,7 +241,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
             builder.and(user.status.eq(AccountStatus.fromValue(status)));
         }
         if(StringUtils.hasLength(roleName)){
-            Role role = roleService.findByName(roleName);
+            RoleEntity role = roleService.findByName(roleName);
             if(role != null){
                 builder.and(user.roles.contains(role));
             }

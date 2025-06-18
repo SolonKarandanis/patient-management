@@ -8,14 +8,14 @@ import java.util.List;
 
 @Getter
 @Setter
-@NamedQuery(name = Role.FIND_BY_IDS,
-        query = "SELECT r FROM Role r WHERE r.id in (:ids)")
-@NamedQuery(name = Role.FIND_BY_NAME,
-        query = "SELECT r FROM Role r " +
+@NamedQuery(name = RoleEntity.FIND_BY_IDS,
+        query = "SELECT r FROM RoleEntity r WHERE r.id in (:ids)")
+@NamedQuery(name = RoleEntity.FIND_BY_NAME,
+        query = "SELECT r FROM RoleEntity r " +
                 "WHERE r.name = :name")
 @Entity
 @Table(name="roles")
-public class Role {
+public class RoleEntity {
 
     public static final String FIND_BY_IDS= "Role.findByIds";
     public static final String FIND_BY_NAME= "User.findByName";
@@ -40,5 +40,5 @@ public class Role {
 
     //bidirectional many-to-one association to RoleOperation
     @OneToMany(mappedBy="role", fetch=FetchType.LAZY )
-    private List<RoleOperation> roleOperations;
+    private List<RoleOperationEntity> roleOperations;
 }

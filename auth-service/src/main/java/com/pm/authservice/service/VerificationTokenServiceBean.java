@@ -2,8 +2,8 @@ package com.pm.authservice.service;
 
 
 import com.pm.authservice.exception.BusinessException;
-import com.pm.authservice.model.User;
-import com.pm.authservice.model.VerificationToken;
+import com.pm.authservice.model.UserEntity;
+import com.pm.authservice.model.VerificationTokenEntity;
 import com.pm.authservice.repository.VerificationTokenRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ public class VerificationTokenServiceBean implements VerificationTokenService{
 
     @Transactional
     @Override
-    public Boolean validateToken(VerificationToken verificationToken) throws BusinessException {
+    public Boolean validateToken(VerificationTokenEntity verificationToken) throws BusinessException {
         if(verificationToken == null){
             throw new BusinessException("error.invalid.token");
         }
@@ -39,14 +39,14 @@ public class VerificationTokenServiceBean implements VerificationTokenService{
     }
 
     @Override
-    public VerificationToken findByToken(String theToken) {
+    public VerificationTokenEntity findByToken(String theToken) {
         return verificationTokenRepository.findByToken(theToken);
     }
 
     @Transactional
     @Override
-    public void saveUserVerificationToken(User theUser, String token) {
-        var verificationToken = new VerificationToken(token, theUser);
+    public void saveUserVerificationToken(UserEntity theUser, String token) {
+        var verificationToken = new VerificationTokenEntity(token, theUser);
         verificationTokenRepository.save(verificationToken);
     }
 }

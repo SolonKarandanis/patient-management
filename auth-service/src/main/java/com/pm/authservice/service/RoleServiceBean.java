@@ -1,7 +1,7 @@
 package com.pm.authservice.service;
 
 import com.pm.authservice.dto.RoleDTO;
-import com.pm.authservice.model.Role;
+import com.pm.authservice.model.RoleEntity;
 import com.pm.authservice.repository.RoleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +22,7 @@ public class RoleServiceBean extends GenericServiceBean implements RoleService {
     }
 
     @Override
-    public RoleDTO convertToDto(Role role) {
+    public RoleDTO convertToDto(RoleEntity role) {
         RoleDTO dto = new RoleDTO();
         dto.setId(role.getId());
         dto.setName(role.getName());
@@ -31,18 +31,18 @@ public class RoleServiceBean extends GenericServiceBean implements RoleService {
     }
 
     @Override
-    public Role convertToEntity(RoleDTO roleDTO) {
-        Role role = new Role();
+    public RoleEntity convertToEntity(RoleDTO roleDTO) {
+        RoleEntity role = new RoleEntity();
         role.setId(roleDTO.getId());
         role.setName(roleDTO.getName());
         return role;
     }
 
     @Override
-    public List<RoleDTO> convertToDtoList(Set<Role> roles) {
+    public List<RoleDTO> convertToDtoList(Set<RoleEntity> roles) {
         List<RoleDTO> roleDTOS = new ArrayList<>();
         if(!CollectionUtils.isEmpty(roles)){
-            for (Role role : roles) {
+            for (RoleEntity role : roles) {
                 roleDTOS.add(convertToDto(role));
             }
         }
@@ -50,17 +50,17 @@ public class RoleServiceBean extends GenericServiceBean implements RoleService {
     }
 
     @Override
-    public List<Role> findAll() {
+    public List<RoleEntity> findAll() {
         return roleRepository.findAll();
     }
 
     @Override
-    public List<Role> findByIds(List<Integer> ids) {
+    public List<RoleEntity> findByIds(List<Integer> ids) {
         return roleRepository.findByIds(ids);
     }
 
     @Override
-    public Role findByName(String name) {
+    public RoleEntity findByName(String name) {
         return roleRepository.findByName(name);
     }
 }

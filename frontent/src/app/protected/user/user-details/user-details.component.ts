@@ -9,7 +9,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {UserDetailsFormComponent} from '../user-details-form/user-details-form.component';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
-import {SelectItem} from 'primeng/api';
 import {User} from '@models/user.model';
 
 
@@ -78,11 +77,11 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
   });
 
   ngOnInit(): void {
-
   }
 
   private initForm(user:User):void{
     this.form = this.userService.initUpdateUserForm(user);
+    this.form.disable();
   }
 
 }

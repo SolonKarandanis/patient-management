@@ -62,8 +62,12 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
     const availableRoles = this.commonEntitiesService.rolesAsSelectItems();
 
     if(user){
-      this.initForm(user);
+      this.initForm();
       this.form.patchValue({
+        username:user.username,
+        firstName:user.firstName,
+        lastName:user.lastName,
+        email:user.email,
         role:userRoles[0].value,
       });
     }
@@ -79,8 +83,8 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
   ngOnInit(): void {
   }
 
-  private initForm(user:User):void{
-    this.form = this.userService.initUpdateUserForm(user);
+  private initForm():void{
+    this.form = this.userService.initUpdateUserForm();
     this.form.disable();
   }
 

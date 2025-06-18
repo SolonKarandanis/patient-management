@@ -1,6 +1,6 @@
 package com.pm.authservice.event;
 
-import com.pm.authservice.model.User;
+import com.pm.authservice.model.UserEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.ApplicationEvent;
@@ -8,10 +8,10 @@ import org.springframework.context.ApplicationEvent;
 @Getter
 @Setter
 public class UserRegistrationCompleteEvent extends ApplicationEvent {
-    private User user;
+    private UserEntity user;
     private String applicationUrl;
 
-    public UserRegistrationCompleteEvent(User user, String applicationUrl) {
+    public UserRegistrationCompleteEvent(UserEntity user, String applicationUrl) {
         super(user);
         this.user = user;
         this.applicationUrl = applicationUrl;

@@ -10,7 +10,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name="operations")
-public class Operation {
+public class OperationEntity {
 
     @Id
     @GeneratedValue(
@@ -32,5 +32,5 @@ public class Operation {
 
     //bidirectional many-to-one association to RoleOperation
     @OneToMany(mappedBy="operation", fetch=FetchType.LAZY )
-    private List<RoleOperation> roleOperations;
+    private List<RoleOperationEntity> roleOperations;
 }

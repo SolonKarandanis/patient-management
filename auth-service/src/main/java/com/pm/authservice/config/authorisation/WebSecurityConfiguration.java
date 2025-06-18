@@ -1,6 +1,6 @@
 package com.pm.authservice.config.authorisation;
 
-import com.pm.authservice.model.Role;
+import com.pm.authservice.model.RoleEntity;
 import com.pm.authservice.repository.RoleRepository;
 import com.pm.authservice.util.SecurityConstants;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -97,7 +96,7 @@ public class WebSecurityConfiguration {
 
     private String[] getRoleNames()  {
         List<String> roleNames = roleRepository.findAll().stream()
-                .map(Role::getName)
+                .map(RoleEntity::getName)
                 .toList();
         int len = roleNames.size();
         String[] roleNamesArr = new String[len];

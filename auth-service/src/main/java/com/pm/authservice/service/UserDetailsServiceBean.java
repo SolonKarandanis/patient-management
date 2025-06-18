@@ -2,7 +2,7 @@ package com.pm.authservice.service;
 
 import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.dto.UserDetailsDTO;
-import com.pm.authservice.model.User;
+import com.pm.authservice.model.UserEntity;
 import com.pm.authservice.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +11,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -36,7 +34,7 @@ public class UserDetailsServiceBean implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND));
     }
 
-    private UserDetails createSpringSecurityUser(User user){
+    private UserDetails createSpringSecurityUser(UserEntity user){
         UserDetailsDTO dto = new UserDetailsDTO();
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());

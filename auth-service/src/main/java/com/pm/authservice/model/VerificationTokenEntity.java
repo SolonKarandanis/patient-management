@@ -9,13 +9,13 @@ import java.util.Date;
 
 @Getter
 @Setter
-@NamedQuery(name = VerificationToken.FIND_BY_TOKEN,
-        query = "SELECT vt FROM VerificationToken vt " +
+@NamedQuery(name = VerificationTokenEntity.FIND_BY_TOKEN,
+        query = "SELECT vt FROM VerificationTokenEntity vt " +
                 "LEFT JOIN FETCH vt.user u " +
                 "WHERE vt.token= :token")
 @Entity
 @Table(name = "verification_token")
-public class VerificationToken {
+public class VerificationTokenEntity {
 
     public static final String FIND_BY_TOKEN= "VerificationToken.findByToken";
 
@@ -37,7 +37,7 @@ public class VerificationToken {
 
     @OneToOne
     @JoinColumn(name = "user_id",insertable=false, updatable=false)
-    private User user;
+    private UserEntity user;
 
     @Column(name = "token")
     private String token;
@@ -55,11 +55,11 @@ public class VerificationToken {
         return false;
     }
 
-    public VerificationToken(){
+    public VerificationTokenEntity(){
 
     }
 
-    public VerificationToken(String token, User user) {
+    public VerificationTokenEntity(String token, UserEntity user) {
         super();
         this.token = token;
         this.user = user;
@@ -67,7 +67,7 @@ public class VerificationToken {
         this.expirationTime = this.getTokenExpirationTime();
     }
 
-    public VerificationToken(String token) {
+    public VerificationTokenEntity(String token) {
         super();
         this.token = token;
         this.expirationTime = this.getTokenExpirationTime();

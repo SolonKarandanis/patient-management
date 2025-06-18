@@ -1,6 +1,6 @@
 package com.pm.authservice.event;
 
-import com.pm.authservice.model.User;
+import com.pm.authservice.model.UserEntity;
 import com.pm.authservice.service.VerificationTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ public class UserRegistrationCompleteEventListener implements ApplicationListene
     private static final Logger log = LoggerFactory.getLogger(UserRegistrationCompleteEventListener.class);
 
     private final VerificationTokenService tokenService;
-    private User user;
+    private UserEntity user;
 
     public UserRegistrationCompleteEventListener(VerificationTokenService tokenService){
         this.tokenService = tokenService;

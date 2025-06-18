@@ -2,14 +2,13 @@ import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@ang
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {UserService} from '../data/services/user.service';
-import {USER_DETAILS_PROVIDER,  USERS_DETAILS} from './user-details.provider';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {UserDetailsFormComponent} from '../user-details-form/user-details-form.component';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
-import {User} from '@models/user.model';
+
 
 
 @Component({
@@ -43,22 +42,16 @@ import {User} from '@models/user.model';
     </div>
   `,
   styleUrl: './user-details.component.css',
-  providers:[
-    USER_DETAILS_PROVIDER
-  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserDetailsComponent extends BaseComponent implements OnInit{
   private userService = inject(UserService);
   protected commonEntitiesService = inject(CommonEntitiesService);
-  protected user = inject(USERS_DETAILS);
-  protected loading = this.userService.isLoading;
-  protected userRoles=this.userService.rolesAsSelectItems;
 
   protected vm = computed(()=>{
-    const loading = this.loading();
-    const user = this.user();
-    const userRoles=this.userRoles();
+    const loading = this.userService.isLoading();
+    const user = this. userService.user();
+    const userRoles=this.userService.rolesAsSelectItems();
     const availableRoles = this.commonEntitiesService.rolesAsSelectItems();
 
     if(user){

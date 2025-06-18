@@ -7,7 +7,6 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {NgClass} from '@angular/common';
 import {Select} from 'primeng/select';
 import {SelectItem} from 'primeng/api';
-import {CommonEntitiesService} from '@core/services/common-entities.service';
 
 @Component({
   selector: 'app-user-details-form',
@@ -89,7 +88,7 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
               [validationErrors]="form.get('username')?.errors"/>
           </div>
           <div class="mt-4">
-            <label for="username"
+            <label for="email"
                    [ngClass]="{'app-required-label': form.enabled}">
               {{ 'USER.DETAILS.LABELS.email' | translate }}
             </label>
@@ -98,7 +97,7 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
               [displayValue]="form.get('email')?.value"
               [fetchingData]="fetchingData()">
               <input
-                id="username"
+                id="email"
                 pInputText
                 type="email"
                 class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
@@ -116,7 +115,7 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
             </label>
             <p-select
               formControlName="role"
-              [options]="userRoles()"
+              [options]="availableRoles()"
               [checkmark]="true"
               [showClear]="true"
               class="border-0 !bg-white text-sm shadow w-full"/>
@@ -130,11 +129,9 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
 })
 export class UserDetailsFormComponent  {
 
-  protected commonEntitiesService = inject(CommonEntitiesService);
-
   fetchingData = input<boolean>(false);
   formGroup = input.required<FormGroup>();
-  userRoles = input.required<SelectItem[]>();
+  availableRoles = input.required<SelectItem[]>();
 
   protected isFieldValid(field: string): boolean | undefined {
     const control = this.formGroup().get(field);

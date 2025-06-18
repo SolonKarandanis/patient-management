@@ -8,6 +8,9 @@ import {BaseComponent} from '@shared/abstract/BaseComponent';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {UserDetailsFormComponent} from '../user-details-form/user-details-form.component';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
+import {CommonEntitiesService} from '@core/services/common-entities.service';
+import {SelectItem} from 'primeng/api';
+import {User} from '@models/user.model';
 
 
 @Component({
@@ -29,12 +32,14 @@ import {FieldsetComponent} from '@components/fieldset/fieldset.component';
       </app-page-header>
       <app-required-fields-label/>
       @if (vm(); as vm) {
-        <app-fieldset legend="Details" [toggleable]="false" >
-          <app-user-details-form
-            [formGroup]="form"
-            [fetchingData]="vm.loading"
-            [userRoles]="vm.userRoles"/>
-        </app-fieldset>
+        @if(vm.user){
+          <app-fieldset legend="Details" [toggleable]="false" >
+            <app-user-details-form
+              [formGroup]="form"
+              [fetchingData]="vm.loading"
+              [availableRoles]="vm.availableRoles"/>
+          </app-fieldset>
+        }
       }
     </div>
   `,
@@ -46,38 +51,38 @@ import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 })
 export class UserDetailsComponent extends BaseComponent implements OnInit{
   private userService = inject(UserService);
+  protected commonEntitiesService = inject(CommonEntitiesService);
   protected user = inject(USERS_DETAILS);
   protected loading = this.userService.isLoading;
+  protected userRoles=this.userService.rolesAsSelectItems;
 
   protected vm = computed(()=>{
     const loading = this.loading();
     const user = this.user();
-    const userRoles=this.userService.rolesAsSelectItems();
+    const userRoles=this.userRoles();
+    const availableRoles = this.commonEntitiesService.rolesAsSelectItems();
 
     if(user){
+      this.initForm(user);
       this.form.patchValue({
-        username: user.username,
-        firstName:user.firstName,
-        lastName:user.lastName,
-        email:user.email,
-        // role:userRoles[0].value,
+        role:userRoles[0].value,
       });
     }
 
     return {
       user,
       loading,
+      availableRoles,
       userRoles
     }
   });
 
   ngOnInit(): void {
-    this.initForm();
-    // this.form.disable();
+
   }
 
-  private initForm():void{
-    this.form = this.userService.initUpdateUserForm();
+  private initForm(user:User):void{
+    this.form = this.userService.initUpdateUserForm(user);
   }
 
 }

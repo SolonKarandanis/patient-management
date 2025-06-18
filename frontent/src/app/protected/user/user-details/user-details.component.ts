@@ -46,7 +46,7 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
 })
 export class UserDetailsComponent extends BaseComponent implements OnInit{
   private userService = inject(UserService);
-  protected commonEntitiesService = inject(CommonEntitiesService);
+  private commonEntitiesService = inject(CommonEntitiesService);
 
   protected vm = computed(()=>{
     const loading = this.userService.isLoading();

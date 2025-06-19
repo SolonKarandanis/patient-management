@@ -8,6 +8,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {UserDetailsFormComponent} from '../user-details-form/user-details-form.component';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
+import {injectParams} from '@shared/utils/injectParams';
 
 
 
@@ -48,6 +49,12 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
   private userService = inject(UserService);
   private commonEntitiesService = inject(CommonEntitiesService);
 
+  constructor() {
+    super();
+    const userId = injectParams('id')();
+    this.userService.executeGetUserById(userId as string);
+  }
+
   protected vm = computed(()=>{
     const loading = this.userService.isLoading();
     const user = this. userService.user();
@@ -74,6 +81,7 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
   });
 
   ngOnInit(): void {
+
   }
 
   private initForm():void{

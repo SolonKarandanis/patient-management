@@ -32,7 +32,12 @@ import {injectParams} from '@shared/utils/injectParams';
       <app-required-fields-label/>
       @if (vm(); as vm) {
         @if(vm.user){
-          <app-fieldset legend="Details" [toggleable]="false" [allowEdit]="true">
+          <app-fieldset
+            legend="Details"
+            [toggleable]="false"
+            [allowEdit]="true"
+            (saveClicked)="saveClickHandler()"
+            (editModeChanged)="editHandler($event)">
             <app-user-details-form
               [formGroup]="form"
               [fetchingData]="vm.loading"
@@ -82,6 +87,19 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
 
   ngOnInit(): void {
 
+  }
+
+  protected saveClickHandler():void{
+    console.log('save');
+  }
+
+  protected editHandler(isEditMode: boolean):void{
+    if(isEditMode){
+      this.form.enable();
+    }
+    else{
+      this.form.disable();
+    }
   }
 
   private initForm():void{

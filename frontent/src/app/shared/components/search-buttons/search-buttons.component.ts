@@ -18,7 +18,6 @@ import {NgTemplateOutlet} from '@angular/common';
     ButtonDirective,
     Ripple,
     TranslatePipe,
-    ButtonIcon,
     Tooltip,
     FloatLabel,
     InputText,
@@ -38,7 +37,7 @@ import {NgTemplateOutlet} from '@angular/common';
             (click)="handleSearchClick($event)"
             [disabled]="isDisabled() || isLoading()"
             [loading]="isLoading()"
-            pButtonIcon="pi pi-search">
+            icon="pi pi-search">
           {{'GLOBAL.BUTTONS.search' | translate}}
         </button>
       </div>
@@ -57,7 +56,7 @@ import {NgTemplateOutlet} from '@angular/common';
                   severity="success"
                   [disabled]="!saveSearchTitle() || saveSearchLoading()"
                   [loading]="saveSearchLoading()"
-                  pButtonIcon="pi pi-save"
+                  icon="pi pi-save"
                   (click)="handleSaveSearchClick()">
                   {{'GLOBAL.BUTTONS.save-search' | translate}}
                 </button>
@@ -87,7 +86,7 @@ import {NgTemplateOutlet} from '@angular/common';
           severity="danger"
           [disabled]="saveSearchLoading()"
           [loading]="saveSearchLoading()"
-          pButtonIcon="pi pi-refresh"
+          icon="pi pi-refresh"
           (click)="handleResetClick($event)">
             <ng-container *ngTemplateOutlet="resetBtnTemplate() || defaultResetBtnLabel"></ng-container>
             <ng-template #defaultResetBtnLabel>

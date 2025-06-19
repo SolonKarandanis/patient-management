@@ -32,7 +32,7 @@ import {injectParams} from '@shared/utils/injectParams';
       <app-required-fields-label/>
       @if (vm(); as vm) {
         @if(vm.user){
-          <app-fieldset legend="Details" [toggleable]="false" >
+          <app-fieldset legend="Details" [toggleable]="false" [allowEdit]="true">
             <app-user-details-form
               [formGroup]="form"
               [fetchingData]="vm.loading"

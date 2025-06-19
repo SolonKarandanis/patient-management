@@ -94,12 +94,7 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
   }
 
   protected editHandler(isEditMode: boolean):void{
-    if(isEditMode){
-      this.form.enable();
-    }
-    else{
-      this.form.disable();
-    }
+    isEditMode ?  this.form.enable():this.form.disable();
   }
 
   private initForm():void{

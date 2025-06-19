@@ -23,6 +23,6 @@ export const USER_DETAILS_PROVIDER: Provider[] =[
 export function usersDetailsFactory(userService:UserService
 ): Signal<User | null>{
   const userId = injectParams('id')();
-    userService.executeGetUserById(userId as string);
-    return userService.user;
+  userService.executeGetUserById(userId as string);
+  return userService.user;
 }

@@ -7,7 +7,6 @@ import {Tooltip} from 'primeng/tooltip';
 @Component({
   selector: 'app-fieldset-edit-buttons',
   imports: [
-    ButtonIcon,
     TranslatePipe,
     Ripple,
     Tooltip,
@@ -19,8 +18,8 @@ import {Tooltip} from 'primeng/tooltip';
         pButton
         pRipple
         type="button"
-        pButtonIcon="pi pi-file-edit"
-        class="w-full"
+        icon="pi pi-file-edit"
+        class="rounded-4xl! bg-transparent! border-transparent!"
         pTooltip="{{ 'GLOBAL.BUTTONS.edit' | translate }}"
         (click)="enterEditMode()"
       ></button>
@@ -30,7 +29,8 @@ import {Tooltip} from 'primeng/tooltip';
         pButton
         pRipple
         type="button"
-        pButtonIcon="pi pi-save"
+        icon="pi pi-save"
+        class="rounded-4xl! bg-transparent! border-transparent!"
         pTooltip="{{ 'GLOBAL.BUTTONS.save' | translate }}"
         (click)="saveClickHandler()"
       ></button>
@@ -38,7 +38,8 @@ import {Tooltip} from 'primeng/tooltip';
         pButton
         pRipple
         type="button"
-        pButtonIcon="pi pi-times-circle"
+        icon="pi pi-times-circle"
+        class="rounded-4xl! bg-transparent! border-transparent!"
         pTooltip="{{ 'GLOBAL.BUTTONS.cancel' | translate }}"
         (click)="exitEditMode()"
       ></button>

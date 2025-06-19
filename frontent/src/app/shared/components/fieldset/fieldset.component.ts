@@ -4,13 +4,15 @@ import {PrimeTemplate} from 'primeng/api';
 import {
   FieldsetHeaderWithButtonsComponent
 } from '@components/fieldset-header-with-buttons/fieldset-header-with-buttons.component';
+import {FieldsetEditButtonsComponent} from '@components/fieldset-edit-buttons/fieldset-edit-buttons.component';
 
 @Component({
   selector: 'app-fieldset',
   imports: [
     Fieldset,
     PrimeTemplate,
-    FieldsetHeaderWithButtonsComponent
+    FieldsetHeaderWithButtonsComponent,
+    FieldsetEditButtonsComponent
   ],
   template: `
     <p-fieldset [toggleable]="toggleable()"
@@ -19,7 +21,8 @@ import {
         <app-fieldset-header-with-buttons>
           <span titleText>{{legend()}}</span>
           @if(allowEdit()){
-
+            <app-fieldset-edit-buttons (editModeChanged)="setEditMode($event)"
+                                       (saveClicked)="saveClickHandler()"/>
           }
         </app-fieldset-header-with-buttons>
       </ng-template>

@@ -16,10 +16,11 @@ import {Tooltip} from 'primeng/tooltip';
   template: `
     @if(!isEditMode){
       <button
+        pButton
         pRipple
         type="button"
         pButtonIcon="pi pi-file-edit"
-        class="p-button-rounded p-button-text"
+        class="w-full"
         pTooltip="{{ 'GLOBAL.BUTTONS.edit' | translate }}"
         (click)="enterEditMode()"
       ></button>
@@ -30,7 +31,6 @@ import {Tooltip} from 'primeng/tooltip';
         pRipple
         type="button"
         pButtonIcon="pi pi-save"
-        class="p-button-rounded p-button-text p-button-success"
         pTooltip="{{ 'GLOBAL.BUTTONS.save' | translate }}"
         (click)="saveClickHandler()"
       ></button>
@@ -39,7 +39,6 @@ import {Tooltip} from 'primeng/tooltip';
         pRipple
         type="button"
         pButtonIcon="pi pi-times-circle"
-        class="p-button-rounded p-button-text"
         pTooltip="{{ 'GLOBAL.BUTTONS.cancel' | translate }}"
         (click)="exitEditMode()"
       ></button>

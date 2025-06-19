@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, input, output, signal} from '@angular/core';
 import {Fieldset} from 'primeng/fieldset';
 import {PrimeTemplate} from 'primeng/api';
 import {
@@ -21,8 +21,7 @@ import {FieldsetEditButtonsComponent} from '@components/fieldset-edit-buttons/fi
         <app-fieldset-header-with-buttons>
           <span titleText>{{legend()}}</span>
           @if(allowEdit()){
-            <app-fieldset-edit-buttons (editModeChanged)="setEditMode($event)"
-                                       (saveClicked)="saveClickHandler()"/>
+            <app-fieldset-edit-buttons />
           }
         </app-fieldset-header-with-buttons>
       </ng-template>
@@ -38,14 +37,6 @@ export class FieldsetComponent {
   toggleable = input(true);
   collapsed = input(false);
 
-  editMode: boolean = false;
-
-  protected setEditMode(isEditMode: boolean): void {
-    this.editMode = isEditMode;
-  }
-
-  protected saveClickHandler(): void {
-    // this.saveButtonSubject.next(this.frmPurchase.value);
-  }
-
+  editModeChanged =output<boolean>();
+  saveClicked =output<boolean>();
 }

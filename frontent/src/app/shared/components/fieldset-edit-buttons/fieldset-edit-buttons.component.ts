@@ -1,8 +1,9 @@
-import {ChangeDetectionStrategy, Component, output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, input, output, signal} from '@angular/core';
 import {ButtonDirective, ButtonIcon} from 'primeng/button';
 import {TranslatePipe} from '@ngx-translate/core';
 import {Ripple} from 'primeng/ripple';
 import {Tooltip} from 'primeng/tooltip';
+import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 
 @Component({
   selector: 'app-fieldset-edit-buttons',
@@ -13,7 +14,7 @@ import {Tooltip} from 'primeng/tooltip';
     ButtonDirective
   ],
   template: `
-    @if(!isEditMode){
+    @if(!isEditMode()){
       <button
         pButton
         pRipple
@@ -24,7 +25,7 @@ import {Tooltip} from 'primeng/tooltip';
         (click)="enterEditMode()"
       ></button>
     }
-    @if(isEditMode){
+    @if(isEditMode()){
       <button
         pButton
         pRipple
@@ -49,28 +50,27 @@ import {Tooltip} from 'primeng/tooltip';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FieldsetEditButtonsComponent {
-  protected isEditMode: boolean = false;
 
-  editModeChanged =output<boolean>();
-  saveClicked =output<boolean>();
+  private fieldSet = inject(FieldsetComponent);
+
+  isEditMode = signal(false);
 
   protected enterEditMode(): void {
-    this.isEditMode = true;
-    this.emitEditModeValue();
+    this.emitEditModeValue(true);
   }
 
   protected exitEditMode(): void {
-    this.isEditMode = false;
-    this.emitEditModeValue();
+    this.emitEditModeValue(false);
   }
 
   protected saveClickHandler(): void {
-    this.saveClicked.emit(true);
+    this.fieldSet.saveClicked.emit(true);
     this.exitEditMode();
   }
 
-  private emitEditModeValue(): void {
-    this.editModeChanged.emit(this.isEditMode);
+  private emitEditModeValue(editMode:boolean): void {
+    this.isEditMode.set(editMode);
+    this.fieldSet.editModeChanged.emit(editMode);
   }
 
 }

@@ -6,7 +6,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AuthorityValidator implements ConstraintValidator<Authority, Integer> {
+public class AuthorityValidator implements ConstraintValidator<Authority, String> {
 
     private final RoleRepository repository;
 
@@ -15,9 +15,9 @@ public class AuthorityValidator implements ConstraintValidator<Authority, Intege
     }
 
     @Override
-    public boolean isValid(Integer value, ConstraintValidatorContext context) {
+    public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value != null) {
-            return repository.existsById(value);
+            return repository.existsByName(value);
         }
         return true;
     }

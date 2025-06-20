@@ -90,7 +90,7 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
   }
 
   protected saveClickHandler():void{
-    console.log('save');
+    this.userService.executeUpdateUser(this.form);
   }
 
   protected editHandler(isEditMode: boolean):void{

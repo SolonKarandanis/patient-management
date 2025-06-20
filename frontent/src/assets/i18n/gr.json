@@ -160,6 +160,14 @@
     },
     "BUTTONS": {
       "register": "Εγγραφή"
+    },
+    "MESSAGES": {
+      "SUCCESS": {
+        "user-register-success": "Ο χρήστης εγγράφηκε με επιτυχία"
+      },
+      "ERROR": {
+        "user-register-failure": "Αποτυχία εγγραφής χρήστη"
+      }
     }
   },
   "USER":{
@@ -197,7 +205,20 @@
         "status": "Κατάσταση χρήστη",
         "role": "Ρόλος"
       }
-    }
+    },
+    "MESSAGES": {
+      "SUCCESS": {
+        "user-edit-success": "Ο χρήστης ενημερώθηκε με επιτυχία",
+        "user-delete-success": "Ο χρήστης διαγράφηκε με επιτυχία",
+        "user-activate-success": "Ο χρήστης ενεργοποιήθηκε με επιτυχία",
+        "user-deactivate-success": "Ο χρήστης απενεργοποιήθηκε με επιτυχία"
+      },
+      "ERROR": {
+        "user-edit-failure": "Η ενημέρωση χρήστη απέτυχε",
+        "user-delete-failure": "Αποτυχία διαγραφής χρήστη",
+        "user-activate-failure": "Αποτυχία ενεργοποίησης χρήστη",
+        "user-deactivate-failure": "Η απενεργοποίηση του χρήστη απέτυχε"
+      }
   },
   "SAVED-SEARCHES": {
     "title": "Αποθηκευμένες αναζητήσεις",

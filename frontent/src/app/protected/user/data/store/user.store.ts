@@ -188,10 +188,11 @@ export const UserStore = signalStore(
                   state.setSelectedUser(result)
                   state.setCreatedUserId(result.publicId);
                   state.setLoadedState();
-                  utilService.showMessage('success','User Successfully Registered');
+                  utilService.showMessage('success',translate.instant('REGISTER.MESSAGES.SUCCESS.user-register-success'));
                 },
                 error: (error:string) =>{
                   state.setErrorState(error);
+                  utilService.showMessage('error',translate.instant('REGISTER.MESSAGES.SUCCESS.user-register-failure'));
                 }
               })
             )
@@ -209,9 +210,11 @@ export const UserStore = signalStore(
                 next:(result)=>{
                   state.setSelectedUser(result);
                   state.setLoadedState();
+                  utilService.showMessage('success',translate.instant('USER.MESSAGES.SUCCESS.user-edit-success'));
                 },
                 error: (error:string) =>{
                   state.setErrorState(error);
+                  utilService.showMessage('error',translate.instant('USER.MESSAGES.ERROR.user-edit-failure'));
                 }
               })
             )
@@ -229,9 +232,11 @@ export const UserStore = signalStore(
                 next:(result)=>{
                   state.setSelectedUser(null);
                   state.setLoadedState();
+                  utilService.showMessage('success',translate.instant('USER.MESSAGES.SUCCESS.user-delete-success'));
                 },
                 error: (error:string) =>{
                   state.setErrorState(error);
+                  utilService.showMessage('error',translate.instant('USER.MESSAGES.ERROR.user-delete-failure'));
                 }
               })
             )
@@ -249,9 +254,11 @@ export const UserStore = signalStore(
                 next:(result)=>{
                   state.setSelectedUser(result);
                   state.setLoadedState();
+                  utilService.showMessage('success',translate.instant('USER.MESSAGES.SUCCESS.user-activate-success'));
                 },
                 error: (error:string) =>{
                   state.setErrorState(error);
+                  utilService.showMessage('error',translate.instant('USER.MESSAGES.ERROR.user-activate-failure'));
                 }
               })
             )
@@ -269,9 +276,11 @@ export const UserStore = signalStore(
                 next:(result)=>{
                   state.setSelectedUser(result);
                   state.setLoadedState();
+                  utilService.showMessage('success',translate.instant('USER.MESSAGES.SUCCESS.user-deactivate-success'));
                 },
                 error: (error:string) =>{
                   state.setErrorState(error);
+                  utilService.showMessage('error',translate.instant('USER.MESSAGES.ERROR.user-deactivate-failure'));
                 }
               })
             )

@@ -5,6 +5,7 @@ import com.pm.authservice.model.UserEntity;
 import com.pm.authservice.service.RoleService;
 import com.pm.authservice.service.SecurityService;
 import com.pm.authservice.service.UserService;
+import com.pm.authservice.util.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
@@ -66,5 +67,40 @@ public class CustomMethodSecurityExpressionRoot
     @Override
     public Object getThis() {
         return this.target;
+    }
+
+    /* Custom permission functions */
+    public boolean hasAnyPermission(final String[] targetDomainObject){
+        boolean check = false;
+        String username = this.currentUser.getUsername();
+        LOG.debug("AUTHORIZE: hasAnyPermission({}, {})",username, targetDomainObject);
+        for (String operationName : targetDomainObject) {
+            check = UserUtil.hasOperation(currentUser, operationName);
+            if (check) {
+                break;
+            }
+        }
+        return check;
+    }
+
+    public boolean hasAllPermissions(final String[] targetDomainObject) {
+        boolean check = false;
+        String username = this.currentUser.getUsername();
+        LOG.debug("AUTHORIZE: hasAllPermissions({}, {})",username, targetDomainObject);
+        for (String operationName : targetDomainObject) {
+            check = UserUtil.hasOperation(currentUser, operationName);
+            if (!check) {
+                break;
+            }
+        }
+        return check;
+    }
+
+    public boolean hasPermission(final String operationName){
+        boolean check = false;
+        String username = this.currentUser.getUsername();
+        LOG.debug("AUTHORIZE: hasPermission({}, {})",username, operationName);
+        check = UserUtil.hasOperation(currentUser, operationName);
+        return check;
     }
 }

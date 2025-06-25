@@ -20,12 +20,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@PreAuthorize("isAuthenticated()")
 @RequestMapping("/users")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -91,6 +93,7 @@ public class UserController {
         return ResponseEntity.ok(usersService.convertToDTO(userSaved,true));
     }
 
+    @PreAuthorize("isSystemAdmin()")
     @PutMapping("/{id}")
     @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> updateUser(

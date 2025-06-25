@@ -5,6 +5,7 @@ import com.pm.authservice.model.UserEntity;
 import com.pm.authservice.service.RoleService;
 import com.pm.authservice.service.SecurityService;
 import com.pm.authservice.service.UserService;
+import com.pm.authservice.util.AuthorityConstants;
 import com.pm.authservice.util.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,5 +103,10 @@ public class CustomMethodSecurityExpressionRoot
         LOG.debug("AUTHORIZE: hasPermission({}, {})",username, operationName);
         check = UserUtil.hasOperation(currentUser, operationName);
         return check;
+    }
+
+    @Override
+    public boolean isSystemAdmin() {
+        return UserUtil.hasRole(this.currentUser, AuthorityConstants.ROLE_SYSTEM_ADMIN);
     }
 }

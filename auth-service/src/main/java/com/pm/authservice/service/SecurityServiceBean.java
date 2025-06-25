@@ -25,7 +25,6 @@ public class SecurityServiceBean implements SecurityService {
     @Override
     public boolean isSystemAdmin() {
         UserDetailsDTO user = authService.getLoggedUser();
-
         return UserUtil.hasRole(null, AuthorityConstants.ROLE_SYSTEM_ADMIN);
     }
 }

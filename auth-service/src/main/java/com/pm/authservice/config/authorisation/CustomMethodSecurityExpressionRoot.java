@@ -3,7 +3,6 @@ package com.pm.authservice.config.authorisation;
 import com.pm.authservice.dto.UserDTO;
 import com.pm.authservice.model.UserEntity;
 import com.pm.authservice.service.RoleService;
-import com.pm.authservice.service.SecurityService;
 import com.pm.authservice.service.UserService;
 import com.pm.authservice.util.AuthorityConstants;
 import com.pm.authservice.util.UserUtil;
@@ -14,7 +13,7 @@ import org.springframework.security.access.expression.method.MethodSecurityExpre
 import org.springframework.security.core.Authentication;
 
 public class CustomMethodSecurityExpressionRoot
-        extends SecurityExpressionRoot implements MethodSecurityExpressionOperations, SecurityService {
+        extends SecurityExpressionRoot implements MethodSecurityExpressionOperations {
 
     /** Logger for the class. */
     private static final Logger LOG = LoggerFactory.getLogger(CustomMethodSecurityExpressionRoot.class);
@@ -105,8 +104,4 @@ public class CustomMethodSecurityExpressionRoot
         return check;
     }
 
-    @Override
-    public boolean isSystemAdmin() {
-        return UserUtil.hasRole(this.currentUser, AuthorityConstants.ROLE_SYSTEM_ADMIN);
-    }
 }

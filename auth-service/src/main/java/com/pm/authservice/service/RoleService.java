@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.Set;
 
 public interface RoleService {
-    public RoleDTO convertToDto(RoleEntity role);
+    RoleDTO convertToDto(RoleEntity role);
 
-    public RoleEntity convertToEntity(RoleDTO roleDTO);
+    RoleEntity convertToEntity(RoleDTO roleDTO);
 
-    public List<RoleDTO> convertToDtoList(Set<RoleEntity> roles);
+    List<RoleDTO> convertToDtoList(Set<RoleEntity> roles);
 
-    public List<RoleEntity> findAll();
+    List<RoleEntity> findAll();
 
-    public List<RoleEntity> findByIds(List<Integer> ids);
+    List<RoleEntity> findByIds(List<Integer> ids);
 
-    public RoleEntity findByName(String name);
+    RoleEntity findByName(String name);
 }

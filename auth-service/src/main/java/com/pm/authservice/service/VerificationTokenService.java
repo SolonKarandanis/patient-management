@@ -7,9 +7,9 @@ import com.pm.authservice.model.VerificationTokenEntity;
 
 public interface VerificationTokenService {
 
-    public Boolean validateToken(VerificationTokenEntity verificationToken) throws BusinessException;
+    Boolean validateToken(VerificationTokenEntity verificationToken) throws BusinessException;
 
-    public VerificationTokenEntity findByToken(String theToken);
+    VerificationTokenEntity findByToken(String theToken);
 
-    public void saveUserVerificationToken(UserEntity theUser, String token);
+    void saveUserVerificationToken(UserEntity theUser, String token);
 }

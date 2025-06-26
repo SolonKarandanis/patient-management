@@ -88,4 +88,8 @@ export class AuthService extends GenericService{
     }
     return null;
   }
+
+  public hasRole(role:string):Signal<boolean>{
+    return this.authStore.hasRole(role);
+  }
 }

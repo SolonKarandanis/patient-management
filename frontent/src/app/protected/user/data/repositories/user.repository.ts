@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BaseRepository} from '@core/repositories/BaseRepository';
 import {SearchResult, UserSearchRequest} from '@models/search.model';
 import {Observable} from 'rxjs';
-import {CreateUserRequest, UpdateUserRequest, User} from '@models/user.model';
+import {ChangePasswordRequest, CreateUserRequest, UpdateUserRequest, User} from '@models/user.model';
 import {ApiControllers} from '@core/repositories/ApiControllers';
 import {HttpContext, HttpResponse} from '@angular/common/http';
 import {AUTHENTICATE_REQUEST} from '@core/guards/SecurityConstants';
@@ -62,6 +62,16 @@ export class UserRepository extends BaseRepository{
    */
   public updateUser(id:string,request:UpdateUserRequest):Observable<User>{
     return this.http.put<User>(`${ApiControllers.USERS}/${id}`,request);
+  }
+
+  /**
+   * Update a selected user
+   * @param id the id of the user
+   * @param request the request for updating user
+   * @returns An Observable with the updated user
+   */
+  public changeUserPassword(id:string,request:ChangePasswordRequest):Observable<User>{
+    return this.http.put<User>(`${ApiControllers.USERS}/${id}/password-change`,request);
   }
 
   /**

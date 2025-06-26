@@ -4,7 +4,7 @@ import {computed, inject} from '@angular/core';
 import {UserRepository} from '../repositories/user.repository';
 import {UtilService} from '@core/services/util.service';
 import {HttpUtil} from '@core/services/http-util.service';
-import {CreateUserRequest, Role, UpdateUserRequest, User} from '@models/user.model';
+import {ChangePasswordRequest, CreateUserRequest, Role, UpdateUserRequest, User} from '@models/user.model';
 import {setError, setLoaded, setLoading, withCallState} from '@core/store/features/call-state.feature';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
 import {UserSearchRequest} from '@models/search.model';
@@ -215,6 +215,28 @@ export const UserStore = signalStore(
                 error: (error:string) =>{
                   state.setErrorState(error);
                   utilService.showMessage('error',translate.instant('USER.MESSAGES.ERROR.user-edit-failure'));
+                }
+              })
+            )
+          )
+        )
+      ),
+      changeUserPassword: rxMethod<{id:string, request:ChangePasswordRequest}>(
+        pipe(
+          tap(() => {
+            state.setLoadingState();
+          }),
+          switchMap(({id,request})=>
+            userRepo.changeUserPassword(id,request).pipe(
+              tapResponse({
+                next:(result)=>{
+                  state.setSelectedUser(result);
+                  state.setLoadedState();
+                  utilService.showMessage('success',translate.instant('USER.MESSAGES.SUCCESS.user-password-change-success'));
+                },
+                error: (error:string) =>{
+                  state.setErrorState(error);
+                  utilService.showMessage('error',translate.instant('USER.MESSAGES.ERROR.user-password-change-failure'));
                 }
               })
             )

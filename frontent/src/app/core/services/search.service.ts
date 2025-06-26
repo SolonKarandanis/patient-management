@@ -60,6 +60,7 @@ export class SearchService extends GenericService{
       firstName: firstName!,
       lastName: lastName!,
       password: password!,
+      confirmPassword:'',
       role: role!,
       username: username!
     };

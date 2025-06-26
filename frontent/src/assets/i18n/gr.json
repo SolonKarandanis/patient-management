@@ -211,13 +211,15 @@
         "user-edit-success": "Ο χρήστης ενημερώθηκε με επιτυχία",
         "user-delete-success": "Ο χρήστης διαγράφηκε με επιτυχία",
         "user-activate-success": "Ο χρήστης ενεργοποιήθηκε με επιτυχία",
-        "user-deactivate-success": "Ο χρήστης απενεργοποιήθηκε με επιτυχία"
+        "user-deactivate-success": "Ο χρήστης απενεργοποιήθηκε με επιτυχία",
+        "user-password-change-success": "Ο κωδικός πρόσβασης άλλαξε με επιτυχία"
       },
       "ERROR": {
         "user-edit-failure": "Η ενημέρωση χρήστη απέτυχε",
         "user-delete-failure": "Αποτυχία διαγραφής χρήστη",
         "user-activate-failure": "Αποτυχία ενεργοποίησης χρήστη",
-        "user-deactivate-failure": "Η απενεργοποίηση του χρήστη απέτυχε"
+        "user-deactivate-failure": "Η απενεργοποίηση του χρήστη απέτυχε",
+        "user-password-change-failure": "Αποτυχία αλλαγής κωδικού πρόσβασης"
       }
   },
   "SAVED-SEARCHES": {

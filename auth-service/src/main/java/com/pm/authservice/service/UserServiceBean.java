@@ -148,22 +148,27 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         return results;
     }
 
-    @Transactional
-    @Override
-    public UserEntity registerUser(CreateUserDTO dto, String applicationUrl) throws BusinessException {
-        Optional<UserEntity> userNameMaybe  = userRepository.findByUsername(dto.getUsername());
-
+    protected void validateUsernameExistence(String username)throws BusinessException{
+        Optional<UserEntity> userNameMaybe  = userRepository.findByUsername(username);
         if(userNameMaybe.isPresent()){
             throw new BusinessException("error.username.exists");
         }
+    }
 
-        Optional<UserEntity> emailMaybe  = userRepository.findByEmail(dto.getEmail());
+    protected void validateEmailExistence(String email)throws BusinessException{
+        Optional<UserEntity> emailMaybe  = userRepository.findByEmail(email);
         if(emailMaybe.isPresent()){
             throw new BusinessException("error.email.exists");
         }
-        UserEntity user = new UserEntity();
-        validatePasswordChange(user,dto.getPassword(), dto.getPassword(), true);
+    }
 
+    @Transactional
+    @Override
+    public UserEntity registerUser(CreateUserDTO dto, String applicationUrl) throws BusinessException {
+        validateUsernameExistence(dto.getUsername());
+        validateEmailExistence(dto.getEmail());
+        validatePasswordChange(dto.getPassword(), dto.getPassword(), true);
+        UserEntity user = new UserEntity();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setUsername(dto.getUsername());
         user.setFirstName(dto.getFirstName());
@@ -222,10 +227,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     }
 
     @Override
-    public UserEntity validatePasswordChange(UserEntity updatedUser, String newPassword, String confirmPassword, boolean isPasswordRequired) throws BusinessException {
-       if(Objects.isNull(updatedUser)){
-           return null;
-       }
+    public void validatePasswordChange( String newPassword, String confirmPassword, boolean isPasswordRequired) throws BusinessException {
         if(isPasswordRequired && !StringUtils.hasLength(newPassword)){
             throw new BusinessException("error.password.required");
         }
@@ -239,8 +241,6 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
                 && !newPassword.equals(confirmPassword)){
             throw new BusinessException("error.password.confirm");
         }
-       updatedUser.setPassword(newPassword);
-       return updatedUser;
     }
 
     protected Predicate getSearchPredicate(UsersSearchRequestDTO searchObj){

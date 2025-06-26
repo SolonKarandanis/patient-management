@@ -1,11 +1,11 @@
 package com.pm.authservice.config.authorisation;
 
-import com.pm.authservice.dto.UserDTO;
 import com.pm.authservice.dto.UserDetailsDTO;
 import com.pm.authservice.model.UserEntity;
-import com.pm.authservice.service.RoleService;
+import com.pm.authservice.service.SecurityService;
 import com.pm.authservice.service.UserService;
 import com.pm.authservice.util.UserUtil;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +28,17 @@ public class CustomMethodSecurityExpressionRoot
 
     private Object returnObject;
 
+    @Setter
     private Object target;
 
     protected UserEntity currentUser;
 
     @Autowired
-    protected UserService usersService;
+    protected SecurityService securityService;
 
     @Autowired
-    protected RoleService roleService;
+    protected UserService usersService;
+
 
     public CustomMethodSecurityExpressionRoot(
             Authentication authentication,
@@ -76,17 +78,13 @@ public class CustomMethodSecurityExpressionRoot
         return this.target;
     }
 
-    public void setTarget(Object target) {
-        this.target = target;
-    }
-
     /* Custom permission functions */
     public boolean hasAnyPermission(final String[] targetDomainObject){
         boolean check = false;
         String username = this.currentUser.getUsername();
-        LOG.debug("AUTHORIZE: hasAnyPermission({}, {})",username, targetDomainObject);
+        LOG.info("AUTHORIZE: hasAnyPermission({}, {})",username, targetDomainObject);
         for (String operationName : targetDomainObject) {
-            check = UserUtil.hasOperation(currentUser, operationName);
+            check = UserUtil.hasOperation(this.currentUser, operationName);
             if (check) {
                 break;
             }
@@ -97,9 +95,9 @@ public class CustomMethodSecurityExpressionRoot
     public boolean hasAllPermissions(final String[] targetDomainObject) {
         boolean check = false;
         String username = this.currentUser.getUsername();
-        LOG.debug("AUTHORIZE: hasAllPermissions({}, {})",username, targetDomainObject);
+        LOG.info("AUTHORIZE: hasAllPermissions({}, {})",username, targetDomainObject);
         for (String operationName : targetDomainObject) {
-            check = UserUtil.hasOperation(currentUser, operationName);
+            check = UserUtil.hasOperation(this.currentUser, operationName);
             if (!check) {
                 break;
             }
@@ -110,8 +108,13 @@ public class CustomMethodSecurityExpressionRoot
     public boolean hasPermission(final String operationName){
         boolean check = false;
         String username = this.currentUser.getUsername();
-        LOG.debug("AUTHORIZE: hasPermission({}, {})",username, operationName);
-        check = UserUtil.hasOperation(currentUser, operationName);
+        LOG.info("AUTHORIZE: hasPermission({}, {})",username, operationName);
+        check = UserUtil.hasOperation(this.currentUser, operationName);
         return check;
+    }
+
+
+    public boolean isSystemAdmin() {
+        return securityService.isSystemAdmin(this.currentUser);
     }
 }

@@ -1,6 +1,7 @@
 package com.pm.authservice.service;
 
 import com.pm.authservice.dto.UserDetailsDTO;
+import com.pm.authservice.model.UserEntity;
 import com.pm.authservice.util.AuthorityConstants;
 import com.pm.authservice.util.UserUtil;
 import org.springframework.stereotype.Service;
@@ -23,8 +24,7 @@ public class SecurityServiceBean implements SecurityService {
 
 
     @Override
-    public boolean isSystemAdmin() {
-        UserDetailsDTO user = authService.getLoggedUser();
-        return UserUtil.hasRole(null, AuthorityConstants.ROLE_SYSTEM_ADMIN);
+    public boolean isSystemAdmin(UserEntity user) {
+        return UserUtil.hasRole(user, AuthorityConstants.ROLE_SYSTEM_ADMIN);
     }
 }

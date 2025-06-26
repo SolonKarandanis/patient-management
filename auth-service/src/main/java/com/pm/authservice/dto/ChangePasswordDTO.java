@@ -1,5 +1,6 @@
 package com.pm.authservice.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -11,9 +12,9 @@ import lombok.*;
 @Setter
 public class ChangePasswordDTO {
 
-    @NotNull(message = "{user.password.notNull}")
+    @NotBlank(message = "{error.generic.prefix} {prompt.user.password} {error.generic.required}")
     private String password;
 
-    @NotNull(message = "{user.confirm.password.notNull}")
+    @NotBlank(message = "{error.generic.prefix} {uprompt.user.confirm.password} {error.generic.required}")
     private String confirmPassword;
 }

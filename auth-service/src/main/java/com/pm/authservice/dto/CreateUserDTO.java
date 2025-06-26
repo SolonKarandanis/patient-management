@@ -6,12 +6,11 @@
 package com.pm.authservice.dto;
 
 import com.pm.authservice.validation.Authority;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 /**
  *
@@ -22,91 +21,37 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode
+@Getter
+@Setter
 public class CreateUserDTO {
     
-    @NotNull(message = "{user.username.notNull}")
-    @Size(min = 1, max = 25, message = "{user.username.size}")
+    @NotBlank(message = "{error.generic.prefix} {prompt.user.name} {error.generic.required}")
+    @Size(min = 1, max = 25, message = "{error.generic.prefix} {user.username.size} {error.generic.oversize.MAX}")
     private String username;
 
-	@NotNull(message = "{user.password.notNull}")
+	@NotBlank(message = "{error.generic.prefix} {prompt.user.password} {error.generic.required}")
     private String password;
 
-	@NotNull(message = "{user.confirm.password.notNull}")
+	@NotBlank(message = "{error.generic.prefix} {uprompt.user.confirm.password} {error.generic.required}")
 	private String confirmPassword;
     
-    @NotNull(message = "{user.firstName.notNull}")
-    @Size(min = 1, max = 50, message = "{user.firstName.size}")
+    @NotBlank(message = "{error.generic.prefix} {prompt.user.firstName} {error.generic.required}")
+    @Size(min = 1, max = 50, message = "{error.generic.prefix} {prompt.user.firstName} {error.generic.oversize.MAX}")
     private String firstName;
-    
-    @NotNull(message = "{user.lastName.notNull}")
-    @Size(min = 1, max = 50, message = "{user.lastName.size}")
+
+	@NotBlank(message = "{error.generic.prefix} {prompt.user.lastName} {error.generic.required}")
+    @Size(min = 1, max = 50, message = "{error.generic.prefix} {prompt.user.lastName} {error.generic.oversize.MAX}")
     private String lastName;
     
-    @NotNull(message = "{user.email.notNull}")
-    @Size(min = 1, max = 150, message = "{user.email.size}")
+    @Size(min = 1, max = 150, message = "{error.generic.prefix} {prompt.user.email} {error.generic.oversize.MAX}")
+	@NotBlank(message = "{error.generic.prefix} {prompt.user.email} {error.generic.required}")
+	@Email(message = "{error.generic.prefix} {prompt.user.email} {error.generic.valid}")
     private String email;
 
 	@Authority
-	@NotNull(message = "{user.role.notNull}")
-	@Size(min = 1, max = 150, message = "{user.role.size}")
+	@NotBlank(message = "{error.generic.prefix} {prompt.user.email} {error.generic.required}")
+	@Size(min = 1, max = 150, message = "{error.generic.prefix} {prompt.user.email} {error.generic.oversize.MAX}")
 	private String role;
-
-
-	public @NotNull(message = "{user.username.notNull}") @Size(min = 1, max = 25, message = "{user.username.size}") String getUsername() {
-		return username;
-	}
-
-	public void setUsername(@NotNull(message = "{user.username.notNull}") @Size(min = 1, max = 25, message = "{user.username.size}") String username) {
-		this.username = username;
-	}
-
-	public @NotNull(message = "{user.password.notNull}") String getPassword() {
-		return password;
-	}
-
-	public void setPassword(@NotNull(message = "{user.password.notNull}") String password) {
-		this.password = password;
-	}
-
-	public @NotNull(message = "{user.confirm.password.notNull}") String getConfirmPassword() {
-		return confirmPassword;
-	}
-
-	public void setPConfirmPassword(@NotNull(message = "{user.confirm.password.notNull}") String password) {
-		this.confirmPassword = password;
-	}
-
-	public @NotNull(message = "{user.firstName.notNull}") @Size(min = 1, max = 50, message = "{user.firstName.size}") String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(@NotNull(message = "{user.firstName.notNull}") @Size(min = 1, max = 50, message = "{user.firstName.size}") String firstName) {
-		this.firstName = firstName;
-	}
-
-	public @NotNull(message = "{user.lastName.notNull}") @Size(min = 1, max = 50, message = "{user.lastName.size}") String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(@NotNull(message = "{user.lastName.notNull}") @Size(min = 1, max = 50, message = "{user.lastName.size}") String lastName) {
-		this.lastName = lastName;
-	}
-
-	public @NotNull(message = "{user.email.notNull}") @Size(min = 1, max = 150, message = "{user.email.size}") String getEmail() {
-		return email;
-	}
-
-	public void setEmail(@NotNull(message = "{user.email.notNull}") @Size(min = 1, max = 150, message = "{user.email.size}") String email) {
-		this.email = email;
-	}
-
-	public @NotNull(message = "{user.role.notNull}") @Size(min = 1, max = 150, message = "{user.role.size}") String getRole() {
-		return role;
-	}
-
-	public void setRole(@NotNull(message = "{user.role.notNull}") @Size(min = 1, max = 150, message = "{user.role.size}") String role) {
-		this.role = role;
-	}
 
 
 }

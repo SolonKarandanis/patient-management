@@ -167,7 +167,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     public UserEntity registerUser(CreateUserDTO dto, String applicationUrl) throws BusinessException {
         validateUsernameExistence(dto.getUsername());
         validateEmailExistence(dto.getEmail());
-        validatePasswordChange(dto.getPassword(), dto.getPassword(), true);
+        validatePasswordChange(dto.getPassword(), dto.getConfirmPassword(), true);
         UserEntity user = new UserEntity();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setUsername(dto.getUsername());

@@ -9,6 +9,7 @@ import {UserDetailsFormComponent} from '../user-details-form/user-details-form.c
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {injectParams} from '@shared/utils/injectParams';
+import {AuthService} from '@core/services/auth.service';
 
 
 
@@ -52,6 +53,7 @@ import {injectParams} from '@shared/utils/injectParams';
 })
 export class UserDetailsComponent extends BaseComponent implements OnInit{
   private userService = inject(UserService);
+  private authService = inject(AuthService);
   private commonEntitiesService = inject(CommonEntitiesService);
 
   constructor() {

@@ -93,4 +93,8 @@ export class AuthService extends GenericService{
   public hasRole(role:UserRoles):Signal<boolean>{
     return this.authStore.hasRole(role);
   }
+
+  public isUserMe(userId:string| undefined):Signal<boolean>{
+    return this.authStore.isUserMe(userId);
+  }
 }

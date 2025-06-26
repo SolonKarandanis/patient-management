@@ -10,6 +10,7 @@ import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {injectParams} from '@shared/utils/injectParams';
 import {AuthService} from '@core/services/auth.service';
+import {UserRolesEnum} from '@models/constants';
 
 
 
@@ -36,7 +37,7 @@ import {AuthService} from '@core/services/auth.service';
           <app-fieldset
             legend="Details"
             [toggleable]="false"
-            [allowEdit]="true"
+            [allowEdit]="vm.isEditAllowed"
             (saveClicked)="saveClickHandler()"
             (editModeChanged)="editHandler($event)">
             <app-user-details-form
@@ -67,6 +68,7 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
     const user = this. userService.user();
     const userRoles=this.userService.rolesAsSelectItems();
     const availableRoles = this.commonEntitiesService.rolesAsSelectItems();
+    const isEditAllowed =  this.authService.hasRole(UserRolesEnum.ROLE_SYSTEM_ADMIN)() || this.authService.isUserMe(user?.publicId)();
 
     if(user){
       this.initForm();
@@ -83,7 +85,8 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
       user,
       loading,
       availableRoles,
-      userRoles
+      userRoles,
+      isEditAllowed
     }
   });
 

@@ -16,6 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import java.util.Objects;
+import java.util.UUID;
 
 
 public class CustomMethodSecurityExpressionRoot
@@ -116,5 +117,9 @@ public class CustomMethodSecurityExpressionRoot
 
     public boolean isSystemAdmin() {
         return securityService.isSystemAdmin(this.currentUser);
+    }
+
+    public boolean isUserMe(String userId){
+        return this.currentUser.getPublicId().equals(UUID.fromString(userId));
     }
 }

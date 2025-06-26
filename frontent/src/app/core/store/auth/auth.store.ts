@@ -50,6 +50,13 @@ export const AuthStore = signalStore(
   withMethods((state)=>{
     const jwtUtil = state.jwtUtil;
     return ({
+      isUserMe: (userId:string| undefined):Signal<boolean>=> computed(()=>{
+        if(!state.isLoggedIn() || !userId){
+          return false;
+        }
+        const loggedInUserId =state.user()!.publicId;
+        return loggedInUserId ===userId;
+      }),
       hasRole: (role:UserRoles):Signal<boolean>=> computed(()=>{
         if(!state.isLoggedIn()){
           return false;

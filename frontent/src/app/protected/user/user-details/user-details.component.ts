@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {UserService} from '../data/services/user.service';
@@ -52,7 +52,7 @@ import {UserRolesEnum} from '@models/constants';
   styleUrl: './user-details.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserDetailsComponent extends BaseComponent implements OnInit{
+export class UserDetailsComponent extends BaseComponent{
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private commonEntitiesService = inject(CommonEntitiesService);
@@ -89,10 +89,6 @@ export class UserDetailsComponent extends BaseComponent implements OnInit{
       isEditAllowed
     }
   });
-
-  ngOnInit(): void {
-
-  }
 
   protected saveClickHandler():void{
     this.userService.executeUpdateUser(this.form);

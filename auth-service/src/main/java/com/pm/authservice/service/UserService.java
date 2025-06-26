@@ -26,7 +26,7 @@ public interface UserService {
     void verifyEmail(String token) throws BusinessException;
     void validatePasswordChange(String newPassword, String confirmPassword, boolean isPasswordRequired)
             throws BusinessException;
-    void changePassword(UserEntity user, ChangePasswordDTO dto) throws BusinessException;;
+    UserEntity changePassword(UserEntity user, ChangePasswordDTO dto) throws BusinessException;;
 
 
 }

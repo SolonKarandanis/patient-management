@@ -100,8 +100,9 @@ public class UserController {
             @PathVariable(name = "id", required=true) String publicId,
             @RequestBody @Valid UpdateUserDTO user)throws NotFoundException{
         log.info("UserController->updateUser->RequestBody: {}" , user);
-        UserEntity userSaved=usersService.updateUser(publicId,user);
-        return ResponseEntity.ok(usersService.convertToDTO(userSaved,true));
+        UserEntity userToBeUpdated = usersService.findByPublicId(publicId);
+        userToBeUpdated=usersService.updateUser(publicId,user);
+        return ResponseEntity.ok(usersService.convertToDTO(userToBeUpdated,true));
     }
 
     @DeleteMapping("/{id}")
@@ -110,6 +111,18 @@ public class UserController {
         log.info("UserController->deleteUser->publicId: {}" , publicId);
         usersService.deleteUser(publicId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PutMapping("/{id}/password-change")
+    @Translate(path = "status", targetProperty = "statusLabel")
+    public ResponseEntity<UserDTO> changeUserPassword(
+            @PathVariable(name= "id", required=true) String publicId,
+            @RequestBody @Valid ChangePasswordDTO request)
+            throws NotFoundException, BusinessException{
+        log.info("UserController->changeUserPassword->publicId: {}" , publicId);
+        UserEntity user = usersService.findByPublicId(publicId);
+        user= usersService.changePassword(user, request);
+        return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
 
     @PutMapping("/{id}/activate")

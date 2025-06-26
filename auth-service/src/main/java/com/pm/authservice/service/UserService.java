@@ -27,7 +27,7 @@ public interface UserService {
     public UserEntity activateUser(UserEntity user) throws BusinessException;
     public UserEntity deactivateUser(UserEntity user) throws BusinessException;
     public void verifyEmail(String token) throws BusinessException;
-    public UserEntity validatePasswordChange(UserEntity updatedUser, String newPassword, String confirmPassword, boolean isPasswordRequired)
+    public void validatePasswordChange(String newPassword, String confirmPassword, boolean isPasswordRequired)
             throws BusinessException;
 
 

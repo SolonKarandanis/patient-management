@@ -1,16 +1,22 @@
 package com.pm.authservice.config.authorisation;
 
 import com.pm.authservice.dto.UserDTO;
+import com.pm.authservice.dto.UserDetailsDTO;
 import com.pm.authservice.model.UserEntity;
 import com.pm.authservice.service.RoleService;
 import com.pm.authservice.service.UserService;
-import com.pm.authservice.util.AuthorityConstants;
 import com.pm.authservice.util.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+
+import java.util.Objects;
+
 
 public class CustomMethodSecurityExpressionRoot
         extends SecurityExpressionRoot implements MethodSecurityExpressionOperations {
@@ -26,19 +32,20 @@ public class CustomMethodSecurityExpressionRoot
 
     protected UserEntity currentUser;
 
+    @Autowired
     protected UserService usersService;
+
+    @Autowired
     protected RoleService roleService;
 
     public CustomMethodSecurityExpressionRoot(
             Authentication authentication,
-            UserService usersService,
-            RoleService roleService
+            WebApplicationContext webAppContext
     ){
         super(authentication);
-        this.usersService = usersService;
-        this.roleService = roleService;
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, Objects.requireNonNull(webAppContext.getServletContext()));
 
-        UserDTO userDTO = (UserDTO) getAuthentication().getPrincipal();
+        UserDetailsDTO userDTO = (UserDetailsDTO) getAuthentication().getPrincipal();
         this.currentUser = this.usersService.findByPublicId(userDTO.getPublicId());
         this.setDefaultRolePrefix(""); // For using hasRole as: hasRole(EDConstants.ROLE_XX)
     }
@@ -67,6 +74,10 @@ public class CustomMethodSecurityExpressionRoot
     @Override
     public Object getThis() {
         return this.target;
+    }
+
+    public void setTarget(Object target) {
+        this.target = target;
     }
 
     /* Custom permission functions */
@@ -103,5 +114,4 @@ public class CustomMethodSecurityExpressionRoot
         check = UserUtil.hasOperation(currentUser, operationName);
         return check;
     }
-
 }

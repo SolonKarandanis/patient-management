@@ -93,7 +93,7 @@ public class UserController {
         return ResponseEntity.ok(usersService.convertToDTO(userSaved,true));
     }
 
-    @PreAuthorize("isSystemAdmin()")
+    @PreAuthorize("hasPermission('')")
     @PutMapping("/{id}")
     @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> updateUser(

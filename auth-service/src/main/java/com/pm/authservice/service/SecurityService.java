@@ -1,6 +1,8 @@
 package com.pm.authservice.service;
 
+import com.pm.authservice.model.UserEntity;
+
 public interface SecurityService {
 
-    public boolean isSystemAdmin();
+    public boolean isSystemAdmin(UserEntity user);
 }

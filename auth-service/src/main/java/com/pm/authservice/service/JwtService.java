@@ -10,10 +10,10 @@ import java.util.Map;
 import java.util.function.Function;
 
 public interface JwtService {
-    public String extractUsername(String token) throws AuthException;
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) throws AuthException;
-    public Claims extractAllClaims(String token) throws AuthException;
-    public JwtDTO generateToken(UserDetailsDTO user);
-    public JwtDTO generateToken(Map<String, Object> extraClaims, UserDetailsDTO user);
-    public boolean isTokenValid(String token, UserDetails userDetails)throws AuthException;
+    String extractUsername(String token) throws AuthException;
+    <T> T extractClaim(String token, Function<Claims, T> claimsResolver) throws AuthException;
+    Claims extractAllClaims(String token) throws AuthException;
+    JwtDTO generateToken(UserDetailsDTO user);
+    JwtDTO generateToken(Map<String, Object> extraClaims, UserDetailsDTO user);
+    boolean isTokenValid(String token, UserDetails userDetails)throws AuthException;
 }

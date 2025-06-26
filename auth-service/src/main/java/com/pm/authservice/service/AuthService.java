@@ -7,9 +7,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 public interface AuthService {
-    public Authentication getAuthContext();
-    public UserDetailsDTO getLoggedUser();
-    public void setAuthentication(UsernamePasswordAuthenticationToken authenticationToken);
-    public void setAuthentication(Authentication authentication);
-    public UserDetailsDTO authenticate(LoginRequestDTO loginRequest) throws AuthException;
+    Authentication getAuthContext();
+    UserDetailsDTO getLoggedUser();
+    void setAuthentication(UsernamePasswordAuthenticationToken authenticationToken);
+    void setAuthentication(Authentication authentication);
+    UserDetailsDTO authenticate(LoginRequestDTO loginRequest) throws AuthException;
 }

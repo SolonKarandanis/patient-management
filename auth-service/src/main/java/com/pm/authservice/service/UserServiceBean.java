@@ -243,6 +243,13 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         }
     }
 
+    @Override
+    public void changePassword(UserEntity user, ChangePasswordDTO dto)throws BusinessException {
+        validatePasswordChange(dto.getPassword(), dto.getConfirmPassword(), true);
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        userRepository.save(user);
+    }
+
     protected Predicate getSearchPredicate(UsersSearchRequestDTO searchObj){
         QUserEntity user = QUserEntity.userEntity;
         BooleanBuilder builder = new BooleanBuilder();

@@ -214,13 +214,15 @@
         "user-edit-success": "User Successfully Updated",
         "user-delete-success": "User Successfully Deleted",
         "user-activate-success": "User Successfully Activated",
-        "user-deactivate-success": "User Successfully Deactivated"
+        "user-deactivate-success": "User Successfully Deactivated",
+        "user-password-change-success": "User password Successfully changed"
       },
       "ERROR": {
         "user-edit-failure": "Failed to update user",
         "user-delete-failure": "Failed to delete user",
         "user-activate-failure": "Failed to activate user",
-        "user-deactivate-failure": "Failed to deactivate user"
+        "user-deactivate-failure": "Failed to deactivate user",
+        "user-password-change-failure": "Failed to change user password"
       }
     }
   },

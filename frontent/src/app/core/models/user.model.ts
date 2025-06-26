@@ -40,12 +40,16 @@ export interface User extends UserWithRole{
   operations:Operation[];
 }
 
-export interface CreateUserRequest{
+export interface ChangePasswordRequest{
+  password:string;
+  confirmPassword:string;
+}
+
+export interface CreateUserRequest extends ChangePasswordRequest{
   username: string;
   firstName: string;
   lastName: string;
   email: string;
-  password:string;
   role:string;
 }
 

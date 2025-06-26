@@ -1,6 +1,5 @@
 package com.pm.authservice.service;
 
-import com.pm.authservice.dto.UserDetailsDTO;
 import com.pm.authservice.model.UserEntity;
 import com.pm.authservice.util.AuthorityConstants;
 import com.pm.authservice.util.UserUtil;

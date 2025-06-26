@@ -5,6 +5,7 @@ import {GenericService} from './generic.service';
 import {Router} from '@angular/router';
 import {User} from '@models/user.model';
 import {SubmitCredentialsDTO} from '@models/auth.model';
+import {UserRoles} from '@models/constants';
 
 export type UserType = User | undefined;
 type AuthStore = InstanceType<typeof AuthStore>;
@@ -89,7 +90,7 @@ export class AuthService extends GenericService{
     return null;
   }
 
-  public hasRole(role:string):Signal<boolean>{
+  public hasRole(role:UserRoles):Signal<boolean>{
     return this.authStore.hasRole(role);
   }
 }

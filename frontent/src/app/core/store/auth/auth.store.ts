@@ -10,6 +10,7 @@ import {JwtUtil} from '@core/services/jwt-util.service';
 import {AuthRepository} from '@core/repositories/auth.repository';
 import {setError, setLoaded, setLoading, withCallState} from '@core/store/features/call-state.feature';
 import {UtilService} from '@core/services/util.service';
+import {UserRoles} from '@models/constants';
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
@@ -49,7 +50,7 @@ export const AuthStore = signalStore(
   withMethods((state)=>{
     const jwtUtil = state.jwtUtil;
     return ({
-      hasRole: (role:string):Signal<boolean>=> computed(()=>{
+      hasRole: (role:UserRoles):Signal<boolean>=> computed(()=>{
         if(!state.isLoggedIn()){
           return false;
         }

@@ -220,6 +220,28 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         }
     }
 
+    @Override
+    public UserEntity validatePasswordChange(UserEntity updatedUser, String newPassword, String confirmPassword, boolean isPasswordRequired) throws BusinessException {
+       if(Objects.isNull(updatedUser)){
+           return null;
+       }
+        if(isPasswordRequired && !StringUtils.hasLength(newPassword)){
+            throw new BusinessException("error.password.required");
+        }
+        if(isPasswordRequired && !StringUtils.hasLength(confirmPassword)){
+            throw new BusinessException("error.password.confirm.required");
+        }
+        if (isPasswordRequired && !newPassword.equals(confirmPassword)) {
+            throw new BusinessException("error.password.confirm");
+        }
+        if(!isPasswordRequired && StringUtils.hasLength(newPassword) && !StringUtils.hasLength(confirmPassword)
+                && !newPassword.equals(confirmPassword)){
+            throw new BusinessException("error.password.confirm");
+        }
+       updatedUser.setPassword(newPassword);
+       return updatedUser;
+    }
+
     protected Predicate getSearchPredicate(UsersSearchRequestDTO searchObj){
         QUserEntity user = QUserEntity.userEntity;
         BooleanBuilder builder = new BooleanBuilder();

@@ -161,10 +161,11 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         if(emailMaybe.isPresent()){
             throw new BusinessException("error.email.exists");
         }
-
         UserEntity user = new UserEntity();
+        validatePasswordChange(user,dto.getPassword(), dto.getPassword(), true);
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setUsername(dto.getUsername());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());

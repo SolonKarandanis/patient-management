@@ -27,8 +27,12 @@ public class CreateUserDTO {
     @NotNull(message = "{user.username.notNull}")
     @Size(min = 1, max = 25, message = "{user.username.size}")
     private String username;
-    
+
+	@NotNull(message = "{user.password.notNull}")
     private String password;
+
+	@NotNull(message = "{user.confirm.password.notNull}")
+	private String confirmPassword;
     
     @NotNull(message = "{user.firstName.notNull}")
     @Size(min = 1, max = 50, message = "{user.firstName.size}")
@@ -56,12 +60,20 @@ public class CreateUserDTO {
 		this.username = username;
 	}
 
-	public String getPassword() {
+	public @NotNull(message = "{user.password.notNull}") String getPassword() {
 		return password;
 	}
 
-	public void setPassword(String password) {
+	public void setPassword(@NotNull(message = "{user.password.notNull}") String password) {
 		this.password = password;
+	}
+
+	public @NotNull(message = "{user.confirm.password.notNull}") String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setPConfirmPassword(@NotNull(message = "{user.confirm.password.notNull}") String password) {
+		this.confirmPassword = password;
 	}
 
 	public @NotNull(message = "{user.firstName.notNull}") @Size(min = 1, max = 50, message = "{user.firstName.size}") String getFirstName() {
@@ -95,4 +107,6 @@ public class CreateUserDTO {
 	public void setRole(@NotNull(message = "{user.role.notNull}") @Size(min = 1, max = 150, message = "{user.role.size}") String role) {
 		this.role = role;
 	}
+
+
 }

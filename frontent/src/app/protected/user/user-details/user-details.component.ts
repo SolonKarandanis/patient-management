@@ -152,9 +152,7 @@ export class UserDetailsComponent extends BaseComponent{
   }
 
   protected changePasswordSaveClickHandler():void{
-    console.log('save')
     if(this.changePasswordForm.valid){
-      console.log('valid')
       this.userService.executeChangeUserPassword(this.changePasswordForm);
     }
   }

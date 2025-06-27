@@ -243,6 +243,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         }
     }
 
+    @Transactional
     @Override
     public UserEntity changePassword(UserEntity user, ChangePasswordDTO dto)throws BusinessException {
         validatePasswordChange(dto.getPassword(), dto.getConfirmPassword(), true);

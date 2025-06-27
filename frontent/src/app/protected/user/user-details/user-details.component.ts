@@ -4,7 +4,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {UserService} from '../data/services/user.service';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {UserDetailsFormComponent} from '../user-details-form/user-details-form.component';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
@@ -35,15 +35,23 @@ import {UserRolesEnum} from '@models/constants';
       @if (vm(); as vm) {
         @if(vm.user){
           <app-fieldset
-            legend="Details"
+            legend="{{ 'USER.DETAILS.LABELS.details' | translate }}"
             [toggleable]="false"
             [allowEdit]="vm.isEditAllowed"
-            (saveClicked)="saveClickHandler()"
-            (editModeChanged)="editHandler($event)">
+            (saveClicked)="detailsSaveClickHandler()"
+            (editModeChanged)="detailsEditHandler($event)">
             <app-user-details-form
               [formGroup]="form"
               [fetchingData]="vm.loading"
               [availableRoles]="vm.availableRoles"/>
+          </app-fieldset>
+          <app-fieldset
+            legend="{{ 'USER.DETAILS.LABELS.change-password' | translate }}"
+            [toggleable]="false"
+            [allowEdit]="vm.isEditAllowed"
+            (saveClicked)="changePasswordSaveClickHandler()"
+            (editModeChanged)="changePasswordEditHandler($event)">
+
           </app-fieldset>
         }
       }
@@ -56,6 +64,8 @@ export class UserDetailsComponent extends BaseComponent{
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private commonEntitiesService = inject(CommonEntitiesService);
+
+  protected changePasswordForm!: FormGroup;
 
   constructor() {
     super();
@@ -76,7 +86,8 @@ export class UserDetailsComponent extends BaseComponent{
     const isEditAllowed =  isAdmin || this.authService.isUserMe(user?.publicId)();
 
     if(user){
-      this.initForm();
+      this.initDetailsForm();
+      this.initChangePasswordForm();
       this.form.patchValue({
         username:user.username,
         firstName:user.firstName,
@@ -95,17 +106,30 @@ export class UserDetailsComponent extends BaseComponent{
     }
   });
 
-  protected saveClickHandler():void{
+  protected detailsSaveClickHandler():void{
     this.userService.executeUpdateUser(this.form);
   }
 
-  protected editHandler(isEditMode: boolean):void{
+  protected detailsEditHandler(isEditMode: boolean):void{
     isEditMode ?  this.form.enable():this.form.disable();
   }
 
-  private initForm():void{
+  protected changePasswordSaveClickHandler():void{
+    this.userService.executeChangeUserPassword(this.changePasswordForm);
+  }
+
+  protected changePasswordEditHandler(isEditMode: boolean):void{
+    isEditMode ?  this.changePasswordForm.enable():this.changePasswordForm.disable();
+  }
+
+  private initDetailsForm():void{
     this.form = this.userService.initUpdateUserForm();
     this.form.disable();
+  }
+
+  private initChangePasswordForm():void{
+    this.changePasswordForm = this.userService.initChangePasswordForm();
+    this.changePasswordForm.disable();
   }
 
 }

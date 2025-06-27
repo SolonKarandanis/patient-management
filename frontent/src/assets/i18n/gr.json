@@ -203,7 +203,10 @@
         "firstName": "Ονομα",
         "lastName": "Επώνυμο",
         "status": "Κατάσταση χρήστη",
-        "role": "Ρόλος"
+        "role": "Ρόλος",
+        "details": "Λεπτομερειες",
+        "change-password": "Αλλαγή κωδικού πρόσβασης",
+        "account-status": "Κατάσταση λογαριασμού"
       }
     },
     "MESSAGES": {

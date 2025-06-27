@@ -206,7 +206,10 @@
         "firstName": "First name",
         "lastName": "Last name",
         "status": "Status",
-        "role": "Role"
+        "role": "Role",
+        "details": "Details",
+        "change-password": "Change Password",
+        "account-status": "Account Status"
       }
     },
     "MESSAGES": {

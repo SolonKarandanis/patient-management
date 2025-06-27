@@ -143,7 +143,6 @@ export class UserDetailsComponent extends BaseComponent{
   protected changePasswordFormValidateHandler():void{
     if(!this.changePasswordForm.valid){
       this.utilService.markAllAsDirty(this.changePasswordForm);
-      console.log(this.changePasswordForm.errors)
     }
   }
 

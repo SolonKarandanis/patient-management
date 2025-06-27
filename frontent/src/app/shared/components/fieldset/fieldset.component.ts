@@ -40,4 +40,6 @@ export class FieldsetComponent {
 
   editModeChanged =output<boolean>();
   saveClicked =output<boolean>();
+  validateFormClicked =output<boolean>();
+  resetFormValidityClicked=output<boolean>();
 }

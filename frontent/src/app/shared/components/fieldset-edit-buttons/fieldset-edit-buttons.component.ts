@@ -61,10 +61,12 @@ export class FieldsetEditButtonsComponent {
   }
 
   protected exitEditMode(): void {
+    this.fieldSet.resetFormValidityClicked.emit(true);
     this.emitEditModeValue(false);
   }
 
   protected saveClickHandler(): void {
+    this.fieldSet.validateFormClicked.emit(true);
     if(this.allowSave()){
       this.fieldSet.saveClicked.emit(true);
       this.exitEditMode();

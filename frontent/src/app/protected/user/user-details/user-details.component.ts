@@ -41,6 +41,7 @@ import {UserPasswordChangeFormComponent} from '../user-password-change-form/user
             legend="{{ 'USER.DETAILS.LABELS.details' | translate }}"
             [toggleable]="false"
             [allowEdit]="vm.isEditAllowed"
+            [allowSave]="form.valid"
             (saveClicked)="detailsSaveClickHandler()"
             (editModeChanged)="detailsEditHandler($event)">
             <app-user-details-form
@@ -52,6 +53,7 @@ import {UserPasswordChangeFormComponent} from '../user-password-change-form/user
             legend="{{ 'USER.DETAILS.LABELS.change-password' | translate }}"
             [toggleable]="false"
             [allowEdit]="vm.isEditAllowed"
+            [allowSave]="changePasswordForm.valid"
             (saveClicked)="changePasswordSaveClickHandler()"
             (editModeChanged)="changePasswordEditHandler($event)">
             <app-user-password-change-form [formGroup]="changePasswordForm" />
@@ -110,7 +112,9 @@ export class UserDetailsComponent extends BaseComponent{
   });
 
   protected detailsSaveClickHandler():void{
-    this.userService.executeUpdateUser(this.form);
+    if(this.form.valid){
+      this.userService.executeUpdateUser(this.form);
+    }
   }
 
   protected detailsEditHandler(isEditMode: boolean):void{
@@ -119,7 +123,10 @@ export class UserDetailsComponent extends BaseComponent{
 
   protected changePasswordSaveClickHandler():void{
     console.log('save')
-    // this.userService.executeChangeUserPassword(this.changePasswordForm);
+    if(this.changePasswordForm.valid){
+      console.log('valid')
+      // this.userService.executeChangeUserPassword(this.changePasswordForm);
+    }
   }
 
   protected changePasswordEditHandler(isEditMode: boolean):void{

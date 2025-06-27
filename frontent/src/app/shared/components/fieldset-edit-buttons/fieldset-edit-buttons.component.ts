@@ -54,6 +54,7 @@ export class FieldsetEditButtonsComponent {
   private fieldSet = inject(FieldsetComponent);
 
   isEditMode = signal(false);
+  allowSave = input(false);
 
   protected enterEditMode(): void {
     this.emitEditModeValue(true);
@@ -64,8 +65,10 @@ export class FieldsetEditButtonsComponent {
   }
 
   protected saveClickHandler(): void {
-    this.fieldSet.saveClicked.emit(true);
-    this.exitEditMode();
+    if(this.allowSave()){
+      this.fieldSet.saveClicked.emit(true);
+      this.exitEditMode();
+    }
   }
 
   private emitEditModeValue(editMode:boolean): void {

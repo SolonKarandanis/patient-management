@@ -21,7 +21,7 @@ import {FieldsetEditButtonsComponent} from '@components/fieldset-edit-buttons/fi
         <app-fieldset-header-with-buttons>
           <span titleText>{{legend()}}</span>
           @if(allowEdit()){
-            <app-fieldset-edit-buttons />
+            <app-fieldset-edit-buttons [allowSave]="allowSave()" />
           }
         </app-fieldset-header-with-buttons>
       </ng-template>
@@ -33,6 +33,7 @@ import {FieldsetEditButtonsComponent} from '@components/fieldset-edit-buttons/fi
 })
 export class FieldsetComponent {
   allowEdit = input(false);
+  allowSave = input(false);
   legend = input('');
   toggleable = input(true);
   collapsed = input(false);

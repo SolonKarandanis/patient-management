@@ -67,8 +67,13 @@ export class UserDetailsComponent extends BaseComponent{
     const loading = this.userService.isLoading();
     const user = this. userService.user();
     const userRoles=this.userService.rolesAsSelectItems();
-    const availableRoles = this.commonEntitiesService.rolesAsSelectItems();
-    const isEditAllowed =  this.authService.hasRole(UserRolesEnum.ROLE_SYSTEM_ADMIN)() || this.authService.isUserMe(user?.publicId)();
+    let availableRoles = this.commonEntitiesService.rolesAsSelectItems();
+
+    const isAdmin =this.authService.hasRole(UserRolesEnum.ROLE_SYSTEM_ADMIN)();
+    if(!isAdmin){
+      availableRoles=availableRoles.filter(r=>r.value!=UserRolesEnum.ROLE_SYSTEM_ADMIN)
+    }
+    const isEditAllowed =  isAdmin || this.authService.isUserMe(user?.publicId)();
 
     if(user){
       this.initForm();

@@ -86,6 +86,7 @@ export class UtilService{
   markAllAsDirty(formGroup: FormGroup): void {
     Object.keys(formGroup.controls).forEach((key: string) => {
       formGroup.controls[key].markAsDirty();
+      formGroup.controls[key].markAsTouched({ onlySelf: true });
     });
   }
 
@@ -96,6 +97,7 @@ export class UtilService{
   markAllAsPristine(formGroup: FormGroup): void {
     Object.keys(formGroup.controls).forEach((key: string) => {
       formGroup.controls[key].markAsPristine();
+      formGroup.controls[key].markAsUntouched({ onlySelf: true });
     });
   }
 

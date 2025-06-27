@@ -5,6 +5,7 @@ import {NgClass} from '@angular/common';
 import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
 import {Password} from 'primeng/password';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
+import {BaseFormComponent} from '@shared/abstract/BaseFormComponent';
 
 @Component({
   selector: 'app-user-password-change-form',
@@ -32,7 +33,7 @@ import {FormErrorComponent} from '@components/form-error/form-error.component';
                 id="password"
                 inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
                 formControlName="password"
-                [feedback]="false"
+                [feedback]="true"
                 [toggleMask]="true" />
             </app-form-control-wrap>
             <app-form-error
@@ -50,7 +51,7 @@ import {FormErrorComponent} from '@components/form-error/form-error.component';
                 id="confirmPassword"
                 inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
                 formControlName="confirmPassword"
-                [feedback]="false"
+                [feedback]="true"
                 [toggleMask]="true" />
             </app-form-control-wrap>
             <app-form-error
@@ -64,13 +65,12 @@ import {FormErrorComponent} from '@components/form-error/form-error.component';
   styleUrl: './user-password-change-form.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserPasswordChangeFormComponent {
+export class UserPasswordChangeFormComponent extends BaseFormComponent{
 
   formGroup = input.required<FormGroup>();
 
   protected isFieldValid(field: string): boolean | undefined {
-    const control = this.formGroup().get(field);
-    return (!control?.valid && control?.touched) ;
+    return this.isFieldValidBase(field, this.formGroup());
   }
 
 }

@@ -7,6 +7,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {NgClass} from '@angular/common';
 import {Select} from 'primeng/select';
 import {SelectItem} from 'primeng/api';
+import {BaseFormComponent} from '@shared/abstract/BaseFormComponent';
 
 @Component({
   selector: 'app-user-details-form',
@@ -127,14 +128,13 @@ import {SelectItem} from 'primeng/api';
   styleUrl: './user-details-form.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserDetailsFormComponent  {
+export class UserDetailsFormComponent  extends BaseFormComponent{
 
   fetchingData = input<boolean>(false);
   formGroup = input.required<FormGroup>();
   availableRoles = input.required<SelectItem[]>();
 
   protected isFieldValid(field: string): boolean | undefined {
-    const control = this.formGroup().get(field);
-    return (!control?.valid && control?.touched) ;
+    return this.isFieldValidBase(field, this.formGroup());
   }
 }

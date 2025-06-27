@@ -118,7 +118,8 @@ export class UserDetailsComponent extends BaseComponent{
   }
 
   protected changePasswordSaveClickHandler():void{
-    this.userService.executeChangeUserPassword(this.changePasswordForm);
+    console.log('save')
+    // this.userService.executeChangeUserPassword(this.changePasswordForm);
   }
 
   protected changePasswordEditHandler(isEditMode: boolean):void{

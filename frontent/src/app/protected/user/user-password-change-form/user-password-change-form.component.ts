@@ -1,14 +1,20 @@
 import {ChangeDetectionStrategy, Component, input} from '@angular/core';
-import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {TranslatePipe} from '@ngx-translate/core';
 import {NgClass} from '@angular/common';
+import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
+import {Password} from 'primeng/password';
+import {FormErrorComponent} from '@components/form-error/form-error.component';
 
 @Component({
   selector: 'app-user-password-change-form',
   imports: [
     TranslatePipe,
     ReactiveFormsModule,
-    NgClass
+    NgClass,
+    FormControlWrapComponent,
+    Password,
+    FormErrorComponent
   ],
   template: `
     @let form = formGroup();
@@ -20,6 +26,36 @@ import {NgClass} from '@angular/common';
                    [ngClass]="{'app-required-label': form.enabled}">
               {{ 'USER.DETAILS.LABELS.password' | translate }}
             </label>
+            <app-form-control-wrap
+              [editMode]="form.enabled">
+              <p-password
+                id="password"
+                inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
+                formControlName="password"
+                [feedback]="false"
+                [toggleMask]="true" />
+            </app-form-control-wrap>
+            <app-form-error
+              [displayLabels]="isFieldValid('password')"
+              [validationErrors]="form.get('password')?.errors"/>
+          </div>
+          <div class="mt-4">
+            <label for="password"
+                   [ngClass]="{'app-required-label': form.enabled}">
+              {{ 'USER.DETAILS.LABELS.confirm-password' | translate }}
+            </label>
+            <app-form-control-wrap
+              [editMode]="form.enabled">
+              <p-password
+                id="confirmPassword"
+                inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
+                formControlName="confirmPassword"
+                [feedback]="false"
+                [toggleMask]="true" />
+            </app-form-control-wrap>
+            <app-form-error
+              [displayLabels]="isFieldValid('confirmPassword')"
+              [validationErrors]="form.get('confirmPassword')?.errors"/>
           </div>
         </div>
       </div>

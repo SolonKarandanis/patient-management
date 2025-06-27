@@ -207,6 +207,8 @@
         "lastName": "Last name",
         "status": "Status",
         "role": "Role",
+        "password": "Password",
+        "confirm-password": "Confirm Password",
         "details": "Details",
         "change-password": "Change Password",
         "account-status": "Account Status"

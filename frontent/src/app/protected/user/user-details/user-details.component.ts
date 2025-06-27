@@ -11,6 +11,8 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {injectParams} from '@shared/utils/injectParams';
 import {AuthService} from '@core/services/auth.service';
 import {UserRolesEnum} from '@models/constants';
+import {NgClass} from '@angular/common';
+import {UserPasswordChangeFormComponent} from '../user-password-change-form/user-password-change-form.component';
 
 
 
@@ -24,6 +26,7 @@ import {UserRolesEnum} from '@models/constants';
     ReactiveFormsModule,
     UserDetailsFormComponent,
     FieldsetComponent,
+    UserPasswordChangeFormComponent,
   ],
   template: `
     <div
@@ -51,7 +54,7 @@ import {UserRolesEnum} from '@models/constants';
             [allowEdit]="vm.isEditAllowed"
             (saveClicked)="changePasswordSaveClickHandler()"
             (editModeChanged)="changePasswordEditHandler($event)">
-
+            <app-user-password-change-form [formGroup]="changePasswordForm" />
           </app-fieldset>
         }
       }

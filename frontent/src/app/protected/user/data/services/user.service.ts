@@ -63,6 +63,19 @@ export class UserService extends GenericService{
   }
 
   /**
+   * Update selected user's password
+   * @param form the request for updating user
+   * @returns nothing
+   */
+  public executeChangeUserPassword(form: FormGroup<ChangePasswordForm>):void{
+    const id = this.userId();
+    if(id){
+      const request = this.searchService.toChangePasswordRequest(form);
+      this.userStore.changeUserPassword({id,request});
+    }
+  }
+
+  /**
    * Delete a  user
    * @returns nothing
    */

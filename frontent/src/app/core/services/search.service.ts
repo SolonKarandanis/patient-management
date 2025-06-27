@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {GenericService} from './generic.service';
-import {CreateUserRequest, UpdateUserRequest} from '@models/user.model';
+import {ChangePasswordRequest, CreateUserRequest, UpdateUserRequest} from '@models/user.model';
 import {FormGroup} from '@angular/forms';
-import {CreateUserForm, UpdateUserForm, UserSearchForm} from '../../protected/user/forms';
+import {ChangePasswordForm, CreateUserForm, UpdateUserForm, UserSearchForm} from '../../protected/user/forms';
 import {UserSearchRequest} from '@models/search.model';
 
 @Injectable({
@@ -12,17 +12,30 @@ export class SearchService extends GenericService{
 
   /**
    * Convert from FormGroup<UpdateUserForm> to UpdateUserRequest
-   * @param  searchForm form of type UpdateUserForm
+   * @param  form form of type UpdateUserForm
    * @returns A UpdateUserRequest
    */
-  public toUpdateUserRequest(searchForm: FormGroup<UpdateUserForm>):UpdateUserRequest{
-    const {email,firstName,username,lastName,role} = searchForm.value;
+  public toUpdateUserRequest(form: FormGroup<UpdateUserForm>):UpdateUserRequest{
+    const {email,firstName,username,lastName,role} = form.value;
     return {
       email: email!,
       firstName: firstName!,
       username: username!,
       lastName: lastName!,
       role: role!
+    };
+  }
+
+  /**
+   * Convert from FormGroup<ChangePasswordForm> to ChangePasswordRequest
+   * @param  form form of type ChangePasswordForm
+   * @returns A ChangePasswordRequest
+   */
+  public toChangePasswordRequest(form:FormGroup<ChangePasswordForm>):ChangePasswordRequest{
+    const {password,confirmPassword} = form.value;
+    return {
+      password: password!,
+      confirmPassword: confirmPassword!
     };
   }
 
@@ -50,11 +63,11 @@ export class SearchService extends GenericService{
 
   /**
    * Convert from FormGroup<UserSearchForm> to CreateUserForm
-   * @param  searchForm form of type UserSearchForm
+   * @param  form form of type UserSearchForm
    * @returns A UserSearchRequest
    */
-  public toCreateUserRequest(searchForm: FormGroup<CreateUserForm>):CreateUserRequest{
-    const {email,firstName,username,lastName,password,role} = searchForm.value;
+  public toCreateUserRequest(form: FormGroup<CreateUserForm>):CreateUserRequest{
+    const {email,firstName,username,lastName,password,role} = form.value;
     return {
       email: email!,
       firstName: firstName!,

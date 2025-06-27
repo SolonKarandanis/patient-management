@@ -120,7 +120,7 @@ export class UserDetailsComponent extends BaseComponent{
 
   protected detailsSaveFormValidateHandler():void{
     if(!this.form.valid){
-      this.utilService.markAllAsDirty(this.form)
+      this.utilService.markAllAsDirty(this.form);
     }
   }
 
@@ -134,19 +134,21 @@ export class UserDetailsComponent extends BaseComponent{
     }
   }
 
-
   protected detailsEditHandler(isEditMode: boolean):void{
     isEditMode ?  this.form.enable():this.form.disable();
   }
 
+
+
   protected changePasswordFormValidateHandler():void{
     if(!this.changePasswordForm.valid){
-      this.utilService.markAllAsDirty(this.changePasswordForm)
+      this.utilService.markAllAsDirty(this.changePasswordForm);
+      console.log(this.changePasswordForm.errors)
     }
   }
 
   protected changePasswordFormResetValidationHandler():void{
-    this.utilService.markAllAsPristine(this.changePasswordForm)
+    this.utilService.markAllAsPristine(this.changePasswordForm);
   }
 
   protected changePasswordSaveClickHandler():void{

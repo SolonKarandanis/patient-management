@@ -90,6 +90,16 @@ export class UtilService{
   }
 
   /**
+   * Marks all the controls of a form group as pristine
+   * @param formGroup The form group that contains the controls to be marked as pristine
+   */
+  markAllAsPristine(formGroup: FormGroup): void {
+    Object.keys(formGroup.controls).forEach((key: string) => {
+      formGroup.controls[key].markAsPristine();
+    });
+  }
+
+  /**
    * Convert an Object to a SelectItem for use with PrimeNG components
    * @param obj The Object to convert
    * @param labelAttribute The object's attribute to use as a label

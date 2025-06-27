@@ -13,6 +13,7 @@ import {AuthService} from '@core/services/auth.service';
 import {UserRolesEnum} from '@models/constants';
 import {NgClass} from '@angular/common';
 import {UserPasswordChangeFormComponent} from '../user-password-change-form/user-password-change-form.component';
+import {UtilService} from '@core/services/util.service';
 
 
 
@@ -43,6 +44,8 @@ import {UserPasswordChangeFormComponent} from '../user-password-change-form/user
             [allowEdit]="vm.isEditAllowed"
             [allowSave]="form.valid"
             (saveClicked)="detailsSaveClickHandler()"
+            (validateFormClicked)="detailsSaveFormValidateHandler()"
+            (resetFormValidityClicked)="detailsSaveFormResetValidationHandler()"
             (editModeChanged)="detailsEditHandler($event)">
             <app-user-details-form
               [formGroup]="form"
@@ -55,6 +58,8 @@ import {UserPasswordChangeFormComponent} from '../user-password-change-form/user
             [allowEdit]="vm.isEditAllowed"
             [allowSave]="changePasswordForm.valid"
             (saveClicked)="changePasswordSaveClickHandler()"
+            (validateFormClicked)="changePasswordFormValidateHandler()"
+            (resetFormValidityClicked)="changePasswordFormResetValidationHandler()"
             (editModeChanged)="changePasswordEditHandler($event)">
             <app-user-password-change-form [formGroup]="changePasswordForm" />
           </app-fieldset>
@@ -68,6 +73,7 @@ import {UserPasswordChangeFormComponent} from '../user-password-change-form/user
 export class UserDetailsComponent extends BaseComponent{
   private userService = inject(UserService);
   private authService = inject(AuthService);
+  private utilService = inject(UtilService);
   private commonEntitiesService = inject(CommonEntitiesService);
 
   protected changePasswordForm!: FormGroup;
@@ -111,21 +117,43 @@ export class UserDetailsComponent extends BaseComponent{
     }
   });
 
+
+  protected detailsSaveFormValidateHandler():void{
+    if(!this.form.valid){
+      this.utilService.markAllAsDirty(this.form)
+    }
+  }
+
+  protected detailsSaveFormResetValidationHandler():void{
+    this.utilService.markAllAsPristine(this.changePasswordForm)
+  }
+
   protected detailsSaveClickHandler():void{
     if(this.form.valid){
       this.userService.executeUpdateUser(this.form);
     }
   }
 
+
   protected detailsEditHandler(isEditMode: boolean):void{
     isEditMode ?  this.form.enable():this.form.disable();
+  }
+
+  protected changePasswordFormValidateHandler():void{
+    if(!this.changePasswordForm.valid){
+      this.utilService.markAllAsDirty(this.changePasswordForm)
+    }
+  }
+
+  protected changePasswordFormResetValidationHandler():void{
+    this.utilService.markAllAsPristine(this.changePasswordForm)
   }
 
   protected changePasswordSaveClickHandler():void{
     console.log('save')
     if(this.changePasswordForm.valid){
       console.log('valid')
-      // this.userService.executeChangeUserPassword(this.changePasswordForm);
+      this.userService.executeChangeUserPassword(this.changePasswordForm);
     }
   }
 

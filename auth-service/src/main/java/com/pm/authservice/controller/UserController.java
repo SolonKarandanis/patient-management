@@ -88,7 +88,7 @@ public class UserController {
     @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> registerUser(@RequestBody @Valid CreateUserDTO user, final HttpServletRequest request)
             throws BusinessException{
-        log.info("UserController->registerUser->RequestBody: {}" , user);
+        log.info("UserController->registerUser");
         UserEntity userSaved=usersService.registerUser(user, applicationUrl(request));
         return ResponseEntity.ok(usersService.convertToDTO(userSaved,true));
     }
@@ -99,7 +99,7 @@ public class UserController {
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable(name = "id", required=true) String publicId,
             @RequestBody @Valid UpdateUserDTO user)throws NotFoundException{
-        log.info("UserController->updateUser->RequestBody: {}" , user);
+        log.info("UserController->updateUser");
         UserEntity userToBeUpdated = usersService.findByPublicId(publicId);
         userToBeUpdated=usersService.updateUser(publicId,user);
         return ResponseEntity.ok(usersService.convertToDTO(userToBeUpdated,true));

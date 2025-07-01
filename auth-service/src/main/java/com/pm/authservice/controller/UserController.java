@@ -105,6 +105,7 @@ public class UserController {
         return ResponseEntity.ok(usersService.convertToDTO(userToBeUpdated,true));
     }
 
+    @PreAuthorize("isSystemAdmin()")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable(name= "id",required=true) @Min(1) String publicId)
             throws NotFoundException{
@@ -113,6 +114,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PreAuthorize("isSystemAdmin() || isUserMe(#publicId)")
     @PutMapping("/{id}/password-change")
     @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> changeUserPassword(
@@ -125,6 +127,7 @@ public class UserController {
         return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
 
+    @PreAuthorize("isSystemAdmin()")
     @PutMapping("/{id}/activate")
     @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> activateUser(
@@ -136,6 +139,7 @@ public class UserController {
         return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
 
+    @PreAuthorize("isSystemAdmin()")
     @PutMapping("/{id}/deactivate")
     @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> deactivateUser(

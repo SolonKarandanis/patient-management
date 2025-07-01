@@ -3,6 +3,7 @@
     "app-full-name": "AirBnb το σπίτι σας",
     "login": "Είσοδος",
     "UNAUTHORIZED": "Δεν έχετε εξουσιοδότηση πρόσβασης σε αυτή τη σελίδα",
+    "sign-in-with-credentials": "Ή συνδεθείτε με διαπιστευτήρια",
     "BUTTONS": {
       "cancel": "Ακύρωση",
       "load": "Φόρτωση",

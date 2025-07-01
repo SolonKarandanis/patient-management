@@ -3,6 +3,7 @@
     "app-full-name": "AirBnb your home",
     "login": "Login",
     "UNAUTHORIZED": "You are not authorized to access this page",
+    "sign-in-with-credentials": "Or sign in with credentials",
     "BUTTONS": {
       "cancel": "Cancel",
       "load": "Load",

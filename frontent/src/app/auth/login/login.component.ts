@@ -37,7 +37,7 @@ import {FormErrorComponent} from '@components/form-error/form-error.component';
             <app-sign-up-with></app-sign-up-with>
             <div class="flex-auto px-4 lg:px-10 py-10 pt-0">
               <div class="text-blueGray-400 text-center mb-3 font-bold">
-                <small>Or sign in with credentials</small>
+                <small>{{ 'GLOBAL.sign-in-with-credentials' | translate }}</small>
               </div>
               <form [formGroup]="form">
                 <div class="mb-6">

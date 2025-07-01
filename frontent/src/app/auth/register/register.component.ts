@@ -130,6 +130,7 @@ import {Password} from 'primeng/password';
                     <p-password
                       id="password"
                       inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
+                      styleClass="w-full"
                       formControlName="password"
                       [feedback]="true"
                       [toggleMask]="true" />
@@ -137,6 +138,26 @@ import {Password} from 'primeng/password';
                   <app-form-error
                     [displayLabels]="isFieldValid('password')"
                     [validationErrors]="form.get('password')?.errors"/>
+                </div>
+                <div class="mt-4">
+                  <label for="password"
+                         class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                         [ngClass]="{'app-required-label': form.enabled}">
+                    {{ 'USER.DETAILS.LABELS.confirm-password' | translate }}
+                  </label>
+                  <app-form-control-wrap
+                    [editMode]="form.enabled">
+                    <p-password
+                      id="confirmPassword"
+                      inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
+                      styleClass="w-full"
+                      formControlName="confirmPassword"
+                      [feedback]="true"
+                      [toggleMask]="true" />
+                  </app-form-control-wrap>
+                  <app-form-error
+                    [displayLabels]="isFieldValid('confirmPassword')"
+                    [validationErrors]="form.get('confirmPassword')?.errors"/>
                 </div>
                 <div class="text-center mt-6">
                   <button

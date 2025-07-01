@@ -163,7 +163,9 @@
       "enter-last-name": "Enter your Last Name"
     },
     "BUTTONS": {
-      "register": "Register"
+      "register": "Register",
+      "create-account": "Create Account",
+      "already-have-account": "Already have an account"
     },
     "MESSAGES": {
       "SUCCESS": {

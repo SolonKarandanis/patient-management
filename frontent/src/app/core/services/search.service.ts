@@ -67,13 +67,13 @@ export class SearchService extends GenericService{
    * @returns A UserSearchRequest
    */
   public toCreateUserRequest(form: FormGroup<CreateUserForm>):CreateUserRequest{
-    const {email,firstName,username,lastName,password,role} = form.value;
+    const {email,firstName,username,lastName,password,confirmPassword,role} = form.value;
     return {
       email: email!,
       firstName: firstName!,
       lastName: lastName!,
       password: password!,
-      confirmPassword:'',
+      confirmPassword:confirmPassword!,
       role: role!,
       username: username!
     };

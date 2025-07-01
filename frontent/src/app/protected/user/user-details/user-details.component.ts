@@ -91,7 +91,7 @@ export class UserDetailsComponent extends BaseComponent{
 
     const isAdmin =this.authService.hasRole(UserRolesEnum.ROLE_SYSTEM_ADMIN)();
     if(!isAdmin){
-      availableRoles=availableRoles.filter(r=>r.value!=UserRolesEnum.ROLE_SYSTEM_ADMIN)
+      availableRoles=availableRoles.filter(r=>r.value!=UserRolesEnum.ROLE_SYSTEM_ADMIN);
     }
     const isEditAllowed =  isAdmin || this.authService.isUserMe(user?.publicId)();
 

@@ -1,5 +1,6 @@
 package com.pm.authservice.controller;
 
+import com.pm.authservice.config.authorisation.NoAuthentication;
 import com.pm.authservice.config.i18n.Translate;
 import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.model.RoleEntity;
@@ -23,6 +24,7 @@ public class RoleController {
         this.roleService = roleService;
     }
 
+    @NoAuthentication
     @GetMapping
     @Translate(path = "[*].name", targetProperty = "nameLabel")
     public ResponseEntity<List<RoleDTO>> findAllRoles(){

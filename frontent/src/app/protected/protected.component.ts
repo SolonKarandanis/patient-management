@@ -24,12 +24,4 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProtectedComponent {
-  protected commonEntitiesService = inject(CommonEntitiesService);
-
-  constructor() {
-    effect(() => {
-      this.commonEntitiesService.initializeCommonEntities();
-    });
-  }
-
 }

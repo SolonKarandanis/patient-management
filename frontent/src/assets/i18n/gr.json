@@ -160,7 +160,9 @@
       "enter-last-name": "Εισαγάγετε το Επώνυμό σας"
     },
     "BUTTONS": {
-      "register": "Εγγραφή"
+      "register": "Εγγραφή",
+      "create-account": "Δημιουργία λογαριασμού",
+      "already-have-account": "Έχετε ήδη λογαριασμό"
     },
     "MESSAGES": {
       "SUCCESS": {

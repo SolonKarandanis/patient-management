@@ -9,6 +9,9 @@ import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {InputText} from 'primeng/inputtext';
 import {NgClass} from '@angular/common';
 import {Password} from 'primeng/password';
+import {RouterLink} from '@angular/router';
+import {ButtonDirective} from 'primeng/button';
+import {Ripple} from 'primeng/ripple';
 
 @Component({
   selector: 'app-register',
@@ -20,7 +23,10 @@ import {Password} from 'primeng/password';
     FormErrorComponent,
     InputText,
     NgClass,
-    Password
+    Password,
+    RouterLink,
+    ButtonDirective,
+    Ripple
   ],
   template: `
     <div class="container mx-auto px-4 h-full">
@@ -168,7 +174,25 @@ import {Password} from 'primeng/password';
                     Create Account
                   </button>
                 </div>
+                <div class="text-center mt-6">
+                  <button
+                    pButton
+                    pRipple
+                    severity="secondary"
+                    class=" font-bold uppercase px-6 py-3 rounded shadow mr-1 mb-1 w-full "
+                    type="button"
+                    >
+                    {{ "REGISTER.BUTTONS.create-account" | translate }}
+                  </button>
+                </div>
               </form>
+            </div>
+          </div>
+          <div class="flex flex-wrap mt-6 relative">
+            <div class="w-1/2">
+              <a [routerLink]="['/auth/login']" class="text-blueGray-200">
+                <small>{{ "REGISTER.BUTTONS.already-have-account" | translate }}</small>
+              </a>
             </div>
           </div>
         </div>

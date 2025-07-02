@@ -1,15 +1,15 @@
-import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, OnInit} from '@angular/core';
 import {SignUpWithComponent} from '../../components/sign-up-with/sign-up-with.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
-import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
+import {ReactiveFormsModule} from '@angular/forms';
 import {UserService} from '../../protected/user/data/services/user.service';
 import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {InputText} from 'primeng/inputtext';
 import {NgClass} from '@angular/common';
 import {Password} from 'primeng/password';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {ButtonDirective} from 'primeng/button';
 import {Ripple} from 'primeng/ripple';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
@@ -216,9 +216,14 @@ import {Select} from 'primeng/select';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegisterComponent extends BaseComponent implements OnInit{
-  private fb= inject(FormBuilder);
   private userService = inject(UserService);
   private commonEntitiesService = inject(CommonEntitiesService);
+  private router= inject(Router);
+
+  constructor() {
+    super();
+    this.listenToSuccessfullUserRegistration();
+  }
 
   ngOnInit(): void {
     this.initForm();
@@ -236,11 +241,26 @@ export class RegisterComponent extends BaseComponent implements OnInit{
   });
 
   protected registerUser():void{
-
+    this.userService.executeRegisterUser(this.form);
   }
 
   private initForm():void{
     this.form= this.userService.initCreateUserForm();
+  }
+
+  private listenToSuccessfullUserRegistration():void{
+    effect(() => {
+      const createdUserId = this.userService.createdUserId();
+      if (createdUserId) {
+        this.navigateToLogin();
+      }
+    });
+  }
+
+  private navigateToLogin():void{
+    this.router.navigate(['/auth','login'], {
+      queryParams: {},
+    });
   }
 
 }

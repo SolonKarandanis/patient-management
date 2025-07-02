@@ -99,6 +99,7 @@ export const UserStore = signalStore(
         createdUserId,
       })
     },
+
   })),
   withMethods((state)=>{
     const {userRepo,httpUtil,utilService, translate} = state;
@@ -185,14 +186,13 @@ export const UserStore = signalStore(
             userRepo.registerUser(request).pipe(
               tapResponse({
                 next:(result)=>{
-                  state.setSelectedUser(result)
                   state.setCreatedUserId(result.publicId);
                   state.setLoadedState();
                   utilService.showMessage('success',translate.instant('REGISTER.MESSAGES.SUCCESS.user-register-success'));
                 },
                 error: (error:string) =>{
                   state.setErrorState(error);
-                  utilService.showMessage('error',translate.instant('REGISTER.MESSAGES.SUCCESS.user-register-failure'));
+                  utilService.showMessage('error',translate.instant('REGISTER.MESSAGES.ERROR.user-register-failure'));
                 }
               })
             )

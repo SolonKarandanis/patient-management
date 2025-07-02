@@ -1,6 +1,5 @@
 package com.pm.authservice.controller;
 
-import com.pm.authservice.config.authorisation.NoAuthentication;
 import com.pm.authservice.config.i18n.Translate;
 import com.pm.authservice.dto.*;
 import com.pm.authservice.exception.BusinessException;
@@ -10,7 +9,6 @@ import com.pm.authservice.service.UserService;
 import com.pm.authservice.util.AppConstants;
 import com.pm.authservice.util.HttpUtil;
 import com.pm.authservice.util.UserCsvExporter;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -27,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-//@PreAuthorize("isAuthenticated()")
+@PreAuthorize("isAuthenticated()")
 @RequestMapping("/users")
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
@@ -81,16 +79,6 @@ public class UserController {
         UserEntity user = usersService.findByPublicId(dto.getPublicId());
         log.info("UserController --> getUserByToken --> username: {}", user.getUsername());
         return ResponseEntity.ok(usersService.convertToDTO(user,true));
-    }
-
-    @NoAuthentication
-    @PostMapping
-    @Translate(path = "status", targetProperty = "statusLabel")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody @Valid CreateUserDTO user, final HttpServletRequest request)
-            throws BusinessException{
-        log.info("UserController->registerUser");
-        UserEntity userSaved=usersService.registerUser(user, applicationUrl(request));
-        return ResponseEntity.ok(usersService.convertToDTO(userSaved,true));
     }
 
     @PreAuthorize("isSystemAdmin() || isUserMe(#publicId)")
@@ -155,10 +143,6 @@ public class UserController {
     public ResponseEntity<Void> verifyEmail(@RequestParam("token") String token)throws BusinessException{
         usersService.verifyEmail(token);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
-    protected String applicationUrl(HttpServletRequest request) {
-        return "http://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath();
     }
 
 }

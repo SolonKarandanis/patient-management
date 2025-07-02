@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
@@ -169,13 +170,16 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         validateEmailExistence(dto.getEmail());
         validatePasswordChange(dto.getPassword(), dto.getConfirmPassword(), true);
         UserEntity user = new UserEntity();
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setUsername(dto.getUsername());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
         user.setStatus(AccountStatus.INACTIVE);
         user.setIsVerified(Boolean.FALSE);
+        LocalDate today = LocalDate.now();
+        user.setLastModifiedDate(today);
+        user.setCreatedDate(today);
         UUID uuid = UUID.randomUUID();
         user.setPublicId(uuid);
         RoleEntity role = roleService.findByName(dto.getRole());
@@ -193,6 +197,8 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
+        LocalDate today = LocalDate.now();
+        user.setLastModifiedDate(today);
         RoleEntity role = roleService.findByName(dto.getRole());
         user.removeRoles();
         user.addRole(role);

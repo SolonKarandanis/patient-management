@@ -254,6 +254,8 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     public UserEntity changePassword(UserEntity user, ChangePasswordDTO dto)throws BusinessException {
         validatePasswordChange(dto.getPassword(), dto.getConfirmPassword(), true);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        LocalDate today = LocalDate.now();
+        user.setLastModifiedDate(today);
         return userRepository.save(user);
     }
 

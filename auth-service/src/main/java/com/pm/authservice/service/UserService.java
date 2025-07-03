@@ -16,9 +16,9 @@ public interface UserService {
     UserEntity findByPublicId(String publicId)throws NotFoundException;
     UserEntity findByEmail(String email)throws NotFoundException;
     void deleteUser(String publicId) throws NotFoundException;
-    Page<UserEntity> searchUsers(UsersSearchRequestDTO searchObj);
-    Long countUsers(UsersSearchRequestDTO searchObj);
-    List<UserDTO> findAllUsersForExport(UsersSearchRequestDTO searchObj);
+    Page<UserEntity> searchUsers(UsersSearchRequestDTO searchObj, UserEntity loggedUser);
+    Long countUsers(UsersSearchRequestDTO searchObj,UserEntity loggedUser);
+    List<UserDTO> findAllUsersForExport(UsersSearchRequestDTO searchObj, UserEntity loggedUser);
     UserEntity registerUser(CreateUserDTO dto, String applicationUrl) throws BusinessException;
     UserEntity updateUser(String publicId, UpdateUserDTO dto) throws NotFoundException;
     UserEntity activateUser(UserEntity user) throws BusinessException;

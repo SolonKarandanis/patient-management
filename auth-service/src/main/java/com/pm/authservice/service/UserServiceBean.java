@@ -6,6 +6,8 @@ import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.model.*;
 import com.pm.authservice.repository.UserRepository;
+import com.pm.authservice.util.AuthorityConstants;
+import com.pm.authservice.util.UserUtil;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.slf4j.Logger;
@@ -125,21 +127,21 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     }
 
     @Override
-    public Page<UserEntity> searchUsers(UsersSearchRequestDTO searchObj) {
+    public Page<UserEntity> searchUsers(UsersSearchRequestDTO searchObj,UserEntity loggedUser) {
         PageRequest pageRequest = toPageRequest(searchObj.getPaging());
-        Predicate predicate = getSearchPredicate(searchObj);
+        Predicate predicate = getSearchPredicate(searchObj,loggedUser);
         return userRepository.findAll(predicate,pageRequest);
     }
 
     @Override
-    public Long countUsers(UsersSearchRequestDTO searchObj) {
-        Predicate predicate = getSearchPredicate(searchObj);
+    public Long countUsers(UsersSearchRequestDTO searchObj, UserEntity loggedUser) {
+        Predicate predicate = getSearchPredicate(searchObj,loggedUser);
         return userRepository.count(predicate);
     }
 
     @Override
-    public List<UserDTO> findAllUsersForExport(UsersSearchRequestDTO searchObj) {
-        Predicate predicate = getSearchPredicate(searchObj);
+    public List<UserDTO> findAllUsersForExport(UsersSearchRequestDTO searchObj, UserEntity loggedUser) {
+        Predicate predicate = getSearchPredicate(searchObj,loggedUser);
         List<UserEntity> users=StreamSupport.stream(userRepository.findAll(predicate).spliterator(), false).toList();
         List<UserDTO> results=new ArrayList<>();
         for(UserEntity user: users){
@@ -259,7 +261,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         return userRepository.save(user);
     }
 
-    protected Predicate getSearchPredicate(UsersSearchRequestDTO searchObj){
+    protected Predicate getSearchPredicate(UsersSearchRequestDTO searchObj,UserEntity loggedUser){
         QUserEntity user = QUserEntity.userEntity;
         BooleanBuilder builder = new BooleanBuilder();
         String email =searchObj.getEmail();
@@ -267,6 +269,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         String name= searchObj.getName();
         String status = searchObj.getStatus();
         String roleName = searchObj.getRoleName();
+        boolean isAdmin = UserUtil.hasRole(loggedUser, AuthorityConstants.ROLE_SYSTEM_ADMIN);
 
         if(StringUtils.hasLength(email)){
             builder.and(user.email.eq(email));

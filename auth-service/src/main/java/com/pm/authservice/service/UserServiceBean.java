@@ -270,6 +270,9 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         String status = searchObj.getStatus();
         String roleName = searchObj.getRoleName();
         boolean isAdmin = UserUtil.hasRole(loggedUser, AuthorityConstants.ROLE_SYSTEM_ADMIN);
+        if(!isAdmin){
+            builder.and(user.status.ne(AccountStatus.DELETED));
+        }
 
         if(StringUtils.hasLength(email)){
             builder.and(user.email.eq(email));

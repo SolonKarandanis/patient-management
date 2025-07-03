@@ -39,8 +39,11 @@ public class UserController {
     @PostMapping("/export/csv")
     public void exportUsersToCsv(
             @RequestBody @Valid UsersSearchRequestDTO searchObj,
-            HttpServletResponse response) throws Exception{
-        Long resultsCount = usersService.countUsers(searchObj);
+            HttpServletResponse response,
+            Authentication authentication) throws Exception{
+        UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
+        UserEntity user = usersService.findByPublicId(dto.getPublicId());
+        Long resultsCount = usersService.countUsers(searchObj,user);
         log.info("UserController --> exportUsersToCsv --> results: {}", resultsCount);
         if (resultsCount >= AppConstants.MAX_RESULTS_CSV_EXPORT) {
             throw new BusinessException("error.max.csv.results");
@@ -48,15 +51,18 @@ public class UserController {
         response.setContentType(HttpUtil.MEDIA_TYPE_CSV);
         response.setCharacterEncoding("UTF-8");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"users-results.csv\"");
-        List<UserDTO> results =usersService.findAllUsersForExport(searchObj);
+        List<UserDTO> results =usersService.findAllUsersForExport(searchObj,user);
         UserCsvExporter exporter= new UserCsvExporter(results, response);
         exporter.exportData();
     }
 
     @PostMapping("/search")
     @Translate(path = "list[*].status", targetProperty = "statusLabel")
-    public ResponseEntity<SearchResults<UserDTO>> findAllUsers(@RequestBody @Valid UsersSearchRequestDTO searchObj){
-        Page<UserEntity> results = usersService.searchUsers(searchObj);
+    public ResponseEntity<SearchResults<UserDTO>> findAllUsers(@RequestBody @Valid UsersSearchRequestDTO searchObj,
+                                                               Authentication authentication){
+        UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
+        UserEntity user = usersService.findByPublicId(dto.getPublicId());
+        Page<UserEntity> results = usersService.searchUsers(searchObj,user);
         List<UserDTO> dtos=usersService.convertToDTOList(results.getContent(),false);
         return ResponseEntity.ok().body(new SearchResults<UserDTO>(Math.toIntExact(results.getTotalElements()), dtos));
     }

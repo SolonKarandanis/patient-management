@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ import java.util.UUID;
 @NamedEntityGraph(name = UserEntity.GRAPH_USERS_ROLES,
         attributeNodes = @NamedAttributeNode("roles")
 )
+@SQLDelete(sql = "UPDATE UserEntity SET state = 'account.deleted' WHERE id = ?")
 @Entity
 @Table(name="users")
 public class UserEntity {
@@ -142,5 +144,10 @@ public class UserEntity {
         }
         setStatus(AccountStatus.INACTIVE);
         setIsEnabled(Boolean.FALSE);
+    }
+
+    @PreRemove
+    public void deleteUser() {
+        this.status = AccountStatus.DELETED;
     }
 }

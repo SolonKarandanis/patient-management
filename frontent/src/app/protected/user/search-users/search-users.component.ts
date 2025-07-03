@@ -234,21 +234,7 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
   }
 
   private initUserStatuses():void{
-    const translationPrefix: string = 'USER.STATUSES';
-    this.userStatuses=[
-      {
-        label:this.translate.instant(`${translationPrefix}.active`),
-        value:'account.active'
-      },
-      {
-        label:this.translate.instant(`${translationPrefix}.inactive`),
-        value:'account.inactive'
-      },
-      {
-        label:this.translate.instant(`${translationPrefix}.deleted`),
-        value:'account.deleted'
-      }
-    ];
+    this.userStatuses=this.userService.initUserStatuses();
   }
 
   private initTableColumns():void{

@@ -62,6 +62,17 @@ import {UtilService} from '@core/services/util.service';
             (editModeChanged)="changePasswordEditHandler($event)">
             <app-user-password-change-form [formGroup]="changePasswordForm" />
           </app-fieldset>
+          <app-fieldset
+            legend="{{ 'USER.DETAILS.LABELS.account-status' | translate }}"
+            [toggleable]="false"
+            [allowEdit]="vm.isEditAllowed"
+            [allowSave]="changePasswordForm.valid"
+            (saveClicked)="changePasswordSaveClickHandler()"
+            (validateFormClicked)="changePasswordFormValidateHandler()"
+            (resetFormValidityClicked)="changePasswordFormResetValidationHandler()"
+            (editModeChanged)="changePasswordEditHandler($event)">
+
+          </app-fieldset>
         }
       }
     </div>

@@ -9,6 +9,7 @@ import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, 
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SearchTableColumn} from '@models/search.model';
 import {User, UserAccountStatusEnum} from '@models/user.model';
+import {SelectItem} from 'primeng/api';
 
 @Injectable({
   providedIn: 'root'
@@ -265,6 +266,24 @@ export class UserService extends GenericService{
         isLink: false,
         enableSorting: true,
       },
+    ];
+  }
+
+  public initUserStatuses():SelectItem[]{
+    const translationPrefix: string = 'USER.STATUSES';
+    return[
+      {
+        label:this.translateService.instant(`${translationPrefix}.active`),
+        value:'account.active'
+      },
+      {
+        label:this.translateService.instant(`${translationPrefix}.inactive`),
+        value:'account.inactive'
+      },
+      {
+        label:this.translateService.instant(`${translationPrefix}.deleted`),
+        value:'account.deleted'
+      }
     ];
   }
 }

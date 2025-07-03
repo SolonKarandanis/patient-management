@@ -120,6 +120,9 @@ import {BaseFormComponent} from '@shared/abstract/BaseFormComponent';
               [checkmark]="true"
               [showClear]="true"
               class="border-0 !bg-white text-sm shadow w-full"/>
+            <app-form-error
+              [displayLabels]="isFieldValid('role')"
+              [validationErrors]="form.get('role')?.errors"/>
           </div>
         </div>
       </div>

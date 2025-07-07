@@ -211,7 +211,11 @@
         "confirm-password": "Επαλήθευση Κωδικού Πρόσβασης",
         "details": "Λεπτομερειες",
         "change-password": "Αλλαγή κωδικού πρόσβασης",
-        "account-status": "Κατάσταση λογαριασμού"
+        "account-status": "Κατάσταση λογαριασμού",
+        "manage-account-status": "Διαχείριση κατάστασης λογαριασμού",
+        "activate": "Ενεργοποιηση",
+        "deactivate": "Απενεργοποίηση",
+        "delete": "Διαγραφη"
       }
     },
     "MESSAGES": {

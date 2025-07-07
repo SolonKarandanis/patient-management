@@ -214,7 +214,11 @@
         "confirm-password": "Confirm Password",
         "details": "Details",
         "change-password": "Change Password",
-        "account-status": "Account Status"
+        "account-status": "Account Status",
+        "manage-account-status": "Manage Account Status",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "delete": "Delete"
       }
     },
     "MESSAGES": {

@@ -13,6 +13,8 @@ import {AuthService} from '@core/services/auth.service';
 import {UserRolesEnum} from '@models/constants';
 import {UserPasswordChangeFormComponent} from '../user-password-change-form/user-password-change-form.component';
 import {UtilService} from '@core/services/util.service';
+import {SplitButton} from 'primeng/splitbutton';
+import {MenuItem} from 'primeng/api';
 
 
 
@@ -27,6 +29,7 @@ import {UtilService} from '@core/services/util.service';
     UserDetailsFormComponent,
     FieldsetComponent,
     UserPasswordChangeFormComponent,
+    SplitButton,
   ],
   template: `
     <div
@@ -65,13 +68,9 @@ import {UtilService} from '@core/services/util.service';
           <app-fieldset
             legend="{{ 'USER.DETAILS.LABELS.account-status' | translate }}"
             [toggleable]="false"
-            [allowEdit]="vm.isEditAllowed"
-            [allowSave]="changePasswordForm.valid"
-            (saveClicked)="changePasswordSaveClickHandler()"
-            (validateFormClicked)="changePasswordFormValidateHandler()"
-            (resetFormValidityClicked)="changePasswordFormResetValidationHandler()"
-            (editModeChanged)="changePasswordEditHandler($event)">
-
+            [allowEdit]="false">
+            <p class="py-2 text-xl font-semibold">Delete Account</p>
+            <p-splitbutton label="Account Actions"  dropdownIcon="pi pi-cog" [model]="accountActions" />
           </app-fieldset>
         }
       }
@@ -80,13 +79,14 @@ import {UtilService} from '@core/services/util.service';
   styleUrl: './user-details.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserDetailsComponent extends BaseComponent{
+export class UserDetailsComponent extends BaseComponent {
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private utilService = inject(UtilService);
   private commonEntitiesService = inject(CommonEntitiesService);
 
   protected changePasswordForm!: FormGroup;
+  protected accountActions!:MenuItem[];
 
   constructor() {
     super();
@@ -109,6 +109,7 @@ export class UserDetailsComponent extends BaseComponent{
     if(user){
       this.initDetailsForm();
       this.initChangePasswordForm();
+      this.initMenuActions(user.status);
       this.form.patchValue({
         username:user.username,
         firstName:user.firstName,
@@ -178,6 +179,34 @@ export class UserDetailsComponent extends BaseComponent{
   private initChangePasswordForm():void{
     this.changePasswordForm = this.userService.initChangePasswordForm();
     this.changePasswordForm.disable();
+  }
+
+  private initMenuActions(status:string):void{
+    console.log(status)
+    this.accountActions=[
+      {
+        label: 'Activate',
+        icon: 'pi pi-check',
+        // disabled:
+        command: () => {
+
+        },
+      },
+      {
+        label: 'Deactivate',
+        icon: 'pi pi-ban',
+        command: () => {
+
+        },
+      },
+      {
+        label: 'Delete',
+        icon: 'pi pi-times',
+        command: () => {
+
+        },
+      },
+    ];
   }
 
 }

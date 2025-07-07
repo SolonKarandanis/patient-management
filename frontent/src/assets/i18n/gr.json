@@ -213,6 +213,7 @@
         "change-password": "Αλλαγή κωδικού πρόσβασης",
         "account-status": "Κατάσταση λογαριασμού",
         "manage-account-status": "Διαχείριση κατάστασης λογαριασμού",
+        "account-actions": "Ενέργειες λογαριασμού",
         "activate": "Ενεργοποιηση",
         "deactivate": "Απενεργοποίηση",
         "delete": "Διαγραφη"

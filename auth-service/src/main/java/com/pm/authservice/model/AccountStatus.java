@@ -38,4 +38,19 @@ public enum AccountStatus {
             default      -> throw new IllegalArgumentException("Invalid value " + value);
         }
     }
+
+    public static String fromValue(AccountStatus value) {
+        switch(value){
+            case AccountStatus.ACTIVE -> {
+                return "account.active";
+            }
+            case AccountStatus.INACTIVE -> {
+                return "account.inactive";
+            }
+            case AccountStatus.DELETED -> {
+                return "account.deleted";
+            }
+            default      -> throw new IllegalArgumentException("Invalid value " + value);
+        }
+    }
 }

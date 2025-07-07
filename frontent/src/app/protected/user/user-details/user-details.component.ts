@@ -15,6 +15,7 @@ import {UserPasswordChangeFormComponent} from '../user-password-change-form/user
 import {UtilService} from '@core/services/util.service';
 import {SplitButton} from 'primeng/splitbutton';
 import {MenuItem} from 'primeng/api';
+import {UserAccountStatusEnum} from '@models/user.model';
 
 
 
@@ -69,8 +70,13 @@ import {MenuItem} from 'primeng/api';
             legend="{{ 'USER.DETAILS.LABELS.account-status' | translate }}"
             [toggleable]="false"
             [allowEdit]="false">
-            <p class="py-2 text-xl font-semibold">Delete Account</p>
-            <p-splitbutton label="Account Actions"  dropdownIcon="pi pi-cog" [model]="accountActions" />
+            <div class="flex justify-between">
+              <p class="py-2 text-xl font-semibold">Manage Account</p>
+              <p-splitbutton
+                label="Account Actions"
+                dropdownIcon="pi pi-cog"
+                [model]="accountActions" />
+            </div>
           </app-fieldset>
         }
       }
@@ -187,7 +193,7 @@ export class UserDetailsComponent extends BaseComponent {
       {
         label: 'Activate',
         icon: 'pi pi-check',
-        // disabled:
+        disabled: status ===UserAccountStatusEnum.ACTIVE,
         command: () => {
 
         },
@@ -195,6 +201,7 @@ export class UserDetailsComponent extends BaseComponent {
       {
         label: 'Deactivate',
         icon: 'pi pi-ban',
+        disabled: status ===UserAccountStatusEnum.INACTIVE,
         command: () => {
 
         },
@@ -202,6 +209,7 @@ export class UserDetailsComponent extends BaseComponent {
       {
         label: 'Delete',
         icon: 'pi pi-times',
+        disabled: status ===UserAccountStatusEnum.DELETED,
         command: () => {
 
         },

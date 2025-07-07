@@ -75,6 +75,7 @@ import {UserAccountStatusEnum} from '@models/user.model';
               <p-splitbutton
                 label="Account Actions"
                 dropdownIcon="pi pi-cog"
+                [disabled]="!vm.isEditAllowed"
                 [model]="accountActions" />
             </div>
           </app-fieldset>

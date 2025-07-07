@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
-import {TranslatePipe} from '@ngx-translate/core';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {UserService} from '../data/services/user.service';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
@@ -71,9 +71,9 @@ import {UserAccountStatusEnum} from '@models/user.model';
             [toggleable]="false"
             [allowEdit]="false">
             <div class="flex justify-between">
-              <p class="py-2 text-xl font-semibold">Manage Account</p>
+              <p class="py-2 text-xl font-semibold">{{ 'USER.DETAILS.LABELS.manage-account-status' | translate }}</p>
               <p-splitbutton
-                label="Account Actions"
+                label="{{ 'USER.DETAILS.LABELS.account-actions' | translate }}"
                 dropdownIcon="pi pi-cog"
                 [disabled]="!vm.isEditAllowed"
                 [model]="accountActions" />
@@ -91,6 +91,7 @@ export class UserDetailsComponent extends BaseComponent {
   private authService = inject(AuthService);
   private utilService = inject(UtilService);
   private commonEntitiesService = inject(CommonEntitiesService);
+  private translateService = inject(TranslateService);
 
   protected changePasswordForm!: FormGroup;
   protected accountActions!:MenuItem[];
@@ -189,10 +190,10 @@ export class UserDetailsComponent extends BaseComponent {
   }
 
   private initMenuActions(status:string):void{
-    console.log(status)
+    const translationPrefix: string = 'USER.DETAILS.LABELS';
     this.accountActions=[
       {
-        label: 'Activate',
+        label: this.translateService.instant(`${translationPrefix}.activate`),
         icon: 'pi pi-check',
         disabled: status ===UserAccountStatusEnum.ACTIVE,
         command: () => {
@@ -200,7 +201,7 @@ export class UserDetailsComponent extends BaseComponent {
         },
       },
       {
-        label: 'Deactivate',
+        label: this.translateService.instant(`${translationPrefix}.deactivate`),
         icon: 'pi pi-ban',
         disabled: status ===UserAccountStatusEnum.INACTIVE,
         command: () => {
@@ -208,7 +209,7 @@ export class UserDetailsComponent extends BaseComponent {
         },
       },
       {
-        label: 'Delete',
+        label: this.translateService.instant(`${translationPrefix}.delete`),
         icon: 'pi pi-times',
         disabled: status ===UserAccountStatusEnum.DELETED,
         command: () => {

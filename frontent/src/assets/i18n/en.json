@@ -216,6 +216,7 @@
         "change-password": "Change Password",
         "account-status": "Account Status",
         "manage-account-status": "Manage Account Status",
+        "account-actions": "Account Actions",
         "activate": "Activate",
         "deactivate": "Deactivate",
         "delete": "Delete"

@@ -7,7 +7,6 @@ import {User} from '@models/user.model';
 import {SubmitCredentialsDTO} from '@models/auth.model';
 import {UserRoles} from '@models/constants';
 
-export type UserType = User | undefined;
 type AuthStore = InstanceType<typeof AuthStore>;
 
 @Injectable({

@@ -7,7 +7,7 @@ import {
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
-import { MessageService } from 'primeng/api';
+import {ConfirmationService, MessageService} from 'primeng/api';
 import Aura from '@primeng/themes/aura';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader'
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -41,6 +41,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     MessageService,
     ErrorService,
+    ConfirmationService,
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimationsAsync(),

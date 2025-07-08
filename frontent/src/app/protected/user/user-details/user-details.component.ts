@@ -16,6 +16,7 @@ import {UtilService} from '@core/services/util.service';
 import {SplitButton} from 'primeng/splitbutton';
 import {MenuItem} from 'primeng/api';
 import {UserAccountStatusEnum} from '@models/user.model';
+import {ConfirmDialog} from 'primeng/confirmdialog';
 
 
 
@@ -31,6 +32,7 @@ import {UserAccountStatusEnum} from '@models/user.model';
     FieldsetComponent,
     UserPasswordChangeFormComponent,
     SplitButton,
+    ConfirmDialog,
   ],
   template: `
     <div
@@ -82,6 +84,10 @@ import {UserAccountStatusEnum} from '@models/user.model';
         }
       }
     </div>
+    <p-confirmDialog
+        icon="pi pi-exclamation-triangle"
+        defaultFocus="none">
+    </p-confirmDialog>
   `,
   styleUrl: './user-details.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -129,7 +129,7 @@ export class UserDetailsComponent extends BaseComponent {
         firstName:user.firstName,
         lastName:user.lastName,
         email:user.email,
-        role:userRoles[0].value,
+        role:userRoles[0]?.value,
       });
     }
 

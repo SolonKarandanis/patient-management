@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.SQLDelete;
 
@@ -37,7 +38,8 @@ import java.util.UUID;
 @NamedEntityGraph(name = UserEntity.GRAPH_USERS_ROLES,
         attributeNodes = @NamedAttributeNode("roles")
 )
-@SQLDelete(sql = "UPDATE UserEntity SET state = 'account.deleted' WHERE id = ?")
+@DynamicUpdate
+@SQLDelete(sql = "UPDATE Users SET status = 'account.deleted' WHERE id = ?")
 @Entity
 @Table(name="users")
 public class UserEntity {

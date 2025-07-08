@@ -11,7 +11,6 @@ import com.pm.authservice.util.HttpUtil;
 import com.pm.authservice.util.UserCsvExporter;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -101,7 +100,7 @@ public class UserController {
 
     @PreAuthorize("isSystemAdmin()")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable(name= "id",required=true) @Min(1) String publicId)
+    public ResponseEntity<Void> deleteUser(@PathVariable(name= "id") String publicId)
             throws NotFoundException{
         log.info("UserController->deleteUser->publicId: {}" , publicId);
         usersService.deleteUser(publicId);

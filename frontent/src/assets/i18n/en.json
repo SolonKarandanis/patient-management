@@ -237,6 +237,18 @@
         "user-deactivate-failure": "Failed to deactivate user",
         "user-password-change-failure": "Failed to change user password"
       }
+    },
+    "DIALOGS": {
+      "STATUS-CONFIRMATION": {
+        "LABELS": {
+          "activation-header": "Activate User",
+          "activate-user": "Are you sure you want to activate this user?",
+          "deactivation-header": "De-Activate User",
+          "deactivate-user": "Are you sure you want to deactivate this user?",
+          "deletion-header": "Delete User",
+          "delete-user": "Are you sure you want to delete this user?"
+        }
+      }
     }
   },
   "SAVED-SEARCHES": {

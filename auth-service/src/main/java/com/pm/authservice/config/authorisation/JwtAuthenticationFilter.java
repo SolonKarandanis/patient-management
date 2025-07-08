@@ -82,7 +82,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 				 user.setStatus(AccountStatus.fromValue(claims.get("status", String.class)));
 				 if (user.getUsername() != null && jwtService.isTokenValid(jwt, user)) {
 					 List<RoleDTO> roleClaims = mapper.convertValue(claims.get("roles", List.class), new TypeReference<List<RoleDTO>>() { });
-					 log.info("JwtAuthenticationFilter -> claims -> roles : {}",roleClaims);
+					 for(RoleDTO role : roleClaims){
+						 log.info("JwtAuthenticationFilter -> claims -> roles : {}",role.getName());
+					 }
 					 List<SimpleGrantedAuthority> simpleGrantedAuthorities= roleClaims.stream()
 							 .map(role->new SimpleGrantedAuthority(role.getName()))
 							 .toList();

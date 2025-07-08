@@ -234,6 +234,19 @@
         "user-deactivate-failure": "Η απενεργοποίηση του χρήστη απέτυχε",
         "user-password-change-failure": "Αποτυχία αλλαγής κωδικού πρόσβασης"
       }
+    },
+    "DIALOGS": {
+      "STATUS-CONFIRMATION": {
+        "LABELS": {
+          "activation-header": "Ενεργοποίηση χρήστη",
+          "activate-user": "Είστε σίγουροι ότι θέλετε να ενεργοποιήσετε αυτόν τον χρήστη;",
+          "deactivation-header": "Απενεργοποίηση χρήστη",
+          "deactivate-user": "Είστε σίγουροι ότι θέλετε να απενεργοποιήσετε αυτόν τον χρήστη;",
+          "deletion-header": "Διαγραφή χρήστη",
+          "delete-user": "Είστε σίγουροι ότι θέλετε να διαγράψετε αυτόν τον χρήστη;"
+        }
+      }
+    }
   },
   "SAVED-SEARCHES": {
     "title": "Αποθηκευμένες αναζητήσεις",

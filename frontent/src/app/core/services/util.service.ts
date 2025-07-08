@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {DatePipe} from '@angular/common';
-import {Router} from '@angular/router';
-import {MessageService, SelectItem} from 'primeng/api';
+import {Confirmation, ConfirmationService, MessageService, SelectItem} from 'primeng/api';
 import {TranslateService} from '@ngx-translate/core';
 import {FormGroup} from '@angular/forms';
 
@@ -23,9 +22,9 @@ export class UtilService{
   private readonly datePipe = new DatePipe('en');
 
   constructor(
-    private readonly router: Router,
     private readonly messageService:MessageService,
     private readonly translate:TranslateService,
+    private readonly confirmationService:ConfirmationService,
   ) {}
 
   public get emailRegex():string{
@@ -216,6 +215,10 @@ export class UtilService{
         }
       }
     }
+  }
+
+  showConfirmation(confirmation: Confirmation):void{
+    this.confirmationService.confirm(confirmation);
   }
 
   /**

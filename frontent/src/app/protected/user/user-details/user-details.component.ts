@@ -195,6 +195,58 @@ export class UserDetailsComponent extends BaseComponent {
     this.changePasswordForm.disable();
   }
 
+  private getTranslationPrefix():string{
+    return 'USER.DIALOGS.STATUS-CONFIRMATION.LABELS'
+  }
+
+  private handleUserActivation():void{
+    const header = this.translate.instant(`${this.getTranslationPrefix()}.activation-header`);
+    const message = this.translate.instant(`${this.getTranslationPrefix()}.activate-user`);
+    this.utilService.showConfirmation({
+      header,
+      message,
+      accept:()=>{
+        this.performUserActivation();
+      }
+    });
+  }
+
+  private performUserActivation():void{
+    this.userService.executeActivateUser();
+  }
+
+  private handleUserDeActivation():void{
+    const header = this.translate.instant(`${this.getTranslationPrefix()}.deactivation-header`);
+    const message = this.translate.instant(`${this.getTranslationPrefix()}.deactivate-user`);
+    this.utilService.showConfirmation({
+      header,
+      message,
+      accept:()=>{
+        this.performUserDeActivation();
+      }
+    });
+  }
+
+  private performUserDeActivation():void{
+    this.userService.executeDeactivateUser();
+  }
+
+  private handleUserDeletion():void{
+    const header = this.translate.instant(`${this.getTranslationPrefix()}.deletion-header`);
+    const message = this.translate.instant(`${this.getTranslationPrefix()}.delete-user`);
+    this.utilService.showConfirmation({
+      header,
+      message,
+      accept:()=>{
+        this.performUserDeletion();
+      }
+    });
+  }
+
+  private performUserDeletion():void{
+    this.userService.executeDeleteUser();
+  }
+
   private initMenuActions(status:string):void{
     const translationPrefix: string = 'USER.DETAILS.LABELS';
     this.accountActions=[
@@ -203,7 +255,7 @@ export class UserDetailsComponent extends BaseComponent {
         icon: 'pi pi-check',
         disabled: status ===UserAccountStatusEnum.ACTIVE,
         command: () => {
-
+          this.handleUserActivation();
         },
       },
       {
@@ -211,7 +263,7 @@ export class UserDetailsComponent extends BaseComponent {
         icon: 'pi pi-ban',
         disabled: status ===UserAccountStatusEnum.INACTIVE,
         command: () => {
-
+          this.handleUserDeActivation();
         },
       },
       {
@@ -219,7 +271,7 @@ export class UserDetailsComponent extends BaseComponent {
         icon: 'pi pi-times',
         disabled: status ===UserAccountStatusEnum.DELETED,
         command: () => {
-
+          this.handleUserDeletion();
         },
       },
     ];

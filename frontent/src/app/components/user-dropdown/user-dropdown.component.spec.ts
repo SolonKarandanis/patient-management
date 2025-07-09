@@ -1,14 +1,25 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserDropdownComponent } from './user-dropdown.component';
+import {AuthService} from '@core/services/auth.service';
 
 describe('UserDropdownComponent', () => {
   let component: UserDropdownComponent;
+  let authServiceSpy: jasmine.SpyObj<AuthService>;
   let fixture: ComponentFixture<UserDropdownComponent>;
 
   beforeEach(async () => {
+    authServiceSpy= jasmine.createSpyObj('AuthService',[
+      'loggedUser',
+    ]);
     await TestBed.configureTestingModule({
-      imports: [UserDropdownComponent]
+      imports: [UserDropdownComponent],
+      providers:[
+        {
+          provide: AuthService,
+          useValue: authServiceSpy,
+        },
+      ]
     })
     .compileComponents();
 

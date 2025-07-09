@@ -14,6 +14,7 @@ describe('FooterSmallComponent', () => {
 
     fixture = TestBed.createComponent(FooterSmallComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput('absolute', true);
     fixture.detectChanges();
   });
 

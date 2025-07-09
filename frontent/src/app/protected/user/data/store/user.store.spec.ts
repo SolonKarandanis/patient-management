@@ -6,6 +6,7 @@ import {SearchResult} from '@models/search.model';
 import {TestBed} from '@angular/core/testing';
 import {mockCreateUserRequest, mockUpdateUserRequest, mockUser, mockUserSearchRequest} from '@testing/mockData';
 import {of} from 'rxjs';
+import {TranslateFakeLoader, TranslateLoader, TranslateModule} from '@ngx-translate/core';
 
 type UserStore = InstanceType<typeof UserStore>;
 
@@ -37,6 +38,11 @@ describe('UserStore', () =>{
     ]);
 
     TestBed.configureTestingModule({
+      imports:[
+        TranslateModule.forRoot({
+          loader: { provide: TranslateLoader, useClass: TranslateFakeLoader }
+        })
+      ],
       providers:[
         {
           provide: UserRepository,

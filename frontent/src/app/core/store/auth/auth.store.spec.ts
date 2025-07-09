@@ -5,7 +5,8 @@ import {mockJwt, mockLoginCredentials, mockUser} from '@testing/mockData';
 import { AuthRepository } from "@core/repositories/auth.repository";
 import {JwtUtil} from '@core/services/jwt-util.service';
 import {RolesConstants} from '@core/guards/SecurityConstants';
-import {MessageService} from 'primeng/api';
+import {TranslateFakeLoader, TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {UtilService} from '@core/services/util.service';
 
 type AuthStore = InstanceType<typeof AuthStore>;
 
@@ -13,7 +14,7 @@ describe('AuthStore', () =>{
   let store: AuthStore;
   let authRepoSpy: jasmine.SpyObj<AuthRepository>;
   let jwtUtilSpy: jasmine.SpyObj<JwtUtil>;
-  let messageServiceSpy:jasmine.SpyObj<MessageService>;
+  let utilServiceSpy: jasmine.SpyObj<UtilService>;
 
   beforeEach(()=>{
     authRepoSpy = jasmine.createSpyObj('AuthRepository',[
@@ -32,7 +33,16 @@ describe('AuthStore', () =>{
       'destroyTokenExpiration'
     ]);
 
+    utilServiceSpy = jasmine.createSpyObj('UtilService',[
+      'showMessage',
+    ]);
+
     TestBed.configureTestingModule({
+      imports:[
+        TranslateModule.forRoot({
+          loader: { provide: TranslateLoader, useClass: TranslateFakeLoader }
+        })
+      ],
       providers:[
         {
           provide: AuthRepository,
@@ -41,6 +51,10 @@ describe('AuthStore', () =>{
         {
           provide: JwtUtil,
           useValue: jwtUtilSpy,
+        },
+        {
+          provide: UtilService,
+          useValue: utilServiceSpy,
         },
       ]
     });

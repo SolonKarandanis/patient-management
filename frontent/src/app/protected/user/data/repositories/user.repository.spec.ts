@@ -4,7 +4,7 @@ import {SearchResult} from '@models/search.model';
 import {TestBed} from '@angular/core/testing';
 import {HttpResponse, provideHttpClient} from '@angular/common/http';
 import {
-  mockArrayBuffer,
+  mockArrayBuffer, mockArrayBufferResponse,
   mockCreateUserRequest,
   mockUpdateUserRequest,
   mockUser,
@@ -65,7 +65,7 @@ describe('UserRepository', () =>{
     repository.exportUsersToCsv(mockUserSearchRequest).subscribe({
       next: (arrayBuffer: HttpResponse<ArrayBuffer>) => {
         expect(arrayBuffer).toBeTruthy();
-        // expect(arrayBuffer).toEqual(mockArrayBufferResponse);
+        expect(arrayBuffer).toEqual(mockArrayBufferResponse);
       },
     });
 

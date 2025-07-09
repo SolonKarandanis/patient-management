@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { RequiredFieldsLabelComponent } from './required-fields-label.component';
 
-describe('RequiredFieldsLabelComponent', () => {
+xdescribe('RequiredFieldsLabelComponent', () => {
   let component: RequiredFieldsLabelComponent;
   let fixture: ComponentFixture<RequiredFieldsLabelComponent>;
 

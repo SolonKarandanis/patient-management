@@ -5,6 +5,7 @@ import {mockJwt, mockLoginCredentials, mockUser} from '@testing/mockData';
 import { AuthRepository } from "@core/repositories/auth.repository";
 import {JwtUtil} from '@core/services/jwt-util.service';
 import {RolesConstants} from '@core/guards/SecurityConstants';
+import {MessageService} from 'primeng/api';
 
 type AuthStore = InstanceType<typeof AuthStore>;
 
@@ -12,6 +13,7 @@ describe('AuthStore', () =>{
   let store: AuthStore;
   let authRepoSpy: jasmine.SpyObj<AuthRepository>;
   let jwtUtilSpy: jasmine.SpyObj<JwtUtil>;
+  let messageServiceSpy:jasmine.SpyObj<MessageService>;
 
   beforeEach(()=>{
     authRepoSpy = jasmine.createSpyObj('AuthRepository',[

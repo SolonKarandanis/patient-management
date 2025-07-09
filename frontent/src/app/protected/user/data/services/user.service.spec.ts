@@ -240,37 +240,38 @@ describe('UserService', () =>{
     expect(formValues).toBeTruthy();
 
     expect(formValues.email).toBeDefined();
-    expect(formValues.email).toEqual('skarandanis@email.com');
+    expect(formValues.email).toBeNull();
 
     expect(formValues.username).toBeDefined();
-    expect(formValues.username).toEqual('skaran');
+    expect(formValues.username).toBeNull();
 
     expect(formValues.firstName).toBeDefined();
-    expect(formValues.firstName).toEqual('solon');
+    expect(formValues.firstName).toBeNull();
 
     expect(formValues.lastName).toBeDefined();
-    expect(formValues.lastName).toEqual('karandanis');
+    expect(formValues.lastName).toBeNull();
 
     expect(formValues.role).toBeDefined();
-    expect(formValues.role).toEqual(RolesConstants.ROLE_ADMIN);
+    expect(formValues.role).toEqual(RolesConstants.ROLE_NO_ROLE);
 
     expect(frmGroup.valid).toBeTrue();
   });
 
   it('should get Users Search Table Columns', () =>{
     const translationPrefix: string = 'USER.SEARCH-USERS.RESULTS-TABLE.COLS';
-    const expectedFields: string[] = ['username', 'firstName', 'lastName', 'email'];
+    const expectedFields: string[] = ['username', 'firstName', 'lastName', 'email','statusLabel'];
 
     const expectedTitles: string[] = [
       `${translationPrefix}.username`,
       `${translationPrefix}.firstName`,
       `${translationPrefix}.lastName`,
       `${translationPrefix}.email`,
+      `${translationPrefix}.status`,
     ];
 
     const cols: SearchTableColumn[] = service.getSearchUserTableColumns();
 
-    expect(cols.length).toBe(4);
+    expect(cols.length).toBe(5);
     cols.forEach((col: SearchTableColumn) => {
       expect(expectedFields.includes(col.field!));
       expect(expectedTitles.includes(col.title!));

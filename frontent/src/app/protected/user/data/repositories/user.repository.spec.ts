@@ -63,9 +63,10 @@ describe('UserRepository', () =>{
 
   it('should export users to csv', () => {
     repository.exportUsersToCsv(mockUserSearchRequest).subscribe({
-      next: (arrayBuffer: HttpResponse<ArrayBuffer>) => {
-        expect(arrayBuffer).toBeTruthy();
-        expect(arrayBuffer).toEqual(mockArrayBufferResponse);
+      next: (response: HttpResponse<ArrayBuffer>) => {
+        expect(response).toBeTruthy();
+        expect(response.body).toBeTruthy();
+        expect(response.body).toEqual(mockArrayBufferResponse.body);
       },
     });
 

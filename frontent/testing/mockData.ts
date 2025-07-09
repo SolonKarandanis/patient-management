@@ -12,7 +12,7 @@ import {RolesConstants} from '@core/guards/SecurityConstants';
 import {
   Paging,
   SavedSearch,
-  SearchConfiguration,
+  SearchConfiguration, SortDirectionEnum,
   UserSearchRequest
 } from '@models/search.model';
 import {FormControl, FormGroup} from '@angular/forms';
@@ -73,6 +73,7 @@ export const mockUserSearchRequest:UserSearchRequest={
   name: 'John',
   status:"account.active",
   email:'skarandanis@gmail.com',
+  roleName:mockRole.name
 }
 
 export const mockSearchUserForm:FormGroup= new FormGroup<UserSearchForm>({
@@ -83,6 +84,8 @@ export const mockSearchUserForm:FormGroup= new FormGroup<UserSearchForm>({
   status:new FormControl("account.active",{nonNullable: true}),
   role: new FormControl(),
   username: new FormControl(''),
+  sortOrder:  new FormControl(SortDirectionEnum.ASC,{nonNullable: true}),
+  sortField: new FormControl('id',{nonNullable: true})
 });
 
 export const mockSavedSearch: SavedSearch = {
@@ -101,6 +104,7 @@ export const mockSavedSearch: SavedSearch = {
     name: 'John',
     status:"account.active",
     email:'skarandanis@gmail.com',
+    roleName:mockRole.name
   },
 };
 
@@ -157,6 +161,7 @@ export const mockCreateUserRequest:CreateUserRequest={
   firstName:'test',
   lastName:'test',
   password:'test',
+  confirmPassword:'test',
   role:RolesConstants.ROLE_PATIENT,
   username:'test'
 };

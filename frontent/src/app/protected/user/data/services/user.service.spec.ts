@@ -5,6 +5,8 @@ import {TranslateService} from '@ngx-translate/core';
 import {UtilService} from '@core/services/util.service';
 import {TestBed} from '@angular/core/testing';
 import {
+  mockChangePasswordForm,
+  mockChangePasswordRequest,
   mockCreateUserForm,
   mockCreateUserRequest, mockSearchUserForm,
   mockUpdateUserForm,
@@ -34,6 +36,7 @@ describe('UserService', () =>{
       'activateUser',
       'deactivateUser',
       'searchUsers',
+      'changeUserPassword',
       'getUser',
       'getUserId',
       'loading',
@@ -46,7 +49,8 @@ describe('UserService', () =>{
     searchServiceSpy= jasmine.createSpyObj('SearchService',[
       'toUpdateUserRequest',
       'toUserSearchRequest',
-      'toCreateUserRequest'
+      'toCreateUserRequest',
+      'toChangePasswordRequest'
     ]);
 
     utilServiceSpy = jasmine.createSpyObj('UtilService', [], {
@@ -113,6 +117,19 @@ describe('UserService', () =>{
     expect(searchServiceSpy.toUpdateUserRequest).toHaveBeenCalledTimes(1);
     expect(userStoreSpy.updateUser).toHaveBeenCalledWith({id:userId,request:mockUpdateUserRequest});
     expect(userStoreSpy.updateUser).toHaveBeenCalledTimes(1);
+  });
+
+  it('should change user password', () => {
+    const userId: string = '1';
+    service.userId=signal(userId);
+    searchServiceSpy.toChangePasswordRequest.and.returnValue(mockChangePasswordRequest);
+
+    service.executeChangeUserPassword(mockChangePasswordForm);
+
+    expect(searchServiceSpy.toChangePasswordRequest).toHaveBeenCalledWith(mockChangePasswordForm);
+    expect(searchServiceSpy.toChangePasswordRequest).toHaveBeenCalledTimes(1);
+    expect(userStoreSpy.changeUserPassword).toHaveBeenCalledWith({id:userId,request:mockChangePasswordRequest});
+    expect(userStoreSpy.changeUserPassword).toHaveBeenCalledTimes(1);
   });
 
   it('should execute delete user ', () =>{
@@ -255,6 +272,22 @@ describe('UserService', () =>{
     expect(formValues.role).toEqual(RolesConstants.ROLE_NO_ROLE);
 
     expect(frmGroup.valid).toBeTrue();
+  });
+
+  it('should initialize a change password FormGroup', () => {
+    const frmGroup = service.initChangePasswordForm();
+    const formValues = frmGroup.value;
+
+    expect(frmGroup).toBeTruthy();
+    expect(formValues).toBeTruthy();
+
+    expect(formValues.password).toBeDefined();
+    expect(formValues.password).toBeNull();
+
+    expect(formValues.confirmPassword).toBeDefined();
+    expect(formValues.confirmPassword).toBeNull();
+
+    expect(frmGroup.valid).toBeFalse();
   });
 
   it('should get Users Search Table Columns', () =>{

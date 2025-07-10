@@ -4,7 +4,7 @@ import {SearchResult} from '@models/search.model';
 import {TestBed} from '@angular/core/testing';
 import {HttpResponse, provideHttpClient} from '@angular/common/http';
 import {
-  mockArrayBuffer, mockArrayBufferResponse,
+  mockArrayBuffer, mockArrayBufferResponse, mockChangePasswordRequest,
   mockCreateUserRequest,
   mockUpdateUserRequest,
   mockUser,
@@ -177,6 +177,24 @@ describe('UserRepository', () =>{
     expect(req.request.method).toBe('PUT');
     expect(req.request.params.keys().length).toBe(0);
     expect(req.request.body).toBeNull();
+
+    req.flush(mockUser);
+  });
+
+  it('should change user password', () => {
+    const userId: string = '1';
+    repository.changeUserPassword(userId,mockChangePasswordRequest).subscribe({
+      next: (result: User) => {
+        expect(result).toBeTruthy();
+        expect(result).toEqual(mockUser);
+      },
+    });
+
+    const req = httpTesting.expectOne(`${apiUrl}/${userId}/password-change`, 'Request to change user password');
+
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.params.keys().length).toBe(0);
+    expect(req.request.body).toEqual(mockChangePasswordRequest);
 
     req.flush(mockUser);
   });

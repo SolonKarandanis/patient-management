@@ -17,7 +17,7 @@ import {
   UserSearchRequest
 } from '@models/search.model';
 import {FormControl, FormGroup} from '@angular/forms';
-import {CreateUserForm, UpdateUserForm, UserSearchForm} from '../src/app/protected/user/forms';
+import {ChangePasswordForm, CreateUserForm, UpdateUserForm, UserSearchForm} from '../src/app/protected/user/forms';
 import {JwtDTO, SubmitCredentialsDTO} from '@models/auth.model';
 import {GenericFile} from '@models/file.model';
 
@@ -195,6 +195,11 @@ export const mockUpdateUserForm:FormGroup= new FormGroup<UpdateUserForm>({
 });
 
 export const mockChangePasswordRequest:ChangePasswordRequest={
-  password:'',
-  confirmPassword:''
-}
+  password:'7ujm&UJM',
+  confirmPassword:'7ujm&UJM'
+};
+
+export const mockChangePasswordForm:FormGroup = new FormGroup<ChangePasswordForm>({
+  password:new FormControl('7ujm&UJM'),
+  confirmPassword:new FormControl('7ujm&UJM')
+});

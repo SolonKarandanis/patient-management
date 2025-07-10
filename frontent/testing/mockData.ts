@@ -1,6 +1,7 @@
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 
 import {
+  ChangePasswordRequest,
   CreateUserRequest,
   Operation,
   Role,
@@ -192,3 +193,8 @@ export const mockUpdateUserForm:FormGroup= new FormGroup<UpdateUserForm>({
   lastName: new FormControl(''),
   role:new FormControl(RolesConstants.ROLE_DOCTOR,{nonNullable: true}),
 });
+
+export const mockChangePasswordRequest:ChangePasswordRequest={
+  password:'',
+  confirmPassword:''
+}

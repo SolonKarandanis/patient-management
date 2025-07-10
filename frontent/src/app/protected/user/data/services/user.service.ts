@@ -269,6 +269,10 @@ export class UserService extends GenericService{
     ];
   }
 
+  /**
+   * Get the user statuses
+   * @returns The statuses as SelectItem array
+   */
   public initUserStatuses():SelectItem[]{
     const translationPrefix: string = 'USER.STATUSES';
     return[

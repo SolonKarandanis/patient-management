@@ -4,7 +4,13 @@ import {UtilService} from '@core/services/util.service';
 import {HttpUtil} from '@core/services/http-util.service';
 import {SearchResult} from '@models/search.model';
 import {TestBed} from '@angular/core/testing';
-import {mockCreateUserRequest, mockUpdateUserRequest, mockUser, mockUserSearchRequest} from '@testing/mockData';
+import {
+  mockChangePasswordRequest,
+  mockCreateUserRequest,
+  mockUpdateUserRequest,
+  mockUser,
+  mockUserSearchRequest
+} from '@testing/mockData';
 import {of} from 'rxjs';
 import {TranslateFakeLoader, TranslateLoader, TranslateModule} from '@ngx-translate/core';
 
@@ -27,7 +33,8 @@ describe('UserStore', () =>{
       'deleteUser',
       'activateUser',
       'deactivateUser',
-      'exportUsersToCsv'
+      'exportUsersToCsv',
+      'changeUserPassword'
     ]);
     utilServiceSpy = jasmine.createSpyObj('UtilService',[
       'showMessage',
@@ -147,6 +154,16 @@ describe('UserStore', () =>{
 
     expect(userRepoSpy.deactivateUser).toHaveBeenCalledWith(userId);
     expect(userRepoSpy.deactivateUser).toHaveBeenCalledTimes(1);
+  });
+
+  it('should change user password', () => {
+    const userId: string = '1';
+    userRepoSpy.changeUserPassword.and.returnValue(of(mockUser));
+
+    store.changeUserPassword({id:userId,request:mockChangePasswordRequest});
+
+    expect(userRepoSpy.changeUserPassword).toHaveBeenCalledWith(userId,mockChangePasswordRequest);
+    expect(userRepoSpy.changeUserPassword).toHaveBeenCalledTimes(1);
   });
 
   it('should verify that it should return computed user', () =>{

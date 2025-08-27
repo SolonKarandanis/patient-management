@@ -14,6 +14,7 @@ public class TestConstants {
     public static final String TEST_USER_FIRST_NAME = "Robert";
     public static final String TEST_USER_SURNAME = "Smith";
     public static final String TEST_USER_USERNAME = "admin1";
+    public static final String TEST_USER_EMAIL = "skarandanis@gmail.com";
 
     public static byte[] TEST_FILE_CONTENT = HexFormat.of().parseHex("e04fd020ea3a6910a2d808002b30309d");
 }

@@ -2,6 +2,8 @@ package util;
 
 import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.dto.UserDTO;
+import com.pm.authservice.dto.UserDetailsDTO;
+import com.pm.authservice.model.AccountStatus;
 import com.pm.authservice.model.RoleEntity;
 import com.pm.authservice.model.UserEntity;
 import com.pm.authservice.util.AuthorityConstants;
@@ -26,6 +28,8 @@ public class TestUtil {
         user.setLastName("Smith");
         user.setUsername("admin1");
         user.setPassword("123");
+        user.setStatus(AccountStatus.ACTIVE);
+        user.setEmail(TestConstants.TEST_USER_EMAIL);
         user.setRoles(Set.of(createTestRole()));
         user.setPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
         return user;
@@ -44,8 +48,25 @@ public class TestUtil {
         userDto.setLastName("Smith");
         userDto.setUsername("admin1");
         userDto.setPassword("123");
+        userDto.setStatus(AccountStatus.fromValue(AccountStatus.ACTIVE));
+        userDto.setEmail(TestConstants.TEST_USER_EMAIL);
         userDto.setPublicId(TestConstants.TEST_USER_PUBLIC_ID);
         userDto.setRoles(List.of(createTestRoleDTO()));
         return userDto;
     }
+
+    public static UserDetailsDTO  createTestUserDetailsDTO(final Integer userId){
+        UserDetailsDTO userDetailsDTO = new UserDetailsDTO();
+        userDetailsDTO.setId(userId);
+        userDetailsDTO.setFirstName("Robert");
+        userDetailsDTO.setLastName("Smith");
+        userDetailsDTO.setUsername("admin1");
+        userDetailsDTO.setPassword("123");
+        userDetailsDTO.setStatus(AccountStatus.ACTIVE);
+        userDetailsDTO.setEmail(TestConstants.TEST_USER_EMAIL);
+        userDetailsDTO.setPublicId(TestConstants.TEST_USER_PUBLIC_ID);
+        return userDetailsDTO;
+    }
+
+
 }

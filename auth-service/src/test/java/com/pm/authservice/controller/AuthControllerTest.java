@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import util.TestConstants;
 import util.TestUtil;
 
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class AuthControllerTest {
 
+
     @InjectMocks
     protected AuthController controller;
 
@@ -35,6 +37,9 @@ public class AuthControllerTest {
 
     @Mock
     protected JwtService jwtService;
+
+    @Mock
+    protected Authentication authentication;
 
     protected UserDetailsDTO userDto;
 

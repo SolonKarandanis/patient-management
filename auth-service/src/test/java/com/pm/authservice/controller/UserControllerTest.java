@@ -1,9 +1,6 @@
 package com.pm.authservice.controller;
 
-import com.pm.authservice.dto.SearchResults;
-import com.pm.authservice.dto.UserDTO;
-import com.pm.authservice.dto.UserDetailsDTO;
-import com.pm.authservice.dto.UsersSearchRequestDTO;
+import com.pm.authservice.dto.*;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.model.UserEntity;
 import com.pm.authservice.service.UserService;
@@ -19,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.Authentication;
+import util.TestConstants;
 import util.TestUtil;
 
 import java.util.List;
@@ -109,5 +107,69 @@ public class UserControllerTest {
         verify(userService,times(1)).findByPublicId(detailsDTO.getPublicId());
         verify(userService, times(1)).searchUsers(searchObj,user);
         verify(userService, times(1)).convertToDTOList(results.getContent(),false);
+    }
+
+    @DisplayName("View User")
+    @Test
+    void testViewUser(){
+        when(userService.findByPublicId(TestConstants.TEST_USER_PUBLIC_ID)).thenReturn(user);
+        when(userService.convertToDTO(user,true)).thenReturn(userDto);
+
+        ResponseEntity<UserDTO> resp = controller.viewUser(TestConstants.TEST_USER_PUBLIC_ID);
+        assertNotNull(resp);
+        assertNotNull(resp.getBody());
+        assertEquals(resp.getBody(), userDto);
+        assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.OK));
+
+        verify(userService, times(1)).findByPublicId(TestConstants.TEST_USER_PUBLIC_ID);
+        verify(userService, times(1)).convertToDTO(user,true);
+    }
+
+    @DisplayName("Get user by token")
+    @Test
+    void testGetUserByToken(){
+        when(userService.findByPublicId(detailsDTO.getPublicId())).thenReturn(user);
+        when(userService.convertToDTO(user,true)).thenReturn(userDto);
+
+        ResponseEntity<UserDTO> resp = controller.getUserByToken(authentication);
+        assertNotNull(resp);
+        assertNotNull(resp.getBody());
+        assertEquals(resp.getBody(), userDto);
+        assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.OK));
+
+        verify(userService, times(1)).findByPublicId(TestConstants.TEST_USER_PUBLIC_ID);
+        verify(userService, times(1)).convertToDTO(user,true);
+    }
+
+    @DisplayName("Update user")
+    @Test
+    void testUpdateUser(){
+        UpdateUserDTO dto = new UpdateUserDTO();
+        when(userService.findByPublicId(TestConstants.TEST_USER_PUBLIC_ID)).thenReturn(user);
+        when(userService.updateUser(TestConstants.TEST_USER_PUBLIC_ID,dto)).thenReturn(user);
+        when(userService.convertToDTO(user,true)).thenReturn(userDto);
+
+        ResponseEntity<UserDTO> resp = controller.updateUser(TestConstants.TEST_USER_PUBLIC_ID,dto);
+        assertNotNull(resp);
+        assertNotNull(resp.getBody());
+        assertEquals(resp.getBody(), userDto);
+        assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.OK));
+
+        verify(userService, times(1)).findByPublicId(TestConstants.TEST_USER_PUBLIC_ID);
+        verify(userService, times(1)).updateUser(TestConstants.TEST_USER_PUBLIC_ID,dto);
+        verify(userService, times(1)).convertToDTO(user,true);
+    }
+
+    @DisplayName("Delete user")
+    @Test
+    void testDeleteUser(){
+        doNothing().when(userService).deleteUser(TestConstants.TEST_USER_PUBLIC_ID);
+
+        ResponseEntity<Void> resp = controller.deleteUser(TestConstants.TEST_USER_PUBLIC_ID);
+        assertNotNull(resp);
+        assertNull(resp.getBody());
+        assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.NO_CONTENT));
+
+        verify(userService, times(1)).deleteUser(TestConstants.TEST_USER_PUBLIC_ID);
     }
 }

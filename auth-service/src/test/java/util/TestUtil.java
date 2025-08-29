@@ -70,7 +70,7 @@ public class TestUtil {
         return userDetailsDTO;
     }
 
-    public static Authentication getTestAuthenticationFromUserDTO(UserDTO userDto, String token) {
+    public static Authentication getTestAuthenticationFromUserDTO(UserDetailsDTO userDto, String token) {
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDto, token, Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(auth);
         return SecurityContextHolder.getContext().getAuthentication();
@@ -78,7 +78,7 @@ public class TestUtil {
     }
 
 
-    public static Authentication getTestAuthenticationFromUserDTO(UserDTO userDto) {
+    public static Authentication getTestAuthenticationFromUserDTO(UserDetailsDTO userDto) {
         return getTestAuthenticationFromUserDTO(userDto, TestConstants.TEST_TOKEN);
     }
 

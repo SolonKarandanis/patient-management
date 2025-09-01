@@ -172,4 +172,73 @@ public class UserControllerTest {
 
         verify(userService, times(1)).deleteUser(TestConstants.TEST_USER_PUBLIC_ID);
     }
+
+    @DisplayName("Activate User")
+    @Test
+    void testActivateUser() throws BusinessException {
+        when(userService.findByPublicId(TestConstants.TEST_USER_PUBLIC_ID)).thenReturn(user);
+        when(userService.activateUser(user)).thenReturn(user);
+        when(userService.convertToDTO(user,true)).thenReturn(userDto);
+
+        ResponseEntity<UserDTO> resp = controller.activateUser(TestConstants.TEST_USER_PUBLIC_ID);
+        assertNotNull(resp);
+        assertNotNull(resp.getBody());
+        assertEquals(resp.getBody(), userDto);
+        assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.OK));
+
+        verify(userService, times(1)).findByPublicId(TestConstants.TEST_USER_PUBLIC_ID);
+        verify(userService, times(1)).activateUser(user);
+        verify(userService, times(1)).convertToDTO(user,true);
+    }
+
+    @DisplayName("Deactivate User")
+    @Test
+    void testDeactivateUser() throws BusinessException{
+        when(userService.findByPublicId(TestConstants.TEST_USER_PUBLIC_ID)).thenReturn(user);
+        when(userService.deactivateUser(user)).thenReturn(user);
+        when(userService.convertToDTO(user,true)).thenReturn(userDto);
+
+        ResponseEntity<UserDTO> resp = controller.deactivateUser(TestConstants.TEST_USER_PUBLIC_ID);
+        assertNotNull(resp);
+        assertNotNull(resp.getBody());
+        assertEquals(resp.getBody(), userDto);
+        assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.OK));
+
+        verify(userService, times(1)).findByPublicId(TestConstants.TEST_USER_PUBLIC_ID);
+        verify(userService, times(1)).deactivateUser(user);
+        verify(userService, times(1)).convertToDTO(user,true);
+    }
+
+    @DisplayName("Verify Email")
+    @Test
+    void testVerifyEmail() throws BusinessException {
+        String token = "test_token";
+        doNothing().when(userService).verifyEmail(token);
+
+        ResponseEntity<Void> resp = controller.verifyEmail(token);
+        assertNotNull(resp);
+        assertNull(resp.getBody());
+        assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.NO_CONTENT));
+
+        verify(userService,times(1)).verifyEmail(token);
+    }
+
+    @DisplayName("Change Password")
+    @Test
+    void testChangePassword() throws BusinessException {
+        ChangePasswordDTO dto = new ChangePasswordDTO();
+        when(userService.findByPublicId(TestConstants.TEST_USER_PUBLIC_ID)).thenReturn(user);
+        when(userService.changePassword(user,dto)).thenReturn(user);
+        when(userService.convertToDTO(user,true)).thenReturn(userDto);
+
+        ResponseEntity<UserDTO> resp = controller.changeUserPassword(TestConstants.TEST_USER_PUBLIC_ID,dto);
+        assertNotNull(resp);
+        assertNotNull(resp.getBody());
+        assertEquals(resp.getBody(), userDto);
+        assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.OK));
+
+        verify(userService, times(1)).findByPublicId(TestConstants.TEST_USER_PUBLIC_ID);
+        verify(userService, times(1)).changePassword(user,dto);
+        verify(userService, times(1)).convertToDTO(user,true);
+    }
 }

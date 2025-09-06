@@ -97,5 +97,13 @@ public class TestUtil {
         return dto;
     }
 
+    public static CreateUserDTO createTestCreateUserDTO(){
+        CreateUserDTO dto = new CreateUserDTO();
+        dto.setFirstName("Robert");
+        dto.setLastName("Smith");
+        dto.setUsername("admin1");
+        dto.setPassword("123");
+        return dto;
+    }
 
 }

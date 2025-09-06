@@ -4,7 +4,7 @@ import java.util.HexFormat;
 
 public class TestConstants {
 
-    public static final String TEST_TOKEN = "TokenString";
+    public static final String TEST_TOKEN = "Bearer TokenString";
 
     /* Test User Constants */
     public static final Integer TEST_USER_ID = Integer.valueOf(1);

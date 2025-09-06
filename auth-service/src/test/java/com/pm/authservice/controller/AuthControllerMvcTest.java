@@ -68,6 +68,35 @@ public class AuthControllerMvcTest {
 //        verify(jwtService,times(1)).isTokenValid(anyString(), any(UserDetails.class));
     }
 
+    @DisplayName("Test token validity (Authorisation header is null")
+    @Test
+    void testValidateToken02() throws Exception {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .get("/auth/validate")
+                                .headers(httpHeaders)
+                )
+                .andExpect(status().is(400))
+                .andReturn();
+    }
+
+    @DisplayName("Test token validity (Authorisation does not start with Bearer")
+    @Test
+    void testValidateToken03() throws Exception {
+        Map<String, String> map = new HashMap<>();
+        map.put("Authorization", "TokenString");
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setAll(map);
+        mockMvc.perform(
+                        MockMvcRequestBuilders
+                                .get("/auth/validate")
+                                .headers(httpHeaders)
+                )
+                .andExpect(status().is(401))
+                .andReturn();
+    }
+
 }
 
 

@@ -46,7 +46,7 @@ public class AuthController {
             Authentication authentication) throws AuthException {
         log.info("AuthController->validateToken");
         // Authorization: Bearer <token>
-        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if(!authHeader.startsWith("Bearer ")) {
             log.info("AuthController->validateToken-> Authentication header is invalid");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

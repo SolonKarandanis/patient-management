@@ -74,12 +74,12 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
         String publicId=dto.getPublicId();
-        user.setPublicId(UUID.fromString(publicId));
         if(StringUtils.hasLength(publicId)){
+            user.setPublicId(UUID.fromString(publicId));
             Integer userId=userRepository.findIdByPublicId(UUID.fromString(publicId)).orElse(null);
             user.setId(userId);
         }
-        user.setStatus(AccountStatus.valueOf(dto.getStatus()));
+        user.setStatus(AccountStatus.fromValue(dto.getStatus()));
         if(!CollectionUtils.isEmpty(dto.getRoles())){
             List<Integer> roleIds= dto.getRoles().stream().map(RoleDTO::getId).toList();
             Set<RoleEntity> roles = new HashSet<>(roleService.findByIds(roleIds));

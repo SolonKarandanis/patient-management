@@ -3,6 +3,7 @@ package com.pm.authservice.service;
 import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.dto.UserDTO;
 import com.pm.authservice.dto.UserDetailsDTO;
+import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.model.UserEntity;
 import com.pm.authservice.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import util.TestConstants;
 import util.TestUtil;
 
 import java.util.*;
@@ -119,5 +121,51 @@ public class UserServiceBeanTest {
         List<UserDTO> userDtos = service.convertToDTOList( List.of(user),true);
         assertNotNull(userDtos);
         assertEquals(1, userDtos.size());
+    }
+
+    @DisplayName("Find a user by id")
+    @Test
+    void testFindById(){
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        UserEntity userEntity = service.findById(userId);
+        assertNotNull(userEntity);
+
+        verify(userRepository,times(1)).findById(userId);
+    }
+
+    @DisplayName("Find a user by id (Not Found) ")
+    @Test
+    void testFindById02(){
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        NotFoundException exception =assertThrows(NotFoundException.class,()->{
+            service.findById(userId);
+        });
+        assertEquals("error.user.not.found",exception.getLocalizedMessage());
+    }
+
+    @DisplayName("Find a user by public id")
+    @Test
+    void testFindByPublicId(){
+        when(userRepository.findByPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID))).thenReturn(Optional.of(user));
+
+        UserEntity userEntity = service.findByPublicId(TestConstants.TEST_USER_PUBLIC_ID);
+        assertNotNull(userEntity);
+
+        verify(userRepository,times(1)).findByPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
+    }
+
+    @DisplayName("Find a user by public id (Not Found) ")
+    @Test
+    void testFindByPublicId02(){
+        when(userRepository.findByPublicId(UUID.fromString(userDto.getPublicId()))).thenReturn(Optional.empty());
+
+        NotFoundException exception =assertThrows(NotFoundException.class,()->{
+            service.findByPublicId(TestConstants.TEST_USER_PUBLIC_ID);
+        });
+        assertEquals("error.user.not.found",exception.getLocalizedMessage());
+
+        verify(userRepository,times(1)).findByPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
     }
 }

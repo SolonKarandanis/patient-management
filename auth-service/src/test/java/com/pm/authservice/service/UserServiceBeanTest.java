@@ -192,4 +192,15 @@ public class UserServiceBeanTest {
 
         verify(userRepository,times(1)).findByEmail(TestConstants.TEST_USER_EMAIL);
     }
+
+    @DisplayName("Delete a user")
+    @Test
+    void testDeleteUser(){
+        when(userRepository.findByPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID))).thenReturn(Optional.of(user));
+
+        service.deleteUser(TestConstants.TEST_USER_PUBLIC_ID);
+
+        verify(userRepository,times(1)).findByPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
+        verify(userRepository,times(1)).delete(user);
+    }
 }

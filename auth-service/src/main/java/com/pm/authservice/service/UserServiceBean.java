@@ -120,10 +120,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     @Override
     public void deleteUser(String publicId) throws NotFoundException {
         Optional<UserEntity> usrOpt  =userRepository.findByPublicId(UUID.fromString(publicId));
-        usrOpt.ifPresentOrElse(
-                userRepository::delete,
-                ()-> new NotFoundException(USER_NOT_FOUND)
-        );
+        usrOpt.ifPresent(userRepository::delete);
     }
 
     @Override

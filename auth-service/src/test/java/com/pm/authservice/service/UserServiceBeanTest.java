@@ -168,4 +168,28 @@ public class UserServiceBeanTest {
 
         verify(userRepository,times(1)).findByPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
     }
+
+    @DisplayName("Find a user by email")
+    @Test
+    void testFindByEmail(){
+        when(userRepository.findByEmail(TestConstants.TEST_USER_EMAIL)).thenReturn(Optional.of(user));
+
+        UserEntity userEntity = service.findByEmail(TestConstants.TEST_USER_EMAIL);
+        assertNotNull(userEntity);
+
+        verify(userRepository,times(1)).findByEmail(TestConstants.TEST_USER_EMAIL);
+    }
+
+    @DisplayName("Find a user by email (Not Found) ")
+    @Test
+    void testFindByEmail02(){
+        when(userRepository.findByEmail(TestConstants.TEST_USER_EMAIL)).thenReturn(Optional.empty());
+
+        NotFoundException exception =assertThrows(NotFoundException.class,()->{
+            service.findByEmail(TestConstants.TEST_USER_EMAIL);
+        });
+        assertEquals("error.user.not.found",exception.getLocalizedMessage());
+
+        verify(userRepository,times(1)).findByEmail(TestConstants.TEST_USER_EMAIL);
+    }
 }

@@ -8,15 +8,15 @@
     </changeSet>
 
     <changeSet id="00000000000001-payment" author="solonk">
-        <createTable tableName="users">
+        <createTable tableName="payments">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="public_id" type="${uuidType}">
                 <constraints  nullable="false" unique="true" />
             </column>
-            <column name="amount" type="bigint"/>
-            <column name="status"
+            <column name="amount" type="numeric(10,4)"/>
+            <column name="state"
                     type="varchar(20)">
                 <constraints nullable="false" />
             </column>

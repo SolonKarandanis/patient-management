@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name="payments")
-public class Payment {
+public class PaymentEntity {
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,

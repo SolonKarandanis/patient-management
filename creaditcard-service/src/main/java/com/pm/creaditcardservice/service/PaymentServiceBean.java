@@ -18,11 +18,18 @@ public class PaymentServiceBean implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final StateMachineFactory<PaymentState, PaymentEvent> stateMachineFactory;
+    private final PaymentStateChangeInterceptor interceptor;
 
-    public PaymentServiceBean(PaymentRepository paymentRepository, StateMachineFactory<PaymentState, PaymentEvent> stateMachineFactory) {
+    public PaymentServiceBean(
+            PaymentRepository paymentRepository,
+            StateMachineFactory<PaymentState, PaymentEvent> stateMachineFactory,
+            PaymentStateChangeInterceptor interceptor
+    ) {
         this.paymentRepository = paymentRepository;
         this.stateMachineFactory = stateMachineFactory;
+        this.interceptor = interceptor;
     }
+
 
     @Override
     public PaymentEntity newPayment(PaymentEntity payment) {
@@ -63,6 +70,7 @@ public class PaymentServiceBean implements PaymentService {
         StateMachine<PaymentState,PaymentEvent> sm = stateMachineFactory.getStateMachine(Integer.toString(payment.getId()));
         sm.stop();
         sm.getStateMachineAccessor().doWithAllRegions(sma->{
+            sma.addStateMachineInterceptor(interceptor);
             sma.resetStateMachine(new DefaultStateMachineContext<>(payment.getState(),null,null,null));
         });
         sm.start();

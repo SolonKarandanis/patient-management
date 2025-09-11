@@ -1,0 +1,35 @@
+package com.pm.creaditcardservice.config;
+
+import com.pm.creaditcardservice.domain.PaymentEvent;
+import com.pm.creaditcardservice.domain.PaymentState;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.statemachine.StateMachine;
+import org.springframework.statemachine.config.StateMachineFactory;
+
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@Slf4j
+@SpringBootTest
+class StateMachineConfigTest {
+
+    @Autowired
+    private StateMachineFactory<PaymentState, PaymentEvent> factory;
+
+    @Test
+    void testNewStateMachine() {
+        log.info("StateMachineConfigTest.testNewStateMachine");
+        StateMachine<PaymentState, PaymentEvent> sm = factory.getStateMachine(UUID.randomUUID());
+        sm.start();
+        log.info("StateMachine: {}", sm.getState().toString());
+        sm.sendEvent(PaymentEvent.PRE_AUTHORIZE);
+        log.info("StateMachine: {}", sm.getState().toString());
+        sm.sendEvent(PaymentEvent.PRE_AUTH_APPROVED);
+        log.info("StateMachine: {}", sm.getState().toString());
+    }
+
+}

@@ -25,11 +25,8 @@ class StateMachineConfigTest {
         log.info("StateMachineConfigTest.testNewStateMachine");
         StateMachine<PaymentState, PaymentEvent> sm = factory.getStateMachine(UUID.randomUUID());
         sm.start();
-        log.info("StateMachine: {}", sm.getState().toString());
         sm.sendEvent(PaymentEvent.PRE_AUTHORIZE);
-        log.info("StateMachine: {}", sm.getState().toString());
         sm.sendEvent(PaymentEvent.PRE_AUTH_APPROVED);
-        log.info("StateMachine: {}", sm.getState().toString());
     }
 
 }

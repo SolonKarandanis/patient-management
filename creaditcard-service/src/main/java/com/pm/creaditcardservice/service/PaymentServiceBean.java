@@ -10,7 +10,9 @@ import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class PaymentServiceBean implements PaymentService {
 
@@ -41,21 +43,21 @@ public class PaymentServiceBean implements PaymentService {
     public StateMachine<PaymentState, PaymentEvent> preAuthorize(Integer paymentId) {
         StateMachine<PaymentState, PaymentEvent> sm = build(paymentId);
         sendEvent(paymentId,sm,PaymentEvent.PRE_AUTHORIZE);
-        return null;
+        return sm;
     }
 
     @Override
     public StateMachine<PaymentState, PaymentEvent> authorizePayment(Integer paymentId) {
         StateMachine<PaymentState, PaymentEvent> sm = build(paymentId);
         sendEvent(paymentId,sm,PaymentEvent.AUTH_APPROVED);
-        return null;
+        return sm;
     }
 
     @Override
     public StateMachine<PaymentState, PaymentEvent> declineAuth(Integer paymentId) {
         StateMachine<PaymentState, PaymentEvent> sm = build(paymentId);
         sendEvent(paymentId,sm,PaymentEvent.AUTH_DECLINED);
-        return null;
+        return sm;
     }
 
 

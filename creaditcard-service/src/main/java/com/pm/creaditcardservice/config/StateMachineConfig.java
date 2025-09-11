@@ -59,4 +59,5 @@ public class StateMachineConfig extends StateMachineConfigurerAdapter<PaymentSta
 
         config.withConfiguration().listener(adapter);
     }
+
 }

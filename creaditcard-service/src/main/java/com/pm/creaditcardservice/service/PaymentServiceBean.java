@@ -4,6 +4,8 @@ import com.pm.creaditcardservice.domain.PaymentEntity;
 import com.pm.creaditcardservice.domain.PaymentEvent;
 import com.pm.creaditcardservice.domain.PaymentState;
 import com.pm.creaditcardservice.repository.PaymentRepository;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateMachine;
 import org.springframework.statemachine.config.StateMachineFactory;
 import org.springframework.statemachine.support.DefaultStateMachineContext;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PaymentServiceBean implements PaymentService {
+
+    public static final String PAYMENT_ID_HEADER="payment_id";
 
     private final PaymentRepository paymentRepository;
     private final StateMachineFactory<PaymentState, PaymentEvent> stateMachineFactory;
@@ -28,17 +32,30 @@ public class PaymentServiceBean implements PaymentService {
 
     @Override
     public StateMachine<PaymentState, PaymentEvent> preAuthorize(Integer paymentId) {
+        StateMachine<PaymentState, PaymentEvent> sm = build(paymentId);
+        sendEvent(paymentId,sm,PaymentEvent.PRE_AUTHORIZE);
         return null;
     }
 
     @Override
     public StateMachine<PaymentState, PaymentEvent> authorizePayment(Integer paymentId) {
+        StateMachine<PaymentState, PaymentEvent> sm = build(paymentId);
+        sendEvent(paymentId,sm,PaymentEvent.AUTH_APPROVED);
         return null;
     }
 
     @Override
     public StateMachine<PaymentState, PaymentEvent> declineAuth(Integer paymentId) {
+        StateMachine<PaymentState, PaymentEvent> sm = build(paymentId);
+        sendEvent(paymentId,sm,PaymentEvent.AUTH_DECLINED);
         return null;
+    }
+
+
+    private void sendEvent(Integer paymentId, StateMachine<PaymentState, PaymentEvent> sm, PaymentEvent paymentEvent) {
+        Message<PaymentEvent> msg = MessageBuilder.withPayload(paymentEvent)
+                .setHeader(PAYMENT_ID_HEADER, paymentId).build();
+        sm.sendEvent(msg);
     }
 
     private StateMachine<PaymentState, PaymentEvent> build(Integer paymentId) {

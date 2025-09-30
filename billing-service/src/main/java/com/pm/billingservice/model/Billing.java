@@ -1,17 +1,19 @@
 package com.pm.billingservice.model;
 
+import org.springframework.data.annotation.Id;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
 public class Billing {
-
+    @Id
     private Integer id;
     private String patientId;
-    private String accountId;
+    private UUID accountId;
     private String accountName;
     private String accountEmail;
     private String accountStatus;

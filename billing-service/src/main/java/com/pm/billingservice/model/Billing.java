@@ -20,6 +20,10 @@ public class Billing {
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
 
+    public Billing(){
+
+    }
+
     public Billing(String patientId,String accountName,String accountEmail){
         this.patientId = patientId;
         this.accountName = accountName;

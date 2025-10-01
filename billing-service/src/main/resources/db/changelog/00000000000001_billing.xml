@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="00000000000001-seq" author="solon">
+        <createSequence sequenceName="billing_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="00000000000001-billing" author="solon">
+        <createTable tableName="billing">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="account_id" type="${uuidType}">
+                <constraints  nullable="false" unique="true" />
+            </column>
+            <column name="patient_id" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="account_name" type="varchar(255)">
+                <constraints  unique="true" nullable="false" uniqueConstraintName="ux_account_name"/>
+            </column>
+            <column name="account_email" type="varchar(256)">
+                <constraints unique="true" nullable="false" uniqueConstraintName="ux_account_email"/>
+            </column>
+            <column name="account_status" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_date" type="timestamp">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

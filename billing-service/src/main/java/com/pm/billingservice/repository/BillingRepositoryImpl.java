@@ -2,13 +2,19 @@ package com.pm.billingservice.repository;
 
 import com.pm.billingservice.model.Billing;
 import com.pm.billingservice.repository.rowmapper.BillingRowMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Component
+@Repository
 public class BillingRepositoryImpl implements BillingRepository {
+
+    private static final Logger log = LoggerFactory.getLogger(
+            BillingRepositoryImpl.class);
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -19,9 +25,14 @@ public class BillingRepositoryImpl implements BillingRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Transactional
     @Override
     public void save(Billing billing) {
-
+        String INSERT_BILLING = "insert into billing(id,account_id,patient_id,account_name,account_email,account_status,created_date) " +
+                "values(nextval('billing_seq'),?,?,?,?,?,?)";
+        int result=jdbcTemplate.update(INSERT_BILLING,billing.getAccountId(),billing.getPatientId(),
+                billing.getAccountName(),billing.getAccountEmail(),billing.getAccountStatus(),billing.getCreatedDate());
+        log.info("billing saved {}", result);
     }
 
     @Override

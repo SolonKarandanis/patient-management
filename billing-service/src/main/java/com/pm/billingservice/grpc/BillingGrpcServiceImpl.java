@@ -39,6 +39,7 @@ public class BillingGrpcServiceImpl extends BillingServiceGrpc.BillingServiceImp
                 .setAccountId(billing.getAccountId().toString())
                 .setStatus(billing.getAccountStatus())
                 .build();
+        log.info("createBillingAccount request response {}", response.toString());
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();

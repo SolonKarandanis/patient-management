@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 
@@ -32,5 +33,10 @@ public class PersistenceConfig {
         datasource.addDataSourceProperty("dataSource.prepStmtCacheSqlLimit", "2048");
         datasource.addDataSourceProperty("dataSource.useServerPrepStmts", "true");
         return datasource;
+    }
+
+    @Bean
+    public JdbcTemplate jdbcTemplate() {
+        return new JdbcTemplate(dataSource());
     }
 }

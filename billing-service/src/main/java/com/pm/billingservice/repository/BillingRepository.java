@@ -6,9 +6,11 @@ import java.util.List;
 
 public interface BillingRepository {
 
-    public void save(Billing billing);
-    public Billing getById(int id);
-    public void update(Billing billing);
-    public void deleteById(int id);
-    public List<Billing> getAll();
+    void save(Billing billing);
+    Billing getById(int id);
+    Billing getByPatientId(String patientId);
+    void update(Billing billing);
+    void deleteById(int id);
+    List<Billing> getAll();
+    List<Billing> getByStatus(String status);
 }

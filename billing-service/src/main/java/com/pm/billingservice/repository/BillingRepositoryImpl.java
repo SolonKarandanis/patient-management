@@ -5,8 +5,11 @@ import com.pm.billingservice.repository.rowmapper.BillingRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
@@ -17,12 +20,23 @@ public class BillingRepositoryImpl implements BillingRepository {
             BillingRepositoryImpl.class);
 
     private final JdbcTemplate jdbcTemplate;
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    private final TransactionTemplate txTemplate;
+    private final JdbcClient jdbcClient;
 
     private static String FIND_BY_ID = "SELECT * FROM billing WHERE id = ?";
     private static String DELETE_BY_ID = "DELETE FROM billing WHERE id = ?";
 
-    public BillingRepositoryImpl(JdbcTemplate jdbcTemplate) {
+    public BillingRepositoryImpl(
+            JdbcTemplate jdbcTemplate,
+            NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+            TransactionTemplate txTemplate,
+            JdbcClient jdbcClient
+    ) {
         this.jdbcTemplate = jdbcTemplate;
+        this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
+        this.txTemplate = txTemplate;
+        this.jdbcClient = jdbcClient;
     }
 
     @Transactional
@@ -41,6 +55,15 @@ public class BillingRepositoryImpl implements BillingRepository {
     }
 
     @Override
+    public Billing getByPatientId(String patientId) {
+        String FIND_BY_PATIENT_ID = "SELECT * FROM billing WHERE patient_id = :patientId";
+        return jdbcClient.sql(FIND_BY_PATIENT_ID)
+                .param("patientId",patientId)
+                .query(new BillingRowMapper())
+                .single();
+    }
+
+    @Override
     public void update(Billing billing) {
 
     }
@@ -54,5 +77,14 @@ public class BillingRepositoryImpl implements BillingRepository {
     public List<Billing> getAll() {
         String FIND_ALL = "select * from billing";
         return jdbcTemplate.query(FIND_ALL,new BillingRowMapper());
+    }
+
+    @Override
+    public List<Billing> getByStatus(String status) {
+       String  FIND_BY_STATUS = "select * from billing where account_status = :accountStatus";
+       return jdbcClient.sql(FIND_BY_STATUS)
+               .param("accountStatus",status)
+               .query(new BillingRowMapper())
+               .list();
     }
 }

@@ -24,9 +24,6 @@ public class BillingRepositoryImpl implements BillingRepository {
     private final TransactionTemplate txTemplate;
     private final JdbcClient jdbcClient;
 
-    private static String FIND_BY_ID = "SELECT * FROM billing WHERE id = ?";
-    private static String DELETE_BY_ID = "DELETE FROM billing WHERE id = ?";
-
     public BillingRepositoryImpl(
             JdbcTemplate jdbcTemplate,
             NamedParameterJdbcTemplate namedParameterJdbcTemplate,
@@ -51,6 +48,7 @@ public class BillingRepositoryImpl implements BillingRepository {
 
     @Override
     public Billing getById(int id) {
+        String FIND_BY_ID = "SELECT * FROM billing WHERE id = ?";
         return jdbcTemplate.queryForObject(FIND_BY_ID,new BillingRowMapper(),id);
     }
 
@@ -70,6 +68,7 @@ public class BillingRepositoryImpl implements BillingRepository {
 
     @Override
     public void deleteById(int id) {
+        String DELETE_BY_ID = "DELETE FROM billing WHERE id = ?";
         int out = jdbcTemplate.update(DELETE_BY_ID, id);
     }
 

@@ -72,6 +72,21 @@ services:
     depends_on:
       - zoo1
 
+  kafbat-ui:
+    container_name: kafbat-ui
+    image: ghcr.io/kafbat/kafka-ui:0791942
+    ports:
+      - "8070:8080"
+    environment:
+      DYNAMIC_CONFIG_ENABLED: 'true'
+      KAFKA_CLUSTERS_0_NAME: kafka1
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:9093
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zoo1:2181
+    networks:
+      - kafka-cluster
+    depends_on:
+      - kafka1
+
 
 volumes:
   esdata01:

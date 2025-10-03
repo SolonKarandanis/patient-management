@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class BillingRepositoryImpl implements BillingRepository {
@@ -43,7 +44,7 @@ public class BillingRepositoryImpl implements BillingRepository {
                 "values(nextval('billing_seq'),?,?,?,?,?,?)";
         int result=jdbcTemplate.update(INSERT_BILLING,billing.getAccountId(),billing.getPatientId(),
                 billing.getAccountName(),billing.getAccountEmail(),billing.getAccountStatus(),billing.getCreatedDate());
-        log.info("billing saved {}", result);
+        log.info("billing saved {}", Optional.of(result));
     }
 
     @Override

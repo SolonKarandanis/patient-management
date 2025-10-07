@@ -5,12 +5,15 @@ import com.pm.billingservice.repository.rowmapper.BillingRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +67,19 @@ public class BillingRepositoryImpl implements BillingRepository {
 
     @Override
     public void update(Billing billing) {
-
+        String UPDATE_BILLING = "update billing " +
+                "set account_name = :name, " +
+                "account_email= :email, " +
+                "account_status= :status,  " +
+                "updated_date = :updateDate " +
+                "where id = :id";
+        SqlParameterSource namedParameters = new MapSqlParameterSource()
+                .addValue("name", billing.getAccountName())
+                .addValue("email", billing.getAccountEmail())
+                .addValue("status", billing.getAccountStatus())
+                .addValue("updateDate", LocalDateTime.now())
+                .addValue("id",billing.getId());
+        int status = namedParameterJdbcTemplate.update(UPDATE_BILLING,namedParameters);
     }
 
     @Override

@@ -65,6 +65,7 @@ public class BillingRepositoryImpl implements BillingRepository {
                 .single();
     }
 
+    @Transactional
     @Override
     public void update(Billing billing) {
         String UPDATE_BILLING = "update billing " +

@@ -1,6 +1,7 @@
 package com.pm.patientservice.broker;
 
 import com.pm.patientservice.model.Patient;
+import com.pm.patientservice.model.PatientEventEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,11 +58,11 @@ public class KafkaProducerIT {
 
     @Test
     public void testSendEventsToTopic() {
-        Patient patient = new Patient();
-        patient.setId(1);
-        patient.setName("Patient 1");
-        patient.setEmail("skarandanis@gmail.com");
-        publisher.sendEvent(patient);
+        PatientEventEntity patientEvent = new PatientEventEntity();
+        patientEvent.setId(1);
+        patientEvent.setName("Patient 1");
+        patientEvent.setEmail("skarandanis@gmail.com");
+        publisher.sendEvent(patientEvent);
         await().pollInterval(Duration.ofSeconds(3))
                 .atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
                     // assert statement

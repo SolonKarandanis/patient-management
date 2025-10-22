@@ -1,6 +1,7 @@
 package com.pm.patientservice.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,6 +42,18 @@ public class PatientEventEntity {
     @Column(name = "patient_id")
     private Integer patientId;
 
+    @Column(name = "patient_public_id",nullable = false, updatable = false, unique = true)
+    private UUID patientPublicId;
+
+    @Column(name = "name")
+    @NotNull
+    private String name;
+
+    @Column(name = "email")
+    @Email
+    @NotNull
+    private String email;
+
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private PatientStatus status;
@@ -52,10 +65,13 @@ public class PatientEventEntity {
     @NotNull
     private LocalDate eventCreated;
 
-    public PatientEventEntity(Integer patientId, PatientStatus status, String details) {
+    public PatientEventEntity(Integer patientId,UUID patientPublicId, PatientStatus status, String details, String name,String email) {
         this.patientId = patientId;
+        this.patientPublicId = patientPublicId;
         this.status = status;
         this.details = details;
+        this.name = name;
+        this.email = email;
         this.eventCreated = LocalDate.now();
         this.publicId = UUID.randomUUID();
     }

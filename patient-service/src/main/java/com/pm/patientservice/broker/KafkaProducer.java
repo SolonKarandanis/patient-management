@@ -24,9 +24,9 @@ public class KafkaProducer implements Producer<PatientEventEntity> {
     public void sendEvent(PatientEventEntity patientEntity) {
         PatientEvent event = PatientEvent.newBuilder()
                 .setPatientId(patientEntity.getPatientId().toString())
-//                .setName(patient.getName())
-//                .setEmail(patient.getEmail())
-                .setEventType("PATIENT_CREATED")
+                .setName(patientEntity.getName())
+                .setEmail(patientEntity.getEmail())
+                .setEventType(patientEntity.getStatus().toString())
                 .build();
 
         try {

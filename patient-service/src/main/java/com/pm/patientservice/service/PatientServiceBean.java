@@ -8,6 +8,7 @@ import com.pm.patientservice.exception.PatientNotFoundException;
 import com.pm.patientservice.grpc.BillingServiceGrpcClient;
 import com.pm.patientservice.model.Patient;
 import com.pm.patientservice.model.PatientEventEntity;
+import com.pm.patientservice.model.PatientStatus;
 import com.pm.patientservice.repository.PatientEventRepository;
 import com.pm.patientservice.repository.PatientRepository;
 import org.slf4j.Logger;
@@ -59,7 +60,7 @@ public class PatientServiceBean implements PatientService{
 
     private void saveAndPublishEvents(PatientEventEntity patientEvent){
         patientEventRepository.save(patientEvent);
-//        kafkaProducer.sendEvent(patientEvent);
+        kafkaProducer.sendEvent(patientEvent);
     }
 
     @Transactional
@@ -75,9 +76,14 @@ public class PatientServiceBean implements PatientService{
 
         billingServiceGrpcClient.createBillingAccount(newPatient.getPublicId().toString(),
                 newPatient.getName(), newPatient.getEmail());
-        PatientEventEntity patientEventEntity = new PatientEventEntity();
+        PatientEventEntity patientEventEntity = new PatientEventEntity(
+                newPatient.getId(),
+                newPatient.getPublicId(),
+                PatientStatus.CREATED,
+                "Patient created successfully",
+                newPatient.getName(),
+                newPatient.getEmail());
         saveAndPublishEvents(patientEventEntity);
-//        kafkaProducer.sendEvent(newPatient);
         return convertToDTO(newPatient);
     }
 

@@ -7,4 +7,5 @@
 
     <include file="/db/changelog/00000000000001_patient.xml" relativeToChangelogFile="false"/>
     <include file="/db/changelog/00000000000002_patient_data.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelog/00000000000003_patient_event.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

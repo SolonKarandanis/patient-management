@@ -7,6 +7,8 @@ import com.pm.patientservice.exception.EmailAlreadyExistsException;
 import com.pm.patientservice.exception.PatientNotFoundException;
 import com.pm.patientservice.grpc.BillingServiceGrpcClient;
 import com.pm.patientservice.model.Patient;
+import com.pm.patientservice.model.PatientEventEntity;
+import com.pm.patientservice.repository.PatientEventRepository;
 import com.pm.patientservice.repository.PatientRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,16 +29,19 @@ public class PatientServiceBean implements PatientService{
     protected static final String PATIENT_WITH_EMAIL_EXISTS="error.patient.email.exists";
 
     private final PatientRepository patientRepository;
+    private final PatientEventRepository patientEventRepository;
     private final BillingServiceGrpcClient billingServiceGrpcClient;
     private final KafkaProducer kafkaProducer;
 
 
     public PatientServiceBean(
             PatientRepository patientRepository,
+            PatientEventRepository patientEventRepository,
             BillingServiceGrpcClient billingServiceGrpcClient,
             KafkaProducer kafkaProducer
     ) {
         this.patientRepository = patientRepository;
+        this.patientEventRepository = patientEventRepository;
         this.billingServiceGrpcClient = billingServiceGrpcClient;
         this.kafkaProducer = kafkaProducer;
     }
@@ -52,6 +57,11 @@ public class PatientServiceBean implements PatientService{
                 () -> new PatientNotFoundException(PATIENT_NOT_FOUND));
     }
 
+    private void saveAndPublishEvents(PatientEventEntity patientEvent){
+        patientEventRepository.save(patientEvent);
+//        kafkaProducer.sendEvent(patientEvent);
+    }
+
     @Transactional
     @Override
     public PatientResponseDTO createPatient(PatientRequestDTO patientRequestDTO) throws EmailAlreadyExistsException {
@@ -65,8 +75,9 @@ public class PatientServiceBean implements PatientService{
 
         billingServiceGrpcClient.createBillingAccount(newPatient.getPublicId().toString(),
                 newPatient.getName(), newPatient.getEmail());
-//
-        kafkaProducer.sendEvent(newPatient);
+        PatientEventEntity patientEventEntity = new PatientEventEntity();
+        saveAndPublishEvents(patientEventEntity);
+//        kafkaProducer.sendEvent(newPatient);
         return convertToDTO(newPatient);
     }
 

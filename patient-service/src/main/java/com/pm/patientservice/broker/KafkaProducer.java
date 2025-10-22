@@ -1,6 +1,7 @@
 package com.pm.patientservice.broker;
 
 import com.pm.patientservice.model.Patient;
+import com.pm.patientservice.model.PatientEventEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -11,7 +12,7 @@ import patient.events.PatientEvent;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class KafkaProducer implements Producer<Patient> {
+public class KafkaProducer implements Producer<PatientEventEntity> {
     private static final Logger log = LoggerFactory.getLogger(KafkaProducer.class);
 
     private final KafkaTemplate<String, byte[]> kafkaTemplate;
@@ -20,11 +21,11 @@ public class KafkaProducer implements Producer<Patient> {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void sendEvent(Patient patient) {
+    public void sendEvent(PatientEventEntity patientEntity) {
         PatientEvent event = PatientEvent.newBuilder()
-                .setPatientId(patient.getId().toString())
-                .setName(patient.getName())
-                .setEmail(patient.getEmail())
+                .setPatientId(patientEntity.getPatientId().toString())
+//                .setName(patient.getName())
+//                .setEmail(patient.getEmail())
                 .setEventType("PATIENT_CREATED")
                 .build();
 

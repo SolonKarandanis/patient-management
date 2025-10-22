@@ -2,7 +2,9 @@ package com.pm.patientservice.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.NaturalId;
 
@@ -11,9 +13,11 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "patient_event")
-public class PatientEvent {
+public class PatientEventEntity {
 
     @Id
     @GeneratedValue(
@@ -48,7 +52,7 @@ public class PatientEvent {
     @NotNull
     private LocalDate eventCreated;
 
-    public PatientEvent(Integer patientId, PatientStatus status, String details) {
+    public PatientEventEntity(Integer patientId, PatientStatus status, String details) {
         this.patientId = patientId;
         this.status = status;
         this.details = details;

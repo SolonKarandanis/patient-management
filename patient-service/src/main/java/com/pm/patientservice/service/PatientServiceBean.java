@@ -79,7 +79,7 @@ public class PatientServiceBean implements PatientService{
         PatientEventEntity patientEventEntity = new PatientEventEntity(
                 newPatient.getId(),
                 newPatient.getPublicId(),
-                PatientStatus.CREATED,
+                PatientStatus.PATIENT_CREATED,
                 "Patient created successfully",
                 newPatient.getName(),
                 newPatient.getEmail());

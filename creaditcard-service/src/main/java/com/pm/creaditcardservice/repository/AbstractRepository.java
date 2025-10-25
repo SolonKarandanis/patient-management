@@ -1,11 +1,10 @@
 package com.pm.creaditcardservice.repository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContextType;
-import jakarta.persistence.SynchronizationType;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
+import com.pm.creaditcardservice.repository.utils.FacadeUtils;
+import com.pm.creaditcardservice.repository.utils.StatementParameter;
+import com.pm.creaditcardservice.utils.StringUtils;
+import jakarta.persistence.*;
+import jakarta.persistence.criteria.*;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -21,10 +20,9 @@ import org.springframework.stereotype.Component;
 import java.io.Serial;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -105,6 +103,26 @@ public abstract class AbstractRepository<T, ID extends Serializable> implements 
         return Optional.ofNullable((T) getEntityManager().getReference(getEntityClass(), id));
     }
 
+    public List<T> findByField(String fieldName, String fieldValue, Class<?> fieldType) {
+        String fieldStr = fieldName;
+        if (String.class.equals(fieldType)) {
+            fieldStr = "lower(o." + fieldName + ")";
+        }
+        String sQuery = SELECT_FROM + getEntityClass().getSimpleName()
+                + " o where " + fieldStr + " = :"+FIELD_VALUE;
+        Query hsql = getEntityManager().createQuery(sQuery);
+        if (Long.class.equals(fieldType)) {
+            hsql.setParameter(FIELD_VALUE, Long.valueOf(fieldValue));
+        } else if (Integer.class.equals(fieldType)) {
+            hsql.setParameter(FIELD_VALUE, Integer.valueOf(fieldValue));
+        } else {
+            hsql.setParameter(FIELD_VALUE, fieldValue != null ? fieldValue.trim().toLowerCase()
+                    : null);
+        }
+        List<T> list = hsql.getResultList();
+        return list;
+    }
+
     public void delete(T entity) {
         getEntityManager().remove(getEntityManager().merge(entity));
     }
@@ -157,6 +175,243 @@ public abstract class AbstractRepository<T, ID extends Serializable> implements 
         cq.select(getEntityManager().getCriteriaBuilder().count(rt));
         TypedQuery<Object> q = getEntityManager().createQuery(cq);
         return ((Long) q.getSingleResult()).intValue();
+    }
+
+    public List<T> findAll() {
+        CriteriaQuery<Object>  cq = getEntityManager().getCriteriaBuilder().createQuery();
+        cq.select(cq.from(getEntityClass()));
+        return (List<T>) getEntityManager().createQuery(cq).getResultList();
+    }
+
+    public List<T> findAll(T entity, String sortField, boolean asc) throws Exception {
+        return findAllRange(entity, -1, -1, sortField, asc);
+    }
+
+    public List<T> findAllRange(T entity, int first, int pageSize, String sortField, boolean asc) throws Exception {
+        // builder generates the Criteria Query as well as all the expressions
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        // The query declares what type of result it will produce
+        CriteriaQuery<T> q = cb.createQuery(getEntityClass());
+        // Which type will be searched
+        Root<T> from = q.from(getEntityClass());
+        // of course, the projection term must match the result type declared earlier
+        q.select(from);
+        // Builds the predicates conditionally for the filled-in input fields
+        ArrayList<StatementParameter> params = generateParams(entity);
+        List<Predicate> predicates = generatePredicates(cb, from, params);
+        // Sets the evaluation criteria
+        if (!predicates.isEmpty()) {
+            q.where(predicates.toArray(new Predicate[predicates.size()]));
+        } else if (!isReturnAllAllowed()) {
+            return new ArrayList<>();
+        }
+        if (sortField != null) {
+            if (asc) {
+                q.orderBy(cb.asc(getExpression(from, sortField)));
+            } else {
+                q.orderBy(cb.desc(getExpression(from, sortField)));
+            }
+        }
+        Query query = getEntityManager().createQuery(q);
+        if ((pageSize > -1) && (first > -1)) {
+            query.setMaxResults(pageSize);
+            query.setFirstResult(first);
+        }
+        return query.getResultList();
+    }
+
+    public ArrayList<StatementParameter> generateParams(T entity) throws Exception {
+        ArrayList<StatementParameter> params = FacadeUtils.getDirty(entity);
+        return params;
+    }
+
+    public List<Predicate> generatePredicates(CriteriaBuilder cb, Root<T> from, List<StatementParameter> params) throws Exception {
+        List<Predicate> predicates = new ArrayList<>();
+        for (StatementParameter param : params) {
+            Predicate predicate;
+            if (param.getType().equals(String.class)) {
+                predicate=setPredicateForString(cb,from,param);
+            } else if (param.getType().equals(Date.class)) {
+                predicate=setPredicateForDate(cb,from,param);
+            } else if (param.getType().equals(Integer.class)) {
+                predicate=setPredicateForInteger(cb,from,param);
+            } else if (param.getType().equals(BigInteger.class)) {
+                predicate=setPredicateForBigInteger(cb,from,param);
+            } else if (param.getType().equals(BigDecimal.class)) {
+                predicate=setPredicateForBigDecimal(cb,from,param);
+            } else if (param.getType().equals(Long.class)) {
+                predicate=setPredicateForLong(cb,from,param);
+            } else if (param.getType().equals(Short.class)) {
+                predicate=setPredicateForShort(cb,from,param);
+            } else {
+                predicate = cb.equal(getExpression(from, param.getColumn()), param.getValue());
+            }
+            predicates.add(predicate);
+        }
+        return predicates;
+    }
+
+    private Predicate setPredicateForString(CriteriaBuilder cb,Root<T> from,StatementParameter param) {
+        Expression<String> expr = getExpression(from, param.getColumn());
+        Predicate predicate;
+        if ("<".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.lessThan(expr, (String) param.getValue());
+        } else if ("<=".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.lessThanOrEqualTo(expr, (String) param.getValue());
+        } else if (">".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.greaterThan(expr, (String) param.getValue());
+        } else if (">=".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.greaterThanOrEqualTo(expr, (String) param.getValue());
+        } else if ("LIKE".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.like(expr, "%" + param.getValue() + "%");
+        } else {
+            predicate = cb.equal(expr, param.getValue());
+        }
+        return predicate;
+    }
+
+    private Predicate setPredicateForDate(CriteriaBuilder cb,Root<T> from,StatementParameter param) {
+        Predicate predicate;
+        Expression<Date> expr = getExpression(from, param.getColumn());
+        if ("<".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.lessThan(expr, (Date) param.getValue());
+        } else if ("<=".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.lessThanOrEqualTo(expr, (Date) param.getValue());
+        } else if (">".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.greaterThan(expr, (Date) param.getValue());
+        } else if (">=".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.greaterThanOrEqualTo(expr, (Date) param.getValue());
+        } else {
+            predicate = cb.equal(expr, param.getValue());
+        }
+        return predicate;
+    }
+
+    private Predicate setPredicateForInteger(CriteriaBuilder cb,Root<T> from,StatementParameter param) {
+        Predicate predicate;
+        Expression<Integer> expr = getExpression(from, param.getColumn());
+        if ("<".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.lessThan(expr, (Integer) param.getValue());
+        } else if ("<=".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.lessThanOrEqualTo(expr, (Integer) param.getValue());
+        } else if (">".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.greaterThan(expr, (Integer) param.getValue());
+        } else if (">=".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.greaterThanOrEqualTo(expr, (Integer) param.getValue());
+        } else {
+            predicate = cb.equal(expr, param.getValue());
+        }
+        return predicate;
+    }
+
+    private Predicate setPredicateForLong(CriteriaBuilder cb,Root<T> from,StatementParameter param) {
+        Predicate predicate;
+        Expression<Long> expr = getExpression(from, param.getColumn());
+        if ("<".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.lessThan(expr, (Long) param.getValue());
+        } else if ("<=".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.lessThanOrEqualTo(expr, (Long) param.getValue());
+        } else if (">".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.greaterThan(expr, (Long) param.getValue());
+        } else if (">=".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.greaterThanOrEqualTo(expr, (Long) param.getValue());
+        } else {
+            predicate = cb.equal(expr, param.getValue());
+        }
+        return predicate;
+    }
+
+    private Predicate setPredicateForShort(CriteriaBuilder cb,Root<T> from,StatementParameter param) {
+        Predicate predicate;
+        Expression<Short> expr = getExpression(from, param.getColumn());
+        if ("<".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.lessThan(expr, (Short) param.getValue());
+        } else if ("<=".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.lessThanOrEqualTo(expr, (Short) param.getValue());
+        } else if (">".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.greaterThan(expr, (Short) param.getValue());
+        } else if (">=".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.greaterThanOrEqualTo(expr, (Short) param.getValue());
+        } else {
+            predicate = cb.equal(expr, param.getValue());
+        }
+        return predicate;
+    }
+
+    private Predicate setPredicateForBigInteger(CriteriaBuilder cb,Root<T> from,StatementParameter param) {
+        Predicate predicate;
+        Expression<BigInteger> expr = getExpression(from, param.getColumn());
+        if ("<".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.lessThan(expr, (BigInteger) param.getValue());
+        } else if ("<=".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.lessThanOrEqualTo(expr, (BigInteger) param.getValue());
+        } else if (">".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.greaterThan(expr, (BigInteger) param.getValue());
+        } else if (">=".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.greaterThanOrEqualTo(expr, (BigInteger) param.getValue());
+        } else {
+            predicate = cb.equal(expr, param.getValue());
+        }
+        return predicate;
+    }
+
+    private Predicate setPredicateForBigDecimal(CriteriaBuilder cb,Root<T> from,StatementParameter param) {
+        Predicate predicate;
+        Expression<BigDecimal> expr = getExpression(from, param.getColumn());
+        if ("<".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.lessThan(expr, (BigDecimal) param.getValue());
+        } else if ("<=".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.lessThanOrEqualTo(expr, (BigDecimal) param.getValue());
+        } else if (">".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.greaterThan(expr, (BigDecimal) param.getValue());
+        } else if (">=".equalsIgnoreCase(param.getOperator())) {
+            predicate = cb.greaterThanOrEqualTo(expr, (BigDecimal) param.getValue());
+        } else {
+            predicate = cb.equal(expr, param.getValue());
+        }
+        return predicate;
+    }
+
+    public Long count(T entity) throws Exception {
+        // builder generates the Criteria Query as well as all the expressions
+        CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
+        // The query declares what type of result it will produce
+        CriteriaQuery<Long> q = cb.createQuery(Long.class);
+        // Which type will be searched
+        Root<T> from = q.from(getEntityClass());
+        // of course, the projection term must match the result type declared earlier
+        q.select(cb.count(from));
+        // Builds the predicates conditionally for the filled-in input fields
+        ArrayList<StatementParameter> params = generateParams(entity);
+        List<Predicate> predicates = generatePredicates(cb, from, params);
+
+        // Sets the evaluation criteria
+        if (!predicates.isEmpty()) {
+            q.where(predicates.toArray(new Predicate[0]));
+        } else if (!isReturnAllAllowed()) {
+            return 0L;
+        }
+        return getEntityManager().createQuery(q).getSingleResult();
+    }
+
+    public boolean isReturnAllAllowed() {
+        return true;
+    }
+
+    public Expression getExpression(Root<T> from, String propertyname) {
+        Expression retValue;
+        if (!propertyname.contains(".")) {
+            retValue = from.get(propertyname);
+        } else {
+            String[] fields = StringUtils.split(propertyname, ".");
+            assert fields != null;
+            Path<T> path = from.get(fields[0]);
+            for (int i = 1; i < fields.length; i++) {
+                path = path.get(fields[i]);
+            }
+            retValue = path;
+        }
+        return retValue;
     }
 
     public List<T> bulkCreate(List<T> entities) {

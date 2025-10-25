@@ -85,11 +85,11 @@ public abstract class AbstractRepository<T, ID extends Serializable> implements 
         return null;
     }
 
-    public T find(ID id) {
+    public T findById(ID id) {
         return (T) getEntityManager().find(getEntityClass(), id);
     }
 
-    public Optional<T> findOpt(ID id) {
+    public Optional<T> findByIdOpt(ID id) {
         if (id == null) {
             throw new IllegalArgumentException("Id cannot be null");
         }

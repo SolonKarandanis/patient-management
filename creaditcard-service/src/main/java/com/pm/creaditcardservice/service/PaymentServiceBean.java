@@ -36,7 +36,7 @@ public class PaymentServiceBean implements PaymentService {
     @Override
     public PaymentEntity newPayment(PaymentEntity payment) {
         payment.setState(PaymentState.NEW);
-        return paymentRepository.save(payment);
+        return paymentRepository.create(payment);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class PaymentServiceBean implements PaymentService {
     }
 
     private StateMachine<PaymentState, PaymentEvent> build(Integer paymentId) {
-        PaymentEntity payment = paymentRepository.findById(paymentId).orElseThrow(() -> new RuntimeException("Payment not found"));
+        PaymentEntity payment = paymentRepository.findByIdOpt(paymentId).orElseThrow(() -> new RuntimeException("Payment not found"));
         StateMachine<PaymentState,PaymentEvent> sm = stateMachineFactory.getStateMachine(Integer.toString(payment.getId()));
         sm.stop();
         sm.getStateMachineAccessor().doWithAllRegions(sma->{

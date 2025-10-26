@@ -31,9 +31,9 @@ public class PaymentStateChangeInterceptor extends StateMachineInterceptorAdapte
         Optional.ofNullable(message).flatMap(msg ->
                 Optional.ofNullable((Integer) msg.getHeaders().getOrDefault(PaymentServiceBean.PAYMENT_ID_HEADER, -1)))
                 .ifPresent(paymentId -> {
-                    PaymentEntity payment = paymentRepository.findById(paymentId).orElseThrow(() -> new RuntimeException("Payment not found"));
+                    PaymentEntity payment = paymentRepository.findByIdOpt(paymentId).orElseThrow(() -> new RuntimeException("Payment not found"));
                     payment.setState(state.getId());
-                    paymentRepository.save(payment);
+                    paymentRepository.create(payment);
                 });
     }
 }

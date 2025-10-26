@@ -19,15 +19,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="auth-service" />
         <module name="camel-integration" />
+        <module name="payment-service" />
         <module name="analytics-service" />
         <module name="api-gateway" />
         <module name="integration-tests" />
         <module name="billing-service" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="payment-service" target="21" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

@@ -15,6 +15,12 @@
             <column name="public_id" type="${uuidType}">
                 <constraints  nullable="false" unique="true" />
             </column>
+            <column name="patient_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="patient_public_id" type="${uuidType}">
+                <constraints  nullable="false"/>
+            </column>
             <column name="amount" type="numeric(10,4)"/>
             <column name="state"
                     type="varchar(20)">

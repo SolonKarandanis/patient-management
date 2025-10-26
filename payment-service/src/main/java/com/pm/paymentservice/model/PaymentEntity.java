@@ -18,6 +18,9 @@ import java.util.UUID;
 @NamedQuery(name = PaymentEntity.FIND_BY_PUBLIC_ID,
         query = "SELECT pe FROM PaymentEntity pe "
                 + "WHERE pe.publicId= :publicId ")
+@NamedQuery(name = PaymentEntity.FIND_BY_PATIENT_ID,
+        query = "SELECT pe FROM PaymentEntity pe "
+                + "WHERE pe.patientId= :patientId ")
 @NamedQuery(name = PaymentEntity.FIND_BY_PATIENT_PUBLIC_ID,
         query = "SELECT pe FROM PaymentEntity pe "
                 + "WHERE pe.patientPublicId= :patientPublicId ")
@@ -37,6 +40,7 @@ import java.util.UUID;
 public class PaymentEntity {
 
     public static final String FIND_BY_PUBLIC_ID= "PaymentEntity.findByPublicId";
+    public static final String FIND_BY_PATIENT_ID= "PaymentEntity.findByPatientId";
     public static final String FIND_BY_PATIENT_PUBLIC_ID= "PaymentEntity.findByPatientPublicId";
     public static final String FIND_BY_PATIENT_STATE= "PaymentEntity.findByState";
     public static final String GET_PAYMENT_STATS = "PaymentEntity.getPaymentStats";

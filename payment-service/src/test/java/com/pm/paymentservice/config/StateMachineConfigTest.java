@@ -1,7 +1,7 @@
 package com.pm.paymentservice.config;
 
-import com.pm.paymentservice.domain.PaymentEvent;
-import com.pm.paymentservice.domain.PaymentState;
+import com.pm.paymentservice.model.PaymentEvent;
+import com.pm.paymentservice.model.PaymentState;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -29,6 +29,6 @@ class PaymentServiceBeanTest {
     void preAuthorize() {
         PaymentEntity savedPayment = paymentService.newPayment(payment);
         paymentService.preAuthorize(savedPayment.getId());
-        PaymentEntity preAuthedPayment =paymentRepository.findById(savedPayment.getId()).get();
+        PaymentEntity preAuthedPayment =paymentRepository.findByIdOpt(savedPayment.getId()).get();
     }
 }

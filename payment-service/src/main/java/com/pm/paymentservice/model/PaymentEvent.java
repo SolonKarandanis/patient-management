@@ -1,4 +1,4 @@
-package com.pm.paymentservice.domain;
+package com.pm.paymentservice.model;
 
 public enum PaymentEvent {
     PRE_AUTHORIZE,

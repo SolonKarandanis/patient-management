@@ -1,7 +1,7 @@
 package com.pm.paymentservice.config;
 
-import com.pm.paymentservice.domain.PaymentEvent;
-import com.pm.paymentservice.domain.PaymentState;
+import com.pm.paymentservice.model.PaymentEvent;
+import com.pm.paymentservice.model.PaymentState;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.config.EnableStateMachineFactory;

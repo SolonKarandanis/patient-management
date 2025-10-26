@@ -1,8 +1,8 @@
 package com.pm.paymentservice.service;
 
-import com.pm.paymentservice.domain.PaymentEntity;
-import com.pm.paymentservice.domain.PaymentEvent;
-import com.pm.paymentservice.domain.PaymentState;
+import com.pm.paymentservice.model.PaymentEntity;
+import com.pm.paymentservice.model.PaymentEvent;
+import com.pm.paymentservice.model.PaymentState;
 import com.pm.paymentservice.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;

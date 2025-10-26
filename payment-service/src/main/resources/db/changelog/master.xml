@@ -6,4 +6,5 @@
     <property name="uuidType" value="uuid" dbms="postgresql"/>
 
     <include file="/db/changelog/00000000000001_payment.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelog/00000000000002_payment_stats_func.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

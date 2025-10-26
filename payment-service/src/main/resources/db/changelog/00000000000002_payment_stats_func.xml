@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="00000000000002-payment-stats-func" author="solonk">
+        <sql splitStatements="false" stripComments="true">
+            CREATE OR REPLACE FUNCTION get_payment_stats(p_patient_id BIGINT)
+            RETURNS TABLE(min_amount NUMERIC, max_amount NUMERIC, avg_amount NUMERIC) AS $$
+            BEGIN
+                RETURN QUERY
+                SELECT
+                    MIN(amount),
+                    MAX(amount),
+                    AVG(amount)
+                FROM
+                    payments
+                WHERE
+                    patient_id = p_patient_id;
+            END;
+            $$ LANGUAGE plpgsql;
+        </sql>
+        <rollback>
+            DROP FUNCTION IF EXISTS get_payment_stats(BIGINT);
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

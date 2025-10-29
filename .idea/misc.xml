@@ -12,7 +12,8 @@
         <option value="$PROJECT_DIR$/integration-tests/pom.xml" />
         <option value="$PROJECT_DIR$/camel-integration/pom.xml" />
         <option value="$PROJECT_DIR$/creaditcard-service/pom.xml" />
-          <option value="$PROJECT_DIR$/payment-service/pom.xml" />
+        <option value="$PROJECT_DIR$/payment-service/pom.xml" />
+        <option value="$PROJECT_DIR$/notification-service/pom.xml" />
       </list>
     </option>
   </component>

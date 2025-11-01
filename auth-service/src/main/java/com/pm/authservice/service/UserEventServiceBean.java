@@ -52,6 +52,7 @@ public class UserEventServiceBean implements UserEventService {
         return userEventRepository.findByUserEmail(email);
     }
 
+    @Transactional
     @Override
     public UserEventEntity saveEvent(UserEventEntity user) {
         return userEventRepository.save(user);

@@ -14,11 +14,32 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NamedQuery(name = UserEventEntity.FIND_BY_PUBLIC_ID,
+        query = "SELECT ue FROM UserEventEntity ue " +
+                "WHERE ue.publicId= :publicId ")
+@NamedQuery(name = UserEventEntity.FIND_BY_USER_ID,
+        query = "SELECT ue FROM UserEventEntity ue " +
+                "WHERE ue.userId= :userId ")
+@NamedQuery(name = UserEventEntity.FIND_BY_USER_PUBLIC_ID,
+        query = "SELECT ue FROM UserEventEntity ue " +
+                "WHERE ue.userPublicId= :userPublicId ")
+@NamedQuery(name = UserEventEntity.FIND_BY_USERNAME,
+        query = "SELECT ue FROM UserEventEntity ue " +
+                "WHERE ue.username= :username ")
+@NamedQuery(name = UserEventEntity.FIND_BY_EMAIL,
+        query = "SELECT ue FROM UserEventEntity ue " +
+                "WHERE ue.email= :email ")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "user_event")
 public class UserEventEntity {
+
+    public static final String FIND_BY_PUBLIC_ID= "UserEvent.findByPublicId";
+    public static final String FIND_BY_USER_ID= "UserEvent.findByUserId";
+    public static final String FIND_BY_USER_PUBLIC_ID= "UserEvent.findByUserPublicId";
+    public static final String FIND_BY_USERNAME= "UserEvent.findByUsername";
+    public static final String FIND_BY_EMAIL= "UserEvent.findByEmail";
 
     @Id
     @GeneratedValue(

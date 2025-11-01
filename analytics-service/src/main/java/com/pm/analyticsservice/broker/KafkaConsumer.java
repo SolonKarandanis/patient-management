@@ -11,7 +11,8 @@ import patient.events.PatientEvent;
 public class KafkaConsumer {
     private static final Logger log = LoggerFactory.getLogger(KafkaConsumer.class);
 
-    @KafkaListener(topics="patient", groupId = "analytics-service")
+
+    @KafkaListener(topics="patient-events", groupId = "analytics-service")
     public void consumeEvent(byte[] event) {
         try {
             PatientEvent patientEvent = PatientEvent.parseFrom(event);

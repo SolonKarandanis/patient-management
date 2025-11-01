@@ -49,16 +49,16 @@ public class WebSecurityConfiguration {
     }
 	
 	@Bean
-    public SecurityFilterChain configure(HttpSecurity httpSecurity, RequestMatcherBuilder mvc) throws Exception {
+    public SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity
 		.csrf(AbstractHttpConfigurer::disable)
 //                .cors(Customizer.withDefaults())
         .cors(c->c.configurationSource(corsConfigurationSource()))
 
         .authorizeHttpRequests(auth-> auth
-                .requestMatchers(mvc.matchers(SecurityConstants.AUTH_WHITELIST)).permitAll()
-                .requestMatchers(mvc.pattern(HttpMethod.POST, "/auth/login")).permitAll()
-                .requestMatchers(mvc.pattern(HttpMethod.POST, "/users")).permitAll()
+                .requestMatchers(SecurityConstants.AUTH_WHITELIST).permitAll()
+                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/users").permitAll()
                 .anyRequest()
                 .hasAnyAuthority(getRoleNames())
         )

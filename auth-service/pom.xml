@@ -30,6 +30,8 @@
 		<java.version>21</java.version>
 		<jwt.version>0.12.6</jwt.version>
 		<querydsl.version>5.1.0</querydsl.version>
+        <protobuf.version>4.30.0</protobuf.version>
+        <protobuf-plugin.version>0.6.1</protobuf-plugin.version>
         <skip.unit.tests>true</skip.unit.tests>
         <skip.integration.tests>true</skip.integration.tests>
 	</properties>
@@ -117,6 +119,11 @@
 			<artifactId>opencsv</artifactId>
 			<version>5.9</version>
 		</dependency>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>${protobuf.version}</version>
+        </dependency>
 		<!-- Utility Dependencies End-->
 		<!-- QueryDSL Dependencies Start-->
 		<dependency>
@@ -170,7 +177,34 @@
     </dependencies>
 
 	<build>
+        <extensions>
+            <!-- Ensure OS compatibility for protoc -->
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>1.7.0</version>
+            </extension>
+        </extensions>
 		<plugins>
+            <!-- PROTO -->
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>${protobuf-plugin.version}</version>
+                <configuration>
+                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <pluginId>grpc-java</pluginId>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.65.0:exe:${os.detected.classifier}</pluginArtifact>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>compile-custom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

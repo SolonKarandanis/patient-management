@@ -1,6 +1,5 @@
 package com.pm.patientservice.broker;
 
-import com.pm.patientservice.model.Patient;
 import com.pm.patientservice.model.PatientEventEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

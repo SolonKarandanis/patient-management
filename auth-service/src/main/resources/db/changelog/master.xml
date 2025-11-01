@@ -11,4 +11,5 @@
     <include file="/db/changelog/00000000000004_add_is_verified_field.xml" relativeToChangelogFile="false"/>
     <include file="/db/changelog/00000000000005_verification_token.xml" relativeToChangelogFile="false"/>
     <include file="/db/changelog/00000000000006_add_admin_role_to_skaran_user.xml" relativeToChangelogFile="false"/>
+    <include file="/db/changelog/00000000000007_user_event.xml" relativeToChangelogFile="false" />
 </databaseChangeLog>

@@ -1,18 +1,15 @@
 package com.pm.patientservice.service;
 
-import com.pm.patientservice.broker.KafkaProducer;
 import com.pm.patientservice.dto.PatientRequestDTO;
 import com.pm.patientservice.dto.PatientResponseDTO;
+import com.pm.patientservice.event.PatientCreationEvent;
 import com.pm.patientservice.exception.EmailAlreadyExistsException;
 import com.pm.patientservice.exception.PatientNotFoundException;
-import com.pm.patientservice.grpc.BillingServiceGrpcClient;
 import com.pm.patientservice.model.Patient;
-import com.pm.patientservice.model.PatientEventEntity;
-import com.pm.patientservice.model.PatientStatus;
-import com.pm.patientservice.repository.PatientEventRepository;
 import com.pm.patientservice.repository.PatientRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -30,21 +27,12 @@ public class PatientServiceBean implements PatientService{
     protected static final String PATIENT_WITH_EMAIL_EXISTS="error.patient.email.exists";
 
     private final PatientRepository patientRepository;
-    private final PatientEventRepository patientEventRepository;
-    private final BillingServiceGrpcClient billingServiceGrpcClient;
-    private final KafkaProducer kafkaProducer;
+    private final ApplicationEventPublisher publisher;
 
 
-    public PatientServiceBean(
-            PatientRepository patientRepository,
-            PatientEventRepository patientEventRepository,
-            BillingServiceGrpcClient billingServiceGrpcClient,
-            KafkaProducer kafkaProducer
-    ) {
+    public PatientServiceBean(PatientRepository patientRepository, ApplicationEventPublisher publisher) {
         this.patientRepository = patientRepository;
-        this.patientEventRepository = patientEventRepository;
-        this.billingServiceGrpcClient = billingServiceGrpcClient;
-        this.kafkaProducer = kafkaProducer;
+        this.publisher = publisher;
     }
 
     @Override
@@ -58,10 +46,6 @@ public class PatientServiceBean implements PatientService{
                 () -> new PatientNotFoundException(PATIENT_NOT_FOUND));
     }
 
-    private void saveAndPublishEvents(PatientEventEntity patientEvent){
-        patientEventRepository.save(patientEvent);
-        kafkaProducer.sendEvent(patientEvent);
-    }
 
     @Transactional
     @Override
@@ -73,17 +57,7 @@ public class PatientServiceBean implements PatientService{
         UUID uuid = UUID.randomUUID();
         newPatient.setPublicId(uuid);
         newPatient = patientRepository.save(newPatient);
-
-        billingServiceGrpcClient.createBillingAccount(newPatient.getPublicId().toString(),
-                newPatient.getName(), newPatient.getEmail());
-        PatientEventEntity patientEventEntity = new PatientEventEntity(
-                newPatient.getId(),
-                newPatient.getPublicId(),
-                PatientStatus.PATIENT_CREATED,
-                "Patient created successfully",
-                newPatient.getName(),
-                newPatient.getEmail());
-        saveAndPublishEvents(patientEventEntity);
+        publisher.publishEvent(new PatientCreationEvent(newPatient));
         return convertToDTO(newPatient);
     }
 

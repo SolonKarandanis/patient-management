@@ -20,7 +20,6 @@ public class UserRegistrationCompleteEventListener implements ApplicationListene
     private final VerificationTokenService tokenService;
     private final UserEventService userEventService;
     private final KafkaAnalyticsProducer analyticsProducer;
-    private UserEntity user;
 
     public UserRegistrationCompleteEventListener(
             VerificationTokenService tokenService,
@@ -34,7 +33,7 @@ public class UserRegistrationCompleteEventListener implements ApplicationListene
     @Override
     public void onApplicationEvent(UserRegistrationCompleteEvent event) {
         // 1. Get the newly registered user
-        user = event.getUser();
+        UserEntity user = event.getUser();
         //2. Create a verification token for the user
         String verificationToken = UUID.randomUUID().toString();
         //3. Save the verification token for the user

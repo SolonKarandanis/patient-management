@@ -33,7 +33,7 @@ public class PaymentStateChangeInterceptor extends StateMachineInterceptorAdapte
                 .ifPresent(paymentId -> {
                     PaymentEntity payment = paymentRepository.findByIdOpt(paymentId).orElseThrow(() -> new RuntimeException("Payment not found"));
                     payment.setState(state.getId());
-                    paymentRepository.create(payment);
+                    paymentRepository.edit(payment);
                 });
     }
 }

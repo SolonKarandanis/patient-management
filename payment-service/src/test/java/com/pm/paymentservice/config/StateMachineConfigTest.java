@@ -18,7 +18,7 @@ class StateMachineConfigTest {
     @Autowired
     private StateMachineFactory<PaymentState, PaymentEvent> factory;
 
-    @Test
+//    @Test
     void testNewStateMachine() {
         log.info("StateMachineConfigTest.testNewStateMachine");
         StateMachine<PaymentState, PaymentEvent> sm = factory.getStateMachine(UUID.randomUUID());

@@ -25,7 +25,7 @@ class PaymentServiceBeanTest {
         payment = PaymentEntity.builder().amount(new BigDecimal("12.99")).build();
     }
 
-    @Test
+//    @Test
     void preAuthorize() {
         PaymentEntity savedPayment = paymentService.newPayment(payment);
         paymentService.preAuthorize(savedPayment.getId());

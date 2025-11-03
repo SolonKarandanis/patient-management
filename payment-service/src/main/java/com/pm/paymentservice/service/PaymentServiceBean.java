@@ -1,9 +1,11 @@
 package com.pm.paymentservice.service;
 
+import com.pm.paymentservice.event.PaymentCreationEvent;
 import com.pm.paymentservice.model.PaymentEntity;
 import com.pm.paymentservice.model.PaymentEvent;
 import com.pm.paymentservice.model.PaymentState;
 import com.pm.paymentservice.repository.PaymentRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.statemachine.StateMachine;
@@ -21,22 +23,26 @@ public class PaymentServiceBean implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final StateMachineFactory<PaymentState, PaymentEvent> stateMachineFactory;
     private final PaymentStateChangeInterceptor interceptor;
+    private final ApplicationEventPublisher publisher;
 
     public PaymentServiceBean(
             PaymentRepository paymentRepository,
             StateMachineFactory<PaymentState, PaymentEvent> stateMachineFactory,
-            PaymentStateChangeInterceptor interceptor
+            PaymentStateChangeInterceptor interceptor, ApplicationEventPublisher publisher
     ) {
         this.paymentRepository = paymentRepository;
         this.stateMachineFactory = stateMachineFactory;
         this.interceptor = interceptor;
+        this.publisher = publisher;
     }
 
 
     @Override
     public PaymentEntity newPayment(PaymentEntity payment) {
         payment.setState(PaymentState.NEW);
-        return paymentRepository.create(payment);
+        payment = paymentRepository.create(payment);
+        publisher.publishEvent(new PaymentCreationEvent(payment));
+        return payment;
     }
 
     @Override

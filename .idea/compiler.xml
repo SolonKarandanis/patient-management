@@ -20,6 +20,7 @@
         <module name="auth-service" />
         <module name="camel-integration" />
         <module name="payment-service" />
+        <module name="stream-processor" />
         <module name="analytics-service" />
         <module name="api-gateway" />
         <module name="integration-tests" />
@@ -38,6 +39,7 @@
       <module name="notification-service" options="-parameters" />
       <module name="patient-service" options="-parameters" />
       <module name="payment-service" options="-parameters" />
+      <module name="stream-processor" options="-parameters" />
     </option>
   </component>
 </project>

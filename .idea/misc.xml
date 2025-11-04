@@ -14,6 +14,7 @@
         <option value="$PROJECT_DIR$/creaditcard-service/pom.xml" />
         <option value="$PROJECT_DIR$/payment-service/pom.xml" />
         <option value="$PROJECT_DIR$/notification-service/pom.xml" />
+        <option value="$PROJECT_DIR$/stream-processor/pom.xml" />
       </list>
     </option>
   </component>

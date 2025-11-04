@@ -1,13 +1,12 @@
 package com.pm.streamprocessor.model.payment;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class PaymentDataModel {
     private String id;
     private String patientId;
     private String state;
-    private BigDecimal amount;
+    private Double amount;
     private LocalDate createdDate;
 
     public String getId() {
@@ -34,19 +33,19 @@ public class PaymentDataModel {
         this.state = state;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
     public LocalDate getCreatedDate() {
         return createdDate;
     }
 
     public void setCreatedDate(LocalDate createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 }

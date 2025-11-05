@@ -27,7 +27,7 @@
         <url/>
     </scm>
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
         <grpc.version>1.71.0</grpc.version>
         <protobuf.version>4.30.0</protobuf.version>
         <protobuf-plugin.version>0.6.1</protobuf-plugin.version>

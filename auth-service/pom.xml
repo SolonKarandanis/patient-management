@@ -32,6 +32,7 @@
 		<querydsl.version>5.1.0</querydsl.version>
         <protobuf.version>4.30.0</protobuf.version>
         <protobuf-plugin.version>0.6.1</protobuf-plugin.version>
+        <hazelcast.version>5.6.0</hazelcast.version>
         <skip.unit.tests>true</skip.unit.tests>
         <skip.integration.tests>true</skip.integration.tests>
 	</properties>
@@ -65,7 +66,15 @@
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
-		<!-- Spring Dependencies End-->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-hazelcast</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-core</artifactId>
+        </dependency>
+        <!-- Spring Dependencies End-->
 
 		<!-- Utility Dependencies Start-->
 		<dependency>
@@ -124,7 +133,12 @@
             <artifactId>protobuf-java</artifactId>
             <version>${protobuf.version}</version>
         </dependency>
-		<!-- Utility Dependencies End-->
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+            <version>${hazelcast.version}</version>
+        </dependency>
+        <!-- Utility Dependencies End-->
 		<!-- QueryDSL Dependencies Start-->
 		<dependency>
 			<groupId>com.querydsl</groupId>

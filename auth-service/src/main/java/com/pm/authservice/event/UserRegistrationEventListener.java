@@ -14,20 +14,13 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
-public class UserRegistrationEventListener implements ApplicationListener<UserRegistrationEvent> {
+public class UserRegistrationEventListener extends BaseEventListener implements ApplicationListener<UserRegistrationEvent> {
     private static final Logger log = LoggerFactory.getLogger(UserRegistrationEventListener.class);
 
     private final VerificationTokenService tokenService;
-    private final UserEventService userEventService;
-    private final KafkaAnalyticsProducer analyticsProducer;
 
-    public UserRegistrationEventListener(
-            VerificationTokenService tokenService,
-            UserEventService userEventService,
-            KafkaAnalyticsProducer analyticsProducer){
+    public UserRegistrationEventListener(VerificationTokenService tokenService){
         this.tokenService = tokenService;
-        this.userEventService = userEventService;
-        this.analyticsProducer = analyticsProducer;
     }
 
     @Override
@@ -46,14 +39,5 @@ public class UserRegistrationEventListener implements ApplicationListener<UserRe
         //6 Send Kafka event for email
         log.info("UserRegistrationCompleteEventListener -> onApplicationEvent ->  url:  {}", url);
 
-    }
-
-    private UserEventEntity createUserEvent(UserEntity user){
-        return new UserEventEntity(user.getId(),user.getPublicId(), UserStatus.USER_CREATED,user.getUsername(),user.getEmail());
-    }
-
-    private void saveAndPublishEvents(UserEventEntity eventEntity){
-        eventEntity=userEventService.saveEvent(eventEntity);
-        analyticsProducer.sendEvent(eventEntity);
     }
 }

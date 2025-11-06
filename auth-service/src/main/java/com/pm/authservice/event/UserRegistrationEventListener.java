@@ -6,6 +6,7 @@ import com.pm.authservice.model.UserEventEntity;
 import com.pm.authservice.model.UserStatus;
 import com.pm.authservice.service.UserEventService;
 import com.pm.authservice.service.VerificationTokenService;
+import notification.events.NotificationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
@@ -36,7 +37,16 @@ public class UserRegistrationEventListener extends BaseEventListener implements 
         //5 Save UserEventEntity and send Kafka event for analytics
         UserEventEntity eventEntity= createUserEvent(user);
         saveAndPublishEvents(eventEntity);
-        //6 Send Kafka event for email
+        //6 Send Kafka event for notification
+        StringBuilder sb =new StringBuilder();
+        sb.append("User with username '").append(user.getUsername()).append("' has been registered successfully");
+        NotificationEvent notificationEvent = NotificationEvent.newBuilder()
+                .addUserIds(user.getPublicId().toString())
+                .setTitle("User Registration Completed")
+                .setMessage(sb.toString())
+                .build();
+        notificationsProducer.sendEvent(notificationEvent);
+        //7 Send Kafka event for email
         log.info("UserRegistrationCompleteEventListener -> onApplicationEvent ->  url:  {}", url);
 
     }

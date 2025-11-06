@@ -1,7 +1,7 @@
 package com.pm.authservice.service;
 
 import com.pm.authservice.dto.*;
-import com.pm.authservice.event.UserRegistrationEvent;
+import com.pm.authservice.event.*;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.model.*;
@@ -194,6 +194,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         RoleEntity role = roleService.findByName(dto.getRole());
         user.removeRoles();
         user.addRole(role);
+        getPublisher().publishEvent(new UserUpdateEvent(user));
         return userRepository.save(user);
     }
 
@@ -202,6 +203,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     public UserEntity activateUser(UserEntity user) throws BusinessException {
         user.activate();
         userRepository.save(user);
+        getPublisher().publishEvent(new UserActivationEvent(user));
         return user;
     }
 
@@ -210,6 +212,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     public UserEntity deactivateUser(UserEntity user) throws BusinessException {
         user.deactivate();
         userRepository.save(user);
+        getPublisher().publishEvent(new UserDeactivationEvent(user));
         return user;
     }
 
@@ -217,7 +220,10 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     @Override
     public void deleteUser(String publicId) throws NotFoundException {
         Optional<UserEntity> usrOpt  =userRepository.findByPublicId(UUID.fromString(publicId));
-        usrOpt.ifPresent(userRepository::delete);
+        usrOpt.ifPresent(usr->{
+            userRepository.delete(usr);
+            getPublisher().publishEvent(new UserDeletionEvent(usr));
+        });
     }
 
     @Override

@@ -4,11 +4,15 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @Entity
 @Table(name="role_operations")
-public class RoleOperationEntity {
+public class RoleOperationEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @EmbeddedId
     private RoleOperationsPK roleOperationsPK;

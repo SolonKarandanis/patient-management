@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Getter
@@ -15,7 +16,9 @@ import java.util.List;
                 "WHERE r.name = :name")
 @Entity
 @Table(name="roles")
-public class RoleEntity {
+public class RoleEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public static final String FIND_BY_IDS= "Role.findByIds";
     public static final String FIND_BY_NAME= "User.findByName";

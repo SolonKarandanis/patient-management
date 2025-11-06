@@ -32,7 +32,7 @@
 		<querydsl.version>5.1.0</querydsl.version>
         <protobuf.version>4.30.0</protobuf.version>
         <protobuf-plugin.version>0.6.1</protobuf-plugin.version>
-        <hazelcast.version>5.6.0</hazelcast.version>
+        <hazelcast.version>4.2.8</hazelcast.version>
         <skip.unit.tests>true</skip.unit.tests>
         <skip.integration.tests>true</skip.integration.tests>
 	</properties>
@@ -135,7 +135,7 @@
         </dependency>
         <dependency>
             <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast</artifactId>
+            <artifactId>hazelcast-all</artifactId>
             <version>${hazelcast.version}</version>
         </dependency>
         <!-- Utility Dependencies End-->

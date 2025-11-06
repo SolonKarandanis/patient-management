@@ -1,7 +1,7 @@
 package com.pm.authservice.service;
 
 import com.pm.authservice.dto.*;
-import com.pm.authservice.event.UserRegistrationCompleteEvent;
+import com.pm.authservice.event.UserRegistrationEvent;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.model.*;
@@ -177,7 +177,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         RoleEntity role = roleService.findByName(dto.getRole());
         user.setRoles(Set.of(role));
         user = userRepository.save(user);
-        getPublisher().publishEvent(new UserRegistrationCompleteEvent(user, applicationUrl));
+        getPublisher().publishEvent(new UserRegistrationEvent(user, applicationUrl));
         return user;
     }
 

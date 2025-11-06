@@ -7,13 +7,11 @@ import org.springframework.context.ApplicationEvent;
 
 @Getter
 @Setter
-public class UserRegistrationCompleteEvent extends ApplicationEvent {
+public class UserActivationEvent extends ApplicationEvent {
     private UserEntity user;
-    private String applicationUrl;
 
-    public UserRegistrationCompleteEvent(UserEntity user, String applicationUrl) {
+    public UserActivationEvent(UserEntity user) {
         super(user);
         this.user = user;
-        this.applicationUrl = applicationUrl;
     }
 }

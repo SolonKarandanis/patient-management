@@ -14,14 +14,14 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
-public class UserRegistrationCompleteEventListener implements ApplicationListener<UserRegistrationCompleteEvent> {
-    private static final Logger log = LoggerFactory.getLogger(UserRegistrationCompleteEventListener.class);
+public class UserRegistrationEventListener implements ApplicationListener<UserRegistrationEvent> {
+    private static final Logger log = LoggerFactory.getLogger(UserRegistrationEventListener.class);
 
     private final VerificationTokenService tokenService;
     private final UserEventService userEventService;
     private final KafkaAnalyticsProducer analyticsProducer;
 
-    public UserRegistrationCompleteEventListener(
+    public UserRegistrationEventListener(
             VerificationTokenService tokenService,
             UserEventService userEventService,
             KafkaAnalyticsProducer analyticsProducer){
@@ -31,7 +31,7 @@ public class UserRegistrationCompleteEventListener implements ApplicationListene
     }
 
     @Override
-    public void onApplicationEvent(UserRegistrationCompleteEvent event) {
+    public void onApplicationEvent(UserRegistrationEvent event) {
         // 1. Get the newly registered user
         UserEntity user = event.getUser();
         //2. Create a verification token for the user

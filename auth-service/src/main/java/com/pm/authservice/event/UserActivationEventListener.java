@@ -1,29 +1,24 @@
 package com.pm.authservice.event;
 
-import com.pm.authservice.broker.KafkaAnalyticsProducer;
-import com.pm.authservice.broker.KafkaNotificationsProducer;
-import com.pm.authservice.service.UserEventService;
+import com.pm.authservice.model.UserEntity;
+import com.pm.authservice.model.UserEventEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserActivationEventListener implements ApplicationListener<UserActivationEvent> {
+public class UserActivationEventListener extends BaseEventListener implements ApplicationListener<UserActivationEvent> {
     private static final Logger log = LoggerFactory.getLogger(UserActivationEventListener.class);
-
-    private final UserEventService userEventService;
-    private final KafkaAnalyticsProducer analyticsProducer;
-    private final KafkaNotificationsProducer notificationsProducer;
-
-    public UserActivationEventListener(UserEventService userEventService, KafkaAnalyticsProducer analyticsProducer, KafkaNotificationsProducer notificationsProducer) {
-        this.userEventService = userEventService;
-        this.analyticsProducer = analyticsProducer;
-        this.notificationsProducer = notificationsProducer;
-    }
 
     @Override
     public void onApplicationEvent(UserActivationEvent event) {
-
+        // 1. Get the newly registered user
+        UserEntity user = event.getUser();
+        //5 Save UserEventEntity and send Kafka event for analytics
+        UserEventEntity eventEntity= createUserEvent(user);
+        saveAndPublishEvents(eventEntity);
+        //6 Send Kafka event for email
+        log.info("UserActivationEventListener -> onApplicationEvent -> ");
     }
 }

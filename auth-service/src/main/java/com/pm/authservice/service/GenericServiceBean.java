@@ -4,12 +4,10 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
 
 import java.util.Locale;
 import java.util.Optional;
 
-@Component
 @Getter
 public class GenericServiceBean {
 
@@ -18,6 +16,10 @@ public class GenericServiceBean {
 
     @Autowired
     private ApplicationEventPublisher publisher;
+
+    public void setPublisher(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
+    }
 
     protected String translate(String key) {
         return Optional.of(messageSource.getMessage(key, null, getDefaultLocale())).orElse(key);

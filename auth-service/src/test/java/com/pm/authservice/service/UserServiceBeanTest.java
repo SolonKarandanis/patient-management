@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import util.TestConstants;
 import util.TestUtil;
@@ -42,6 +43,9 @@ public class UserServiceBeanTest {
     @Mock
     protected PasswordEncoder passwordEncoder;
 
+    @Mock
+    protected ApplicationEventPublisher publisher;
+
     protected final Integer userId = 1;
     protected UserEntity user;
     protected UserDTO userDto;
@@ -51,6 +55,7 @@ public class UserServiceBeanTest {
 
     @BeforeEach
     public void setup(){
+        service.setPublisher(publisher);
         user = TestUtil.createTestUser(userId);
         userDto = TestUtil.createTestUserDto(userId);
         detailsDTO = TestUtil.createTestUserDetailsDTO(userId);

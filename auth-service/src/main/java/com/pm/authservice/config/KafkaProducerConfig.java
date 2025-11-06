@@ -18,15 +18,31 @@ import java.util.Map;
 public class KafkaProducerConfig {
 
     @Value("${user.processing.topic-name}")
-    private String topicName;
+    private String userProcessingTopicName;
+
+    @Value("${user.email.topic-name}")
+    private String userEmailTopicName;
+
+//    @Value("${notification.topic-name}")
+//    private String notificationTopicName;
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
     @Bean
-    public NewTopic createTopic() {
-        return new NewTopic(topicName, 3, (short) 1);
+    public NewTopic createUserProcessingTopic() {
+        return new NewTopic(userProcessingTopicName, 3, (short) 1);
     }
+
+    @Bean
+    public NewTopic createUserEmailTopic() {
+        return new NewTopic(userEmailTopicName, 3, (short) 1);
+    }
+
+//    @Bean
+//    public NewTopic createTopic() {
+//        return new NewTopic(notificationTopicName, 3, (short) 1);
+//    }
 
     @Bean
     public KafkaTemplate<String, byte[]> kafkaTemplate() {

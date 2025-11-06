@@ -3,6 +3,7 @@ package com.pm.authservice.service;
 import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.model.RoleEntity;
 import com.pm.authservice.repository.RoleRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -49,6 +50,7 @@ public class RoleServiceBean extends GenericServiceBean implements RoleService {
         return roleDTOS;
     }
 
+    @Cacheable("roles")
     @Override
     public List<RoleEntity> findAll() {
         return roleRepository.findAll();

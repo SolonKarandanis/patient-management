@@ -23,9 +23,6 @@ public class KafkaProducerConfig {
     @Value("${user.email.topic-name}")
     private String userEmailTopicName;
 
-//    @Value("${notification.topic-name}")
-//    private String notificationTopicName;
-
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
@@ -38,11 +35,6 @@ public class KafkaProducerConfig {
     public NewTopic createUserEmailTopic() {
         return new NewTopic(userEmailTopicName, 3, (short) 1);
     }
-
-//    @Bean
-//    public NewTopic createTopic() {
-//        return new NewTopic(notificationTopicName, 3, (short) 1);
-//    }
 
     @Bean
     public KafkaTemplate<String, byte[]> kafkaTemplate() {

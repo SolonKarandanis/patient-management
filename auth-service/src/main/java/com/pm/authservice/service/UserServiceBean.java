@@ -116,13 +116,6 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
     }
 
-    @Transactional
-    @Override
-    public void deleteUser(String publicId) throws NotFoundException {
-        Optional<UserEntity> usrOpt  =userRepository.findByPublicId(UUID.fromString(publicId));
-        usrOpt.ifPresent(userRepository::delete);
-    }
-
     @Override
     public Page<UserEntity> searchUsers(UsersSearchRequestDTO searchObj,UserEntity loggedUser) {
         PageRequest pageRequest = toPageRequest(searchObj.getPaging());
@@ -218,6 +211,13 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         user.deactivate();
         userRepository.save(user);
         return user;
+    }
+
+    @Transactional
+    @Override
+    public void deleteUser(String publicId) throws NotFoundException {
+        Optional<UserEntity> usrOpt  =userRepository.findByPublicId(UUID.fromString(publicId));
+        usrOpt.ifPresent(userRepository::delete);
     }
 
     @Override

@@ -33,14 +33,9 @@ export class ProtectedComponent implements OnDestroy{
     effect(() => {
       const isLoggedIn = this.authService.isLoggedIn();
       const userId = this.authService.loggedUserId();
-      console.log(`[ProtectedComponent Effect] isLoggedIn: ${isLoggedIn}, userId: ${userId}, isConnected: ${this.isConnected}`);
-
       if (isLoggedIn && userId && !this.isConnected) {
-        console.log('[ProtectedComponent Effect] Conditions met. Calling connect...');
         this.notificationService.connect('http://localhost:4010/ws', userId);
         this.isConnected = true;
-      } else {
-        console.log('[ProtectedComponent Effect] Conditions not met. Not connecting.');
       }
     });
   }

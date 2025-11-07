@@ -24,8 +24,8 @@ public class KafkaConsumer {
     public void consumeEvent(byte[] event){
         try {
             NotificationEvent notification = NotificationEvent.parseFrom(event);
-            log.debug("Received Notification Event: [User ids={},Title={},Message={}]",
-                    notification.getUserIdsCount(),
+            log.info("Received Notification Event: [User ids={},Title={},Message={}]",
+                    notification.getUserIdsList(),
                     notification.getTitle(),
                     notification.getMessage());
             notificationService.sendNotification(notification);

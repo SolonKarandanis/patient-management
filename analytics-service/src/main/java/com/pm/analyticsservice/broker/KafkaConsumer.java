@@ -22,7 +22,7 @@ public class KafkaConsumer {
             PatientEvent patientEvent = PatientEvent.parseFrom(event);
             // ... perform any business related to analytics here
 
-            log.debug("Received Patient Event: [PatientId={},PatientName={},PatientEmail={}]",
+            log.info("Received Patient Event: [PatientId={},PatientName={},PatientEmail={}]",
                     patientEvent.getPatientId(),
                     patientEvent.getName(),
                     patientEvent.getEmail());
@@ -35,7 +35,7 @@ public class KafkaConsumer {
     public void consumeUserEvent(byte[] event){
         try {
             UserEvent userEvent = UserEvent.parseFrom(event);
-            log.debug("Received User Event: [User Id={},Username={},UserEmail={}]",
+            log.info("Received User Event: [User Id={},Username={},UserEmail={}]",
                     userEvent.getUserId(),
                     userEvent.getUsername(),
                     userEvent.getEmail());
@@ -48,7 +48,7 @@ public class KafkaConsumer {
     public void consumePaymentEvent(byte[] event){
         try {
             PaymentEvent paymentEvent = PaymentEvent.parseFrom(event);
-            log.debug("Received Payment Event: [Payment Id={}, Patient Id={}, Amount={}]",
+            log.info("Received Payment Event: [Payment Id={}, Patient Id={}, Amount={}]",
                     paymentEvent.getId(),
                     paymentEvent.getPatientId(),
                     paymentEvent.getAmount());

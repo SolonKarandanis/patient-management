@@ -20,9 +20,8 @@ public class NotificationServiceBean implements NotificationService {
         notificationEvent.getUserIdsList().forEach(userId -> {
             log.info("Sending WS notification to {} with payload {}", userId, notificationEvent.getTitle());
             NotificationDTO dto = new NotificationDTO(notificationEvent.getTitle(), notificationEvent.getMessage());
-            messagingTemplate.convertAndSendToUser(
-                    userId,
-                    "/notifications",
+            messagingTemplate.convertAndSend(
+                    "/topic/notifications/" + userId,
                     dto
             );
         });

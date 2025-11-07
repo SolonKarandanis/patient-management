@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import * as Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
+import {Notification} from '@models/notification.model';
+import {UtilService} from '@core/services/util.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,19 +10,18 @@ import SockJS from 'sockjs-client';
 export class NotificationService {
   private stompClient: any;
 
-  constructor() { }
+  private utilService = inject(UtilService);
+
 
   public connect(url: string, userId: string): void {
-    console.log(`Attempting to connect to WebSocket at ${url} for user ${userId}`);
     const socket = new SockJS(url);
     this.stompClient = Stomp.over(socket);
 
     const onConnect = (frame: any) => {
-      console.log('STOMP Connected: ' + frame);
-
       // Subscription for actual notifications
       this.stompClient.subscribe(`/topic/notifications/${userId}`, (message: any) => {
-        console.log('Received NOTIFICATION:', message.body);
+        const notification = JSON.parse(message.body) as Notification;
+        this.utilService.showMessage("warn",notification.message,notification.title)
       });
 
       // Subscription for echo test
@@ -36,7 +37,6 @@ export class NotificationService {
     const onError = (error: any) => {
       console.error('STOMP Error: ', error);
     };
-
     this.stompClient.connect({}, onConnect, onError);
   }
 

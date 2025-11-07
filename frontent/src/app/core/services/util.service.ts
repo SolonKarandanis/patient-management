@@ -182,7 +182,7 @@ export class UtilService{
 
 
 
-  showMessage(severity:SeverityMessage, details:string|string[]):void{
+  showMessage(severity:SeverityMessage, details:string|string[], summary?:string):void{
     if(!Array.isArray(details)){
       details =[details];
     }
@@ -192,7 +192,7 @@ export class UtilService{
         case 'error':{
           this.messageService.add({
             severity:'error',
-            summary: this.translate.instant('GLOBAL.ERRORS.summary'),
+            summary: summary ? summary: this.translate.instant('GLOBAL.ERRORS.summary'),
             detail
           });
           break;
@@ -200,7 +200,7 @@ export class UtilService{
         case 'success':{
           this.messageService.add({
             severity:'success',
-            summary: this.translate.instant('GLOBAL.SUCCESS.summary'),
+            summary: summary ? summary: this.translate.instant('GLOBAL.SUCCESS.summary'),
             detail
           });
           break;
@@ -208,7 +208,7 @@ export class UtilService{
         case 'warn':{
           this.messageService.add({
             severity:'warn',
-            summary: this.translate.instant('GLOBAL.WARNING.summary'),
+            summary: summary ? summary: this.translate.instant('GLOBAL.WARNING.summary'),
             detail
           });
           break;

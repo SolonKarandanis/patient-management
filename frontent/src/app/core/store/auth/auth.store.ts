@@ -27,6 +27,7 @@ export const AuthStore = signalStore(
       expires,
     },
   )=>({
+    getUserId: computed(()=> user()?.publicId),
     getUsername: computed(()=>user()?.username),
     getUser: computed(()=> user()),
     getRoleIds: computed(()=> {

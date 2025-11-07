@@ -17,6 +17,7 @@ export class AuthService extends GenericService{
   public isLoading:Signal<boolean>;
   public isLoggedIn:Signal<boolean>;
   public loggedUser:Signal<User | undefined>;
+  public loggedUserId: Signal<string| undefined>;
   public loggedInUserRoleIds:Signal<number[]>;
 
   constructor(
@@ -27,6 +28,7 @@ export class AuthService extends GenericService{
     this.isLoading = this.authStore.loading;
     this.isLoggedIn = this.authStore.isLoggedIn;
     this.loggedUser=this.authStore.getUser;
+    this.loggedUserId=this.authStore.getUserId;
     this.loggedInUserRoleIds = this.authStore.getRoleIds;
 
     effect(()=>{

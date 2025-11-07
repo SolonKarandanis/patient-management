@@ -22,12 +22,9 @@ public class KafkaConsumer {
 
     @KafkaListener(topics="${notification.topic-name}", groupId = "notifications-service")
     public void consumeEvent(byte[] event){
+        log.info("Received raw Kafka event (byte length: {}): {}", event.length, new String(event));
         try {
             NotificationEvent notification = NotificationEvent.parseFrom(event);
-            log.info("Received Notification Event: [User ids={},Title={},Message={}]",
-                    notification.getUserIdsList(),
-                    notification.getTitle(),
-                    notification.getMessage());
             notificationService.sendNotification(notification);
         }
         catch (InvalidProtocolBufferException e) {

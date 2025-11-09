@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BaseRepository} from './BaseRepository';
 import {Observable} from 'rxjs';
 import {HttpResponse} from '@angular/common/http';
-import {ApiControllers} from './ApiControllers';
+import {ApiRepositories} from './ApiRepositories';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class FilesRepository extends BaseRepository{
 
 
   downloadFile(fileid: number): Observable<HttpResponse<ArrayBuffer>> {
-    return this.http.get(`${ApiControllers.FILES}/${fileid}`, {
+    return this.http.get(`${ApiRepositories.FILES}/${fileid}`, {
       responseType: 'arraybuffer',
       observe: 'response',
     });

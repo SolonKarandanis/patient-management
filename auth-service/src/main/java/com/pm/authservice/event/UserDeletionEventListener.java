@@ -26,6 +26,7 @@ public class UserDeletionEventListener extends BaseEventListener implements Appl
                 .addUserIds(user.getPublicId().toString())
                 .setTitle("User Deletion Completed")
                 .setMessage(sb.toString())
+                .setEventType(EventConstants.USER_DELETED_NOTIFICATION)
                 .build();
         notificationsProducer.sendEvent(notificationEvent);
         //7 Send Kafka event for email

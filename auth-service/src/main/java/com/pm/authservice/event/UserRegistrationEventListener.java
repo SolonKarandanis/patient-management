@@ -44,6 +44,7 @@ public class UserRegistrationEventListener extends BaseEventListener implements 
                 .addUserIds(user.getPublicId().toString())
                 .setTitle("User Registration Completed")
                 .setMessage(sb.toString())
+                .setEventType(EventConstants.USER_CREATED_NOTIFICATION)
                 .build();
         notificationsProducer.sendEvent(notificationEvent);
         //7 Send Kafka event for email

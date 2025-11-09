@@ -26,6 +26,7 @@ public class UserUpdateEventListener extends BaseEventListener implements Applic
                 .addUserIds(user.getPublicId().toString())
                 .setTitle("User Update Completed")
                 .setMessage(sb.toString())
+                .setEventType(EventConstants.USER_UPDATED_NOTIFICATION)
                 .build();
         notificationsProducer.sendEvent(notificationEvent);
         //7 Send Kafka event for email

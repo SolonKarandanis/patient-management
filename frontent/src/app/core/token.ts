@@ -6,3 +6,8 @@ export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL', {
   factory: (): string => environment.backEndDomain,
   providedIn: 'root',
 });
+
+export const WS_BASE_URL = new InjectionToken<string>('WS_BASE_URL', {
+  factory: (): string => environment.webSockerDomain,
+  providedIn: 'root',
+});

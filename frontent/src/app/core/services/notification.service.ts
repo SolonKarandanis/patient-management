@@ -3,6 +3,7 @@ import * as Stomp from 'stompjs';
 import SockJS from 'sockjs-client';
 import {Notification} from '@models/notification.model';
 import {UtilService} from '@core/services/util.service';
+import {WS_BASE_URL} from '@core/token';
 
 @Injectable({
   providedIn: 'root'
@@ -11,10 +12,11 @@ export class NotificationService {
   private stompClient: any;
 
   private utilService = inject(UtilService);
+  private baseUrl = inject(WS_BASE_URL);
 
 
-  public connect(url: string, userId: string): void {
-    const socket = new SockJS(url);
+  public connect(userId: string): void {
+    const socket = new SockJS(this.baseUrl);
     this.stompClient = Stomp.over(socket);
 
     const onConnect = (frame: any) => {

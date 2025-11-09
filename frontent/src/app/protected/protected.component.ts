@@ -34,7 +34,7 @@ export class ProtectedComponent implements OnDestroy{
       const isLoggedIn = this.authService.isLoggedIn();
       const userId = this.authService.loggedUserId();
       if (isLoggedIn && userId && !this.isConnected) {
-        this.notificationService.connect('http://localhost:4010/ws', userId);
+        this.notificationService.connect( userId);
         this.isConnected = true;
       }
     });

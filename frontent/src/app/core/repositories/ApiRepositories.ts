@@ -1,4 +1,4 @@
-export enum ApiControllers {
+export enum ApiRepositories {
   AUTH='auth',
   USERS = 'users',
   ROLES = 'roles',

@@ -1,7 +1,7 @@
 import {Inject, Injectable} from '@angular/core';
 import {HttpErrorResponse, HttpHeaders, HttpStatusCode} from '@angular/common/http';
 import {API_BASE_URL} from '../token';
-import {ApiControllers} from '@core/repositories/ApiControllers';
+import {ApiRepositories} from '@core/repositories/ApiRepositories';
 
 @Injectable({
   providedIn: 'root',
@@ -12,11 +12,11 @@ export class HttpUtil{
 
   private readonly HttpErrorMessageExceptions: HttpErrorMessageException[] = [
     {
-      urlRegExp: ApiControllers.USERS,
+      urlRegExp: ApiRepositories.USERS,
       status: HttpStatusCode.Ok,
     },
     {
-      urlRegExp: ApiControllers.SEARCH,
+      urlRegExp: ApiRepositories.SEARCH,
       status: HttpStatusCode.NotFound,
     },
   ];

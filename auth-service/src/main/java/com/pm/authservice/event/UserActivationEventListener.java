@@ -26,6 +26,7 @@ public class UserActivationEventListener extends BaseEventListener implements Ap
                 .addUserIds(user.getPublicId().toString())
                 .setTitle("User Activation Completed")
                 .setMessage(sb.toString())
+                .setEventType(EventConstants.USER_ACTIVATED_NOTIFICATION)
                 .build();
         notificationsProducer.sendEvent(notificationEvent);
         //7 Send Kafka event for email

@@ -27,7 +27,7 @@ public class NotificationServiceBean implements NotificationService {
     public void sendNotification(NotificationEvent notificationEvent) {
         notificationEvent.getUserIdsList().forEach(userId -> {
             log.info("Sending WS notification to {} with payload {}", userId, notificationEvent.getTitle());
-            NotificationDTO dto = new NotificationDTO(notificationEvent.getTitle(), notificationEvent.getMessage());
+            NotificationDTO dto = new NotificationDTO(notificationEvent.getTitle(), notificationEvent.getMessage(),notificationEvent.getEventType());
             try {
                 String payload = objectMapper.writeValueAsString(dto);
                 MessageHeaders headers = new MessageHeaders(Map.of(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON));

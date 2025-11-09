@@ -1,4 +1,17 @@
+export const NotificationEventTypeEnum = {
+  USER_CREATED_NOTIFICATION: "USER_CREATED_NOTIFICATION",
+  USER_UPDATED_NOTIFICATION: "USER_UPDATED_NOTIFICATION",
+  USER_ACTIVATED_NOTIFICATION: "USER_ACTIVATED_NOTIFICATION",
+  USER_DEACTIVATED_NOTIFICATION: "USER_DEACTIVATED_NOTIFICATION",
+  USER_DELETED_NOTIFICATION: "USER_DELETED_NOTIFICATION",
+  USER_PASSWORD_CHANGED_NOTIFICATION: "USER_PASSWORD_CHANGED_NOTIFICATION",
+  USER_PASSWORD_RESET_NOTIFICATION: "USER_PASSWORD_RESET_NOTIFICATION",
+} as const satisfies Record<string, string>;
+
+export type NotificationEventType = (typeof NotificationEventTypeEnum)[keyof typeof NotificationEventTypeEnum];
+
 export interface Notification{
   title:string;
   message:string;
+  eventType:NotificationEventType;
 }

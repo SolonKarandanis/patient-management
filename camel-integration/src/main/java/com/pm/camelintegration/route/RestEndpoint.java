@@ -13,6 +13,6 @@ public class RestEndpoint extends RouteBuilder {
 
         from("direct:sendMessageToArtemis")
             .log("Received message for Artemis: ${body}")
-            .to("activemq:queue:patient_queue");
+            .to("jms:queue:patient_queue");
     }
 }

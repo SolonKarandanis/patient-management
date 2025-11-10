@@ -20,6 +20,9 @@ public class KafkaProducerConfig {
     @Value("${patient.processing.topic-name}")
     private String topicName;
 
+    @Value("${kafka.bootstrap-servers}")
+    private String bootStrapServers;
+
     @Bean
     public NewTopic createTopic() {
         return new NewTopic(topicName, 3, (short) 1);
@@ -33,7 +36,7 @@ public class KafkaProducerConfig {
     @Bean
     public ProducerFactory<String, byte[]> producerFactory() {
         Map<String, Object> configs = new HashMap<>();
-        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootStrapServers);
         configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
         return new DefaultKafkaProducerFactory<>(configs);

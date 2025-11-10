@@ -2,7 +2,6 @@ package com.pm.patientservice.event;
 
 import com.pm.patientservice.broker.ArtemisProducer;
 import com.pm.patientservice.broker.KafkaProducer;
-import com.pm.patientservice.grpc.BillingServiceGrpcClient;
 import com.pm.patientservice.model.Patient;
 import com.pm.patientservice.model.PatientEventEntity;
 import com.pm.patientservice.model.PatientStatus;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
 public class PatientCreationEventListener implements ApplicationListener<PatientCreationEvent> {
 
     private final PatientEventRepository patientEventRepository;
-//    private final BillingServiceGrpcClient billingServiceGrpcClient;
     private final KafkaProducer kafkaProducer;
     private final ArtemisProducer artemisProducer;
 
@@ -31,8 +29,6 @@ public class PatientCreationEventListener implements ApplicationListener<Patient
     @Override
     public void onApplicationEvent(PatientCreationEvent event) {
         Patient patient = event.getNewPatient();
-//        billingServiceGrpcClient.createBillingAccount(patient.getPublicId().toString(),
-//                patient.getName(), patient.getEmail());
         PatientEventEntity patientEventEntity = new PatientEventEntity(
                 patient.getId(),
                 patient.getPublicId(),

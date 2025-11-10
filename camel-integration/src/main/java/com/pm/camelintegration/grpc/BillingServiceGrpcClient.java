@@ -1,4 +1,4 @@
-package com.pm.patientservice.grpc;
+package com.pm.camelintegration.grpc;
 
 import billing.BillingRequest;
 import billing.BillingResponse;

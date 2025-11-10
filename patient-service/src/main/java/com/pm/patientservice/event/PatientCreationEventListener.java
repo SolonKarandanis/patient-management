@@ -1,5 +1,6 @@
 package com.pm.patientservice.event;
 
+import com.pm.patientservice.broker.ArtemisProducer;
 import com.pm.patientservice.broker.KafkaProducer;
 import com.pm.patientservice.grpc.BillingServiceGrpcClient;
 import com.pm.patientservice.model.Patient;
@@ -13,20 +14,25 @@ import org.springframework.stereotype.Component;
 public class PatientCreationEventListener implements ApplicationListener<PatientCreationEvent> {
 
     private final PatientEventRepository patientEventRepository;
-    private final BillingServiceGrpcClient billingServiceGrpcClient;
+//    private final BillingServiceGrpcClient billingServiceGrpcClient;
     private final KafkaProducer kafkaProducer;
+    private final ArtemisProducer artemisProducer;
 
-    public PatientCreationEventListener(PatientEventRepository patientEventRepository, BillingServiceGrpcClient billingServiceGrpcClient, KafkaProducer kafkaProducer) {
+    public PatientCreationEventListener(
+            PatientEventRepository patientEventRepository,
+            KafkaProducer kafkaProducer,
+            ArtemisProducer artemisProducer
+    ) {
         this.patientEventRepository = patientEventRepository;
-        this.billingServiceGrpcClient = billingServiceGrpcClient;
         this.kafkaProducer = kafkaProducer;
+        this.artemisProducer = artemisProducer;
     }
 
     @Override
     public void onApplicationEvent(PatientCreationEvent event) {
         Patient patient = event.getNewPatient();
-        billingServiceGrpcClient.createBillingAccount(patient.getPublicId().toString(),
-                patient.getName(), patient.getEmail());
+//        billingServiceGrpcClient.createBillingAccount(patient.getPublicId().toString(),
+//                patient.getName(), patient.getEmail());
         PatientEventEntity patientEventEntity = new PatientEventEntity(
                 patient.getId(),
                 patient.getPublicId(),
@@ -40,5 +46,6 @@ public class PatientCreationEventListener implements ApplicationListener<Patient
     private void saveAndPublishEvents(PatientEventEntity patientEvent){
         patientEventRepository.save(patientEvent);
         kafkaProducer.sendEvent(patientEvent);
+        artemisProducer.sendEvent(patientEvent);
     }
 }

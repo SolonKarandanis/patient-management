@@ -14,9 +14,9 @@ public class CommonErrorHandlerRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:exceptionHandler")
-                .log(WARN, "In Exception Handler")
-                //                .process(e -> SECONDS.sleep(5))
-                .log(WARN, "${body}");
+//        from("direct:exceptionHandler")
+//                .log(WARN, "In Exception Handler")
+//                //                .process(e -> SECONDS.sleep(5))
+//                .log(WARN, "${body}");
     }
 }

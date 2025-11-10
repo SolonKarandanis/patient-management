@@ -11,18 +11,8 @@ public class RestEndpoint extends RouteBuilder {
     public void configure() throws Exception {
         restConfiguration().component("servlet").bindingMode(RestBindingMode.json);
 
-        rest("/api")
-            .post("/sendMessageToArtemis")
-            .to("direct:sendMessageToArtemis")
-            .post("/sendMessageToRabbitMQ")
-            .to("direct:sendMessageToRabbitMQ");
-
         from("direct:sendMessageToArtemis")
             .log("Received message for Artemis: ${body}")
             .to("activemq:queue:patient_queue");
-
-        from("direct:sendMessageToRabbitMQ")
-            .log("Received message for RabbitMQ: ${body}")
-            .to("rabbitmq:patient_exchange?queue=patient_queue&autoDelete=false");
     }
 }

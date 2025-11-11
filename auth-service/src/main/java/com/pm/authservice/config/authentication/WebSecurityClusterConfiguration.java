@@ -1,8 +1,8 @@
 package com.pm.authservice.config.authentication;
 
+import com.pm.authservice.util.SecurityConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,8 +12,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @ConditionalOnExpression("${hazelcast.session.management.enabled}==true")
 @Configuration
@@ -21,34 +21,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityClusterConfiguration extends BaseSecurityConfig {
     protected static final Logger LOG = LoggerFactory.getLogger(WebSecurityClusterConfiguration.class);
 
+
+
     @Bean
-    @Order(1)
-    SecurityFilterChain basicFilterChain(HttpSecurity http) throws Exception {
-        LOG.info(" WebSecurityClusterConfiguration.basicFilterChain ");
-
-        http.securityMatcher(EndpointRequest.toAnyEndpoint()).csrf(AbstractHttpConfigurer::disable)
-                .cors(c->c.configurationSource(corsConfigurationSource()))
-                .httpBasic(Customizer.withDefaults())
-                .authorizeHttpRequests(customizer -> customizer.requestMatchers(EndpointRequest.toAnyEndpoint()).authenticated());
-
+    @Order(3)
+    SecurityFilterChain clusterFilterChain(HttpSecurity http) throws Exception{
+        LOG.info(" WebSecurityClusterConfiguration.WebSecurityClusterConfiguration ");
+        http.csrf(AbstractHttpConfigurer::disable).sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+                .authorizeHttpRequests(requests -> requests
+                        .requestMatchers(SecurityConstants.AUTH_WHITELIST).permitAll()).authorizeHttpRequests(requests -> requests
+                        .anyRequest().hasAnyAuthority(getRoleNames()))
+                .cors(Customizer.withDefaults()).exceptionHandling(handling -> handling.authenticationEntryPoint(restAuthenticationEntryPoint()))
+                .logout(logout -> logout.logoutUrl("/logout").invalidateHttpSession(true).clearAuthentication(true).deleteCookies("JSESSIONID",
+                        "USER_LOGGED_IN").logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) ->{
+                    httpServletResponse.setStatus(HttpServletResponse.SC_OK);
+                }));
         return http.build();
     }
-
-//    @Bean
-//    @Order(3)
-//    SecurityFilterChain clusterFilterChain(HttpSecurity http) throws Exception{
-//        LOG.info(" WebSecurityClusterConfiguration.WebSecurityClusterConfiguration ");
-//        http.csrf(AbstractHttpConfigurer::disable).sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
-//                .addFilterBefore(singleSignOutFilter, UsernamePasswordAuthenticationFilter.class)
-//                .authorizeHttpRequests(requests -> requests
-//                        .requestMatchers(getPermittedUrisAntPathRequestMatchers()).permitAll()).authorizeHttpRequests(requests -> requests
-//                        .requestMatchers(getAuthenticationPermittedUrisAntPathRequestMatchers()).authenticated()
-//                        .anyRequest().hasAnyAuthority(getRoleNames()))
-//                .cors(withDefaults()).exceptionHandling(handling -> handling.authenticationEntryPoint(casRestAuthenticationEntryPoint()))
-//                .logout(logout -> logout.logoutUrl("/logout").invalidateHttpSession(true).clearAuthentication(true).deleteCookies("JSESSIONID",
-//                        "USER_LOGGED_IN").logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) ->{
-//                    httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-//                }));
-//        return http.build();
-//    }
 }

@@ -24,7 +24,7 @@ public class PatientBillingRoute extends RouteBuilder {
             .unmarshal().json(JsonLibrary.Jackson, Map.class)
             .process(exchange -> {
                 Map<String, Object> body = exchange.getIn().getBody(Map.class);
-                String patientId = (String) body.get("patientPublicId");
+                String patientId = (String) body.get("patientId");
                 String name = (String) body.get("name");
                 String email = (String) body.get("email");
                 

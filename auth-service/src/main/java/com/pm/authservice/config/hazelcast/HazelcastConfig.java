@@ -74,6 +74,7 @@ public class HazelcastConfig {
         NetworkConfig network = config.getNetworkConfig();
         network.setPort(hazelCastInstancePort);
         network.setPortAutoIncrement(false); // Prevent auto-increment if port is busy
+        network.getJoin().getTcpIpConfig().setEnabled(true);
         return network;
     }
 

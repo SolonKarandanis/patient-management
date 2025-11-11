@@ -2,6 +2,7 @@ package com.pm.patientservice.broker;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pm.patientservice.dto.PatientEventDTO;
 import com.pm.patientservice.model.PatientEventEntity;
 import jakarta.jms.Queue;
 import org.slf4j.Logger;
@@ -31,8 +32,13 @@ public class ArtemisProducer implements Producer<PatientEventEntity>{
 
     @Override
     public void sendEvent(PatientEventEntity object) {
+        PatientEventDTO dto = new PatientEventDTO();
+        dto.setPublicId(object.getPublicId().toString());
+        dto.setPatientId(object.getPatientId().toString());
+        dto.setName(object.getName());
+        dto.setEmail(object.getEmail());
         try {
-            String message = objectMapper.writeValueAsString(object);
+            String message = objectMapper.writeValueAsString(dto);
             LOGGER.info("Sending message to queue: {}", message);
             jmsTemplate.convertAndSend(patientQueue, message);
         } catch (JsonProcessingException e) {

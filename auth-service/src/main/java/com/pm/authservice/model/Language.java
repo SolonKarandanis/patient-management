@@ -1,17 +1,20 @@
 package com.pm.authservice.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NamedQuery(name = Language.GET_LANGUAGES,
+        query = "SELECT lang " +
+                "FROM Language lang " +
+                "ORDER BY lang.id ASC")
 @Entity
 @Table(name="languages")
 public class Language {
+
+    public static final String GET_LANGUAGES = "Language.getLanguages";
 
     @Id
     @Column(name = "id", unique = true, nullable = false)

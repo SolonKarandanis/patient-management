@@ -14,19 +14,19 @@ import java.util.List;
 public interface I18nLabelRepository extends JpaRepository<I18nLabel, Integer> {
 
     @Query(name =I18nLabel.GET_I18N_LABELS)
-    public List<I18nLabel> getI18nLabels();
+    List<I18nLabel> getI18nLabels();
 
     @Query(name =I18nLabel.GET_I18N_LABELS_BY_MODULE_ID)
-    public List<I18nLabel> getI18nLabelsByModuleId(@Param("moduleId") Integer moduleId);
+    List<I18nLabel> getI18nLabelsByModuleId(@Param("moduleId") Integer moduleId);
 
     @Query(name =I18nLabel.GET_I18N_LABEL_RESOURCE_KEYS)
-    public List<String> getI18nLabelResourceKeys();
+    List<String> getI18nLabelResourceKeys();
 
     @Modifying
     @Query(name =I18nLabel.DELETE_I18N_LABEL_BY_ID)
-    public int deleteI18nLabelById(@Param("labelId") Integer labelId);
+    int deleteI18nLabelById(@Param("labelId") Integer labelId);
 
     @Modifying
     @Query(name =I18nLabel.DELETE_I18N_LABELS_WITH_NO_TRANSLATIONS_BY_MODULE_ID)
-    public int deleteI18nLabelsWithNoTranslationsByModuleId(@Param("moduleId") Integer moduleId);
+    int deleteI18nLabelsWithNoTranslationsByModuleId(@Param("moduleId") Integer moduleId);
 }

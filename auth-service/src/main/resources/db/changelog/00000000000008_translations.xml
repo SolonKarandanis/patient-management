@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="00000000000008-languages-seq" author="solon">
+        <createSequence sequenceName="languages_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="00000000000008-languages" author="solon">
+        <createTable tableName="languages">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="language_name" type="varchar(512)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="language_key" type="varchar(512)" />
+            <column name="iso_code" type="varchar(32)">
+                <constraints  nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="00000000000008-i18n-modules-seq" author="solon">
+        <createSequence sequenceName="i18n_modules_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="00000000000008-i18n-modules" author="solon">
+        <createTable tableName="i18n_modules">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="module_name" type="varchar(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_active"
+                    type="boolean"
+                    defaultValueBoolean="true">
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="00000000000008-i18n-labels-seq" author="solon">
+        <createSequence sequenceName="i18n_labels_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="00000000000008-i18n-labels" author="solon">
+        <createTable tableName="i18n_labels">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="resource_key" type="varchar(2048)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="i18n_modules_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="i18n_modules_id"
+                                 baseTableName="i18n_labels"
+                                 constraintName="fk_i18n_labels_i18n_modules_id"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id"
+                                 referencedTableName="i18n_modules"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="00000000000008-i18n-translations-seq" author="solon">
+        <createSequence sequenceName="i18n_translations_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="00000000000008-i18n-translations" author="solon">
+        <createTable tableName="i18n_translations">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="text_value" type="text" />
+            <column name="i18n_labels_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="languages_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_user_modified"
+                    type="boolean"
+                    defaultValueBoolean="false">
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="i18n_labels_id"
+                                 baseTableName="i18n_translations"
+                                 constraintName="fk_i18n_translations_i18n_labels_id"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id"
+                                 referencedTableName="i18n_labels"
+                                 validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="languages_id"
+                                 baseTableName="i18n_translations"
+                                 constraintName="fk_i18n_translations_languages_id"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id"
+                                 referencedTableName="languages"
+                                 validate="true"/>
+    </changeSet>
+
+    <changeSet id="00000000000008-languages-data" author="solon">
+        <sql endDelimiter=";">
+            insert into languages (id, iso_code, language_key, language_name)
+            values (1, 'en', 'ENGLISH', 'English');
+
+            insert into languages (id, iso_code, language_key, language_name)
+            values (2, 'el', 'GREEK', 'Greek');
+        </sql>
+    </changeSet>
+
+    <changeSet id="00000000000008-i18n_modules-data" author="solon">
+        <sql endDelimiter=";">
+            insert into i18n_modules (id, module_name, is_active)
+            values (1, 'N_A', false);
+
+            insert into i18n_modules (id, module_name, is_active)
+            values (2, 'application_messages', true);
+
+            insert into i18n_modules (id, module_name, is_active)
+            values (3, 'application_errors', true);
+
+            insert into i18n_modules (id, module_name, is_active)
+            values (4, 'messages', true);
+
+            insert into i18n_modules (id, module_name, is_active)
+            values (5, 'application_ui_labels', true);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

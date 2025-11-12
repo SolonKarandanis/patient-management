@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="solon" id="00000000000009">
+        <addColumn tableName="i18n_modules">
+            <column name="update_id" type="varchar(512)" />
+            <column name="update_start_time" type="timestamptz" />
+            <column name="update_end_time" type="timestamptz" />
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

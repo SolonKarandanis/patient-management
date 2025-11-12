@@ -6,9 +6,35 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@NamedQuery(name = I18nLabel.GET_I18N_LABELS,
+        query = "SELECT lab " +
+                "FROM I18nLabel lab " +
+                "ORDER BY lab.id ASC")
+@NamedQuery(name = I18nLabel.GET_I18N_LABELS_BY_MODULE_ID,
+        query = "SELECT lab " +
+                "FROM I18nLabel lab " +
+                "WHERE lab.i18nModuleId = :moduleId " +
+                "ORDER BY lab.id ASC")
+@NamedQuery(name = I18nLabel.GET_I18N_LABEL_RESOURCE_KEYS,
+        query = "SELECT lab " +
+                "FROM I18nLabel lab " +
+                "ORDER BY lab.resourceKey ASC")
+@NamedQuery(name = I18nLabel.DELETE_I18N_LABEL_BY_ID,
+        query = "DELETE FROM I18nLabel lab " +
+                "WHERE lab.id = :labelId")
+@NamedQuery(name = I18nLabel.DELETE_I18N_LABELS_WITH_NO_TRANSLATIONS_BY_MODULE_ID,
+        query = "DELETE FROM I18nLabel lab " +
+                "WHERE lab.i18nModuleId = :moduleId " +
+                "AND NOT EXISTS (SELECT trn FROM I18nTranslation trn WHERE trn.i18nLabelId = lab.id)")
 @Entity
 @Table(name="i18n_labels")
 public class I18nLabel {
+
+    public static final String GET_I18N_LABELS = "I18nLabel.getI18nLabels";
+    public static final String GET_I18N_LABELS_BY_MODULE_ID = "I18nLabel.getI18nLabelsByModuleId";
+    public static final String GET_I18N_LABEL_RESOURCE_KEYS = "I18nLabel.getI18nLabelResourceKeys";
+    public static final String DELETE_I18N_LABEL_BY_ID = "I18nLabel.deleteI18nLabelById";
+    public static final String DELETE_I18N_LABELS_WITH_NO_TRANSLATIONS_BY_MODULE_ID = "I18nLabel.deleteI18nLabelsWithNoTranslationsByModuleId";
 
     @Id
     @Column(name = "id", unique = true, nullable = false)

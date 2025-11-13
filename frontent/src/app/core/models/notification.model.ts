@@ -6,11 +6,12 @@ export const NotificationEventTypeEnum = {
   USER_DELETED_NOTIFICATION: "USER_DELETED_NOTIFICATION",
   USER_PASSWORD_CHANGED_NOTIFICATION: "USER_PASSWORD_CHANGED_NOTIFICATION",
   USER_PASSWORD_RESET_NOTIFICATION: "USER_PASSWORD_RESET_NOTIFICATION",
+  I18N_RESOURCES_EDITED:"I18N_RESOURCES_EDITED",
 } as const satisfies Record<string, string>;
 
 export type NotificationEventType = (typeof NotificationEventTypeEnum)[keyof typeof NotificationEventTypeEnum];
 
-export interface Notification{
+export interface NotificationEvent {
   title:string;
   message:string;
   eventType:NotificationEventType;

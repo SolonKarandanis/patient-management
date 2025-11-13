@@ -1,6 +1,4 @@
-import {ChangeDetectionStrategy, Component, effect, inject, OnDestroy} from '@angular/core';
-import {AuthService} from '@core/services/auth.service';
-import {NotificationService} from '@core/services/notification.service';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 
 @Component({
   selector: 'app-protected',
@@ -24,23 +22,6 @@ import {NotificationService} from '@core/services/notification.service';
   styleUrl: './protected.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProtectedComponent implements OnDestroy{
-  private readonly authService = inject(AuthService);
-  private readonly notificationService = inject(NotificationService);
-  private isConnected = false;
-
-  constructor() {
-    effect(() => {
-      const isLoggedIn = this.authService.isLoggedIn();
-      const userId = this.authService.loggedUserId();
-      if (isLoggedIn && userId && !this.isConnected) {
-        this.notificationService.connect( userId);
-        this.isConnected = true;
-      }
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.notificationService.disconnect();
-  }
+export class ProtectedComponent{
+  constructor() {}
 }

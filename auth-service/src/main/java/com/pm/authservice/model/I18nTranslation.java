@@ -31,6 +31,11 @@ import lombok.Setter;
 @NamedQuery(name = I18nTranslation.DELETE_I18N_TRANSLATION_BY_IDS,
         query = "DELETE FROM I18nTranslation trn " +
                 "WHERE trn.id IN (:translationIds)")
+@NamedQuery(name = I18nTranslation.GET_TRANSLATIONS_BY_RECORDS_BY_RESOURCE_IDS,
+        query = "SELECT trn " +
+                "FROM I18nTranslation trn " +
+                "LEFT JOIN trn.i18nLabel lab " +
+                "WHERE lab.id in (:ids)")
 @Entity
 @Table(name="i18n_translations")
 public class I18nTranslation {
@@ -40,6 +45,7 @@ public class I18nTranslation {
     public static final String GET_LABEL_KEYS_HAVING_USER_MODIFIED_TRANSLATION_BY_MODULE_ID_AND_LANG_ID= "I18nTranslation.getLabelKeysHavingUserModifiedTranslationByModuleIdAndLangId";
     public static final String DELETE_I18N_TRANSLATION_BY_ID = "I18nTranslation.deleteI18nTranslationById";
     public static final String DELETE_I18N_TRANSLATION_BY_IDS = "I18nTranslation.deleteI18nTranslationByIds";
+    public static final String GET_TRANSLATIONS_BY_RECORDS_BY_RESOURCE_IDS = "I18nTranslation.getTranslationsByResourceIds";
 
     @Id
     @Column(name = "ID", unique = true, nullable = false)

@@ -22,6 +22,11 @@ import lombok.Setter;
 @NamedQuery(name = I18nLabel.DELETE_I18N_LABEL_BY_ID,
         query = "DELETE FROM I18nLabel lab " +
                 "WHERE lab.id = :labelId")
+@NamedQuery(name = I18nLabel.GET_COUNT_OF_I18N_LABELS_WITH_NO_TRANSLATIONS_BY_MODULE_ID,
+        query = "SELECT COUNT(lab.id) " +
+                "FROM I18nLabel lab " +
+                "WHERE lab.i18nModuleId = :moduleId " +
+                "AND NOT EXISTS (SELECT trn FROM I18nTranslation trn WHERE trn.i18nLabelId = lab.id)")
 @NamedQuery(name = I18nLabel.DELETE_I18N_LABELS_WITH_NO_TRANSLATIONS_BY_MODULE_ID,
         query = "DELETE FROM I18nLabel lab " +
                 "WHERE lab.i18nModuleId = :moduleId " +
@@ -34,6 +39,7 @@ public class I18nLabel {
     public static final String GET_I18N_LABELS_BY_MODULE_ID = "I18nLabel.getI18nLabelsByModuleId";
     public static final String GET_I18N_LABEL_RESOURCE_KEYS = "I18nLabel.getI18nLabelResourceKeys";
     public static final String DELETE_I18N_LABEL_BY_ID = "I18nLabel.deleteI18nLabelById";
+    public static final String GET_COUNT_OF_I18N_LABELS_WITH_NO_TRANSLATIONS_BY_MODULE_ID = "I18nLabel.getCountOfI18nLabelsWithNoTranslationsByModuleId";
     public static final String DELETE_I18N_LABELS_WITH_NO_TRANSLATIONS_BY_MODULE_ID = "I18nLabel.deleteI18nLabelsWithNoTranslationsByModuleId";
 
     @Id

@@ -41,4 +41,7 @@ public interface I18nTranslationRepository extends JpaRepository<I18nTranslation
     @Query(name = I18nTranslation.DELETE_I18N_TRANSLATION_BY_IDS)
     int deleteI18nTranslationByIds(@Param("translationIds") List<Integer> translationIds);
 
+    @Query(name = I18nTranslation.GET_TRANSLATIONS_BY_RECORDS_BY_RESOURCE_IDS)
+    List<I18nTranslation> getTranslationsByResourceIds(@Param("ids") List<Integer> ids);
+
 }

@@ -26,6 +26,9 @@ public interface I18nLabelRepository extends JpaRepository<I18nLabel, Integer> {
     @Query(name =I18nLabel.DELETE_I18N_LABEL_BY_ID)
     int deleteI18nLabelById(@Param("labelId") Integer labelId);
 
+    @Query(name = I18nLabel.GET_COUNT_OF_I18N_LABELS_WITH_NO_TRANSLATIONS_BY_MODULE_ID)
+    Integer getCountOfI18nLabelsWithNoTranslationsByModuleId(@Param("moduleId") Integer moduleId);
+
     @Modifying
     @Query(name =I18nLabel.DELETE_I18N_LABELS_WITH_NO_TRANSLATIONS_BY_MODULE_ID)
     int deleteI18nLabelsWithNoTranslationsByModuleId(@Param("moduleId") Integer moduleId);

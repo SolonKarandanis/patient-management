@@ -3,6 +3,7 @@ import {DatePipe} from '@angular/common';
 import {Confirmation, ConfirmationService, MessageService, SelectItem} from 'primeng/api';
 import {TranslateService} from '@ngx-translate/core';
 import {FormGroup} from '@angular/forms';
+import {NotificationEvent, NotificationEventTypeEnum} from '@models/notification.model';
 
 @Injectable({
   providedIn: 'root'
@@ -270,6 +271,15 @@ export class UtilService{
 
   megabytesToBytes(megabytes: number): number {
     return megabytes * 1024 * 1024;
+  }
+
+  handleNotification(event: NotificationEvent): void {
+    if (event.eventType === NotificationEventTypeEnum.I18N_RESOURCES_EDITED) {
+      this.translate.reloadLang(this.translate.currentLang);
+    }
+    if (event.eventType === NotificationEventTypeEnum.USER_UPDATED_NOTIFICATION){
+      this.showMessage("warn",event.message,event.title)
+    }
   }
 }
 

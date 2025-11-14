@@ -1,6 +1,7 @@
 package com.pm.authservice.service;
 
 import com.pm.authservice.dto.UpdateTranslationDTO;
+import com.pm.authservice.event.TranslationsUpdatedEvent;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.model.I18nLabel;
 import com.pm.authservice.model.I18nModule;
@@ -210,6 +211,7 @@ public class I18nServiceBean extends GenericServiceBean implements I18nService{
         }
         //send notification event
         i18nTranslationRepository.saveAll(translations);
+        getPublisher().publishEvent(new TranslationsUpdatedEvent());
     }
 
     private Predicate<I18nTranslation> filterByLanguageAndResource(final Integer languageId, final Integer resourceId) {

@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationEvent;
 @Setter
 public class TranslationsUpdatedEvent extends ApplicationEvent {
 
-    public TranslationsUpdatedEvent(Object source) {
-        super(source);
+    public TranslationsUpdatedEvent() {
+        super(new Object());
     }
 }

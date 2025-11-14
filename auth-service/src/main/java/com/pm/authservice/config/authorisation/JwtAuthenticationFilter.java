@@ -26,6 +26,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -39,16 +40,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	@Autowired
 	private ObjectMapper mapper;
 
-	
+
 	@Override
 	protected void doFilterInternal(
-			@NonNull HttpServletRequest request, 
-			@NonNull HttpServletResponse response, 
+			@NonNull HttpServletRequest request,
+			@NonNull HttpServletResponse response,
 			@NonNull FilterChain filterChain
 	) throws ServletException, IOException {
+		if (isWhitelisted(request)) {
+			filterChain.doFilter(request, response);
+			return;
+		}
 		final String authHeader = request.getHeader(SecurityConstants.AUTHORIZATION_HEADER);
 	    final String jwt;
-	    final String username; 
+	    final String username;
 	    if (!isAuthorizationHeader(authHeader)) {
 	        filterChain.doFilter(request, response);
 	        return;
@@ -64,6 +69,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         } catch (AuthException e) {
             throw new RuntimeException(e);
         }
+	}
+
+	private boolean isWhitelisted(HttpServletRequest request) {
+		String requestURI = request.getRequestURI();
+		return Arrays.stream(SecurityConstants.AUTH_WHITELIST)
+				.anyMatch(pattern -> requestURI.startsWith(pattern.replace("/**", "")));
 	}
 	
 	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request,String jwt) throws AuthException {

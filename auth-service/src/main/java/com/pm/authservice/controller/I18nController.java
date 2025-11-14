@@ -1,6 +1,5 @@
 package com.pm.authservice.controller;
 
-import com.pm.authservice.config.authorisation.NoAuthentication;
 import com.pm.authservice.dto.UpdateTranslationDTO;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.service.I18nService;
@@ -44,7 +43,6 @@ public class I18nController {
      * @return
      */
     @GetMapping(value = "/ui-labels", produces = { MediaType.APPLICATION_JSON_VALUE })
-    @NoAuthentication
     @ResponseBody
     public ResponseEntity<Map<String, String>> getUiLabels(@RequestParam(name = "languageIsoCode", required = false) String languageIsoCode)
             throws IOException, BusinessException {

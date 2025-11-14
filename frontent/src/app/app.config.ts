@@ -27,13 +27,18 @@ import {BaseUrlInterceptor} from '@core/interceptors/base-url.interceptor';
 import {LanguageInterceptor} from '@core/interceptors/language.interceptor';
 import {httpError} from '@core/interceptors/http-error.interceptor';
 import {authExpired} from '@core/interceptors/auth-expired.interceptor';
+import {TranslationController} from '@core/repositories/translation.controller';
+import {CustomTranslateLoader} from '@core/helpers/translation.loader';
+
+export function createCustomTranslateLoader(translationController: TranslationController): CustomTranslateLoader {
+  return new CustomTranslateLoader(translationController);
+}
 
 export const provideTranslation = () => ({
-  defaultLanguage: 'en',
   loader: {
     provide: TranslateLoader,
-    useFactory: createTranslateLoader,
-    deps: [HttpBackend],
+    useFactory: createCustomTranslateLoader,
+    deps: [TranslationController],
   },
 });
 
@@ -68,18 +73,5 @@ export const appConfig: ApplicationConfig = {
       withInterceptorsFromDi(),
     ),
     importProvidersFrom(TranslateModule.forRoot(provideTranslation())),
-    provideAppInitializer(appInitializerFactory),
-
   ]
 };
-
-
-export function createTranslateLoader(httpHandler: HttpBackend): TranslateHttpLoader {
-  return  new  TranslateHttpLoader(new HttpClient(httpHandler), './assets/i18n/', '.json');
-}
-
-export function appInitializerFactory() {
-  const translate = inject(TranslateService);
-  translate.setDefaultLang('en');
-  return firstValueFrom(translate.use('en'));
-}

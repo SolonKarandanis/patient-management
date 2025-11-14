@@ -22,13 +22,13 @@ public class I18nDbResourceBundleMessageSource extends ResourceBundleMessageSour
     /** Set this as cacheMilis in order to prevent internal caching. */
     protected static final long NO_CACHE_MILIS = 1L;
 
-    private final I18nService i18nService;
+    @Autowired
+    private I18nService i18nService;
 
     /** Prevent setting cacheMillis explicitly. */
     private boolean isCacheMillisInit = false;
 
-    public I18nDbResourceBundleMessageSource(I18nService i18nService) {
-        this.i18nService = i18nService;
+    public I18nDbResourceBundleMessageSource() {
         setCacheMillis(NO_CACHE_MILIS);
         isCacheMillisInit = true;
     }

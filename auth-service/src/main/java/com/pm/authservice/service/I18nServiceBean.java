@@ -16,6 +16,7 @@ import com.pm.authservice.util.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,26 +30,29 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service("i18nService")
 @Transactional(readOnly = true)
-public class I18nServiceBean extends GenericServiceBean implements I18nService{
+public class I18nServiceBean implements I18nService{
 
     private final LanguageRepository languageRepository;
     private final I18nModuleRepository i18nModuleRepository;
     private final I18nLabelRepository i18nLabelRepository;
     private final I18nTranslationRepository i18nTranslationRepository;
     private final ApplicationContext applicationContext;
+    private final ApplicationEventPublisher publisher;
 
     public I18nServiceBean(
             LanguageRepository languageRepository,
             I18nModuleRepository i18nModuleRepository,
             I18nLabelRepository i18nLabelRepository,
             I18nTranslationRepository i18nTranslationRepository,
-            ApplicationContext applicationContext
+            ApplicationContext applicationContext,
+            ApplicationEventPublisher publisher
     ) {
         this.languageRepository = languageRepository;
         this.i18nModuleRepository = i18nModuleRepository;
         this.i18nLabelRepository = i18nLabelRepository;
         this.i18nTranslationRepository = i18nTranslationRepository;
         this.applicationContext = applicationContext;
+        this.publisher = publisher;
     }
 
     @Override
@@ -211,7 +215,7 @@ public class I18nServiceBean extends GenericServiceBean implements I18nService{
         }
         //send notification event
         i18nTranslationRepository.saveAll(translations);
-        getPublisher().publishEvent(new TranslationsUpdatedEvent());
+        publisher.publishEvent(new TranslationsUpdatedEvent());
     }
 
     private Predicate<I18nTranslation> filterByLanguageAndResource(final Integer languageId, final Integer resourceId) {

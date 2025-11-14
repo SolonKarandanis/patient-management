@@ -1,9 +1,13 @@
 package com.pm.authservice.config;
 
 import com.pm.authservice.config.i18n.ChangeableLocaleResolver;
+import com.pm.authservice.config.i18n.I18nDbReloadableResourceBundleMessageSource;
+import com.pm.authservice.config.i18n.I18nDbResourceBundleMessageSource;
 import com.pm.authservice.util.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +24,15 @@ import java.util.Locale;
 public class ApplicationConfig {
     private static final Logger log = LoggerFactory.getLogger(ApplicationConfig.class);
 
+    @Value("${i18n.resources.DB.enabled:false}")
+    private Boolean i18nDbEnabled;
+
+    @Autowired
+    private I18nDbResourceBundleMessageSource i18nDbResourceBundleMessageSource;
+
+    @Autowired
+    private I18nDbReloadableResourceBundleMessageSource i18nDbReloadableResourceBundleMessageSource;
+
     @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
@@ -28,7 +41,12 @@ public class ApplicationConfig {
     @Bean
     public MessageSource messageSource() {
         log.debug("messageSource");
-        ResourceBundleMessageSource source = new ResourceBundleMessageSource();
+        ResourceBundleMessageSource source = null;
+        if (Boolean.TRUE.equals(i18nDbEnabled)) {
+            source = i18nDbResourceBundleMessageSource;
+        } else {
+            source = new ResourceBundleMessageSource();
+        }
         source.setBasenames("application_messages", "application_errors");
         source.setUseCodeAsDefaultMessage(true);
         source.setDefaultEncoding(AppConstants.UTF_8);
@@ -48,8 +66,14 @@ public class ApplicationConfig {
          * (Some implementations other than ReloadableResourceBundleMessageSource
          * cause message interpolation to fail.
          */
-        ReloadableResourceBundleMessageSource msgSource = new ReloadableResourceBundleMessageSource();
-        msgSource.setBasenames("classpath:application_messages", "classpath:application_errors");
+        ReloadableResourceBundleMessageSource msgSource = null;
+        if (Boolean.TRUE.equals(i18nDbEnabled)) {
+            msgSource = i18nDbReloadableResourceBundleMessageSource;
+            msgSource.setBasenames("application_messages", "application_errors", "messages");
+        } else {
+            msgSource = new ReloadableResourceBundleMessageSource();
+            msgSource.setBasenames("classpath:application_messages", "classpath:application_errors", "classpath:messages");
+        }
         msgSource.setDefaultEncoding(AppConstants.UTF_8);
         msgSource.setDefaultLocale(Locale.ENGLISH);
         msgSource.setUseCodeAsDefaultMessage(true);

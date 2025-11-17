@@ -88,12 +88,9 @@ public class JmsConfig {
 
     @Bean
     public ErrorHandler customErrorHandler() {
-        return new ErrorHandler() {
-            @Override
-            public void handleError(Throwable t) {
-                // Custom error handling logic
-                log.error("Error occurred while processing JMS message: " + t.getMessage());
-            }
+        return t -> {
+            // Custom error handling logic
+            log.error("Error occurred while processing JMS message: " + t.getMessage());
         };
     }
 

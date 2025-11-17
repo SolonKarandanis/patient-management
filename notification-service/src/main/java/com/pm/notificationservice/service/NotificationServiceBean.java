@@ -30,7 +30,7 @@ public class NotificationServiceBean implements NotificationService {
         ProtocolStringList userIdsList = notificationEvent.getUserIdsList();
         if(!CollectionUtils.isEmpty(userIdsList)){
             userIdsList.forEach(userId -> {
-                log.info("Sending WS notification to {} with payload {}", userId, notificationEvent.getTitle());
+                log.info("Sending {} notification to {} with payload {}", notificationEvent.getEventType(),userId, notificationEvent.getTitle());
                 NotificationDTO dto = new NotificationDTO(notificationEvent.getTitle(), notificationEvent.getMessage(),notificationEvent.getEventType());
                 try {
                     String payload = objectMapper.writeValueAsString(dto);
@@ -44,6 +44,21 @@ public class NotificationServiceBean implements NotificationService {
                     log.error("Failed to serialize notification DTO for user {}", userId, e);
                 }
             });
+        }
+        else{
+            log.info("Sending {} notification  with payload {}", notificationEvent.getEventType(), notificationEvent.getTitle());
+            NotificationDTO dto = new NotificationDTO(notificationEvent.getEventType());
+            try {
+                String payload = objectMapper.writeValueAsString(dto);
+                MessageHeaders headers = new MessageHeaders(Map.of(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON));
+                messagingTemplate.convertAndSend(
+                        "/topic/notifications",
+                        payload,
+                        headers
+                );
+            } catch (JsonProcessingException e) {
+                log.error("Failed to serialize notification DTO", e);
+            }
         }
     }
 }

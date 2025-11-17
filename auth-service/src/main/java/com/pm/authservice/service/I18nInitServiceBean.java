@@ -9,6 +9,7 @@ import com.pm.authservice.util.AppResourceUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,7 @@ public class I18nInitServiceBean implements I18nInitService {
     private final ApplicationContext applicationContext;
 
     public I18nInitServiceBean(
-            I18nService i18nService,
+            @Lazy I18nService i18nService,
             ApplicationContext applicationContext) {
         this.i18nService = i18nService;
         this.applicationContext = applicationContext;

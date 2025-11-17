@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,16 +31,16 @@ public class AppResourceUtil {
     }
 
     /**
-     * @param appContext
-     *            <code>ApplicationContext</code>
+     * @param resourceLoader
+     *            <code>ResourceLoader</code>
      * @param resourceName
      *            <code>String</code>
      * @return <code>byte[]</code>
      */
-    public static byte[] loadResourceBytes(final ApplicationContext appContext, final String resourceName)
+    public static byte[] loadResourceBytes(final ResourceLoader resourceLoader, final String resourceName)
             throws BusinessException {
         byte[] outputAsBytes = null;
-        Resource appResource = appContext.getResource(LOCAL_CLASSPATH + resourceName);
+        Resource appResource = resourceLoader.getResource(LOCAL_CLASSPATH + resourceName);
         try (InputStream appResourceAsStream = appResource.getInputStream();) {
             outputAsBytes = IOUtils.toByteArray(appResourceAsStream);
         } catch (FileNotFoundException e) {
@@ -59,10 +60,22 @@ public class AppResourceUtil {
      *            <code>String</code>
      * @return <code>byte[]</code>
      */
-    public static InputStream loadResourceAsStream(final ApplicationContext appContext, final String resourceName)
+    public static byte[] loadResourceBytes(final ApplicationContext appContext, final String resourceName)
+            throws BusinessException {
+        return loadResourceBytes((ResourceLoader) appContext, resourceName);
+    }
+
+    /**
+     * @param resourceLoader
+     *            <code>ResourceLoader</code>
+     * @param resourceName
+     *            <code>String</code>
+     * @return <code>byte[]</code>
+     */
+    public static InputStream loadResourceAsStream(final ResourceLoader resourceLoader, final String resourceName)
             throws BusinessException {
         InputStream appResourceAsStream = null;
-        Resource appResource = appContext.getResource(LOCAL_CLASSPATH + resourceName);
+        Resource appResource = resourceLoader.getResource(LOCAL_CLASSPATH + resourceName);
         try {
             appResourceAsStream = appResource.getInputStream();
         } catch (FileNotFoundException e) {
@@ -85,10 +98,22 @@ public class AppResourceUtil {
      *            <code>String</code>
      * @return <code>byte[]</code>
      */
-    public static String loadResourceAsUtf8String(final ApplicationContext appContext, final String resourceName)
+    public static InputStream loadResourceAsStream(final ApplicationContext appContext, final String resourceName)
+            throws BusinessException {
+        return loadResourceAsStream((ResourceLoader) appContext, resourceName);
+    }
+
+    /**
+     * @param resourceLoader
+     *            <code>ResourceLoader</code>
+     * @param resourceName
+     *            <code>String</code>
+     * @return <code>byte[]</code>
+     */
+    public static String loadResourceAsUtf8String(final ResourceLoader resourceLoader, final String resourceName)
             throws BusinessException {
         String outputAsString = null;
-        Resource appResource = appContext.getResource(LOCAL_CLASSPATH + resourceName);
+        Resource appResource = resourceLoader.getResource(LOCAL_CLASSPATH + resourceName);
         try (InputStream appResourceAsStream = appResource.getInputStream();) {
             outputAsString = IOUtils.toString(appResourceAsStream, StandardCharsets.UTF_8);
 
@@ -104,14 +129,26 @@ public class AppResourceUtil {
 
     /**
      * @param appContext
+     *            <code>ApplicationContext</code>
+     * @param resourceName
+     *            <code>String</code>
+     * @return <code>byte[]</code>
+     */
+    public static String loadResourceAsUtf8String(final ApplicationContext appContext, final String resourceName)
+            throws BusinessException {
+        return loadResourceAsUtf8String((ResourceLoader) appContext, resourceName);
+    }
+
+    /**
+     * @param resourceLoader
      * @param resourceName
      * @param charset
      * @return
      */
-    public static Properties loadResourceAsProperties(final ApplicationContext appContext, final String resourceName, final Charset charset)
+    public static Properties loadResourceAsProperties(final ResourceLoader resourceLoader, final String resourceName, final Charset charset)
             throws BusinessException {
         Properties props = new Properties();
-        InputStream appResourceAsStream = AppResourceUtil.loadResourceAsStream(appContext, resourceName);
+        InputStream appResourceAsStream = AppResourceUtil.loadResourceAsStream(resourceLoader, resourceName);
 
         if (appResourceAsStream != null) {
             try (InputStream appResExistsAsStream = appResourceAsStream; InputStreamReader appResRead = new InputStreamReader(appResExistsAsStream, String.valueOf(charset));) {
@@ -121,5 +158,16 @@ public class AppResourceUtil {
             }
         }
         return props;
+    }
+
+    /**
+     * @param appContext
+     * @param resourceName
+     * @param charset
+     * @return
+     */
+    public static Properties loadResourceAsProperties(final ApplicationContext appContext, final String resourceName, final Charset charset)
+            throws BusinessException {
+        return loadResourceAsProperties((ResourceLoader) appContext, resourceName, charset);
     }
 }

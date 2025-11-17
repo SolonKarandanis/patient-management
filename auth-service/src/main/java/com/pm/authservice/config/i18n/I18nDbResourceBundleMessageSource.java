@@ -4,6 +4,7 @@ import com.pm.authservice.service.I18nService;
 import com.pm.authservice.util.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,7 @@ public class I18nDbResourceBundleMessageSource extends ResourceBundleMessageSour
     protected static final long NO_CACHE_MILIS = 1L;
 
     @Autowired
+    @Lazy
     private I18nService i18nService;
 
     /** Prevent setting cacheMillis explicitly. */

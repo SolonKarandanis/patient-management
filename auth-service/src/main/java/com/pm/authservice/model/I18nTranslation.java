@@ -34,7 +34,9 @@ import lombok.Setter;
 @NamedQuery(name = I18nTranslation.GET_TRANSLATIONS_BY_RECORDS_BY_RESOURCE_IDS,
         query = "SELECT trn " +
                 "FROM I18nTranslation trn " +
-                "LEFT JOIN trn.i18nLabel lab " +
+                "LEFT JOIN FETCH trn.language lang " +
+                "LEFT JOIN FETCH trn.i18nLabel lab " +
+                "LEFT JOIN FETCH lab.i18nModule mod " +
                 "WHERE lab.id in (:ids)")
 @Entity
 @Table(name="i18n_translations")
@@ -48,7 +50,7 @@ public class I18nTranslation {
     public static final String GET_TRANSLATIONS_BY_RECORDS_BY_RESOURCE_IDS = "I18nTranslation.getTranslationsByResourceIds";
 
     @Id
-    @Column(name = "ID", unique = true, nullable = false)
+    @Column(name = "id", unique = true, nullable = false)
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "i18nTranslationGenerator"
@@ -61,7 +63,7 @@ public class I18nTranslation {
     )
     private Integer id;
 
-    @Column(name = "TEXT_VALUE")
+    @Column(name = "text_value")
     private String textValue;
 
     @JoinColumn(
@@ -73,7 +75,7 @@ public class I18nTranslation {
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private I18nLabel i18nLabel;
 
-    @Column(name = "I18N_LABELS_ID", insertable = true, updatable = true)
+    @Column(name = "i18n_labels_id", insertable = true, updatable = true)
     private Integer i18nLabelId;
 
     @JoinColumn(
@@ -85,9 +87,9 @@ public class I18nTranslation {
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private Language language;
 
-    @Column(name = "LANGUAGES_ID", insertable = true, updatable = true)
+    @Column(name = "languages_id", insertable = true, updatable = true)
     private Integer languageId;
 
-    @Column(name = "IS_USER_MODIFIED")
+    @Column(name = "is_user_modified")
     private Boolean isUserModified;
 }

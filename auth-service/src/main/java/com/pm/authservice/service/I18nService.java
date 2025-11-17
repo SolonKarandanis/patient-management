@@ -36,5 +36,9 @@ public interface I18nService {
 
     boolean unlockUpdateModuleById(Integer moduleId, String updateId, Date updEndTime);
 
-    void editLabels(List<UpdateTranslationDTO> updateRequest);
+    void editLabelsAndSendNotification(List<UpdateTranslationDTO> updateRequest);
+
+    void editLabels(List<UpdateTranslationDTO> updateRequest,List<I18nTranslation> translations);
+
+    void clearCacheByModuleAndIso(String moduleName, String langIso);
 }

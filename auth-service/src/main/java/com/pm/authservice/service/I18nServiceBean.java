@@ -14,9 +14,11 @@ import com.pm.authservice.repository.LanguageRepository;
 import com.pm.authservice.util.AppResourceUtil;
 import com.pm.authservice.util.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,23 +38,26 @@ public class I18nServiceBean implements I18nService{
     private final I18nModuleRepository i18nModuleRepository;
     private final I18nLabelRepository i18nLabelRepository;
     private final I18nTranslationRepository i18nTranslationRepository;
-    private final ApplicationContext applicationContext;
+    private final ResourceLoader resourceLoader;
     private final ApplicationEventPublisher publisher;
+    private final I18nService selfService;
 
     public I18nServiceBean(
             LanguageRepository languageRepository,
             I18nModuleRepository i18nModuleRepository,
             I18nLabelRepository i18nLabelRepository,
             I18nTranslationRepository i18nTranslationRepository,
-            ApplicationContext applicationContext,
-            ApplicationEventPublisher publisher
+            ResourceLoader resourceLoader,
+            ApplicationEventPublisher publisher,
+            @Lazy I18nService selfService
     ) {
         this.languageRepository = languageRepository;
         this.i18nModuleRepository = i18nModuleRepository;
         this.i18nLabelRepository = i18nLabelRepository;
         this.i18nTranslationRepository = i18nTranslationRepository;
-        this.applicationContext = applicationContext;
+        this.resourceLoader = resourceLoader;
         this.publisher = publisher;
+        this.selfService = selfService;
     }
 
     @Override
@@ -110,7 +115,7 @@ public class I18nServiceBean implements I18nService{
 
         // Classpath resource: <module_name>_<lang>.properties
         String appResourceName = moduleName + "_" + langIso + ".properties";
-        Properties appResourceProps = AppResourceUtil.loadResourceAsProperties(applicationContext, appResourceName, StandardCharsets.UTF_8);
+        Properties appResourceProps = AppResourceUtil.loadResourceAsProperties(resourceLoader, appResourceName, StandardCharsets.UTF_8);
 
         appResourceProps.forEach((propKey, propValue) -> {
             outputMap.put((String) propKey, (String) propValue);
@@ -197,14 +202,28 @@ public class I18nServiceBean implements I18nService{
         return i18nModuleRepository.unlockUpdateModuleById(moduleId, updateId, updEndTime) > 0;
     }
 
-    @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public void editLabels(List<UpdateTranslationDTO> updateRequest) {
+    @Override
+    public void editLabelsAndSendNotification(List<UpdateTranslationDTO> updateRequest) {
         List<Integer> resourceIds = updateRequest.stream()
                 .map(UpdateTranslationDTO::getResourceId)
                 .toList();
         List<I18nTranslation> translations = i18nTranslationRepository.getTranslationsByResourceIds(resourceIds);
+        selfService.editLabels(updateRequest,translations);
+        Map<String, List<String>> modulesLanguagesMap = translations.stream()
+                .collect(Collectors.groupingBy(tran->tran.getI18nLabel().getI18nModule().getModuleName(),
+                        Collectors.mapping(tran->getLanguages().getFirst().getIsoCode(), Collectors.toList())));
 
+        modulesLanguagesMap.forEach((key, value) -> value.stream()
+                .distinct()
+                .forEach(isoCode -> selfService.clearCacheByModuleAndIso(key, isoCode)));
+        publisher.publishEvent(new TranslationsUpdatedEvent());
+    }
+
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void editLabels(List<UpdateTranslationDTO> updateRequest, List<I18nTranslation> translations) {
         for(UpdateTranslationDTO  dto : updateRequest) {
             translations.stream().filter(filterByLanguageAndResource(dto.getLanguageId(),dto.getResourceId()))
                     .findFirst()
@@ -213,9 +232,13 @@ public class I18nServiceBean implements I18nService{
                         tr.setIsUserModified(true);
                     });
         }
-        //send notification event
         i18nTranslationRepository.saveAll(translations);
-        publisher.publishEvent(new TranslationsUpdatedEvent());
+    }
+
+    @CacheEvict( cacheNames = "resources",key="#moduleName.concat('-').concat(#langIso)")
+    @Override
+    public void clearCacheByModuleAndIso(String moduleName, String langIso) {
+        log.info("-----> I18nServiceBean -----> clearCacheByModuleAndIso (moduleName:{}, langIso:{}) cleared", moduleName, langIso);
     }
 
     private Predicate<I18nTranslation> filterByLanguageAndResource(final Integer languageId, final Integer resourceId) {

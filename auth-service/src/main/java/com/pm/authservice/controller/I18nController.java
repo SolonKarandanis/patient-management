@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class I18nController {
 
     private final I18nService i18nService;
 
-    public I18nController(I18nService i18nService) {
+    public I18nController(@Lazy I18nService i18nService) {
         this.i18nService = i18nService;
     }
 
@@ -67,7 +68,7 @@ public class I18nController {
     @RolesAllowed({ AuthorityConstants.ROLE_SYSTEM_ADMIN })
     @PutMapping
     public ResponseEntity<Void> editLabels(@RequestBody @Valid List<UpdateTranslationDTO> updateRequest){
-        i18nService.editLabels(updateRequest);
+        i18nService.editLabelsAndSendNotification(updateRequest);
         return ResponseEntity.ok().build();
     }
 

@@ -28,13 +28,13 @@ public class NotificationServiceBean implements NotificationService {
 
     public void sendNotification(NotificationEvent notificationEvent) {
         ProtocolStringList userIdsList = notificationEvent.getUserIdsList();
+        MessageHeaders headers = new MessageHeaders(Map.of(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON));
         if(!CollectionUtils.isEmpty(userIdsList)){
             userIdsList.forEach(userId -> {
                 log.info("Sending {} notification to {} with payload {}", notificationEvent.getEventType(),userId, notificationEvent.getTitle());
                 NotificationDTO dto = new NotificationDTO(notificationEvent.getTitle(), notificationEvent.getMessage(),notificationEvent.getEventType());
                 try {
                     String payload = objectMapper.writeValueAsString(dto);
-                    MessageHeaders headers = new MessageHeaders(Map.of(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON));
                     messagingTemplate.convertAndSend(
                             "/topic/notifications/" + userId,
                             payload,
@@ -50,7 +50,6 @@ public class NotificationServiceBean implements NotificationService {
             NotificationDTO dto = new NotificationDTO(notificationEvent.getEventType());
             try {
                 String payload = objectMapper.writeValueAsString(dto);
-                MessageHeaders headers = new MessageHeaders(Map.of(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON));
                 messagingTemplate.convertAndSend(
                         "/topic/notifications",
                         payload,

@@ -114,6 +114,7 @@ public class I18nInitServiceBean implements I18nInitService {
         Properties propsResource = AppResourceUtil.loadResourceAsProperties(applicationContext, appResourceName, StandardCharsets.UTF_8);
         log.info(" CHECKING-1: AppResource = {}, exists? {} ", appResourceName, (!propsResource.isEmpty()));
         List<I18nTranslation> i18nTranslations = i18nService.getTranslationRecordsByModuleIdAndLangIdAndNoUserModified(module.getId(), language.getId());
+        // Fetch label keys from translations modified by the user
         List<String> labelKeysUserUpdAsList = i18nService.getLabelKeysHavingUserModifiedTranslationByModuleIdAndLangId(module.getId(), language.getId());
         log.info(" CHECKING-2: AppResource = {}, Total properties = {}, Messages/DB = {}, Labels UserModified = {} ", appResourceName, propsResource.size(),
                 i18nTranslations.size(), labelKeysUserUpdAsList.size());

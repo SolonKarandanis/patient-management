@@ -137,57 +137,44 @@ public class I18nServiceBean implements I18nService{
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public int importI18nTranslations(Integer moduleId, Map<String, I18nTranslation> insertionsMap, List<I18nTranslation> updatesList, List<Integer> deletionsList) {
+    public int importI18nTranslations(Integer moduleId, List<I18nTranslation> insertionsList, List<I18nTranslation> updatesList, List<Integer> deletionsList,
+                                      boolean isInsertLabels, boolean isDeleteOrphanLabels) {
         // Step-1: Inserts
         List<I18nLabel> i18nLabelsInserted = new ArrayList<>();
-        if (!insertionsMap.isEmpty()){
-            List<I18nLabel> i18nLabels = i18nLabelRepository.getI18nLabelsByModuleId(moduleId);
-            Map<String, I18nLabel> i18nLabelsDbMap = i18nLabels.stream()
-                    .collect(Collectors.toMap(I18nLabel::getResourceKey, Function.identity()));
-
-            // Step-1.1: Insert labels
-            List<I18nLabel> i18nLabelsToInsert = insertionsMap.keySet().stream()
-                    .filter(resourceKey -> !i18nLabelsDbMap.containsKey(resourceKey))
-                    .map(resourceKey -> {
-                        I18nLabel i18nLabel = new I18nLabel();
-                        i18nLabel.setResourceKey(resourceKey);
-                        i18nLabel.setI18nModuleId(moduleId);
-                        return i18nLabel;
-                    }).toList();
-            i18nLabelsInserted.addAll(i18nLabelRepository.saveAllAndFlush(i18nLabelsToInsert));
-
-            Map<String, I18nLabel> i18nLabelsMap = new LinkedHashMap<>(i18nLabelsDbMap);
-            i18nLabelsInserted.forEach(i18nLabel -> i18nLabelsMap.put(i18nLabel.getResourceKey(), i18nLabel));
-
+        if (!insertionsList.isEmpty()) {
+            if (isInsertLabels) {
+                List<String> labelResKeys = insertionsList.stream().map(I18nTranslation::getI18nLabelResourceKey).collect(Collectors.toList());
+                i18nLabelsInserted.addAll(importI18nLabels(moduleId, labelResKeys));
+            }
+            boolean isGetLabels = insertionsList.stream().anyMatch(i18nTrn -> i18nTrn.getI18nLabelId() == null);
+            List<I18nLabel> i18nLabels = isGetLabels ? i18nLabelRepository.getI18nLabelsByModuleId(moduleId) : new ArrayList<>();
+            Map<String, I18nLabel> i18nLabelsMap = i18nLabels.stream().collect(Collectors.toMap(I18nLabel::getResourceKey, Function.identity()));
+            i18nLabelsInserted.forEach(i18nLabel -> i18nLabelsMap.putIfAbsent(i18nLabel.getResourceKey(), i18nLabel));
             // Step-1.2: Insert translations
-            insertionsMap.forEach((i18nLabelResKey, i18nTranslation) -> {
-                I18nLabel associatedLabel = i18nLabelsMap.get(i18nLabelResKey);
-                if (associatedLabel == null) {
-                    log.warn(" Warning: ModuleId={}, ResourceKey={}, I18nLabel NULL ", moduleId, i18nLabelResKey);
-                } else {
-                    i18nTranslation.setI18nLabelId(associatedLabel.getId());
+            insertionsList.forEach(i18nTranslation -> {
+                if (i18nTranslation.getI18nLabelId() == null) {
+                    I18nLabel associatedLabel = i18nLabelsMap.get(i18nTranslation.getI18nLabelResourceKey());
+                    if (associatedLabel == null) {
+                        log.warn(" Warning: ModuleId={}, ResourceKey={}, I18nLabel NULL ", moduleId, i18nTranslation.getI18nLabelResourceKey());
+                    } else {
+                        i18nTranslation.setI18nLabelId(associatedLabel.getId());
+                    }
                 }
             });
-            i18nTranslationRepository.saveAllAndFlush(insertionsMap.values());
+            i18nTranslationRepository.saveAllAndFlush(insertionsList);
         }
         // Step-2: Updates
         if (!updatesList.isEmpty()) {
             i18nTranslationRepository.saveAllAndFlush(updatesList);
         }
-
         // Step-3: Deletions
         List<List<Integer>> deletionsLists = CollectionUtil.splitList(deletionsList, 100);
         deletionsLists.forEach(i18nTranslationRepository::deleteI18nTranslationByIds);
-
         // Step-4: Delete labels with no translations
-        int iLabelsDeleted = 0;
-        if (i18nLabelRepository.getCountOfI18nLabelsWithNoTranslationsByModuleId(moduleId) > 0) {
-            iLabelsDeleted = i18nLabelRepository.deleteI18nLabelsWithNoTranslationsByModuleId(moduleId);
-        }
-
+        int iLabelsDeleted = isDeleteOrphanLabels ? deleteI18nLabelsWithNoTranslationsByModuleId(moduleId) : 0;
         log.info(" END: I18nLabels-Inserted={}, I18nTranslations-Inserted={}, I18nTranslations-updated={}, I18nTranslations-deleted={}, I18nLabels-deleted={} ",
-                i18nLabelsInserted.size(), insertionsMap.size(), updatesList.size(), deletionsList.size(), iLabelsDeleted);
-        return (i18nLabelsInserted.size() + insertionsMap.size() + updatesList.size() + deletionsList.size() + iLabelsDeleted);
+                i18nLabelsInserted.size(), insertionsList.size(), updatesList.size(), deletionsList.size(), iLabelsDeleted);
+        return (i18nLabelsInserted.size() + insertionsList.size() + updatesList.size() + deletionsList.size() + iLabelsDeleted);
     }
 
     @Override
@@ -239,6 +226,31 @@ public class I18nServiceBean implements I18nService{
     @Override
     public void clearCacheByModuleAndIso(String moduleName, String langIso) {
         log.info("-----> I18nServiceBean -----> clearCacheByModuleAndIso (moduleName:{}, langIso:{}) cleared", moduleName, langIso);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<I18nLabel> importI18nLabels(Integer moduleId, List<String> labelResKeys) {
+        List<I18nLabel> i18nLabels = i18nLabelRepository.getI18nLabelsByModuleId(moduleId);
+        Map<String, I18nLabel> i18nLabelsDbMap = i18nLabels.stream().collect(Collectors.toMap(I18nLabel::getResourceKey, Function.identity()));
+        List<I18nLabel> i18nLabelsToInsert = labelResKeys.stream().filter(resourceKey -> !i18nLabelsDbMap.containsKey(resourceKey)).map(resourceKey -> {
+            I18nLabel i18nLabel = new I18nLabel();
+            i18nLabel.setResourceKey(resourceKey);
+            i18nLabel.setI18nModuleId(moduleId);
+            return i18nLabel;
+        }).toList();
+
+        return new ArrayList<>(i18nLabelRepository.saveAllAndFlush(i18nLabelsToInsert));
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public int deleteI18nLabelsWithNoTranslationsByModuleId(Integer moduleId) {
+        int iLabelsDeleted = 0;
+        if (i18nLabelRepository.getCountOfI18nLabelsWithNoTranslationsByModuleId(moduleId) > 0) {
+            iLabelsDeleted = i18nLabelRepository.deleteI18nLabelsWithNoTranslationsByModuleId(moduleId);
+        }
+        return iLabelsDeleted;
     }
 
     private Predicate<I18nTranslation> filterByLanguageAndResource(final Integer languageId, final Integer resourceId) {

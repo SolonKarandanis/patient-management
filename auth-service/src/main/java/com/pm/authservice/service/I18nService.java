@@ -2,6 +2,7 @@ package com.pm.authservice.service;
 
 import com.pm.authservice.dto.UpdateTranslationDTO;
 import com.pm.authservice.exception.BusinessException;
+import com.pm.authservice.model.I18nLabel;
 import com.pm.authservice.model.I18nModule;
 import com.pm.authservice.model.I18nTranslation;
 import com.pm.authservice.model.Language;
@@ -30,7 +31,8 @@ public interface I18nService {
 
     List<String> getLabelKeysHavingUserModifiedTranslationByModuleIdAndLangId(Integer moduleId, Integer langId);
 
-    int importI18nTranslations(Integer moduleId, Map<String, I18nTranslation> insertionsMap, List<I18nTranslation> updatesList, List<Integer> deletionsList);
+    int importI18nTranslations(Integer moduleId, List<I18nTranslation> insertionsList, List<I18nTranslation> updatesList, List<Integer> deletionsList,
+                               boolean isInsertLabels, boolean isDeleteOrphanLabels);
 
     boolean lockUpdateModuleById(Integer moduleId, String updateId, Date updStartTime);
 
@@ -41,4 +43,8 @@ public interface I18nService {
     void editLabels(List<UpdateTranslationDTO> updateRequest,List<I18nTranslation> translations);
 
     void clearCacheByModuleAndIso(String moduleName, String langIso);
+
+    List<I18nLabel> importI18nLabels(Integer moduleId, List<String> labelResKeys);
+
+    int deleteI18nLabelsWithNoTranslationsByModuleId(Integer moduleId);
 }

@@ -92,4 +92,7 @@ public class I18nTranslation {
 
     @Column(name = "is_user_modified")
     private Boolean isUserModified;
+
+    @Transient
+    private String i18nLabelResourceKey;
 }

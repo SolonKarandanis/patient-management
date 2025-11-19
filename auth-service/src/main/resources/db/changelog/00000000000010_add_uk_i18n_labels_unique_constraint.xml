@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="solon" id="00000000000010-uk_i18n_labels">
+        <addUniqueConstraint tableName="i18n_labels"
+                             columnNames="i18n_modules_id, resource_key"
+                             constraintName="uk_i18n_labels"
+                             deferrable="true"
+                             initiallyDeferred="true"
+                             validate="true"/>
+    </changeSet>
+</databaseChangeLog>

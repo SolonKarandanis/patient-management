@@ -113,7 +113,7 @@
             values (1, 'en', 'ENGLISH', 'English');
 
             insert into languages (id, iso_code, language_key, language_name)
-            values (2, 'el', 'GREEK', 'Greek');
+            values (2, 'gr', 'GREEK', 'Greek');
         </sql>
     </changeSet>
 

@@ -28,4 +28,10 @@ public class Language {
 
     @Column(name = "iso_code")
     private String isoCode;
+
+    @Column(name = "sort_key")
+    private Short sortKey;
+
+    @Column(name = "is_enabled")
+    private Boolean isEnabled;
 }

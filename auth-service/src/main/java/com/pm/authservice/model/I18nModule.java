@@ -59,5 +59,8 @@ public class I18nModule {
     @Column(name = "update_end_time")
     private Date updateEndTime;
 
-
+    @Transient
+    public boolean isActive() {
+        return Boolean.TRUE.equals(isActive);
+    }
 }

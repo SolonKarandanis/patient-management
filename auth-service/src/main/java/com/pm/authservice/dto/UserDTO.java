@@ -1,5 +1,7 @@
 package com.pm.authservice.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.pm.authservice.config.authorisation.RedactedEmailUserDTOSerializer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,11 +9,11 @@ import java.util.List;
 
 @Getter
 @Setter
+@JsonSerialize(using = RedactedEmailUserDTOSerializer.class)
 public class UserDTO {
 
     private String publicId;
     private String username;
-    private String password;
     private String lastName;
     private String firstName;
     private String email;

@@ -2,7 +2,7 @@ package com.pm.authservice.service;
 
 import com.pm.authservice.dto.JwtDTO;
 import com.pm.authservice.dto.RoleDTO;
-import com.pm.authservice.dto.UserDetailsDTO;
+import com.pm.authservice.user.dto.UserDetailsDTO;
 import com.pm.authservice.exception.AuthException;
 import com.pm.authservice.util.SecurityConstants;
 import io.jsonwebtoken.Claims;

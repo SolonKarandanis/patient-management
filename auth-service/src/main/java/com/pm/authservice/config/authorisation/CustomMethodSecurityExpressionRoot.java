@@ -1,9 +1,9 @@
 package com.pm.authservice.config.authorisation;
 
-import com.pm.authservice.dto.UserDetailsDTO;
-import com.pm.authservice.model.UserEntity;
+import com.pm.authservice.user.dto.UserDetailsDTO;
+import com.pm.authservice.user.model.UserEntity;
 import com.pm.authservice.service.SecurityService;
-import com.pm.authservice.service.UserService;
+import com.pm.authservice.user.service.UserService;
 import com.pm.authservice.util.UserUtil;
 import lombok.Setter;
 import org.slf4j.Logger;

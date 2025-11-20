@@ -1,6 +1,6 @@
 package com.pm.authservice.event;
 
-import com.pm.authservice.model.UserEntity;
+import com.pm.authservice.user.model.UserEntity;
 import com.pm.authservice.model.UserEventEntity;
 import notification.events.NotificationEvent;
 import org.slf4j.Logger;

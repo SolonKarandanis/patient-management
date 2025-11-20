@@ -1,7 +1,7 @@
 package com.pm.authservice.service;
 
 import com.pm.authservice.dto.JwtDTO;
-import com.pm.authservice.dto.UserDetailsDTO;
+import com.pm.authservice.user.dto.UserDetailsDTO;
 import com.pm.authservice.exception.AuthException;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.core.userdetails.UserDetails;

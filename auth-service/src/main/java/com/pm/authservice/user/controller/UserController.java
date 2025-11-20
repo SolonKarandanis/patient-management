@@ -1,11 +1,13 @@
-package com.pm.authservice.controller;
+package com.pm.authservice.user.controller;
 
 import com.pm.authservice.config.i18n.Translate;
-import com.pm.authservice.dto.*;
+import com.pm.authservice.user.dto.*;
+import com.pm.authservice.dto.ChangePasswordDTO;
+import com.pm.authservice.dto.SearchResults;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
-import com.pm.authservice.model.UserEntity;
-import com.pm.authservice.service.UserService;
+import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.user.service.UserService;
 import com.pm.authservice.util.AppConstants;
 import com.pm.authservice.util.HttpUtil;
 import com.pm.authservice.util.UserCsvExporter;

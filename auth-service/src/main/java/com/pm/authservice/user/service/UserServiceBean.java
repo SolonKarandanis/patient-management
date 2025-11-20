@@ -1,11 +1,21 @@
-package com.pm.authservice.service;
+package com.pm.authservice.user.service;
 
-import com.pm.authservice.dto.*;
+import com.pm.authservice.dto.ChangePasswordDTO;
+import com.pm.authservice.dto.Paging;
+import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.event.*;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
-import com.pm.authservice.model.*;
-import com.pm.authservice.repository.UserRepository;
+import com.pm.authservice.model.AccountStatus;
+import com.pm.authservice.model.RoleEntity;
+import com.pm.authservice.model.VerificationTokenEntity;
+import com.pm.authservice.service.GenericServiceBean;
+import com.pm.authservice.service.RoleService;
+import com.pm.authservice.service.VerificationTokenService;
+import com.pm.authservice.user.dto.*;
+import com.pm.authservice.user.model.QUserEntity;
+import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.user.repository.UserRepository;
 import com.pm.authservice.util.AuthorityConstants;
 import com.pm.authservice.util.UserUtil;
 import com.querydsl.core.BooleanBuilder;
@@ -17,6 +27,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -50,6 +61,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     }
 
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public UserDTO convertToDTO(UserEntity user, Boolean withRoles) {
         UserDTO dto = new UserDTO();
@@ -65,7 +77,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         return dto;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public UserEntity convertToEntity(UserDTO dto) {
         UserEntity user = new UserEntity();
@@ -155,7 +167,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         }
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public UserEntity registerUser(CreateUserDTO dto, String applicationUrl) throws BusinessException {
         validateUsernameExistence(dto.getUsername());
@@ -181,7 +193,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         return user;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public UserEntity updateUser(String publicId, UpdateUserDTO dto) throws NotFoundException {
         UserEntity user = findByPublicId(publicId);
@@ -198,7 +210,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         return userRepository.save(user);
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public UserEntity activateUser(UserEntity user) throws BusinessException {
         user.activate();
@@ -207,7 +219,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         return user;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public UserEntity deactivateUser(UserEntity user) throws BusinessException {
         user.deactivate();
@@ -216,7 +228,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         return user;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void deleteUser(String publicId) throws NotFoundException {
         Optional<UserEntity> usrOpt  =userRepository.findByPublicId(UUID.fromString(publicId));
@@ -254,7 +266,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         }
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public UserEntity changePassword(UserEntity user, ChangePasswordDTO dto)throws BusinessException {
         validatePasswordChange(dto.getPassword(), dto.getConfirmPassword(), true);

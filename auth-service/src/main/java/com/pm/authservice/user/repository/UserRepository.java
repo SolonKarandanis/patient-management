@@ -1,6 +1,6 @@
-package com.pm.authservice.repository;
+package com.pm.authservice.user.repository;
 
-import com.pm.authservice.model.UserEntity;
+import com.pm.authservice.user.model.UserEntity;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;

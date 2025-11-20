@@ -2,7 +2,7 @@ package com.pm.authservice.service;
 
 
 import com.pm.authservice.exception.BusinessException;
-import com.pm.authservice.model.UserEntity;
+import com.pm.authservice.user.model.UserEntity;
 import com.pm.authservice.model.VerificationTokenEntity;
 import com.pm.authservice.repository.VerificationTokenRepository;
 import org.springframework.stereotype.Service;

@@ -1,11 +1,13 @@
-package com.pm.authservice.service;
+package com.pm.authservice.user.service;
 
 import com.pm.authservice.dto.RoleDTO;
-import com.pm.authservice.dto.UserDTO;
-import com.pm.authservice.dto.UserDetailsDTO;
 import com.pm.authservice.exception.NotFoundException;
-import com.pm.authservice.model.UserEntity;
-import com.pm.authservice.repository.UserRepository;
+import com.pm.authservice.service.RoleService;
+import com.pm.authservice.service.VerificationTokenService;
+import com.pm.authservice.user.dto.UserDTO;
+import com.pm.authservice.user.dto.UserDetailsDTO;
+import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -199,7 +199,7 @@ public class I18nServiceBean implements I18nService{
         selfService.editLabels(updateRequest,translations);
         Map<String, List<String>> modulesLanguagesMap = translations.stream()
                 .collect(Collectors.groupingBy(tran->tran.getI18nLabel().getI18nModule().getModuleName(),
-                        Collectors.mapping(tran->getLanguages().getFirst().getIsoCode(), Collectors.toList())));
+                        Collectors.mapping(tran->tran.getLanguage().getIsoCode(), Collectors.toList())));
 
         modulesLanguagesMap.forEach((key, value) -> value.stream()
                 .distinct()

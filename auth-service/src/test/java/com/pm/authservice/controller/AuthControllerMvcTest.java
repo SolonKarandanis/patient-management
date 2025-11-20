@@ -1,6 +1,6 @@
 package com.pm.authservice.controller;
 
-import com.pm.authservice.dto.UserDetailsDTO;
+import com.pm.authservice.user.dto.UserDetailsDTO;
 import com.pm.authservice.service.AuthService;
 import com.pm.authservice.service.JwtService;
 import org.junit.jupiter.api.BeforeEach;

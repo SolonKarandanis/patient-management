@@ -2,7 +2,7 @@ package com.pm.authservice.util;
 
 import com.pm.authservice.model.RoleEntity;
 import com.pm.authservice.model.RoleOperationEntity;
-import com.pm.authservice.model.UserEntity;
+import com.pm.authservice.user.model.UserEntity;
 import org.springframework.util.StringUtils;
 
 import java.util.*;

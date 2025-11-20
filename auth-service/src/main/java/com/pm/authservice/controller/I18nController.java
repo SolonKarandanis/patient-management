@@ -1,7 +1,10 @@
 package com.pm.authservice.controller;
 
-import com.pm.authservice.dto.UpdateTranslationDTO;
+import com.pm.authservice.dto.*;
 import com.pm.authservice.exception.BusinessException;
+import com.pm.authservice.model.I18nModule;
+import com.pm.authservice.service.SearchService;
+import com.pm.authservice.service.i18n.I18nResourceManagementService;
 import com.pm.authservice.service.i18n.I18nService;
 import com.pm.authservice.util.AuthorityConstants;
 import jakarta.annotation.security.RolesAllowed;
@@ -10,15 +13,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/i18n")
@@ -32,9 +39,16 @@ public class I18nController {
     private Boolean i18nDbEnabled;
 
     private final I18nService i18nService;
+    private final I18nResourceManagementService i18nResourceManagementService;
+    private final SearchService  searchService;
 
-    public I18nController(@Lazy I18nService i18nService) {
+    public I18nController(
+            @Lazy I18nService i18nService,
+            I18nResourceManagementService i18nResourceManagementService,
+            SearchService searchService) {
         this.i18nService = i18nService;
+        this.i18nResourceManagementService = i18nResourceManagementService;
+        this.searchService = searchService;
     }
 
     /**
@@ -70,6 +84,44 @@ public class I18nController {
     public ResponseEntity<Void> editLabels(@RequestBody @Valid List<UpdateTranslationDTO> updateRequest){
         i18nService.editLabelsAndSendNotification(updateRequest);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/languages", produces = { MediaType.APPLICATION_JSON_VALUE })
+    @ResponseBody
+    public ResponseEntity<List<Map<String, Object>>> getLanguages() {
+        List<Map<String, Object>> list = i18nService.getLanguages()
+                .stream()
+                .map(lang -> {
+                    Map<String, Object> map = new HashMap<String, Object>();
+                    map.put("id", lang.getId());
+                    map.put("label", lang.getLanguageName());
+                    map.put("isoCode", lang.getIsoCode());
+                    return map;
+                }).toList();
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping(value = "/modules", produces = { MediaType.APPLICATION_JSON_VALUE })
+    @ResponseBody
+    public ResponseEntity<Map<Integer, String>> getModules() {
+        Map<Integer, String> outputMap = i18nService.getActiveModules()
+                .stream()
+                .collect(Collectors.toMap(
+                        I18nModule::getId,
+                        I18nModule::getModuleName
+                ));
+        return ResponseEntity.ok(outputMap);
+    }
+
+    @PreAuthorize("isAuthenticated() && hasPermission('MANAGE_RESOURCE_BUNDLES')")
+    @PostMapping(value = "/search", produces = { MediaType.APPLICATION_JSON_VALUE })
+    @ResponseBody
+    public ResponseEntity<SearchResults<I18nResourceManagementResponseDTO>> searchResources(
+            @RequestBody I18nResourceManagementRequestDTO searchRequest) {
+        Paging paging = searchRequest.getPaging();
+        PageRequest pageRequest = searchService.toPageRequest(paging);
+        SearchResults<I18nResourceManagementResponseDTO> searchResults = i18nResourceManagementService.searchI18nResources(searchRequest, pageRequest);
+        return ResponseEntity.ok(searchResults);
     }
 
     /**

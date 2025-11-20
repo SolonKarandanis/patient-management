@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -50,6 +51,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     }
 
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public UserDTO convertToDTO(UserEntity user, Boolean withRoles) {
         UserDTO dto = new UserDTO();
@@ -65,7 +67,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         return dto;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.SUPPORTS)
     @Override
     public UserEntity convertToEntity(UserDTO dto) {
         UserEntity user = new UserEntity();
@@ -155,7 +157,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         }
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public UserEntity registerUser(CreateUserDTO dto, String applicationUrl) throws BusinessException {
         validateUsernameExistence(dto.getUsername());
@@ -181,7 +183,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         return user;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public UserEntity updateUser(String publicId, UpdateUserDTO dto) throws NotFoundException {
         UserEntity user = findByPublicId(publicId);
@@ -198,7 +200,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         return userRepository.save(user);
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public UserEntity activateUser(UserEntity user) throws BusinessException {
         user.activate();
@@ -207,7 +209,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         return user;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public UserEntity deactivateUser(UserEntity user) throws BusinessException {
         user.deactivate();
@@ -216,7 +218,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         return user;
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void deleteUser(String publicId) throws NotFoundException {
         Optional<UserEntity> usrOpt  =userRepository.findByPublicId(UUID.fromString(publicId));
@@ -254,7 +256,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         }
     }
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public UserEntity changePassword(UserEntity user, ChangePasswordDTO dto)throws BusinessException {
         validatePasswordChange(dto.getPassword(), dto.getConfirmPassword(), true);

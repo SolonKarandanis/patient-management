@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="00000000000012" author="solon">
+        <sql endDelimiter=";">
+            insert into operations (id, name) values (nextval('operations_seq'), 'MANAGE_RESOURCE_BUNDLES');
+            insert into role_operations (role_id, operation_id) values (1, (select o.id from operations o where o.name = 'MANAGE_RESOURCE_BUNDLES'));
+        </sql>
+    </changeSet>
+</databaseChangeLog>

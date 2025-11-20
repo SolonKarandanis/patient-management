@@ -4,9 +4,10 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Getter
 public class GenericServiceBean {
@@ -33,4 +34,31 @@ public class GenericServiceBean {
     protected Locale getDefaultLocale() {
         return Locale.ENGLISH;
     }
+
+
+
+    protected PageRequest transformPageSorting(PageRequest pageRequest, Map<String, String> sortingFieldsMap,
+                                               Set<String> allowedSortingFields) {
+        if (pageRequest == null) {
+            return null;
+        }
+        Set<String> sortingFieldsMapKeys = sortingFieldsMap.keySet();
+        List<Sort.Order> mappedOrders = pageRequest.getSort().get().map(order -> {
+            String propName = order.getProperty();
+            if (sortingFieldsMapKeys.contains(propName)) {
+                return order.withProperty(sortingFieldsMap.get(propName));
+            } else if (!allowedSortingFields.contains(propName)) {
+                return order.withProperty(getDefaultSortingProperty());
+            }
+            return order;
+        }).toList();
+
+        return pageRequest.withSort(Sort.by(mappedOrders));
+    }
+
+    protected String getDefaultSortingProperty() {
+        return "id";
+    }
+
+
 }

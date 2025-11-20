@@ -1,4 +1,4 @@
-package com.pm.authservice.service;
+package com.pm.authservice.service.i18n;
 
 import com.pm.authservice.dto.I18nTranslationImportDTO;
 import com.pm.authservice.model.I18nModule;

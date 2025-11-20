@@ -2,7 +2,7 @@ package com.pm.authservice.controller;
 
 import com.pm.authservice.dto.UpdateTranslationDTO;
 import com.pm.authservice.exception.BusinessException;
-import com.pm.authservice.service.I18nService;
+import com.pm.authservice.service.i18n.I18nService;
 import com.pm.authservice.util.AuthorityConstants;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;

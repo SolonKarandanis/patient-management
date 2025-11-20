@@ -93,8 +93,7 @@ public class UserController {
             @PathVariable(name = "id", required=true) String publicId,
             @RequestBody @Valid UpdateUserDTO user)throws NotFoundException{
         log.info("UserController->updateUser");
-        UserEntity userToBeUpdated = usersService.findByPublicId(publicId);
-        userToBeUpdated=usersService.updateUser(publicId,user);
+        UserEntity userToBeUpdated=usersService.updateUser(publicId,user);
         return ResponseEntity.ok(usersService.convertToDTO(userToBeUpdated,true));
     }
 

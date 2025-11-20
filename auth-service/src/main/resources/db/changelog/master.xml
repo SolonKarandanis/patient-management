@@ -16,4 +16,5 @@
     <include file="/db/changelog/00000000000009_translations_add_fields_to_i18n_modules.xml" relativeToChangelogFile="false" />
     <include file="/db/changelog/00000000000010_add_uk_i18n_labels_unique_constraint.xml" relativeToChangelogFile="false" />
     <include file="/db/changelog/00000000000011_add_sort_key_and_is_enabled_fields_to_languages.xml" relativeToChangelogFile="false" />
+    <include file="/db/changelog/00000000000012_add_manage_resource_bundles_operation.xml" relativeToChangelogFile="false" />
 </databaseChangeLog>

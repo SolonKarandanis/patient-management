@@ -1,4 +1,4 @@
-package com.pm.authservice.service;
+package com.pm.authservice.service.i18n;
 
 
 import lombok.extern.slf4j.Slf4j;

@@ -1,11 +1,11 @@
 package com.pm.authservice.controller;
 
 import com.pm.authservice.config.i18n.Translate;
-import com.pm.authservice.dto.CreateUserDTO;
-import com.pm.authservice.dto.UserDTO;
+import com.pm.authservice.user.dto.CreateUserDTO;
+import com.pm.authservice.user.dto.UserDTO;
 import com.pm.authservice.exception.BusinessException;
-import com.pm.authservice.model.UserEntity;
-import com.pm.authservice.service.UserService;
+import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;

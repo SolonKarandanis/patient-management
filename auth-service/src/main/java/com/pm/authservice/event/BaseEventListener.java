@@ -3,7 +3,7 @@ package com.pm.authservice.event;
 
 import com.pm.authservice.broker.KafkaAnalyticsProducer;
 import com.pm.authservice.broker.KafkaNotificationsProducer;
-import com.pm.authservice.model.UserEntity;
+import com.pm.authservice.user.model.UserEntity;
 import com.pm.authservice.model.UserEventEntity;
 import com.pm.authservice.model.UserStatus;
 import com.pm.authservice.service.UserEventService;

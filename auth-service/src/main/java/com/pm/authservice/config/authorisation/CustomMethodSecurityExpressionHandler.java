@@ -1,7 +1,7 @@
 package com.pm.authservice.config.authorisation;
 
 import com.pm.authservice.service.RoleService;
-import com.pm.authservice.service.UserService;
+import com.pm.authservice.user.service.UserService;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.context.expression.MethodBasedEvaluationContext;
 import org.springframework.expression.EvaluationContext;

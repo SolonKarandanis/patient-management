@@ -1,9 +1,13 @@
 package com.pm.authservice.controller;
 
-import com.pm.authservice.dto.*;
+import com.pm.authservice.dto.ChangePasswordDTO;
+import com.pm.authservice.dto.SearchResults;
 import com.pm.authservice.exception.BusinessException;
-import com.pm.authservice.model.UserEntity;
-import com.pm.authservice.service.UserService;
+import com.pm.authservice.exception.NotFoundException;
+import com.pm.authservice.user.controller.UserController;
+import com.pm.authservice.user.dto.*;
+import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -145,7 +149,6 @@ public class UserControllerTest {
     @Test
     void testUpdateUser(){
         UpdateUserDTO dto = new UpdateUserDTO();
-        when(userService.findByPublicId(TestConstants.TEST_USER_PUBLIC_ID)).thenReturn(user);
         when(userService.updateUser(TestConstants.TEST_USER_PUBLIC_ID,dto)).thenReturn(user);
         when(userService.convertToDTO(user,true)).thenReturn(userDto);
 
@@ -155,7 +158,6 @@ public class UserControllerTest {
         assertEquals(resp.getBody(), userDto);
         assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.OK));
 
-        verify(userService, times(1)).findByPublicId(TestConstants.TEST_USER_PUBLIC_ID);
         verify(userService, times(1)).updateUser(TestConstants.TEST_USER_PUBLIC_ID,dto);
         verify(userService, times(1)).convertToDTO(user,true);
     }

@@ -1,9 +1,10 @@
-package com.pm.authservice.service;
+package com.pm.authservice.user.service;
 
-import com.pm.authservice.dto.*;
+import com.pm.authservice.dto.ChangePasswordDTO;
+import com.pm.authservice.user.dto.*;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
-import com.pm.authservice.model.UserEntity;
+import com.pm.authservice.user.model.UserEntity;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

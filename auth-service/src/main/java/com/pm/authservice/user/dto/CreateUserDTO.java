@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.pm.authservice.dto;
+package com.pm.authservice.user.dto;
 
 import com.pm.authservice.validation.Authority;
 import jakarta.validation.constraints.Email;

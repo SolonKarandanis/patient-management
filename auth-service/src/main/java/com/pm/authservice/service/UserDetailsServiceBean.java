@@ -1,9 +1,9 @@
 package com.pm.authservice.service;
 
 import com.pm.authservice.dto.RoleDTO;
-import com.pm.authservice.dto.UserDetailsDTO;
-import com.pm.authservice.model.UserEntity;
-import com.pm.authservice.repository.UserRepository;
+import com.pm.authservice.user.dto.UserDetailsDTO;
+import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;

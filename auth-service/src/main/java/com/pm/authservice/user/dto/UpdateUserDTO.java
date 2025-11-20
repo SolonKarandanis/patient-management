@@ -1,4 +1,4 @@
-package com.pm.authservice.dto;
+package com.pm.authservice.user.dto;
 
 import com.pm.authservice.validation.Authority;
 import jakarta.validation.constraints.NotNull;

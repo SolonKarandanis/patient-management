@@ -49,7 +49,6 @@ public class TestUtil {
         userDto.setFirstName("Robert");
         userDto.setLastName("Smith");
         userDto.setUsername("admin1");
-        userDto.setPassword("123");
         userDto.setStatus(AccountStatus.fromValue(AccountStatus.ACTIVE));
         userDto.setEmail(TestConstants.TEST_USER_EMAIL);
         userDto.setPublicId(TestConstants.TEST_USER_PUBLIC_ID);

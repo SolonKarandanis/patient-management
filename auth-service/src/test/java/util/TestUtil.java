@@ -58,15 +58,12 @@ public class TestUtil {
     }
 
     public static UserDetailsDTO  createTestUserDetailsDTO(final Integer userId){
-        UserDetailsDTO userDetailsDTO = new UserDetailsDTO();
+        UserDetailsDTO userDetailsDTO = new UserDetailsDTO(
+                TestConstants.TEST_USER_PUBLIC_ID,"admin1","123",TestConstants.TEST_USER_EMAIL);
         userDetailsDTO.setId(userId);
         userDetailsDTO.setFirstName("Robert");
         userDetailsDTO.setLastName("Smith");
-        userDetailsDTO.setUsername("admin1");
-        userDetailsDTO.setPassword("123");
         userDetailsDTO.setStatus(AccountStatus.ACTIVE);
-        userDetailsDTO.setEmail(TestConstants.TEST_USER_EMAIL);
-        userDetailsDTO.setPublicId(TestConstants.TEST_USER_PUBLIC_ID);
         return userDetailsDTO;
     }
 

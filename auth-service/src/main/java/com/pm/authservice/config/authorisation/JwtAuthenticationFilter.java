@@ -83,13 +83,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
              Claims claims = null;
              try {
                  claims = jwtService.extractAllClaims(token);
-				 UserDetailsDTO user = new UserDetailsDTO();
-				 user.setUsername(claims.get("sub", String.class));
-				 user.setPassword(claims.get("password", String.class));
+                 String publicId = claims.get("publicId", String.class);
+                 String username = claims.get("sub", String.class);
+                 String password = claims.get("password", String.class);
+                 String email = claims.get("email", String.class);
+                 UserDetailsDTO user = new UserDetailsDTO(publicId,username, password,email);
 				 user.setFirstName(claims.get("firstName", String.class));
 				 user.setLastName(claims.get("lastName", String.class));
-				 user.setEmail(claims.get("email", String.class));
-				 user.setPublicId(claims.get("publicId", String.class));
 				 user.setStatus(AccountStatus.fromValue(claims.get("status", String.class)));
 				 if (user.getUsername() != null && jwtService.isTokenValid(jwt, user)) {
 					 List<RoleDTO> roleClaims = mapper.convertValue(claims.get("roles", List.class), new TypeReference<List<RoleDTO>>() { });

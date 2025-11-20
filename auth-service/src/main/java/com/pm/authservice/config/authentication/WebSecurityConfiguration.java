@@ -34,7 +34,6 @@ public class WebSecurityConfiguration extends BaseSecurityConfig{
 		httpSecurity
 		.csrf(AbstractHttpConfigurer::disable)
         .cors(c->c.configurationSource(corsConfigurationSource()))
-
         .authorizeHttpRequests(auth-> auth
                 .requestMatchers(SecurityConstants.AUTH_WHITELIST).permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()

@@ -1,6 +1,8 @@
 package com.pm.authservice.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.pm.authservice.config.authorisation.Email;
+import com.pm.authservice.config.authorisation.UserEmail;
 import com.pm.authservice.dto.serializer.CustomRoleDeserializer;
 import com.pm.authservice.model.AccountStatus;
 import lombok.Getter;
@@ -16,7 +18,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class UserDetailsDTO implements UserDetails, Serializable {
+public class UserDetailsDTO implements UserEmail, UserDetails, Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer id;
@@ -25,10 +27,17 @@ public class UserDetailsDTO implements UserDetails, Serializable {
     private String password;
     private String lastName;
     private String firstName;
-    private String email;
+    private Email email;
     private AccountStatus status;
     private Boolean isEnabled;
     private List<RoleDTO> roleEntities= new ArrayList<>();
+
+    public UserDetailsDTO(String publicId,String username,String password,String email) {
+        this.publicId = publicId;
+        this.username = username;
+        this.password = password;
+        this.email = new Email(email);
+    }
 
 
     @JsonDeserialize(using = CustomRoleDeserializer.class)
@@ -67,5 +76,10 @@ public class UserDetailsDTO implements UserDetails, Serializable {
     @Override
     public boolean isEnabled() {
         return this.isEnabled;
+    }
+
+    @Override
+    public Email getUserEmail() {
+        return this.email;
     }
 }

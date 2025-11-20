@@ -86,8 +86,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
                  String publicId = claims.get("publicId", String.class);
                  String username = claims.get("sub", String.class);
                  String password = claims.get("password", String.class);
-                 String email = claims.get("email", String.class);
-                 UserDetailsDTO user = new UserDetailsDTO(publicId,username, password,email);
+                 Email email = mapper.convertValue(claims.get("email"), Email.class);
+                 UserDetailsDTO user = new UserDetailsDTO(publicId,username, password,email.toString());
 				 user.setFirstName(claims.get("firstName", String.class));
 				 user.setLastName(claims.get("lastName", String.class));
 				 user.setStatus(AccountStatus.fromValue(claims.get("status", String.class)));

@@ -1,4 +1,4 @@
-package com.pm.authservice.controller;
+package com.pm.authservice.user.controller;
 
 import com.pm.authservice.config.i18n.Translate;
 import com.pm.authservice.user.dto.CreateUserDTO;

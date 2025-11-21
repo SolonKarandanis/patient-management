@@ -1,5 +1,6 @@
 package com.pm.authservice.controller;
 
+import com.pm.authservice.user.controller.UserRegistrationController;
 import com.pm.authservice.user.dto.CreateUserDTO;
 import com.pm.authservice.user.dto.UserDTO;
 import com.pm.authservice.exception.BusinessException;

@@ -275,7 +275,11 @@ export class UtilService{
 
   handleNotification(event: NotificationEvent): void {
     if (event.eventType === NotificationEventTypeEnum.I18N_RESOURCES_EDITED) {
-      this.translate.reloadLang(this.translate.currentLang);
+      this.translate.reloadLang(this.translate.currentLang).subscribe(() => {
+        this.translate.getTranslation(this.translate.currentLang).subscribe((translations) => {
+          this.translate.setTranslation(this.translate.currentLang, translations, true);
+        });
+      });
     }
     if (event.eventType === NotificationEventTypeEnum.USER_UPDATED_NOTIFICATION){
       this.showMessage("warn",event.message,event.title)

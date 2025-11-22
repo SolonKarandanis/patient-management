@@ -1,6 +1,6 @@
 package com.pm.authservice.config.i18n;
 
-import com.pm.authservice.service.i18n.I18nService;
+import com.pm.authservice.i18n.service.I18nService;
 import com.pm.authservice.util.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

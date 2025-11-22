@@ -1,4 +1,4 @@
-package com.pm.authservice.event;
+package com.pm.authservice.i18n.event;
 
 import lombok.Getter;
 import lombok.Setter;

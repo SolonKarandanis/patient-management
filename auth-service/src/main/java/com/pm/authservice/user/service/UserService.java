@@ -1,6 +1,6 @@
 package com.pm.authservice.user.service;
 
-import com.pm.authservice.dto.ChangePasswordDTO;
+import com.pm.authservice.user.dto.ChangePasswordDTO;
 import com.pm.authservice.user.dto.*;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;

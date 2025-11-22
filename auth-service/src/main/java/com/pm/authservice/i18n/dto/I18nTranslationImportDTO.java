@@ -1,6 +1,6 @@
-package com.pm.authservice.dto;
+package com.pm.authservice.i18n.dto;
 
-import com.pm.authservice.model.I18nTranslation;
+import com.pm.authservice.i18n.model.I18nTranslation;
 import lombok.Getter;
 import lombok.Setter;
 

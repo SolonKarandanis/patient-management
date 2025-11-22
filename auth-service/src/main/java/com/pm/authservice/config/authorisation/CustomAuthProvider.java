@@ -2,7 +2,7 @@ package com.pm.authservice.config.authorisation;
 
 
 import com.pm.authservice.user.dto.UserDetailsDTO;
-import com.pm.authservice.model.AccountStatus;
+import com.pm.authservice.user.model.AccountStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.pm.authservice.model.converter;
+package com.pm.authservice.user.model.converter;
 
 
-import com.pm.authservice.model.AccountStatus;
+import com.pm.authservice.user.model.AccountStatus;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 

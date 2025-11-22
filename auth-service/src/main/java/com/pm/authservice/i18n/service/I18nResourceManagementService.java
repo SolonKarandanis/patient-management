@@ -1,7 +1,7 @@
-package com.pm.authservice.service.i18n;
+package com.pm.authservice.i18n.service;
 
-import com.pm.authservice.dto.I18nResourceManagementRequestDTO;
-import com.pm.authservice.dto.I18nResourceManagementResponseDTO;
+import com.pm.authservice.i18n.dto.I18nResourceManagementRequestDTO;
+import com.pm.authservice.i18n.dto.I18nResourceManagementResponseDTO;
 import com.pm.authservice.dto.SearchResults;
 import org.springframework.data.domain.PageRequest;
 

@@ -1,16 +1,16 @@
-package com.pm.authservice.service.i18n;
+package com.pm.authservice.i18n.service;
 
-import com.pm.authservice.dto.UpdateTranslationDTO;
-import com.pm.authservice.event.TranslationsUpdatedEvent;
+import com.pm.authservice.i18n.dto.UpdateTranslationDTO;
+import com.pm.authservice.i18n.event.TranslationsUpdatedEvent;
 import com.pm.authservice.exception.BusinessException;
-import com.pm.authservice.model.I18nLabel;
-import com.pm.authservice.model.I18nModule;
-import com.pm.authservice.model.I18nTranslation;
-import com.pm.authservice.model.Language;
-import com.pm.authservice.repository.I18nLabelRepository;
-import com.pm.authservice.repository.I18nModuleRepository;
-import com.pm.authservice.repository.I18nTranslationRepository;
-import com.pm.authservice.repository.LanguageRepository;
+import com.pm.authservice.i18n.model.I18nLabel;
+import com.pm.authservice.i18n.model.I18nModule;
+import com.pm.authservice.i18n.model.I18nTranslation;
+import com.pm.authservice.i18n.model.Language;
+import com.pm.authservice.i18n.repository.I18nLabelRepository;
+import com.pm.authservice.i18n.repository.I18nModuleRepository;
+import com.pm.authservice.i18n.repository.I18nTranslationRepository;
+import com.pm.authservice.i18n.repository.LanguageRepository;
 import com.pm.authservice.util.AppResourceUtil;
 import com.pm.authservice.util.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;

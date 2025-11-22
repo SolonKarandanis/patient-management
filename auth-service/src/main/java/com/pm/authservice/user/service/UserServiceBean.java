@@ -1,11 +1,11 @@
 package com.pm.authservice.user.service;
 
-import com.pm.authservice.dto.ChangePasswordDTO;
+import com.pm.authservice.user.dto.ChangePasswordDTO;
 import com.pm.authservice.dto.Paging;
 import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
-import com.pm.authservice.model.AccountStatus;
+import com.pm.authservice.user.model.AccountStatus;
 import com.pm.authservice.model.RoleEntity;
 import com.pm.authservice.model.VerificationTokenEntity;
 import com.pm.authservice.service.GenericServiceBean;

@@ -1,4 +1,4 @@
-package com.pm.authservice.dto;
+package com.pm.authservice.i18n.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

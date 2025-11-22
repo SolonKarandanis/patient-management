@@ -1,5 +1,7 @@
-package com.pm.authservice.event;
+package com.pm.authservice.i18n.event;
 
+import com.pm.authservice.event.BaseEventListener;
+import com.pm.authservice.event.EventConstants;
 import notification.events.NotificationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

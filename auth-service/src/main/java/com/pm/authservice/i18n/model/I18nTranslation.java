@@ -1,4 +1,4 @@
-package com.pm.authservice.model;
+package com.pm.authservice.i18n.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;

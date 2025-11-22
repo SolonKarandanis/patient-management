@@ -2,7 +2,7 @@ package com.pm.authservice.user.controller;
 
 import com.pm.authservice.config.i18n.Translate;
 import com.pm.authservice.user.dto.*;
-import com.pm.authservice.dto.ChangePasswordDTO;
+import com.pm.authservice.user.dto.ChangePasswordDTO;
 import com.pm.authservice.dto.SearchResults;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;

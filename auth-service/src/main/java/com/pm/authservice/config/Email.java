@@ -1,4 +1,4 @@
-package com.pm.authservice.config.authorisation;
+package com.pm.authservice.config;
 
 public record Email(String address, String domain) {
     public Email(String email) {

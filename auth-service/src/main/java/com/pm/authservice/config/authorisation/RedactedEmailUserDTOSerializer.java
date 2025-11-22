@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.pm.authservice.user.dto.UserDTO;
-import com.pm.authservice.user.dto.UserDetailsDTO;
+import com.pm.authservice.auth.UserDetailsDTO;
 import com.pm.authservice.util.AuthorityConstants;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

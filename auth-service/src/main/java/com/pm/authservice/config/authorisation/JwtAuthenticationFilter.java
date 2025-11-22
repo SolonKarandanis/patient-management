@@ -3,8 +3,9 @@ package com.pm.authservice.config.authorisation;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pm.authservice.config.Email;
 import com.pm.authservice.user.dto.RoleDTO;
-import com.pm.authservice.user.dto.UserDetailsDTO;
+import com.pm.authservice.auth.UserDetailsDTO;
 import com.pm.authservice.exception.AuthException;
 import com.pm.authservice.user.model.AccountStatus;
 import com.pm.authservice.auth.service.JwtService;

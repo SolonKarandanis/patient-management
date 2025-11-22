@@ -1,5 +1,6 @@
 package util;
 
+import com.pm.authservice.auth.UserDetailsDTO;
 import com.pm.authservice.dto.Paging;
 import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.user.model.AccountStatus;
@@ -58,7 +59,7 @@ public class TestUtil {
         return userDto;
     }
 
-    public static UserDetailsDTO  createTestUserDetailsDTO(final Integer userId){
+    public static UserDetailsDTO createTestUserDetailsDTO(final Integer userId){
         UserDetailsDTO userDetailsDTO = new UserDetailsDTO(
                 TestConstants.TEST_USER_PUBLIC_ID,"admin1","123",TestConstants.TEST_USER_EMAIL);
         userDetailsDTO.setId(userId);

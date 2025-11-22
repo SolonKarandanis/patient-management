@@ -1,6 +1,6 @@
 package com.pm.authservice.validation;
 
-import com.pm.authservice.repository.RoleRepository;
+import com.pm.authservice.user.repository.RoleRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.stereotype.Component;

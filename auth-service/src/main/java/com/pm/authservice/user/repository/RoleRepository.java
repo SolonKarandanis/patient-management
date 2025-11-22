@@ -1,7 +1,7 @@
-package com.pm.authservice.repository;
+package com.pm.authservice.user.repository;
 
 
-import com.pm.authservice.model.RoleEntity;
+import com.pm.authservice.user.model.RoleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

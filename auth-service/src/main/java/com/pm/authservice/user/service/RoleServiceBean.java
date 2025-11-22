@@ -1,8 +1,9 @@
-package com.pm.authservice.service;
+package com.pm.authservice.user.service;
 
 import com.pm.authservice.dto.RoleDTO;
-import com.pm.authservice.model.RoleEntity;
-import com.pm.authservice.repository.RoleRepository;
+import com.pm.authservice.service.GenericServiceBean;
+import com.pm.authservice.user.model.RoleEntity;
+import com.pm.authservice.user.repository.RoleRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

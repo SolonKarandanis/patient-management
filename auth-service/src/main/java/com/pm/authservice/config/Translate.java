@@ -1,4 +1,4 @@
-package com.pm.authservice.config.i18n;
+package com.pm.authservice.config;
 
 import java.lang.annotation.*;
 

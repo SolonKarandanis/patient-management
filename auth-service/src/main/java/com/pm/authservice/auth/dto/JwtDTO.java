@@ -1,4 +1,4 @@
-package com.pm.authservice.dto;
+package com.pm.authservice.auth.dto;
 
 import java.util.Date;
 

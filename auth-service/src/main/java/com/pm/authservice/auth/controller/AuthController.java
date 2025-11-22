@@ -1,11 +1,11 @@
-package com.pm.authservice.controller;
+package com.pm.authservice.auth.controller;
 
-import com.pm.authservice.dto.JwtDTO;
-import com.pm.authservice.dto.LoginRequestDTO;
+import com.pm.authservice.auth.dto.JwtDTO;
+import com.pm.authservice.auth.dto.LoginRequestDTO;
 import com.pm.authservice.user.dto.UserDetailsDTO;
 import com.pm.authservice.exception.AuthException;
-import com.pm.authservice.service.AuthService;
-import com.pm.authservice.service.JwtService;
+import com.pm.authservice.auth.service.AuthService;
+import com.pm.authservice.auth.service.JwtService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;

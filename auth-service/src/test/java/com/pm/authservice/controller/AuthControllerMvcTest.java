@@ -1,8 +1,9 @@
 package com.pm.authservice.controller;
 
+import com.pm.authservice.auth.controller.AuthController;
 import com.pm.authservice.user.dto.UserDetailsDTO;
-import com.pm.authservice.service.AuthService;
-import com.pm.authservice.service.JwtService;
+import com.pm.authservice.auth.service.AuthService;
+import com.pm.authservice.auth.service.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

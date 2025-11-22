@@ -1,4 +1,4 @@
-package com.pm.authservice.config;
+package com.pm.authservice.config.application;
 
 import com.pm.authservice.config.i18n.ChangeableLocaleResolver;
 import com.pm.authservice.config.i18n.I18nDbReloadableResourceBundleMessageSource;

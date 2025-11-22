@@ -1,4 +1,4 @@
-package com.pm.authservice.config;
+package com.pm.authservice.config.application;
 
 import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;

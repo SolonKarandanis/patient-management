@@ -1,6 +1,7 @@
 package com.pm.authservice.config.i18n;
 
 
+import com.pm.authservice.config.Translate;
 import com.pm.authservice.util.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

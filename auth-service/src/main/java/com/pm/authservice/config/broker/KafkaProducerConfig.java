@@ -1,4 +1,4 @@
-package com.pm.authservice.config;
+package com.pm.authservice.config.broker;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;

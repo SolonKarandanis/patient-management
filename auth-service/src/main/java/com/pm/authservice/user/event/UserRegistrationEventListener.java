@@ -1,10 +1,9 @@
-package com.pm.authservice.event;
+package com.pm.authservice.user.event;
 
-import com.pm.authservice.broker.KafkaAnalyticsProducer;
+import com.pm.authservice.event.BaseEventListener;
+import com.pm.authservice.event.EventConstants;
 import com.pm.authservice.user.model.UserEntity;
-import com.pm.authservice.model.UserEventEntity;
-import com.pm.authservice.model.UserStatus;
-import com.pm.authservice.service.UserEventService;
+import com.pm.authservice.user.model.UserEventEntity;
 import com.pm.authservice.service.VerificationTokenService;
 import notification.events.NotificationEvent;
 import org.slf4j.Logger;

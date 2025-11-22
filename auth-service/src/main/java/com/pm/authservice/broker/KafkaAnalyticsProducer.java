@@ -1,6 +1,6 @@
 package com.pm.authservice.broker;
 
-import com.pm.authservice.model.UserEventEntity;
+import com.pm.authservice.user.model.UserEventEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

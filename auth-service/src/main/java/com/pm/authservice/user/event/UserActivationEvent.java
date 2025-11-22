@@ -1,4 +1,4 @@
-package com.pm.authservice.event;
+package com.pm.authservice.user.event;
 
 import com.pm.authservice.user.model.UserEntity;
 import lombok.Getter;
@@ -7,10 +7,10 @@ import org.springframework.context.ApplicationEvent;
 
 @Getter
 @Setter
-public class UserUpdateEvent extends ApplicationEvent {
+public class UserActivationEvent extends ApplicationEvent {
     private UserEntity user;
 
-    public UserUpdateEvent(UserEntity user) {
+    public UserActivationEvent(UserEntity user) {
         super(user);
         this.user = user;
     }

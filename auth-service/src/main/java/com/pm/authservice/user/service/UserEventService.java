@@ -1,7 +1,7 @@
-package com.pm.authservice.service;
+package com.pm.authservice.user.service;
 
 import com.pm.authservice.exception.NotFoundException;
-import com.pm.authservice.model.UserEventEntity;
+import com.pm.authservice.user.model.UserEventEntity;
 
 import java.util.List;
 

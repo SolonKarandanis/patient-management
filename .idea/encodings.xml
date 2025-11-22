@@ -2,16 +2,30 @@
 <project version="4">
   <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
     <file url="file://$PROJECT_DIR$/analytics-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/analytics-service/target/generated-sources/annotations" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/analytics-service/target/generated-sources/protobuf/grpc-java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/analytics-service/target/generated-sources/protobuf/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/api-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/auth-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/auth-service/src/main/resources/application_ui_labels_gr.properties" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/billing-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/billing-service/target/generated-sources/protobuf/grpc-java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/billing-service/target/generated-sources/protobuf/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/camel-integration/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/camel-integration/target/generated-sources/protobuf/grpc-java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/camel-integration/target/generated-sources/protobuf/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/integration-tests/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/integration-tests/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/notification-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/notification-service/target/generated-sources/protobuf/grpc-java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/notification-service/target/generated-sources/protobuf/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/patient-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/patient-service/target/generated-sources/annotations" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/patient-service/target/generated-sources/protobuf/grpc-java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/patient-service/target/generated-sources/protobuf/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/payment-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/payment-service/target/generated-sources/protobuf/grpc-java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/payment-service/target/generated-sources/protobuf/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/stream-processor/src/main/java" charset="UTF-8" />
   </component>
 </project>

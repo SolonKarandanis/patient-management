@@ -1,6 +1,6 @@
 package util;
 
-import com.pm.authservice.auth.UserDetailsDTO;
+import com.pm.authservice.auth.dto.UserDetailsDTO;
 import com.pm.authservice.dto.Paging;
 import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.user.model.AccountStatus;

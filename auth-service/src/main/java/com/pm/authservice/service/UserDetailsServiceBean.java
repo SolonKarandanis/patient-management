@@ -1,7 +1,7 @@
 package com.pm.authservice.service;
 
 import com.pm.authservice.user.dto.RoleDTO;
-import com.pm.authservice.auth.UserDetailsDTO;
+import com.pm.authservice.auth.dto.UserDetailsDTO;
 import com.pm.authservice.user.model.UserEntity;
 import com.pm.authservice.user.repository.UserRepository;
 import org.slf4j.Logger;

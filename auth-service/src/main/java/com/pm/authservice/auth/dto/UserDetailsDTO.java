@@ -1,4 +1,4 @@
-package com.pm.authservice.auth;
+package com.pm.authservice.auth.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.pm.authservice.config.Email;

@@ -1,7 +1,7 @@
 package com.pm.authservice.config.authorisation;
 
 
-import com.pm.authservice.auth.UserDetailsDTO;
+import com.pm.authservice.auth.dto.UserDetailsDTO;
 import com.pm.authservice.user.model.AccountStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

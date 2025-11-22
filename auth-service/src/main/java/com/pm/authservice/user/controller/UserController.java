@@ -1,6 +1,6 @@
 package com.pm.authservice.user.controller;
 
-import com.pm.authservice.auth.UserDetailsDTO;
+import com.pm.authservice.auth.dto.UserDetailsDTO;
 import com.pm.authservice.config.Translate;
 import com.pm.authservice.user.dto.*;
 import com.pm.authservice.user.dto.ChangePasswordDTO;

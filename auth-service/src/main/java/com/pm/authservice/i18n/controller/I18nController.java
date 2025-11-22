@@ -1,11 +1,14 @@
-package com.pm.authservice.controller;
+package com.pm.authservice.i18n.controller;
 
 import com.pm.authservice.dto.*;
 import com.pm.authservice.exception.BusinessException;
-import com.pm.authservice.model.I18nModule;
+import com.pm.authservice.i18n.dto.I18nResourceManagementRequestDTO;
+import com.pm.authservice.i18n.dto.I18nResourceManagementResponseDTO;
+import com.pm.authservice.i18n.dto.UpdateTranslationDTO;
+import com.pm.authservice.i18n.model.I18nModule;
 import com.pm.authservice.service.SearchService;
-import com.pm.authservice.service.i18n.I18nResourceManagementService;
-import com.pm.authservice.service.i18n.I18nService;
+import com.pm.authservice.i18n.service.I18nResourceManagementService;
+import com.pm.authservice.i18n.service.I18nService;
 import com.pm.authservice.util.AuthorityConstants;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;

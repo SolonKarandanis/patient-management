@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.user.dto.UserDetailsDTO;
 import com.pm.authservice.exception.AuthException;
-import com.pm.authservice.model.AccountStatus;
+import com.pm.authservice.user.model.AccountStatus;
 import com.pm.authservice.service.JwtService;
 import com.pm.authservice.util.SecurityConstants;
 import io.jsonwebtoken.Claims;
@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

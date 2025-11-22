@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.pm.authservice.config.authorisation.Email;
 import com.pm.authservice.config.authorisation.UserEmail;
 import com.pm.authservice.dto.serializer.CustomRoleDeserializer;
-import com.pm.authservice.model.AccountStatus;
+import com.pm.authservice.user.model.AccountStatus;
 import com.pm.authservice.dto.RoleDTO;
 import lombok.Getter;
 import lombok.Setter;

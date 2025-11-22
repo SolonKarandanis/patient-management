@@ -1,7 +1,7 @@
-package com.pm.authservice.repository;
+package com.pm.authservice.i18n.repository;
 
 
-import com.pm.authservice.model.I18nLabel;
+import com.pm.authservice.i18n.model.I18nLabel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

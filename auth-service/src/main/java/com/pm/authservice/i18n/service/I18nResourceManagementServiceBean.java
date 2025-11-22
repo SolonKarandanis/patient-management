@@ -1,9 +1,9 @@
-package com.pm.authservice.service.i18n;
+package com.pm.authservice.i18n.service;
 
-import com.pm.authservice.dto.I18nResourceManagementRequestDTO;
-import com.pm.authservice.dto.I18nResourceManagementResponseDTO;
+import com.pm.authservice.i18n.dto.I18nResourceManagementRequestDTO;
+import com.pm.authservice.i18n.dto.I18nResourceManagementResponseDTO;
 import com.pm.authservice.dto.SearchResults;
-import com.pm.authservice.repository.I18nLabelRepository;
+import com.pm.authservice.i18n.repository.I18nLabelRepository;
 import com.pm.authservice.service.GenericServiceBean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

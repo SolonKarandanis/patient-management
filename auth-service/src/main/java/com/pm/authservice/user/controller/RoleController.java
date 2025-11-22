@@ -1,7 +1,7 @@
 package com.pm.authservice.user.controller;
 
 import com.pm.authservice.config.Translate;
-import com.pm.authservice.dto.RoleDTO;
+import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.user.model.RoleEntity;
 import com.pm.authservice.user.service.RoleService;
 import org.springframework.http.ResponseEntity;

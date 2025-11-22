@@ -1,7 +1,7 @@
 package com.pm.authservice.util;
 
 import com.opencsv.CSVWriter;
-import com.pm.authservice.dto.RoleDTO;
+import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.user.dto.UserDTO;
 import jakarta.servlet.http.HttpServletResponse;
 

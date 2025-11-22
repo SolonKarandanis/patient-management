@@ -3,7 +3,6 @@ package com.pm.authservice.config.authorisation;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.user.dto.UserDTO;
 import com.pm.authservice.user.dto.UserDetailsDTO;
 import com.pm.authservice.util.AuthorityConstants;

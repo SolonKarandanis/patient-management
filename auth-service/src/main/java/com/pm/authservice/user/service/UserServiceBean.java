@@ -2,7 +2,7 @@ package com.pm.authservice.user.service;
 
 import com.pm.authservice.user.dto.ChangePasswordDTO;
 import com.pm.authservice.dto.Paging;
-import com.pm.authservice.dto.RoleDTO;
+import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.user.model.AccountStatus;

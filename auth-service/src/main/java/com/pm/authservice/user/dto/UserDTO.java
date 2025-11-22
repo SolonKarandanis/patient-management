@@ -2,8 +2,6 @@ package com.pm.authservice.user.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.pm.authservice.config.authorisation.RedactedEmailUserDTOSerializer;
-import com.pm.authservice.dto.OperationDTO;
-import com.pm.authservice.dto.RoleDTO;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,4 +1,4 @@
-package com.pm.authservice.event;
+package com.pm.authservice.user.event;
 
 import com.pm.authservice.user.model.UserEntity;
 import lombok.Getter;

@@ -1,10 +1,10 @@
 package com.pm.authservice.service;
 
+import com.pm.authservice.auth.service.AuthService;
 import com.pm.authservice.user.model.UserEntity;
 import com.pm.authservice.util.AuthorityConstants;
 import com.pm.authservice.util.UserUtil;
 import com.pm.authservice.user.service.UserService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,6 +1,6 @@
-package com.pm.authservice.service;
+package com.pm.authservice.auth.service;
 
-import com.pm.authservice.dto.JwtDTO;
+import com.pm.authservice.auth.dto.JwtDTO;
 import com.pm.authservice.user.dto.UserDetailsDTO;
 import com.pm.authservice.exception.AuthException;
 import io.jsonwebtoken.Claims;

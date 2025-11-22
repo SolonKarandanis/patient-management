@@ -1,6 +1,6 @@
-package com.pm.authservice.service;
+package com.pm.authservice.auth.service;
 
-import com.pm.authservice.dto.LoginRequestDTO;
+import com.pm.authservice.auth.dto.LoginRequestDTO;
 import com.pm.authservice.user.dto.UserDetailsDTO;
 import com.pm.authservice.exception.AuthException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,7 +8,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -7,7 +7,7 @@ import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.user.dto.UserDetailsDTO;
 import com.pm.authservice.exception.AuthException;
 import com.pm.authservice.user.model.AccountStatus;
-import com.pm.authservice.service.JwtService;
+import com.pm.authservice.auth.service.JwtService;
 import com.pm.authservice.util.SecurityConstants;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;

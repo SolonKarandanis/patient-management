@@ -1,7 +1,7 @@
-package com.pm.authservice.service;
+package com.pm.authservice.user.service;
 
 import com.pm.authservice.dto.RoleDTO;
-import com.pm.authservice.model.RoleEntity;
+import com.pm.authservice.user.model.RoleEntity;
 
 import java.util.List;
 import java.util.Set;

@@ -2,8 +2,8 @@ package com.pm.authservice.config.authentication;
 
 import com.pm.authservice.config.authorisation.CustomAuthProvider;
 import com.pm.authservice.config.authorisation.NoAuthenticationRequestMatcher;
-import com.pm.authservice.model.RoleEntity;
-import com.pm.authservice.repository.RoleRepository;
+import com.pm.authservice.user.model.RoleEntity;
+import com.pm.authservice.user.repository.RoleRepository;
 import com.pm.authservice.util.SecurityConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

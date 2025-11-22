@@ -1,9 +1,9 @@
-package com.pm.authservice.controller;
+package com.pm.authservice.user.controller;
 
 import com.pm.authservice.config.Translate;
 import com.pm.authservice.dto.RoleDTO;
-import com.pm.authservice.model.RoleEntity;
-import com.pm.authservice.service.RoleService;
+import com.pm.authservice.user.model.RoleEntity;
+import com.pm.authservice.user.service.RoleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

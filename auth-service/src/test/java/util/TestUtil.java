@@ -3,7 +3,7 @@ package util;
 import com.pm.authservice.dto.Paging;
 import com.pm.authservice.dto.RoleDTO;
 import com.pm.authservice.user.model.AccountStatus;
-import com.pm.authservice.model.RoleEntity;
+import com.pm.authservice.user.model.RoleEntity;
 import com.pm.authservice.user.dto.*;
 import com.pm.authservice.user.model.UserEntity;
 import com.pm.authservice.util.AuthorityConstants;

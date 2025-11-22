@@ -1,4 +1,4 @@
-package com.pm.authservice.model;
+package com.pm.authservice.user.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

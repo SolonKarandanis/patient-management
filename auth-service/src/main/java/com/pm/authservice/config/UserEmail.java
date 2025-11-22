@@ -1,4 +1,4 @@
-package com.pm.authservice.config.authorisation;
+package com.pm.authservice.config;
 
 public interface UserEmail {
 

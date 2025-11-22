@@ -1,7 +1,7 @@
 package com.pm.authservice.auth.service;
 
 import com.pm.authservice.auth.dto.LoginRequestDTO;
-import com.pm.authservice.user.dto.UserDetailsDTO;
+import com.pm.authservice.auth.UserDetailsDTO;
 import com.pm.authservice.exception.AuthException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

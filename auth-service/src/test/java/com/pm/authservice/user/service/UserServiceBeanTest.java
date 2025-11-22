@@ -4,7 +4,7 @@ import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.service.VerificationTokenService;
 import com.pm.authservice.user.dto.UserDTO;
-import com.pm.authservice.user.dto.UserDetailsDTO;
+import com.pm.authservice.auth.UserDetailsDTO;
 import com.pm.authservice.user.model.UserEntity;
 import com.pm.authservice.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;

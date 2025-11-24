@@ -17,6 +17,7 @@ public class ServiceConfigProperties {
     protected static Properties APPLICATION_PROPS = initProps("service.properties");
 
     public static Boolean I18N_RESOURCES_DB_ENABLED = getBooleanProperty("i18n.resources.DB.enabled", false);
+    public static Boolean CLUSTER_ENABLED = getBooleanProperty("cluster.enabled", false);
 
     protected static Properties initProps(String propertyName) {
         Properties retVal = null;
@@ -58,8 +59,16 @@ public class ServiceConfigProperties {
         return Long.parseLong(property);
     }
 
+    protected static Boolean getBooleanProperty(String key) {
+        String strProp = APPLICATION_PROPS.getProperty(key);
+        return Boolean.parseBoolean(strProp);
+    }
+
     protected static Boolean getBooleanProperty(String key, boolean def) {
         String strProp = APPLICATION_PROPS.getProperty(key);
+        if (!StringUtils.hasLength(strProp)){
+            return def;
+        }
         return Boolean.parseBoolean(strProp);
     }
 
@@ -69,12 +78,11 @@ public class ServiceConfigProperties {
             hostName = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
         }
-        Integer dotIndex = hostName.indexOf('.');
+        int dotIndex = hostName.indexOf('.');
         if (dotIndex == -1) {
             dotIndex = hostName.length();
         }
-        String letters = hostName.substring(dotIndex - 2, dotIndex);
-        return letters;
+        return hostName.substring(dotIndex - 2, dotIndex);
     }
 
     protected static String[] getPropertyValueAsStringArray(String key) {

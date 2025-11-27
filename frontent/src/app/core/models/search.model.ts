@@ -111,7 +111,13 @@ export interface UserSearchRequest extends SearchRequest {
   roleName: string;
 }
 
-export type SearchRequestCriteria = UserSearchRequest
+export interface I18nResourceSearchRequest extends SearchRequest {
+  languageId?: number;
+  moduleId?: number;
+  term?: string;
+}
+
+export type SearchRequestCriteria = UserSearchRequest | I18nResourceSearchRequest
 
 
 export interface SavedSearch {

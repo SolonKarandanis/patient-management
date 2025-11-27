@@ -105,6 +105,18 @@ import {MenuItem} from 'primeng/api';
                 Users
               </a>
             </li>
+            <li class="items-center">
+              <a [routerLink]="['/i18n-resource']"
+                 class="text-xs uppercase py-3 font-bold block"
+                 routerLinkActive
+                 #resourceRoute="routerLinkActive"
+                 [ngClass]="resourceRoute.isActive ? 'text-red-600 hover:text-red-700' : 'text-blueGray-700 hover:text-blueGray-500'">
+                <i class="pi pi-desktop mr-2 text-sm"
+                   [ngClass]="resourceRoute.isActive ? 'opacity-75' : 'text-blueGray-300'">
+                </i>
+                Resource Management
+              </a>
+            </li>
           </ul>
         </div>
       </div>

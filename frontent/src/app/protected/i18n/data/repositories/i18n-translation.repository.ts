@@ -3,6 +3,7 @@ import {Observable} from 'rxjs';
 import {I18nResourceResponse, UpdateI18nResource} from '@models/i18n-resource.model';
 import {ApiRepositories} from '@core/repositories/ApiRepositories';
 import {Injectable} from '@angular/core';
+import {I18nResourceSearchRequest} from '@models/search.model';
 
 @Injectable({
   providedIn: 'root',
@@ -23,9 +24,8 @@ export class I18nTranslationRepository {
     return this.http.put<void>(`${ApiRepositories.I18N}`, updates);
   }
 
-  searchResources(searchParams: any):Observable<I18nResourceResponse> {
-    let params: HttpParams = { ...searchParams };
-    return this.http.post<I18nResourceResponse>(`${ApiRepositories.I18N}/search`, params );
+  searchResources(searchRequest: I18nResourceSearchRequest):Observable<I18nResourceResponse> {
+    return this.http.post<I18nResourceResponse>(`${ApiRepositories.I18N}/search`, searchRequest );
   }
 
 }

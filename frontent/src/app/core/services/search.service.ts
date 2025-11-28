@@ -4,6 +4,7 @@ import {ChangePasswordRequest, CreateUserRequest, UpdateUserRequest} from '@mode
 import {FormGroup} from '@angular/forms';
 import {ChangePasswordForm, CreateUserForm, UpdateUserForm, UserSearchForm} from '../../protected/user/forms';
 import {I18nResourceSearchRequest, UserSearchRequest} from '@models/search.model';
+import {I18nResourceSearchForm} from '../../protected/i18n/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -79,12 +80,12 @@ export class SearchService extends GenericService{
     };
   }
 
-  public toI18nResourceSearchRequest(form: FormGroup):I18nResourceSearchRequest{
+  public toI18nResourceSearchRequest(form: FormGroup<I18nResourceSearchForm>):I18nResourceSearchRequest{
     const {language,module,term,rows,first,sortField,sortOrder} = form.value
     return {
-      languageId:language,
-      term,
-      moduleId:module,
+      languageId:language!,
+      term:term!,
+      moduleId:module!,
       paging: {
         limit: rows!,
         page: first!,

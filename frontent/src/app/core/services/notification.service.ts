@@ -1,5 +1,5 @@
 import {effect, inject, Injectable} from '@angular/core';
-import * as Stomp from 'stompjs';
+import {Client, StompSubscription} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import {NotificationEvent} from '@models/notification.model';
 import {UtilService} from '@core/services/util.service';
@@ -10,10 +10,10 @@ import {AuthService} from '@core/services/auth.service';
   providedIn: 'root'
 })
 export class NotificationService {
-  private stompClient: any;
+  private readonly stompClient: Client;
   private isConnected = false;
-  private subscriptions: Stomp.Subscription[] = [];
-  private userSubscription: Stomp.Subscription | undefined;
+  private userSubscription: StompSubscription | undefined;
+  private subscriptions: StompSubscription[] = [];
 
   private readonly utilService = inject(UtilService);
   private readonly authService = inject(AuthService);
@@ -22,8 +22,12 @@ export class NotificationService {
   private userId = this.authService.loggedUserId;
 
   constructor() {
-    const socket = new SockJS(this.baseUrl);
-    this.stompClient = Stomp.over(socket);
+    this.stompClient = new Client({
+      webSocketFactory: () => new SockJS(this.baseUrl),
+      reconnectDelay: 5000,
+      heartbeatIncoming: 20000,
+      heartbeatOutgoing: 20000,
+    });
     this.connect();
 
     effect(() => {
@@ -47,9 +51,9 @@ export class NotificationService {
       return;
     }
 
-    this.stompClient.connect({}, this.onConnect, this.onError);
-    this.stompClient.heartbeat.outgoing = 20000;
-    this.stompClient.heartbeat.incoming = 20000;
+    this.stompClient.onConnect = this.onConnect;
+    this.stompClient.onStompError = this.onError;
+    this.stompClient.activate();
   }
 
   private onConnect = () => {
@@ -65,11 +69,8 @@ export class NotificationService {
     return;
   };
 
-  private onError = (error: any) => {
+  private onError = () => {
     this.isConnected = false;
-    setTimeout(() => {
-      this.connect();
-    }, 5000);
   };
 
   private subscribeToTopics(): void {
@@ -87,8 +88,12 @@ export class NotificationService {
         this.userSubscription = undefined;
       }
       this.subscriptions = [];
-      if (this.stompClient.connected) {
-        this.stompClient.disconnect(callback);
+      if (this.stompClient.active) {
+        this.stompClient.deactivate().then(() => {
+          if (callback) {
+            callback();
+          }
+        });
       } else if (callback) {
         callback();
       }

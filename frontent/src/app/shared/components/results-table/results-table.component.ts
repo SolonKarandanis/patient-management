@@ -3,43 +3,38 @@ import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {BaseModel} from '@models/base.model';
 import {SearchModes, SearchTableColumn} from '@models/search.model';
 import {UtilService} from '@core/services/util.service';
-import {Paginator} from 'primeng/paginator';
+import {PaginatorModule} from 'primeng/paginator';
 import {TranslatePipe} from '@ngx-translate/core';
-import {ButtonDirective, ButtonIcon} from 'primeng/button';
-import {Ripple} from 'primeng/ripple';
+import {ButtonModule} from 'primeng/button';
 import {LinkComponent} from '@components/link/link.component';
 import {DatePipe, DecimalPipe, NgClass, NgTemplateOutlet} from '@angular/common';
-import {Tooltip} from 'primeng/tooltip';
 import {ImageModule} from 'primeng/image';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {Checkbox, CheckboxModule} from 'primeng/checkbox';
 import {FormsModule} from '@angular/forms';
 import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
 import {InputText} from 'primeng/inputtext';
-import {InputNumber, InputNumberModule} from 'primeng/inputnumber';
-import {Calendar} from 'primeng/calendar';
+import {InputNumberModule} from 'primeng/inputnumber';
+import {DatePickerModule} from 'primeng/datepicker';
 
 @Component({
   selector: 'app-results-table',
   imports: [
     TableModule,
-    Paginator,
+    PaginatorModule,
     TranslatePipe,
-    ButtonDirective,
-    Ripple,
+    ButtonModule,
     LinkComponent,
     NgClass,
     DatePipe,
     NgTemplateOutlet,
-    Tooltip,
-    ButtonIcon,
     ImageModule,
     DecimalPipe,
     FormsModule,
     FormControlWrapComponent,
     InputText,
-    Calendar,
-    InputNumber,
+    DatePickerModule,
+    InputNumberModule,
     Checkbox,
   ],
   template: `
@@ -97,7 +92,6 @@ import {Calendar} from 'primeng/calendar';
         @if(showTableToolBar){
           <button
             pButton
-            pRipple
             type="button"
             (click)="tableToolBarAction()">
           {{ 'GLOBAL.TABLES.ACTIONS.add' | translate }}
@@ -111,8 +105,6 @@ import {Calendar} from 'primeng/calendar';
           @for(colTitle of columns; track colTitle.field){
             <th [pSortableColumn]="colTitle.enableSorting ? colTitle.field : null"
                 [pSortableColumnDisabled]="!colTitle.enableSorting"
-                [pTooltip]="colTitle.headerTooltip"
-                [tooltipDisabled]="!colTitle.headerTooltip"
                 [style]="colTitle.style"
                 class="bg-blueGray-100">
               @if (!colTitle.isCheckbox && !colTitle.headerIsIcon){
@@ -187,7 +179,6 @@ import {Calendar} from 'primeng/calendar';
                       ></p-image>
                       <span
                         class="pi pi-image text-3xl"
-                        pTooltip="{{ 'GLOBAL.TOOLTIPS.no-image-found' | translate }}"
                       ></span>
                     }
                   }
@@ -251,23 +242,21 @@ import {Calendar} from 'primeng/calendar';
                   [editMode]="!(col.dataFieldForInputDateDisabled && tableItem[col.dataFieldForInputDateDisabled])"
                   [displayValue]="getDateAsString(tableItem[col.inputDateModelField])"
                 >
-                  <p-calendar
+                  <p-datepicker
                     [(ngModel)]="tableItem[col.inputDateModelField]"
                     dateFormat="dd/mm/yy"
                     [showTime]="false"
                     [readonlyInput]="true"
                     appendTo="body"
-                  ></p-calendar>
+                  ></p-datepicker>
                 </app-form-control-wrap>
               }
               @if(col.isButton && (col.fieldForButtonVisibility !== undefined ? !!tableItem[col.fieldForButtonVisibility] : true)){
                 <button
                   pButton
-                  pRipple
                   type="button"
                   icon="{{ col.icon }}"
                   class="p-button-rounded p-button-outlined"
-                  pTooltip="{{ col.toolTip ? col.toolTip : col.title }}"
                   (click)="col.buttonAction(col.dataFieldForButtonAction ? tableItem[col.dataFieldForButtonAction] : null)"
                 ></button>
               }
@@ -275,11 +264,9 @@ import {Calendar} from 'primeng/calendar';
                 @for(groupButton of  col.buttonGroup; track groupButton.icon){
                   <button
                     pButton
-                    pRipple
                     type="button"
                     icon="{{ col.icon }}"
                     class="p-button-rounded p-button-outlined"
-                    pTooltip="{{ col.toolTip ? col.toolTip : col.title }}"
                     [disabled]="groupButton.dataFieldForButtonDisabled && tableItem[groupButton.dataFieldForButtonDisabled]"
                     (click)="groupButton.action(groupButton.dataFieldForButtonAction ? tableItem[groupButton.dataFieldForButtonAction] : null)"
                   ></button>
@@ -291,18 +278,21 @@ import {Calendar} from 'primeng/calendar';
                     @switch(action.type){
                       @case ('VIEW'){
                         <ng-container
-                          *ngTemplateOutlet="viewBlock; context: {tableItem:tableItem, action:action }">
-                              </ng-container>
+                          [ngTemplateOutlet]="viewBlock"
+                          [ngTemplateOutletContext]="{tableItem:tableItem, action:action }">
+                        </ng-container>
                       }
                       @case ('EDIT'){
                         <ng-container
-                          *ngTemplateOutlet="editBlock; context: { tableItem:tableItem,action:action }">
-                              </ng-container>
+                          [ngTemplateOutlet]="editBlock"
+                          [ngTemplateOutletContext]="{ tableItem:tableItem,action:action }">
+                        </ng-container>
                       }
                       @case ('DELETE'){
                         <ng-container
-                          *ngTemplateOutlet="deleteBlock; context: {uuid:tableItem['uuid'] ,action:action }">
-                              </ng-container>
+                          [ngTemplateOutlet]="deleteBlock"
+                          [ngTemplateOutletContext]="{uuid:tableItem['uuid'] ,action:action }">
+                        </ng-container>
                       }
                       @default{
 
@@ -323,7 +313,6 @@ import {Calendar} from 'primeng/calendar';
           <ng-template let-tableItem="tableItem" let-action="action" #editBlock>
             <button
               pButton
-              pRipple
               data-tool-tip="Edit"
               type="button"
               (click)="action.callbackFn(tableItem)">
@@ -334,7 +323,6 @@ import {Calendar} from 'primeng/calendar';
             @if(action.isButton){
               <button
                 pButton
-                pRipple
                 data-tool-tip="Delete"
                 type="button"
                 (click)="action.callbackFn(uuid)">
@@ -357,7 +345,6 @@ import {Calendar} from 'primeng/calendar';
           <div class="flex gap-5 mt-4">
             <button
               pButton
-              pRipple
               type="button"
               pButtonIcon="pi pi-file-export"
               severity="info"
@@ -369,7 +356,6 @@ import {Calendar} from 'primeng/calendar';
             @if(selectionEnabled){
               <button
                 pButton
-                pRipple
                 type="button"
                 pButtonIcon="pi pi-check"
                 (click)="handleSelectItemsClicked()"

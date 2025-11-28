@@ -8,7 +8,7 @@ import {ChangePasswordForm, CreateUserForm, UpdateUserForm, UserSearchForm} from
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SearchTableColumn} from '@models/search.model';
-import {User, UserAccountStatusEnum} from '@models/user.model';
+import {UserAccountStatusEnum} from '@models/user.model';
 import {SelectItem} from 'primeng/api';
 
 @Injectable({

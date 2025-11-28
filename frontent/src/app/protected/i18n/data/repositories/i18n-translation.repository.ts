@@ -1,4 +1,4 @@
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {I18nResourceResponse, UpdateI18nResource} from '@models/i18n-resource.model';
 import {ApiRepositories} from '@core/repositories/ApiRepositories';

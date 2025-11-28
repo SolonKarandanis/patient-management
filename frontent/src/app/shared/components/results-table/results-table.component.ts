@@ -10,7 +10,7 @@ import {LinkComponent} from '@components/link/link.component';
 import {DatePipe, DecimalPipe, NgClass, NgTemplateOutlet} from '@angular/common';
 import {ImageModule} from 'primeng/image';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
-import {Checkbox, CheckboxModule} from 'primeng/checkbox';
+import {CheckboxModule} from 'primeng/checkbox';
 import {FormsModule} from '@angular/forms';
 import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
 import {InputText} from 'primeng/inputtext';
@@ -35,7 +35,7 @@ import {DatePickerModule} from 'primeng/datepicker';
     InputText,
     DatePickerModule,
     InputNumberModule,
-    Checkbox,
+    CheckboxModule,
   ],
   template: `
     <p-table

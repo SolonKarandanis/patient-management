@@ -1,3 +1,29 @@
-::ng-deep .p-select-label{
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 300ms ease-in-out;
+}
+
+.fade-out {
+  animation: fadeOut 300ms ease-in-out;
+}
+
+::ng-deep .p-select-label {
   color: black !important;
 }

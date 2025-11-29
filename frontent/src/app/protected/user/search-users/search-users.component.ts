@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
 import {FloatLabel} from 'primeng/floatlabel';
@@ -24,8 +24,8 @@ import {ResultsTableComponent} from '@components/results-table/results-table.com
 import {ResultsTableFilterDirective} from '@directives/results-table-filter.directive';
 import {ResultsTablePaginatorDirective} from '@directives/results-table-paginator.directive';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
-import {fadeAnimation} from '@shared/animations/fadeAnimation';
 import {ReactiveFormsModule} from '@angular/forms';
+import {NgClass} from "@angular/common";
 
 @Component({
   selector: 'app-search-users',
@@ -44,6 +44,7 @@ import {ReactiveFormsModule} from '@angular/forms';
     ResultsTableFilterDirective,
     ResultsTablePaginatorDirective,
     FieldsetComponent,
+    NgClass,
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
@@ -71,7 +72,7 @@ import {ReactiveFormsModule} from '@angular/forms';
                   </p-float-label>
                   <app-form-error
                     [displayLabels]="isFieldValid('email')"
-                    [validationErrors]="form.get('email')?.errors" />
+                    [validationErrors]="form.get('email')?.errors"/>
                 </div>
                 <div class="mb-6">
                   <p-float-label variant="on" class="w-full mb-3">
@@ -86,7 +87,7 @@ import {ReactiveFormsModule} from '@angular/forms';
                   </p-float-label>
                   <app-form-error
                     [displayLabels]="isFieldValid('username')"
-                    [validationErrors]="form.get('username')?.errors" />
+                    [validationErrors]="form.get('username')?.errors"/>
                 </div>
                 <div class="mb-6">
                   <p-float-label variant="on" class="w-full mb-3">
@@ -101,7 +102,7 @@ import {ReactiveFormsModule} from '@angular/forms';
                   </p-float-label>
                   <app-form-error
                     [displayLabels]="isFieldValid('name')"
-                    [validationErrors]="form.get('name')?.errors" />
+                    [validationErrors]="form.get('name')?.errors"/>
                 </div>
               </div>
               <div class="grid gap-6 mt-6 md:grid-cols-2">
@@ -119,7 +120,7 @@ import {ReactiveFormsModule} from '@angular/forms';
                   </p-float-label>
                   <app-form-error
                     [displayLabels]="isFieldValid('status')"
-                    [validationErrors]="form.get('status')?.errors" />
+                    [validationErrors]="form.get('status')?.errors"/>
                 </div>
                 <div class="mb-6">
                   <p-float-label variant="on" class="w-full mb-3">
@@ -135,7 +136,7 @@ import {ReactiveFormsModule} from '@angular/forms';
                   </p-float-label>
                   <app-form-error
                     [displayLabels]="isFieldValid('role')"
-                    [validationErrors]="form.get('role')?.errors" />
+                    [validationErrors]="form.get('role')?.errors"/>
                 </div>
               </div>
               <app-search-buttons #searchBtns
@@ -146,22 +147,22 @@ import {ReactiveFormsModule} from '@angular/forms';
                                   (resetClicked)="resetForm()"/>
             </form>
           </app-fieldset>
-          @if (hasSearched()){
-            <div @fadeAnimation class="mt-6">
-                <app-results-table
-                    tableFilter
-                    tablePaginator
-                    [colTitles]="tableColumns"
-                    [tableItems]="results()"
-                    [totalRecords]="totalCount()"
-                    [resultsPerPage]="form.controls['rows'].value"
-                    (tableStateChanged)="handleTableLazyLoad($event)"
-                    [first]="form.controls['first'].value"
-                    [lazy]="true"
-                    [loading]="tableLoading()"
-                    [overrideDefaultExport]="true"
-                    [exportFunction]="exportReport.bind(this)"
-                />
+          @if (resultsVisible()) {
+            <div class="mt-6" [ngClass]="{'fade-in': hasSearched(), 'fade-out': !hasSearched()}">
+              <app-results-table
+                tableFilter
+                tablePaginator
+                [colTitles]="tableColumns"
+                [tableItems]="results()"
+                [totalRecords]="totalCount()"
+                [resultsPerPage]="form.controls['rows'].value"
+                (tableStateChanged)="handleTableLazyLoad($event)"
+                [first]="form.controls['first'].value"
+                [lazy]="true"
+                [loading]="tableLoading()"
+                [overrideDefaultExport]="true"
+                [exportFunction]="exportReport.bind(this)"
+              />
             </div>
           }
         </div>
@@ -169,23 +170,39 @@ import {ReactiveFormsModule} from '@angular/forms';
     </div>
   `,
   styleUrl: './search-users.component.css',
-  animations:[fadeAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchUsersComponent extends BaseComponent implements OnInit{
+export class SearchUsersComponent extends BaseComponent implements OnInit {
   private userService = inject(UserService);
   protected commonEntitiesService = inject(CommonEntitiesService);
 
-  protected results=this.userService.searchResults;
-  protected totalCount=this.userService.totalCount;
-  protected criteriaCollapsed=this.userService.criteriaCollapsed;
-  protected tableLoading=this.userService.tableLoading;
+  protected results = this.userService.searchResults;
+  protected totalCount = this.userService.totalCount;
+  protected criteriaCollapsed = this.userService.criteriaCollapsed;
+  protected tableLoading = this.userService.tableLoading;
   protected loading = this.userService.isLoading;
   protected hasSearched = this.userService.hasSearched;
 
-  protected userStatuses:SelectItem[]=[];
-  protected readonly searchType:SearchType = SearchTypeEnum.USERS;
-  protected tableColumns:SearchTableColumn[]=[];
+  protected resultsVisible: WritableSignal<boolean> = signal(false);
+  private animationTimer: any;
+
+  protected userStatuses: SelectItem[] = [];
+  protected readonly searchType: SearchType = SearchTypeEnum.USERS;
+  protected tableColumns: SearchTableColumn[] = [];
+
+  constructor() {
+    super();
+    effect(() => {
+      clearTimeout(this.animationTimer);
+      if (this.hasSearched()) {
+        this.resultsVisible.set(true);
+      } else {
+        this.animationTimer = setTimeout(() => {
+          this.resultsVisible.set(false);
+        }, 300); // Must match the animation duration in CSS
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.initForm();
@@ -193,32 +210,32 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
     this.initUserStatuses();
   }
 
-  protected search():void{
+  protected search(): void {
     this.userService.executeSearchUsers(this.form);
   }
 
-  protected resetForm():void{
+  protected resetForm(): void {
     this.form.reset();
     this.userService.resetSearchResults();
   }
 
-  protected exportReport():void{
+  protected exportReport(): void {
     this.userService.exportUsersToCsv(this.form);
   }
 
-  protected handleTableLazyLoad(event: TableLazyLoadEvent): void{
-    const {first,rows,sortField,sortOrder} = event;
-    this.form.patchValue({first, rows,sortField,sortOrder});
+  protected handleTableLazyLoad(event: TableLazyLoadEvent): void {
+    const {first, rows, sortField, sortOrder} = event;
+    this.form.patchValue({first, rows, sortField, sortOrder});
     this.search();
   }
 
-  protected handleLoadSavedSearch(selectedSavedSearch: SavedSearch):void{
+  protected handleLoadSavedSearch(selectedSavedSearch: SavedSearch): void {
     const {criteria} = selectedSavedSearch;
     this.loadSavedSearch(criteria);
   }
 
-  private loadSavedSearch(searchRequest:SearchRequestCriteria):void{
-    const {email,name,status,roleName,username} = searchRequest as UserSearchRequest;
+  private loadSavedSearch(searchRequest: SearchRequestCriteria): void {
+    const {email, name, status, roleName, username} = searchRequest as UserSearchRequest;
     this.form.patchValue({
       email,
       status,
@@ -229,16 +246,16 @@ export class SearchUsersComponent extends BaseComponent implements OnInit{
     this.search();
   }
 
-  private initForm():void{
+  private initForm(): void {
     this.form = this.userService.initSearchUserForm();
   }
 
-  private initUserStatuses():void{
-    this.userStatuses=this.userService.initUserStatuses();
+  private initUserStatuses(): void {
+    this.userStatuses = this.userService.initUserStatuses();
   }
 
-  private initTableColumns():void{
-    this.tableColumns= this.userService.getSearchUserTableColumns();
+  private initTableColumns(): void {
+    this.tableColumns = this.userService.getSearchUserTableColumns();
   }
 
 }

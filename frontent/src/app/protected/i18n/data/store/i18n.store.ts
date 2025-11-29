@@ -100,12 +100,12 @@ export const I18nResourceStore = signalStore(
               tapResponse({
                 next:()=>{
                   state.setLoadedState();
-                  utilService.showMessage('success',"success");
+                  utilService.showMessage('success',translate.instant('ADMINISTRATION.I18N-MANAGEMENT.MESSAGES.SUCCESS.update-success'));
                 },
                 error: (error:string) =>{
                   state.setErrorState(error);
                   state.setLoadedState();
-                  utilService.showMessage("error","ERROR")
+                  utilService.showMessage("error",translate.instant('ADMINISTRATION.I18N-MANAGEMENT.MESSAGES.ERROR.update-failure'))
                 }
               })
             )
@@ -123,12 +123,11 @@ export const I18nResourceStore = signalStore(
                 next:(result)=>{
                   state.setLoadedState();
                   state.setModules(result)
-                  utilService.showMessage('success',"success");
                 },
                 error: (error:string) =>{
                   state.setErrorState(error);
                   state.setLoadedState();
-                  utilService.showMessage("error","ERROR")
+                  utilService.showMessage("error",translate.instant('ADMINISTRATION.I18N-MANAGEMENT.MESSAGES.ERROR.get-modules'))
                 }
               })
             )
@@ -146,12 +145,11 @@ export const I18nResourceStore = signalStore(
                 next:(result)=>{
                   state.setLoadedState();
                   state.setLanguages(result)
-                  utilService.showMessage('success',"success");
                 },
                 error: (error:string) =>{
                   state.setErrorState(error);
                   state.setLoadedState();
-                  utilService.showMessage("error","ERROR")
+                  utilService.showMessage("error",translate.instant('ADMINISTRATION.I18N-MANAGEMENT.MESSAGES.ERROR.get-languages'))
                 }
               })
             )

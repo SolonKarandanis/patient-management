@@ -20,7 +20,8 @@ export const CommonEntitiesStore = signalStore(
     uiService:inject(UiService),
   })),
   withComputed(({
-    roles
+    roles,
+    appConfig
   })=>({
     getRolesAsSelectItems: computed(()=>{
       const roleArray = roles();
@@ -30,6 +31,13 @@ export const CommonEntitiesStore = signalStore(
         });
       }
       return [];
+    }),
+    isManagementOfI18nResourcesEnabled: computed(()=>{
+      const config=appConfig();
+      if(!config){
+        return false;
+      }
+      return config.MANAGE_I18N_RESOURCES_FUNCTIONALITY_ENABLED;
     })
   })),
   withMethods((state)=>{

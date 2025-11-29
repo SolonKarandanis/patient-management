@@ -48,7 +48,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setClientLogin(user)    // Credentials for client connections
                 .setClientPasscode(password)
                 .setSystemLogin(user)    // Credentials for the relay's "system" connection
-                .setSystemPasscode(password);
+                .setSystemPasscode(password)
+                .setSystemHeartbeatSendInterval(10000)
+                .setSystemHeartbeatReceiveInterval(10000);
     }
 
     @Override

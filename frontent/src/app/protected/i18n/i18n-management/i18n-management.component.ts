@@ -30,9 +30,15 @@ export class I18nManagementComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.initResourceBundleData();
   }
 
   private initForm(): void{
     this.form = this.i18nResourceService.initSearchI18nResourceForm();
+  }
+
+  private initResourceBundleData(): void{
+    this.i18nResourceService.executeGetLanguages();
+    this.i18nResourceService.executeGetModules();
   }
 }

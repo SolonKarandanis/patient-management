@@ -7,5 +7,6 @@ export enum ApiRepositories {
   SAVED_SEARCH = 'savedSearches',
   SEARCH_CONFIGURATION='searchConfiguration',
   FILES='files',
-  I18N="i18n"
+  I18N="i18n",
+  COMMON="common",
 }

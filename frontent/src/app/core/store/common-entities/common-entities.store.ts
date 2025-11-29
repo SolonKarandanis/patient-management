@@ -9,6 +9,7 @@ import {delay, forkJoin, pipe, switchMap, tap} from 'rxjs';
 import {tapResponse} from '@ngrx/operators';
 import {SelectItem} from 'primeng/api';
 import {UiService} from '@core/services/ui.service';
+import {ApplicationConfig} from '@models/application-config.model';
 
 export const CommonEntitiesStore = signalStore(
   { providedIn: 'root' },
@@ -35,6 +36,9 @@ export const CommonEntitiesStore = signalStore(
     return ({
       setRoles(roles:Role[]){
         patchState(state,{roles});
+      },
+      setAppConfig(appConfig:ApplicationConfig){
+        patchState(state,{appConfig})
       },
       setLoadingState(){
         patchState(state, setLoading());
@@ -63,6 +67,16 @@ export const CommonEntitiesStore = signalStore(
                 tapResponse({
                   next:(result)=>{
                     state.setRoles(result);
+                  },
+                  error: (error:string) =>{
+                    state.setErrorState(error);
+                  }
+                })
+              ),
+              appConfig:commonEntitiesRepo.getApplicationConfig().pipe(
+                tapResponse({
+                  next:(result)=>{
+                    state.setAppConfig(result);
                   },
                   error: (error:string) =>{
                     state.setErrorState(error);

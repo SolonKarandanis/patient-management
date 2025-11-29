@@ -24,7 +24,8 @@ public class SecurityConstants {
             "/swagger-resources",
             "/swagger-resources/**",
             "/roles",
-            "/i18n/**"
+            "/i18n/**",
+            "/common/config"
     };
     public static final String[] ALLOWED_ORIGIN_PATTERNS = {
             "http://localhost:4200","http://localhost:3011","http://localhost:8080","http://www.dut.com"

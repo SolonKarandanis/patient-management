@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit, signal, WritableSignal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import {I18nTranslationService} from '../data/services/i18n-translation.service';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
@@ -9,6 +9,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FloatLabel} from 'primeng/floatlabel';
 import {InputText} from 'primeng/inputtext';
 import {Select} from 'primeng/select';
+import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.component';
+import {SearchType, SearchTypeEnum} from '@models/search.model';
 
 @Component({
   selector: 'app-i18n-management',
@@ -20,7 +22,8 @@ import {Select} from 'primeng/select';
     ReactiveFormsModule,
     FloatLabel,
     InputText,
-    Select
+    Select,
+    SearchButtonsComponent
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
@@ -73,6 +76,12 @@ import {Select} from 'primeng/select';
                   </p-float-label>
                 </div>
               </div>
+              <app-search-buttons #searchBtns
+                                  [searchType]="searchType"
+                                  [enableSaveSearch]="true"
+                                  [searchForm]="form"
+                                  (searchClicked)="search()"
+                                  (resetClicked)="resetForm()"/>
             </form>
           </app-fieldset>
         </div>
@@ -95,13 +104,37 @@ export class I18nManagementComponent extends BaseComponent implements OnInit {
   protected languages = this.i18nResourceService.languagesAsSelectItems;
   protected modules = this.i18nResourceService.modulesAsSelectItems;
 
+  protected readonly searchType: SearchType = SearchTypeEnum.RESOURCES;
+
 
   protected resultsVisible: WritableSignal<boolean> = signal(false);
   private animationTimer: any;
 
+  constructor() {
+    super();
+    effect(() => {
+      clearTimeout(this.animationTimer);
+      if (this.hasSearched()) {
+        this.resultsVisible.set(true);
+      } else {
+        this.animationTimer = setTimeout(() => {
+          this.resultsVisible.set(false);
+        }, 300); // Must match the animation duration in CSS
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.initForm();
     this.initResourceBundleData();
+  }
+
+  protected search(): void {
+    this.i18nResourceService.executeSearchResources(this.form);
+  }
+
+  protected resetForm(): void {
+    this.form.reset();
   }
 
   private initForm(): void{

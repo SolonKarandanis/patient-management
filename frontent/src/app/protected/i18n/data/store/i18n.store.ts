@@ -43,12 +43,11 @@ export const I18nResourceStore = signalStore(
     }),
     getModulesAsSelectItems: computed(()=>{
       const mods = modules();
-      if(mods && Array.isArray(mods) && mods.length > 0){
-        console.log(mods)
+      if(mods){
         return Object.entries(mods).map(([key,value]) =>({
-          label:key,
-          value:value
-        }))
+          label:value,
+          value:key
+        }));
       }
       return [];
     })
@@ -82,7 +81,7 @@ export const I18nResourceStore = signalStore(
         totalCount,
       })
     },
-    setModules(modules:string[]){
+    setModules(modules:Record<number,string>){
       patchState(state,{modules})
     },
     setLanguages(languages:Language[]){

@@ -26,8 +26,9 @@ import java.util.UUID;
 @NamedQuery(name = UserEntity.FIND_BY_PUBLIC_ID,
         query = "SELECT u FROM UserEntity u "
                 + "LEFT JOIN FETCH u.roles r "
-                + "LEFT JOIN FETCH r.roleOperations ro "+
-                "WHERE u.publicId= :publicId ")
+                + "LEFT JOIN FETCH r.roleOperations ro "
+                + "LEFT JOIN FETCH ro.operation operation "
+                + "WHERE u.publicId= :publicId ")
 @NamedQuery(name = UserEntity.FIND_BY_USERNAME,
         query = "SELECT u FROM UserEntity u "
                 + "LEFT JOIN FETCH u.roles r " +

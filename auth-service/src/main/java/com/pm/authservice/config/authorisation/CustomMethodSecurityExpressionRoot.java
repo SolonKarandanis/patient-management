@@ -47,7 +47,6 @@ public class CustomMethodSecurityExpressionRoot
     ){
         super(authentication);
         SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, Objects.requireNonNull(webAppContext.getServletContext()));
-
         UserDetailsDTO userDTO = (UserDetailsDTO) getAuthentication().getPrincipal();
         this.currentUser = this.usersService.findByPublicId(userDTO.getPublicId());
         this.setDefaultRolePrefix(""); // For using hasRole as: hasRole(EDConstants.ROLE_XX)

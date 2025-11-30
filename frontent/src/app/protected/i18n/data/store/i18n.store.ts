@@ -1,4 +1,4 @@
-import {patchState, signalStore, withMethods, withProps, withState} from '@ngrx/signals';
+import {patchState, signalStore, withComputed, withMethods, withProps, withState} from '@ngrx/signals';
 import {setError, setLoaded, setLoading, withCallState} from '@core/store/features/call-state.feature';
 import {I18nState, initialResourceState} from './i18n.state';
 import {
@@ -7,15 +7,16 @@ import {
   setTableLoading,
   withSearchState
 } from '@core/store/features/search-state.feature';
-import {inject} from '@angular/core';
+import {computed, inject} from '@angular/core';
 import {I18nTranslationRepository} from '../repositories/i18n-translation.repository';
-import {I18nResource, UpdateI18nResource} from '@models/i18n-resource.model';
+import {I18nResource, Language, UpdateI18nResource} from '@models/i18n-resource.model';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
 import {I18nResourceSearchRequest} from '@models/search.model';
 import {pipe, switchMap, tap} from 'rxjs';
 import {tapResponse} from '@ngrx/operators';
 import {UtilService} from '@core/services/util.service';
 import {TranslateService} from '@ngx-translate/core';
+import {SelectItem} from 'primeng/api';
 
 export const I18nResourceStore = signalStore(
   {providedIn:'root'},
@@ -26,6 +27,31 @@ export const I18nResourceStore = signalStore(
     i18nRepo:inject(I18nTranslationRepository),
     utilService:inject(UtilService),
     translate:inject(TranslateService),
+  })),
+  withComputed(({
+    languages,
+    modules
+  }) => ({
+    getLanguagesAsSelectItems: computed(()=>{
+      const langs = languages();
+      if(langs && Array.isArray(langs) && langs.length > 0){
+        return langs.map((lang: Language) => {
+          return {label: lang.label, value: lang.id} as SelectItem;
+        });
+      }
+      return [];
+    }),
+    getModulesAsSelectItems: computed(()=>{
+      const mods = modules();
+      if(mods && Array.isArray(mods) && mods.length > 0){
+        console.log(mods)
+        return Object.entries(mods).map(([key,value]) =>({
+          label:key,
+          value:value
+        }))
+      }
+      return [];
+    })
   })),
   withMethods((state)=>({
     setLoadingState(){
@@ -59,7 +85,7 @@ export const I18nResourceStore = signalStore(
     setModules(modules:string[]){
       patchState(state,{modules})
     },
-    setLanguages(languages:string[]){
+    setLanguages(languages:Language[]){
       patchState(state,{languages})
     }
   })),

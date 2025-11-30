@@ -150,6 +150,7 @@ export interface SearchConfiguration {
 
 export const SearchTypeEnum = {
   USERS: "search.type.users",
+  RESOURCES: "search.type.resources",
   PATIENTS: "search.type.patients",
 } as const satisfies Record<string, string>;
 

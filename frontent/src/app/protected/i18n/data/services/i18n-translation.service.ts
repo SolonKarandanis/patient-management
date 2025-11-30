@@ -18,8 +18,8 @@ export class I18nTranslationService extends GenericService{
   private translateService = inject(TranslateService);
   private utilService = inject(UtilService);
 
-  public languages = this.resourceStore.languages;
-  public modules = this.resourceStore.modules;
+  public languagesAsSelectItems = this.resourceStore.getLanguagesAsSelectItems;
+  public modulesAsSelectItems = this.resourceStore.getModulesAsSelectItems;
   public searchResults = this.resourceStore.searchResults;
   public totalCount = this.resourceStore.totalCount;
   public isLoading = this.resourceStore.loading;

@@ -17,3 +17,9 @@ export interface I18nResourceResponse {
   countRows: number;
   list: I18nResource[];
 }
+
+export interface Language{
+  id: number;
+  isoCode: string;
+  label: string;
+}

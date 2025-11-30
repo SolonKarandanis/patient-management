@@ -16,8 +16,8 @@ export class I18nTranslationRepository {
     return this.http.get<Language[]>(`${ApiRepositories.I18N}/languages`);
   }
 
-  getModules(): Observable<string[]> {
-    return this.http.get<string[]>(`${ApiRepositories.I18N}/modules`);
+  getModules(): Observable<Record<number,string>> {
+    return this.http.get<Record<number,string>>(`${ApiRepositories.I18N}/modules`);
   }
 
   updateTranslations(updates: UpdateI18nResource[]):Observable<void> {

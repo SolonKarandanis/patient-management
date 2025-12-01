@@ -11,6 +11,7 @@ export class CommonEntitiesService extends GenericService{
   public roles = this.commonEntitiesStore.roles;
   public rolesAsSelectItems = this.commonEntitiesStore.getRolesAsSelectItems;
   public isManagementOfI18nResourcesEnabled = this.commonEntitiesStore.isManagementOfI18nResourcesEnabled;
+  public isWebSocketsEnabled = this.commonEntitiesStore.isWebSocketsEnabled;
 
   /**
    * Initialize All Common Entities
@@ -18,6 +19,10 @@ export class CommonEntitiesService extends GenericService{
    */
   public initializeCommonEntities():void{
     this.commonEntitiesStore.initializeCommonEntities();
+  }
+
+  public executeGetPublicApplicationConfig():void{
+    this.commonEntitiesStore.getPublicApplicationConfig();
   }
 
   getBigDecimalScale(): string {

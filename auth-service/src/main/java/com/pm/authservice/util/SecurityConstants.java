@@ -25,7 +25,6 @@ public class SecurityConstants {
             "/swagger-resources/**",
             "/roles",
             "/i18n/ui-labels",
-            "/common/config",
             "/public/**",
     };
     public static final String[] ALLOWED_ORIGIN_PATTERNS = {

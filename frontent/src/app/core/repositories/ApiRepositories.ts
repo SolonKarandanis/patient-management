@@ -9,4 +9,5 @@ export enum ApiRepositories {
   FILES='files',
   I18N="i18n",
   COMMON="common",
+  PUBLIC="public",
 }

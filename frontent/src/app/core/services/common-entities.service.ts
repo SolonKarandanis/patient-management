@@ -21,8 +21,8 @@ export class CommonEntitiesService extends GenericService{
     this.commonEntitiesStore.initializeCommonEntities();
   }
 
-  public executeGetPublicApplicationConfig():void{
-    this.commonEntitiesStore.getPublicApplicationConfig();
+  public initializePublicApplicationConfig():void{
+    this.commonEntitiesStore.initializePublicApplicationConfig();
   }
 
   getBigDecimalScale(): string {

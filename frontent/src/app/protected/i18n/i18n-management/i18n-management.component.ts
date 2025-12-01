@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, WritableSignal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, OnInit} from '@angular/core';
 import {I18nTranslationService} from '../data/services/i18n-translation.service';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
@@ -107,9 +107,6 @@ export class I18nManagementComponent extends BaseComponent implements OnInit {
   protected readonly searchType: SearchType = SearchTypeEnum.RESOURCES;
 
 
-  protected resultsVisible: WritableSignal<boolean> = signal(false);
-  private animationTimer: any;
-
   constructor() {
     super();
     effect(() => {
@@ -135,6 +132,7 @@ export class I18nManagementComponent extends BaseComponent implements OnInit {
 
   protected resetForm(): void {
     this.form.reset();
+    this.search();
   }
 
   private initForm(): void{

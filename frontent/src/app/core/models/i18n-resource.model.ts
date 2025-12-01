@@ -2,8 +2,9 @@ export interface I18nResource {
   id: number;
   key: string;
   mod: string;
-  translations: { lang: string; value: string }[];
-  _translations?: { lang: string; value: string }[];
+  translations: Record<number,string>;
+  translationList:Translation[];
+  _translationsList?: Translation[];
   editing: boolean;
 }
 
@@ -22,4 +23,9 @@ export interface Language{
   id: number;
   isoCode: string;
   label: string;
+}
+
+export interface Translation {
+  lang:number;
+  value:string;
 }

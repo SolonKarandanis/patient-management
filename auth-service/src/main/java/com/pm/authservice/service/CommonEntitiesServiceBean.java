@@ -2,6 +2,7 @@ package com.pm.authservice.service;
 
 import com.pm.authservice.config.ServiceConfigProperties;
 import com.pm.authservice.dto.ApplicationConfigDTO;
+import com.pm.authservice.dto.PublicConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
@@ -58,6 +59,34 @@ public class CommonEntitiesServiceBean  implements CommonEntitiesService {
         }
     }
 
+    @Override
+    public PublicConfiguration getPublicApplicationConfig() {
+        PublicConfiguration publicConfig = getEmptyPublicApplicationConfigDTO();
+        Map<String, Field> publicDtoFieldsMap = new HashMap<>();
+        Field[] dtoFields = publicConfig.getClass().getFields();
+        for (Field field : dtoFields) {
+            publicDtoFieldsMap.put(field.getName(), field);
+        }
+
+        try {
+            Field[] configFields = getConfigFields();
+            for (Field field : configFields) {
+                String fieldName = field.getName();
+                Object value = field.get(fieldName);
+                Field dtoField = publicDtoFieldsMap.get(fieldName);
+                if (dtoField != null) {
+                    ReflectionUtils.setField(dtoField, publicConfig, value);
+                }
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return publicConfig;
+    }
+
+    protected PublicConfiguration getEmptyPublicApplicationConfigDTO() {
+        return new PublicConfiguration();
+    }
 
 
 }

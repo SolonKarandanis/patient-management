@@ -25,4 +25,10 @@ export class CommonEntitiesRepository extends BaseRepository{
   public getApplicationConfig():Observable<ApplicationConfig>{
     return this.http.get<ApplicationConfig>(`${ApiRepositories.COMMON}/config`)
   }
+
+  public getPublicApplicationConfig():Observable<ApplicationConfig>{
+    return this.http.get<ApplicationConfig>(`${ApiRepositories.PUBLIC}/config`,{
+      context: new HttpContext().set(AUTHENTICATE_REQUEST, false),
+    })
+  }
 }

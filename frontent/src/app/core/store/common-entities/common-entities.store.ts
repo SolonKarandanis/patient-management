@@ -38,6 +38,13 @@ export const CommonEntitiesStore = signalStore(
         return false;
       }
       return config.MANAGE_I18N_RESOURCES_FUNCTIONALITY_ENABLED;
+    }),
+    isWebSocketsEnabled: computed(()=>{
+      const config=appConfig();
+      if(!config){
+        return false;
+      }
+      return config.WEBSOCKETS_ENABLED;
     })
   })),
   withMethods((state)=>{
@@ -63,6 +70,24 @@ export const CommonEntitiesStore = signalStore(
     const commonEntitiesRepo = state.commonEntitiesRepo;
     const uiService = state.uiService;
     return ({
+      getPublicApplicationConfig:rxMethod<void>(
+        pipe(
+          switchMap(()=>
+            commonEntitiesRepo.getApplicationConfig().pipe(
+              tapResponse({
+                next:(result)=>{
+                  state.setLoadedState();
+                  state.setAppConfig(result)
+                },
+                error: (error:string) =>{
+                  state.setErrorState(error);
+                  state.setLoadedState();
+                }
+              })
+            )
+          )
+        )
+      ),
       initializeCommonEntities: rxMethod<void>(
         pipe(
           tap(() => {

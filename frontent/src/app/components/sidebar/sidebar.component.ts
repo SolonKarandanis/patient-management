@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 import {NgClass} from '@angular/common';
 import {MenuItem} from 'primeng/api';
+import {TranslatePipe} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sidebar',
@@ -9,6 +10,7 @@ import {MenuItem} from 'primeng/api';
     RouterLink,
     NgClass,
     RouterLinkActive,
+    TranslatePipe,
   ],
   template: `
     <nav class="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row
@@ -75,10 +77,7 @@ import {MenuItem} from 'primeng/api';
           </form>
           <!-- Divider -->
           <hr class="my-4 md:min-w-full" />
-          <!-- Heading -->
-          <h6 class="md:min-w-full text-blueGray-500 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-            Admin Layout Pages
-          </h6>
+
           <!-- Navigation -->
           <ul class="md:flex-col md:min-w-full flex flex-col list-none">
             <li class="items-center">
@@ -90,7 +89,7 @@ import {MenuItem} from 'primeng/api';
                 <i class="pi pi-desktop mr-2 text-sm"
                   [ngClass]="adminDashboard.isActive ? 'opacity-75' : 'text-blueGray-300'">
                 </i>
-                Dashboard
+                {{ 'SIDE.MENU.ADMINISTRATION.dashboard' | translate }}
               </a>
             </li>
             <li class="items-center">
@@ -102,7 +101,7 @@ import {MenuItem} from 'primeng/api';
                 <i class="pi pi-desktop mr-2 text-sm"
                    [ngClass]="userRoute.isActive ? 'opacity-75' : 'text-blueGray-300'">
                 </i>
-                Users
+                {{ 'SIDE.MENU.ADMINISTRATION.users' | translate }}
               </a>
             </li>
             <li class="items-center">
@@ -114,7 +113,7 @@ import {MenuItem} from 'primeng/api';
                 <i class="pi pi-desktop mr-2 text-sm"
                    [ngClass]="resourceRoute.isActive ? 'opacity-75' : 'text-blueGray-300'">
                 </i>
-                Resource Management
+                {{ 'SIDE.MENU.ADMINISTRATION.i18n-management' | translate }}
               </a>
             </li>
           </ul>

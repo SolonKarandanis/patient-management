@@ -11,6 +11,9 @@ import {InputText} from 'primeng/inputtext';
 import {Select} from 'primeng/select';
 import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.component';
 import {SearchType, SearchTypeEnum} from '@models/search.model';
+import {TableLazyLoadEvent} from 'primeng/table';
+import {I18nResource, UpdateI18nResource} from '@models/i18n-resource.model';
+import {NgClass} from '@angular/common';
 
 @Component({
   selector: 'app-i18n-management',
@@ -23,7 +26,8 @@ import {SearchType, SearchTypeEnum} from '@models/search.model';
     FloatLabel,
     InputText,
     Select,
-    SearchButtonsComponent
+    SearchButtonsComponent,
+    NgClass
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
@@ -84,6 +88,9 @@ import {SearchType, SearchTypeEnum} from '@models/search.model';
                                   (resetClicked)="resetForm()"/>
             </form>
           </app-fieldset>
+          @if (resultsVisible()) {
+            <div class="mt-6" [ngClass]="{'fade-in': hasSearched(), 'fade-out': !hasSearched()}"></div>
+          }
         </div>
       </div>
     </div>
@@ -133,6 +140,33 @@ export class I18nManagementComponent extends BaseComponent implements OnInit {
   protected resetForm(): void {
     this.form.reset();
     this.search();
+  }
+
+  protected handleTableLazyLoad(event: TableLazyLoadEvent): void {
+    const {first, rows, sortField, sortOrder} = event;
+    this.form.patchValue({first, rows, sortField, sortOrder});
+    this.search();
+  }
+
+  protected getLangValues(values: Record<string, string>) {
+    return Object.entries(values).map(([lang, value]) => ({ lang, value }));
+  }
+
+  protected getLanguageLabel(langId: unknown): string {
+    return this.languages().find(lang => lang.value.toString() === langId)?.label ?? '';
+  }
+
+  protected onRowEditInit(row: I18nResource){
+    row.editing = true;
+    row._translations = row.translations ? row.translations.map(t => ({ ...t })) : [];
+  }
+
+  protected onRowEditSave(row: I18nResource){
+    const updates: UpdateI18nResource[] = row.translations.map(t => ({
+      resourceId: row.id,
+      textValue: t.value,
+      languageId: Number(t.lang)
+    }));
   }
 
   private initForm(): void{

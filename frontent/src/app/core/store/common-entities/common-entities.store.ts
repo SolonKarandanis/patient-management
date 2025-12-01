@@ -70,22 +70,48 @@ export const CommonEntitiesStore = signalStore(
     const commonEntitiesRepo = state.commonEntitiesRepo;
     const uiService = state.uiService;
     return ({
-      getPublicApplicationConfig:rxMethod<void>(
+      initializePublicApplicationConfig:rxMethod<void>(
         pipe(
-          switchMap(()=>
-            commonEntitiesRepo.getApplicationConfig().pipe(
+          tap(() => {
+            state.setLoadingState();
+            uiService.showScreenLoader();
+          }),
+          switchMap(()=>{
+            return forkJoin({
+              roles:commonEntitiesRepo.getAllRoles().pipe(
+                tapResponse({
+                  next:(result)=>{
+                    state.setRoles(result);
+                  },
+                  error: (error:string) =>{
+                    state.setErrorState(error);
+                  }
+                })
+              ),
+              appConfig:commonEntitiesRepo.getPublicApplicationConfig().pipe(
+                tapResponse({
+                  next:(result)=>{
+                    state.setAppConfig(result);
+                  },
+                  error: (error:string) =>{
+                    state.setErrorState(error);
+                  }
+                })
+              )
+            }).pipe(
+              delay(500),
               tapResponse({
-                next:(result)=>{
-                  state.setLoadedState();
-                  state.setAppConfig(result)
-                },
+                next:(result)=>{},
                 error: (error:string) =>{
                   state.setErrorState(error);
+                },
+                complete:()=>{
                   state.setLoadedState();
+                  uiService.hideScreenLoader();
                 }
-              })
-            )
-          )
+              }),
+            );
+          })
         )
       ),
       initializeCommonEntities: rxMethod<void>(

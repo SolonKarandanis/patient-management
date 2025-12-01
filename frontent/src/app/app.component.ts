@@ -8,6 +8,7 @@ import {routeTransition} from './route-transition';
 import {LoaderComponent} from '@components/loader/loader.component';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {NotificationService} from '@core/services/notification.service';
+import {AuthService} from '@core/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -27,11 +28,26 @@ export class AppComponent implements OnInit,OnDestroy{
   private readonly primengConfig = inject(PrimeNG);
   protected route = inject(ActivatedRoute);
   private readonly notificationService = inject(NotificationService);
+  private readonly authService = inject(AuthService);
+
+  private isLoggedIn = this.authService.isLoggedIn;
+  private isWebsocketsEnabled = this.commonEntitiesService.isWebSocketsEnabled;
 
   constructor() {
     effect(() => {
-      this.commonEntitiesService.initializeCommonEntities();
-      this.notificationService.connect();
+      if (this.isLoggedIn()) {
+        this.commonEntitiesService.initializeCommonEntities();
+      } else {
+        this.commonEntitiesService.initializePublicApplicationConfig();
+      }
+    });
+    effect((onCleanup) => {
+      if (this.isWebsocketsEnabled()) {
+        this.notificationService.connect();
+        onCleanup(() => {
+          this.notificationService.disconnect();
+        });
+      }
     });
   }
 
@@ -42,6 +58,6 @@ export class AppComponent implements OnInit,OnDestroy{
   }
 
   ngOnDestroy(): void {
-    this.notificationService.disconnect();
+    // a non-op method to be compliant with the interface
   }
 }

@@ -18,6 +18,8 @@ public class ServiceConfigProperties {
 
     public static Boolean I18N_RESOURCES_DB_ENABLED = getBooleanProperty("i18n.resources.DB.enabled", false);
     public static Boolean CLUSTER_ENABLED = getBooleanProperty("cluster.enabled", false);
+    public static Boolean WEBSOCKETS_ENABLED = getBooleanProperty("websockets.enabled", false);
+
 
     protected static Properties initProps(String propertyName) {
         Properties retVal = null;

@@ -11,7 +11,7 @@ import {InputText} from 'primeng/inputtext';
 import {Select} from 'primeng/select';
 import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.component';
 import {SearchType, SearchTypeEnum} from '@models/search.model';
-import {TableLazyLoadEvent} from 'primeng/table';
+import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {I18nResource, UpdateI18nResource} from '@models/i18n-resource.model';
 import {NgClass} from '@angular/common';
 
@@ -27,7 +27,8 @@ import {NgClass} from '@angular/common';
     InputText,
     Select,
     SearchButtonsComponent,
-    NgClass
+    NgClass,
+    TableModule
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
@@ -89,7 +90,48 @@ import {NgClass} from '@angular/common';
             </form>
           </app-fieldset>
           @if (resultsVisible()) {
-            <div class="mt-6" [ngClass]="{'fade-in': hasSearched(), 'fade-out': !hasSearched()}"></div>
+            <div class="mt-6" [ngClass]="{'fade-in': hasSearched(), 'fade-out': !hasSearched()}">
+              <p-table
+                [value]="results()"
+                dataKey="id"
+                editMode="row"
+                [paginator]="true"
+                [totalRecords]="totalCount()"
+                [first]="form.controls['first'].value"
+                [rows]="form.controls['rows'].value"
+                [rowsPerPageOptions]="[10, 20, 50]"
+                [lazy]="true"
+                [loading]="loading()"
+                (onLazyLoad)="handleTableLazyLoad($event)"
+              >
+                <ng-template pTemplate="header">
+                  <tr class="flex flex-wrap flex-row">
+                    <th scope="col" class="bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-key' | translate }}</th>
+                    <th scope="col" class="bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-value' | translate }}</th>
+                    <th scope="col" class="bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.action' | translate }}</th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage" let-columns>
+                  <tr>
+                    <td [attr.colspan]="3">
+                      {{ 'GLOBAL.TABLES.no-results' | translate }}
+                    </td>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
+                  <tr class="flex flex-wrap flex-row">
+                    <td class="">{{row.key}}</td>
+                    <td class="">
+                      @for(translation of row.translationList; track translation.value;  let idx = $index){
+                        <tr class="grid">
+<!--                          <td class="columns-2">{{ (getLanguageLabel(translation.lang)) }}</td>-->
+                        </tr>
+                      }
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
           }
         </div>
       </div>
@@ -158,11 +200,11 @@ export class I18nManagementComponent extends BaseComponent implements OnInit {
 
   protected onRowEditInit(row: I18nResource){
     row.editing = true;
-    row._translations = row.translations ? row.translations.map(t => ({ ...t })) : [];
+    row._translationsList = row.translationList ? row.translationList.map(t => ({ ...t })) : [];
   }
 
   protected onRowEditSave(row: I18nResource){
-    const updates: UpdateI18nResource[] = row.translations.map(t => ({
+    const updates: UpdateI18nResource[] = row.translationList.map(t => ({
       resourceId: row.id,
       textValue: t.value,
       languageId: Number(t.lang)

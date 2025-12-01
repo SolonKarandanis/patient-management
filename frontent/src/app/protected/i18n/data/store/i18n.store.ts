@@ -9,7 +9,7 @@ import {
 } from '@core/store/features/search-state.feature';
 import {computed, inject} from '@angular/core';
 import {I18nTranslationRepository} from '../repositories/i18n-translation.repository';
-import {I18nResource, Language, UpdateI18nResource} from '@models/i18n-resource.model';
+import {I18nResource, Language, Translation, UpdateI18nResource} from '@models/i18n-resource.model';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
 import {I18nResourceSearchRequest} from '@models/search.model';
 import {pipe, switchMap, tap} from 'rxjs';
@@ -103,6 +103,12 @@ export const I18nResourceStore = signalStore(
                 next:({list,countRows})=>{
                   state.setLoadedState();
                   state.setTableLoadedState();
+                  list.forEach(resource=>{
+                    resource.translationList=Object.entries(resource.translations).map(([key, value]) => ({
+                      value: value,
+                      lang: parseInt(key, 10)
+                    } as Translation));
+                  });
                   state.setSearchResults(list,countRows);
                 },
                 error: (error:string) =>{

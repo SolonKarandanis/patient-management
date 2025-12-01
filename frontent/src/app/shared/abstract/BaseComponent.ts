@@ -1,4 +1,4 @@
-import {Directive, inject, signal, viewChildren} from '@angular/core';
+import {Directive, effect, inject, signal, viewChildren, WritableSignal} from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
 import {FormControl, FormGroup, ValidationErrors} from '@angular/forms';
 import {FORM_INPUT} from '@shared/abstract/formInput.token';
@@ -12,8 +12,11 @@ export class BaseComponent {
   protected form!: FormGroup;
   protected isFormSubmitted=false;
   protected isFieldVali =signal<boolean| undefined>(false);
+  protected resultsVisible: WritableSignal<boolean> = signal(false);
+  protected animationTimer: any;
 
   inputChildren = viewChildren(FORM_INPUT);
+
 
   protected get controls() {
     return this.form.controls;

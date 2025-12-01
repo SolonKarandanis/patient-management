@@ -28,7 +28,7 @@
          <!-- Standard Core acceptor -->
          <acceptor name="artemis">tcp://0.0.0.0:61616?protocols=CORE</acceptor>
          <!-- STOMP acceptor for WebSocket connections -->
-         <acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP</acceptor>
+         <acceptor name="stomp">tcp://0.0.0.0:61613?protocols=STOMP;connectionTtl=60000;heartbeatCheckPeriod=5000</acceptor>
       </acceptors>
 
       <security-settings>

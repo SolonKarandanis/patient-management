@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, WritableSignal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, OnInit,} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
 import {FloatLabel} from 'primeng/floatlabel';
@@ -182,9 +182,6 @@ export class SearchUsersComponent extends BaseComponent implements OnInit {
   protected tableLoading = this.userService.tableLoading;
   protected loading = this.userService.isLoading;
   protected hasSearched = this.userService.hasSearched;
-
-  protected resultsVisible: WritableSignal<boolean> = signal(false);
-  private animationTimer: any;
 
   protected userStatuses: SelectItem[] = [];
   protected readonly searchType: SearchType = SearchTypeEnum.USERS;

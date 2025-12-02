@@ -11,6 +11,7 @@ import {AuthRepository} from '@core/repositories/auth.repository';
 import {setError, setLoaded, setLoading, withCallState} from '@core/store/features/call-state.feature';
 import {UtilService} from '@core/services/util.service';
 import {UserRoles} from '@models/constants';
+import {NgxPermissionsService} from 'ngx-permissions';
 
 export const AuthStore = signalStore(
   { providedIn: 'root' },
@@ -20,6 +21,7 @@ export const AuthStore = signalStore(
     jwtUtil:inject(JwtUtil),
     authRepo:inject(AuthRepository),
     utilService:inject(UtilService),
+    ngxPermissionsService: inject(NgxPermissionsService),
   })),
   withComputed((
     {
@@ -141,10 +143,12 @@ export const AuthStore = signalStore(
                   }),
                   switchMap(()=>{
                     const id = state.getUserId()!;
+                    const  ngxPermissionsService = state.ngxPermissionsService;
                     return authRepo.getUserPermissions(id).pipe(
                       tapResponse({
                         next:(response:string[])=>{
                           state.setPermissions(response)
+                          ngxPermissionsService.loadPermissions(response);
                           state.setLoadedState();
                         },
                         error: (error:string) =>{

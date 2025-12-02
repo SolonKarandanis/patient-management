@@ -22,12 +22,14 @@ import {BaseUrlInterceptor} from '@core/interceptors/base-url.interceptor';
 import {LanguageInterceptor} from '@core/interceptors/language.interceptor';
 import {httpError} from '@core/interceptors/http-error.interceptor';
 import {authExpired} from '@core/interceptors/auth-expired.interceptor';
-import {TranslationController} from '@core/repositories/translation.controller';
-import {CustomTranslateLoader} from '@core/helpers/translation.loader';
+import { TranslationController } from '@core/repositories/translation.controller';
+import { CustomTranslateLoader } from '@core/helpers/translation.loader';
+import { NgxPermissionsModule } from "ngx-permissions";
 
 export function createCustomTranslateLoader(translationController: TranslationController): CustomTranslateLoader {
   return new CustomTranslateLoader(translationController);
 }
+
 
 export const provideTranslation = () => ({
   loader: {
@@ -68,5 +70,6 @@ export const appConfig: ApplicationConfig = {
       withInterceptorsFromDi(),
     ),
     importProvidersFrom(TranslateModule.forRoot(provideTranslation())),
+    importProvidersFrom(NgxPermissionsModule.forRoot()),
   ]
 };

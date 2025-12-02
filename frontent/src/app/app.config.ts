@@ -1,7 +1,6 @@
 import {
   ApplicationConfig,
-  importProvidersFrom, inject,
-  provideAppInitializer,
+  importProvidersFrom,
   provideZoneChangeDetection
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
@@ -9,19 +8,15 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { providePrimeNG } from 'primeng/config';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import Aura from '@primeng/themes/aura';
-import {TranslateHttpLoader} from '@ngx-translate/http-loader'
-import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 
 import { routes } from './app.routes';
 import {
   HTTP_INTERCEPTORS,
-  HttpBackend,
-  HttpClient,
   provideHttpClient,
   withInterceptors,
   withInterceptorsFromDi
 } from "@angular/common/http";
-import {firstValueFrom} from "rxjs";
 import {ErrorService} from '@core/services/error.service';
 import {BaseUrlInterceptor} from '@core/interceptors/base-url.interceptor';
 import {LanguageInterceptor} from '@core/interceptors/language.interceptor';

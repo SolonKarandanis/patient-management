@@ -16,7 +16,7 @@ public class ServiceConfigProperties {
 
     protected static Properties APPLICATION_PROPS = initProps("service.properties");
 
-    public static Boolean I18N_RESOURCES_DB_ENABLED = getBooleanProperty("i18n.resources.DB.enabled", false);
+    public static Boolean MANAGE_I18N_RESOURCES_FUNCTIONALITY_ENABLED = getBooleanProperty("i18n.resources.DB.enabled", false);
     public static Boolean CLUSTER_ENABLED = getBooleanProperty("cluster.enabled", false);
     public static Boolean WEBSOCKETS_ENABLED = getBooleanProperty("websockets.enabled", false);
 

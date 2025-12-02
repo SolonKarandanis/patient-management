@@ -7,11 +7,11 @@ import {
 } from '@ngrx/signals';
 
 export type CallState = {
-  status: 'pending' | 'loading' | 'loaded' | { error: string };
+  callStateStatus: 'pending' | 'loading' | 'loaded' | { error: string };
 };
 
 export const initialCallState: CallState = {
-  status: 'pending',
+  callStateStatus: 'pending',
 };
 
 export type NamedCallStateSignals<Prop extends string> = {
@@ -43,29 +43,29 @@ export function getCallStateKeys(config?: { collection?: string }) {
 export function withCallState() {
   return signalStoreFeature(
     withState<CallState>(initialCallState),
-    withComputed(({ status }) => ({
-      loading: computed(() => status() === 'loading'),
-      loaded: computed(() => status() === 'loaded'),
+    withComputed(({ callStateStatus }) => ({
+      loading: computed(() => callStateStatus() === 'loading'),
+      loaded: computed(() => callStateStatus() === 'loaded'),
       error: computed(() => {
-        const s = status();
+        const s = callStateStatus();
         return typeof s === 'object' ? s.error : null
       }),
       status: computed(() => {
-        const s = status();
+        const s = callStateStatus();
         return typeof s === 'object' ? 'error' : s;
       }),
     }))
   );
 }
 
-export function setLoading(): { status: 'loading' } {
-  return { status: 'loading' };
+export function setLoading(): { callStateStatus: 'loading' } {
+  return { callStateStatus: 'loading' };
 }
 
-export function setLoaded(): { status: 'loaded' } {
-  return { status: 'loaded' };
+export function setLoaded(): { callStateStatus: 'loaded' } {
+  return { callStateStatus: 'loaded' };
 }
 
-export function setError(error: string): { status: { error: string } } {
-  return { status: { error } };
+export function setError(error: string): { callStateStatus: { error: string } } {
+  return { callStateStatus: { error } };
 }

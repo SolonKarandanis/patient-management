@@ -34,6 +34,7 @@ export class AppComponent implements OnInit,OnDestroy{
   private isWebsocketsEnabled = this.commonEntitiesService.isWebSocketsEnabled;
 
   constructor() {
+    this.authService.initAuth();
     effect(() => {
       if (this.isLoggedIn()) {
         this.commonEntitiesService.initializeCommonEntities();

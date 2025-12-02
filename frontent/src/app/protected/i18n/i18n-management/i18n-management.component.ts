@@ -14,6 +14,9 @@ import {SearchType, SearchTypeEnum} from '@models/search.model';
 import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import {I18nResource, UpdateI18nResource} from '@models/i18n-resource.model';
 import {NgClass} from '@angular/common';
+import {Textarea} from 'primeng/textarea';
+import {ButtonDirective} from 'primeng/button';
+import {Ripple} from 'primeng/ripple';
 
 @Component({
   selector: 'app-i18n-management',
@@ -28,7 +31,10 @@ import {NgClass} from '@angular/common';
     Select,
     SearchButtonsComponent,
     NgClass,
-    TableModule
+    TableModule,
+    Textarea,
+    ButtonDirective,
+    Ripple
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
@@ -105,10 +111,10 @@ import {NgClass} from '@angular/common';
                 (onLazyLoad)="handleTableLazyLoad($event)"
               >
                 <ng-template pTemplate="header">
-                  <tr class="flex flex-wrap flex-row">
-                    <th scope="col" class="bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-key' | translate }}</th>
-                    <th scope="col" class="bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-value' | translate }}</th>
-                    <th scope="col" class="bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.action' | translate }}</th>
+                  <tr class="">
+                    <th scope="col" class="flex-initial w-[16%] bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-key' | translate }}</th>
+                    <th scope="col" class="flex-initial w-[58%]  bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-value' | translate }}</th>
+                    <th scope="col" class="flex-initial w-[8%]  bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.action' | translate }}</th>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage" let-columns>
@@ -119,14 +125,64 @@ import {NgClass} from '@angular/common';
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
-                  <tr class="flex flex-wrap flex-row">
+                  <tr class="">
                     <td class="">{{row.key}}</td>
                     <td class="">
                       @for(translation of row.translationList; track translation.value;  let idx = $index){
-                        <tr class="grid">
-<!--                          <td class="columns-2">{{ (getLanguageLabel(translation.lang)) }}</td>-->
+                        <tr class="">
+                          <td class="">{{ (getLanguageLabel(translation.lang)) }}</td>
+                          <td class="">
+                            @if(row.editing){
+                              <textarea
+                                [(ngModel)]="translation.value"
+                                class="w-full"
+                                name="translationValue{{ idx}}"
+                                [rows]="3"
+                                pInputTextarea
+                              ></textarea>
+                            } @else {
+                              {{ translation.value }}
+                            }
+                          </td>
                         </tr>
                       }
+                    </td>
+                    <td class="">
+                      <div class="flex items-center justify-center gap-2">
+                        @if(!row.editing){
+                          <button
+                            pButton
+                            pRipple
+                            type="button"
+                            icon="pi pi-pencil"
+                            (click)="onRowEditInit(row)"
+                            text
+                            rounded
+                            severity="secondary"
+                          ></button>
+                        } @else {
+                          <button
+                            pButton
+                            pRipple
+                            type="button"
+                            icon="pi pi-save"
+                            (click)="onRowEditSave(row)"
+                            text
+                            rounded
+                            severity="secondary"
+                          ></button>
+                          <button
+                            pButton
+                            pRipple
+                            type="button"
+                            icon="pi pi-times"
+                            (click)="onRowEditCancel(row, row?.id)"
+                            text
+                            rounded
+                            severity="secondary"
+                          ></button>
+                        }
+                      </div>
                     </td>
                   </tr>
                 </ng-template>
@@ -200,7 +256,7 @@ export class I18nManagementComponent extends BaseComponent implements OnInit {
 
   protected onRowEditInit(row: I18nResource){
     row.editing = true;
-    row._translationsList = row.translationList ? row.translationList.map(t => ({ ...t })) : [];
+    row._translationList = row.translationList ? row.translationList.map(t => ({ ...t })) : [];
   }
 
   protected onRowEditSave(row: I18nResource){
@@ -209,6 +265,12 @@ export class I18nManagementComponent extends BaseComponent implements OnInit {
       textValue: t.value,
       languageId: Number(t.lang)
     }));
+  }
+
+  protected onRowEditCancel(row: I18nResource, rowId: number){
+    this.results().find((item) => item.id === rowId)!.translationList = row._translationList ? [...row._translationList] : [];
+    delete row._translationList;
+    row.editing = false;
   }
 
   private initForm(): void{

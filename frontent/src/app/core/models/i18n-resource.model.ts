@@ -4,7 +4,7 @@ export interface I18nResource {
   mod: string;
   translations: Record<number,string>;
   translationList:Translation[];
-  _translationsList?: Translation[];
+  _translationList?: Translation[];
   editing: boolean;
 }
 

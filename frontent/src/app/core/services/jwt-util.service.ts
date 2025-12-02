@@ -7,6 +7,7 @@ import {User} from '@models/user.model';
 })
 export class JwtUtil{
   private readonly ID_TOKEN_KEY = "token" as string;
+  private readonly PERMISSIONS_KEY = "permissions" as string;
   private readonly ID_TOKEN_KEY_EXPIRATION = "expires" as string;
 
   /**
@@ -29,6 +30,17 @@ export class JwtUtil{
    */
   public destroyToken():void{
     window.sessionStorage.removeItem(this.ID_TOKEN_KEY);
+  }
+
+  public savePermissions(permissions: string[]):void{
+    window.sessionStorage.setItem(this.PERMISSIONS_KEY, JSON.stringify(permissions));
+  }
+
+  /**
+   * @description remove token form localStorage
+   */
+  public destroyPermissions():void{
+    window.sessionStorage.removeItem(this.PERMISSIONS_KEY);
   }
 
   /**

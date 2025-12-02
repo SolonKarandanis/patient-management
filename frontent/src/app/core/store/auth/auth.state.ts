@@ -1,4 +1,4 @@
-import {Operation, Role, User} from '@models/user.model';
+import { Role, User} from '@models/user.model';
 
 export interface AuthState{
   readonly isLoggedIn: boolean,
@@ -6,7 +6,7 @@ export interface AuthState{
   readonly expires: string|undefined;
   readonly user: User | undefined;
   readonly roles:Role[] | undefined;
-  readonly operations: Operation[] | undefined;
+  readonly permissions: string[] | undefined;
 }
 
 export const initialAuthState: AuthState = {
@@ -15,5 +15,5 @@ export const initialAuthState: AuthState = {
   expires:undefined,
   user: undefined,
   roles:undefined,
-  operations:undefined,
+  permissions:undefined,
 };

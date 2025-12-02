@@ -36,6 +36,20 @@ import java.util.UUID;
 @NamedQuery(name = UserEntity.FIND_ID_BY_PUBLIC_ID,
         query = "SELECT u.id FROM UserEntity u " +
                 "WHERE u.publicId=:publicId")
+@NamedNativeQuery(name = UserEntity.FIND_USER_ROLE_IDS_BY_USER_ID_NATIVE_QUERY,
+        query="select ur.role_id " +
+                "from user_roles ur " +
+                "where ur.user_id= :userId", resultSetMapping = "role_id")
+@NamedNativeQuery(name = UserEntity.FIND_OPERATION_KEY_BY_ROLE_IDS_AS_OBJECTS_NATIVE_QUERY,
+        query= """
+                select o.name \
+                from operations o \
+                where exists (select ro.operation_id from role_operations ro where ro.operation_id = o.id and ro.role_id in (:roleIds))""",
+        resultSetMapping = "name")
+@SqlResultSetMappings({
+    @SqlResultSetMapping(name = "role_id", columns = @ColumnResult(name = "role_id")),
+    @SqlResultSetMapping(name = "name", columns = @ColumnResult(name = "name"))
+})
 @NamedEntityGraph(name = UserEntity.GRAPH_USERS_ROLES,
         attributeNodes = @NamedAttributeNode("roles")
 )
@@ -48,6 +62,8 @@ public class UserEntity {
     public static final String FIND_BY_PUBLIC_ID= "User.findByPublicId";
     public static final String FIND_BY_USERNAME= "User.findByUsername";
     public static final String FIND_ID_BY_PUBLIC_ID= "User.findIdByPublicId";
+    public static final String FIND_USER_ROLE_IDS_BY_USER_ID_NATIVE_QUERY= "User.getUserRoleIdsByUserIdNativeQuery";
+    public static final String FIND_OPERATION_KEY_BY_ROLE_IDS_AS_OBJECTS_NATIVE_QUERY= "User.getOperationKeysByRoleIdsAsObjectsNativeQuery";
 
     public static final String GRAPH_USERS_ROLES="graph.users.roles";
 

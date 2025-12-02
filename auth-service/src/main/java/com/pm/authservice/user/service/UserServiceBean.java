@@ -122,6 +122,13 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     }
 
     @Override
+    public List<String> getUserPermissions(String publicId) throws NotFoundException {
+        UserEntity user= userRepository.findByPublicId(UUID.fromString(publicId))
+                            .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+        return userRepository.getUserPermissions(user.getId());
+    }
+
+    @Override
     public UserEntity findByEmail(String email) throws NotFoundException {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));

@@ -1,9 +1,9 @@
-import {patchState, signalStore, withComputed, withHooks, withMethods, withProps, withState} from '@ngrx/signals';
+import {patchState, signalStore, withComputed, withMethods, withProps, withState} from '@ngrx/signals';
 import {AuthState, initialAuthState} from './auth.state';
 import {computed, inject, Signal} from '@angular/core';
 import {Operation, User} from '@models/user.model';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
-import {pipe, switchMap, tap} from 'rxjs';
+import {EMPTY, map, pipe, switchMap, tap} from 'rxjs';
 import {SubmitCredentialsDTO} from '@models/auth.model';
 import {tapResponse} from '@ngrx/operators';
 import {JwtUtil} from '@core/services/jwt-util.service';
@@ -108,12 +108,42 @@ export const AuthStore = signalStore(
       logout(){
         jwtUtil.destroyToken();
         jwtUtil.destroyTokenExpiration();
-        patchState(state,initialAuthState)
+        patchState(state,{...initialAuthState, ...setLoaded()})
       },
     })
   }),
   withMethods((state)=>{
     const authRepo = state.authRepo;
+
+    const _loadUserAndPermissions = () => {
+      return authRepo.getUserByToken().pipe(
+        tapResponse({
+          next: (response: User) => {
+            state.setAccount(response);
+          },
+          error: (error: string) => {
+            state.setErrorState(error);
+          }
+        }),
+        switchMap(() => {
+          const id = state.getUserId()!;
+          const  ngxPermissionsService = state.ngxPermissionsService;
+          return authRepo.getUserPermissions(id).pipe(
+            tapResponse({
+              next: (response: string[]) => {
+                state.setPermissions(response);
+                ngxPermissionsService.loadPermissions(response);
+                state.setLoadedState();
+              },
+              error: (error: string) => {
+                state.setErrorState(error);
+              }
+            })
+          );
+        })
+      );
+    }
+
     return ({
       login: rxMethod<SubmitCredentialsDTO>(
         pipe(
@@ -130,49 +160,46 @@ export const AuthStore = signalStore(
                   state.setErrorState(error);
                 }
               }),
-              switchMap(()=>
-                authRepo.getUserByToken().pipe(
-                  tapResponse({
-                    next:(response:User)=>{
-                      state.setAccount(response)
-                      state.setLoadedState();
-                    },
-                    error: (error:string) =>{
-                      state.setErrorState(error);
-                    }
-                  }),
-                  switchMap(()=>{
-                    const id = state.getUserId()!;
-                    const  ngxPermissionsService = state.ngxPermissionsService;
-                    return authRepo.getUserPermissions(id).pipe(
-                      tapResponse({
-                        next:(response:string[])=>{
-                          state.setPermissions(response)
-                          ngxPermissionsService.loadPermissions(response);
-                          state.setLoadedState();
-                        },
-                        error: (error:string) =>{
-                          state.setErrorState(error);
-                        }
-                      })
-                    )
-                  })
-                )
-              )
+              switchMap(()=> _loadUserAndPermissions())
             )
           )
         )
       ),
-      getUserAccount: rxMethod<void>(
+      initAuth: rxMethod<void>(
+        pipe(
+          tap(() => patchState(state, setLoading())),
+          map(() => {
+            const token = state.jwtUtil.getToken();
+            const expirationDate = state.jwtUtil.getTokenExpiration();
+            const isExpired = state.jwtUtil.isJwtExpired();
+
+            const shouldLogin = !isExpired && token && expirationDate;
+            if (shouldLogin) {
+              patchState(state, { authToken: token, expires: expirationDate, isLoggedIn: true });
+            }
+            return shouldLogin;
+          }),
+          switchMap((shouldLogin) => {
+            if (shouldLogin) {
+              return _loadUserAndPermissions();
+            }
+            state.logout();
+            return EMPTY;
+          })
+        )
+      ),
+      getUserPermissions: rxMethod<string>(
         pipe(
           tap(() => {
             state.setLoadingState();
           }),
-          switchMap(()=>
-            authRepo.getUserByToken().pipe(
+          switchMap((userId)=>{
+            const  ngxPermissionsService = state.ngxPermissionsService;
+            return authRepo.getUserPermissions(userId).pipe(
               tapResponse({
-                next:(response:User)=>{
-                  state.setAccount(response)
+                next:(response:string[])=>{
+                  state.setPermissions(response)
+                  ngxPermissionsService.loadPermissions(response);
                   state.setLoadedState();
                 },
                 error: (error:string) =>{
@@ -180,26 +207,9 @@ export const AuthStore = signalStore(
                 }
               })
             )
-          )
+          })
         )
       )
     })
-  }),
-  withHooks((state)=>{
-    const {jwtUtil,setAccountInfoFromStorage}= state;
-    const setAccountInfoToStore =():void =>{
-      const token = jwtUtil.getToken();
-      const expirationDate = jwtUtil.getTokenExpiration();
-      const userFromStorage = jwtUtil.getUser(token);
-      const isExpired =jwtUtil.isJwtExpired();
-      if(!isExpired && token && expirationDate && userFromStorage){
-        setAccountInfoFromStorage(token,expirationDate,userFromStorage);
-      }
-    }
-    return {
-      onInit(){
-        setAccountInfoToStore();
-      }
-    }
   })
 );

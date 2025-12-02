@@ -19,6 +19,7 @@ export class AuthService extends GenericService{
   public loggedUser:Signal<User | undefined>;
   public loggedUserId: Signal<string| undefined>;
   public loggedInUserRoleIds:Signal<number[]>;
+  public status: Signal<'pending' | 'loading' | 'loaded' | 'error'>;
 
   constructor(
     private readonly authStore:AuthStore,
@@ -30,15 +31,21 @@ export class AuthService extends GenericService{
     this.loggedUser=this.authStore.getUser;
     this.loggedUserId=this.authStore.getUserId;
     this.loggedInUserRoleIds = this.authStore.getRoleIds;
+    this.status = this.authStore.status;
 
     effect(()=>{
-      const loggedIn=this.isAuthenticated();
-      if(!loggedIn){
+      const loggedIn = this.isAuthenticated();
+      const status = this.status();
+      if(!loggedIn && status === 'loaded'){
         untracked(()=>{
           this.navigateToLogin();
         });
       }
     });
+  }
+
+  public initAuth(): void {
+    this.authStore.initAuth();
   }
 
   private navigateToHome():void{
@@ -61,10 +68,6 @@ export class AuthService extends GenericService{
   public logout() {
     this.authStore.logout();
     this.navigateToLogin();
-  }
-
-  public getUserByToken():void {
-    this.authStore.getUserAccount();
   }
 
   public hasAnyAuthority(authorities: string[] | string):Signal<boolean>{

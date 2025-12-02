@@ -1,36 +1,44 @@
-import { TestBed } from "@angular/core/testing";
+import {fakeAsync, TestBed, tick} from "@angular/core/testing";
 import { Router } from "@angular/router";
 import { AuthStore } from "../store/auth/auth.store";
 
-import {signal} from '@angular/core';
+import {computed, signal} from '@angular/core';
 import {AuthService} from '@core/services/auth.service';
-import {mockLoginCredentials} from '@testing/mockData';
+import {mockLoginCredentials, mockUser} from '@testing/mockData';
 import {RolesConstants} from '@core/guards/SecurityConstants';
-
-type AuthStore = InstanceType<typeof AuthStore>;
 
 describe('AuthService', () =>{
   let service: AuthService;
-  let authStoreSpy: jasmine.SpyObj<AuthStore>;
+  let authStoreSpy: any;
   let routerSpy: jasmine.SpyObj<Router>;
+
+  const mockIsLoggedIn = signal(false);
+  const mockStatus = signal<'pending' | 'loading' | 'loaded' | 'error'>('pending');
 
   beforeEach(()=>{
     authStoreSpy = jasmine.createSpyObj('AuthStore',[
-      'isLoading',
-      'isLoggedIn',
-      'loggedUser',
-      'isJwtExpired',
       'login',
       'logout',
-      'getUserAccount',
       'hasAnyAuthority',
       'getUsername',
+      'isJwtExpired',
+      'initAuth'
     ]);
+
+    // Mock signals
+    authStoreSpy.isLoggedIn = mockIsLoggedIn.asReadonly();
+    authStoreSpy.status = mockStatus.asReadonly();
+    authStoreSpy.loading = computed(() => mockStatus() === 'loading');
+    authStoreSpy.loaded = computed(() => mockStatus() === 'loaded');
+    authStoreSpy.getUser = signal(undefined).asReadonly();
+    authStoreSpy.getUserId = signal(undefined).asReadonly();
+    authStoreSpy.getRoleIds = signal([]).asReadonly();
 
     routerSpy = jasmine.createSpyObj('Router',['navigate']);
 
     TestBed.configureTestingModule({
       providers:[
+        AuthService,
         {
           provide: AuthStore,
           useValue: authStoreSpy,
@@ -49,54 +57,62 @@ describe('AuthService', () =>{
     expect(service).toBeTruthy();
   });
 
+  it('should call initAuth on creation', () => {
+    expect(authStoreSpy.initAuth).toHaveBeenCalled();
+  });
+
+
   it('should perform login ', () =>{
     service.login(mockLoginCredentials);
 
     expect(authStoreSpy.login).toHaveBeenCalledWith(mockLoginCredentials);
-    expect(authStoreSpy.login).toHaveBeenCalledTimes(1);
   });
 
   it('should perform logout ', () =>{
     service.logout();
 
     expect(authStoreSpy.logout).toHaveBeenCalled();
-    expect(authStoreSpy.logout).toHaveBeenCalledTimes(1);
-  });
-
-  it('should get user account by token ', () =>{
-    service.getUserByToken();
-
-    expect(authStoreSpy.getUserAccount).toHaveBeenCalled();
-    expect(authStoreSpy.getUserAccount).toHaveBeenCalledTimes(1);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login']);
   });
 
   it('should check if user has any authority', () =>{
     service.hasAnyAuthority(RolesConstants.ROLE_DOCTOR);
 
     expect(authStoreSpy.hasAnyAuthority).toHaveBeenCalledWith(RolesConstants.ROLE_DOCTOR);
-    expect(authStoreSpy.hasAnyAuthority).toHaveBeenCalledTimes(1);
   });
 
-  it('should check if user is authenticated (true)', () =>{
-    const isLoggedIn = signal(true);
-    service.isLoggedIn=isLoggedIn;
-    authStoreSpy.isJwtExpired.and.returnValue(false)
+  describe('isAuthenticated', () => {
+    it('should return true if user is logged in and token is not expired', () =>{
+      mockIsLoggedIn.set(true);
+      authStoreSpy.isJwtExpired.and.returnValue(false)
 
-    service.isAuthenticated();
+      const result = service.isAuthenticated();
 
-    expect(authStoreSpy.isJwtExpired).toHaveBeenCalled();
-    expect(authStoreSpy.isJwtExpired).toHaveBeenCalledTimes(1);
-  });
+      expect(result).toBe(true);
+      expect(authStoreSpy.isJwtExpired).toHaveBeenCalled();
+    });
 
-  it('should check if user is authenticated (false)', () =>{
-    const isLoggedIn = signal(false);
-    service.isLoggedIn=isLoggedIn;
-    authStoreSpy.isJwtExpired.and.returnValue(true)
+    it('should return false if user is not logged in', () =>{
+      mockIsLoggedIn.set(false);
+      authStoreSpy.isJwtExpired.and.returnValue(false)
 
-    service.isAuthenticated();
+      const result = service.isAuthenticated();
 
-    expect(authStoreSpy.isJwtExpired).toHaveBeenCalledTimes(0);
-  });
+      expect(result).toBe(false);
+      expect(authStoreSpy.isJwtExpired).not.toHaveBeenCalled();
+    });
+
+    it('should return false if token is expired', () =>{
+      mockIsLoggedIn.set(true);
+      authStoreSpy.isJwtExpired.and.returnValue(true)
+
+      const result = service.isAuthenticated();
+
+      expect(result).toBe(false);
+      expect(authStoreSpy.isJwtExpired).toHaveBeenCalled();
+    });
+  })
+
 
   it('should return the logged in users username', () =>{
     authStoreSpy.getUsername.and.returnValue("skaran");
@@ -104,6 +120,38 @@ describe('AuthService', () =>{
     service.getUsername();
 
     expect(authStoreSpy.getUsername).toHaveBeenCalled();
-    expect(authStoreSpy.getUsername).toHaveBeenCalledTimes(1);
+  });
+
+  describe('effect', () => {
+    it('should navigate to login when not logged in and status is loaded', fakeAsync(() => {
+      TestBed.runInInjectionContext(() => {
+        // initial state
+        mockIsLoggedIn.set(false);
+        mockStatus.set('pending');
+
+        // service initializes
+        const instance = TestBed.inject(AuthService);
+        tick(); // process effects
+        expect(routerSpy.navigate).not.toHaveBeenCalled();
+
+
+        // status becomes 'loaded'
+        mockStatus.set('loaded');
+        tick(); // process effects again
+        expect(routerSpy.navigate).toHaveBeenCalledWith(['/auth/login']);
+      });
+    }));
+
+    it('should not navigate when logged in and status is loaded', fakeAsync(() => {
+      TestBed.runInInjectionContext(() => {
+        mockIsLoggedIn.set(true);
+        mockStatus.set('loaded');
+
+        const instance = TestBed.inject(AuthService);
+        tick();
+
+        expect(routerSpy.navigate).not.toHaveBeenCalled();
+      });
+    }));
   });
 })

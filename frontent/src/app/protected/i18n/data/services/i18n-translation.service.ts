@@ -4,7 +4,7 @@ import {SearchService} from '@core/services/search.service';
 import {TranslateService} from '@ngx-translate/core';
 import {UtilService} from '@core/services/util.service';
 import {FormControl, FormGroup} from '@angular/forms';
-import {UpdateI18nResource} from '@models/i18n-resource.model';
+import {I18nResource, UpdateI18nResource} from '@models/i18n-resource.model';
 import {I18nResourceSearchForm} from '../../forms';
 import {GenericService} from '@core/services/generic.service';
 
@@ -40,8 +40,8 @@ export class I18nTranslationService extends GenericService{
     this.resourceStore.getLanguages();
   }
 
-  public executeUpdateResources(request:UpdateI18nResource[]):void{
-    this.resourceStore.updateTranslations(request);
+  public executeUpdateResources(request:UpdateI18nResource[],row:I18nResource):void{
+    this.resourceStore.updateTranslations({updates:request,row:row});
   }
 
   public initSearchI18nResourceForm(): FormGroup<I18nResourceSearchForm>{

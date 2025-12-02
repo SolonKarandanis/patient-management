@@ -265,6 +265,7 @@ export class I18nManagementComponent extends BaseComponent implements OnInit {
       textValue: t.value,
       languageId: Number(t.lang)
     }));
+    this.i18nResourceService.executeUpdateResources(updates,row);
   }
 
   protected onRowEditCancel(row: I18nResource, rowId: number){

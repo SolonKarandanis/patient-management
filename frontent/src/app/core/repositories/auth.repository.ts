@@ -31,13 +31,7 @@ export class AuthRepository extends BaseRepository{
     return this.http.get<User>(`${ApiRepositories.USERS}/account`);
   }
 
-  // getUserOperations(): Observable<OperationModel[]> {
-  //     return this.http.get<Operations[]>(`${this.dutEndpoint}/${ApiRepositories.USERS}/operations`)
-  //         .pipe(
-  //             map(response =>{
-  //                 const models =response.map(this.operationMapper.mapToModel)
-  //                 return models;
-  //             })
-  //         )
-  // }
+  getUserPermissions(id:string):Observable<string[]>{
+    return this.http.get<string[]>(`${ApiRepositories.USERS}/${id}/permissions`);
+  }
 }

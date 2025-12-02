@@ -84,10 +84,15 @@ export const AuthStore = signalStore(
         patchState(state,{authToken,expires})
       },
       setAccountInfoFromStorage(token:string,expires:string,user:User){
-        patchState(state,{authToken:token,expires,isLoggedIn:true,user});
+        const roles = user.roles
+        patchState(state,{authToken:token,expires,isLoggedIn:true,user,roles});
       },
       setAccount(user:User){
-        patchState(state,{isLoggedIn:true,user })
+        const roles = user.roles
+        patchState(state,{isLoggedIn:true,user, roles })
+      },
+      setPermissions(permissions:string[]){
+        patchState(state,{permissions});
       },
       setLoadingState(){
         patchState(state, setLoading());
@@ -133,6 +138,20 @@ export const AuthStore = signalStore(
                     error: (error:string) =>{
                       state.setErrorState(error);
                     }
+                  }),
+                  switchMap(()=>{
+                    const id = state.getUserId()!;
+                    return authRepo.getUserPermissions(id).pipe(
+                      tapResponse({
+                        next:(response:string[])=>{
+                          state.setPermissions(response)
+                          state.setLoadedState();
+                        },
+                        error: (error:string) =>{
+                          state.setErrorState(error);
+                        }
+                      })
+                    )
                   })
                 )
               )

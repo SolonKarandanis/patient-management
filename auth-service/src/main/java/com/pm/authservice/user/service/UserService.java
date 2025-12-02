@@ -15,6 +15,7 @@ public interface UserService {
     List<UserDTO> convertToDTOList(List<UserEntity> userList, Boolean withRoles);
     UserEntity findById(Integer id) throws NotFoundException;
     UserEntity findByPublicId(String publicId)throws NotFoundException;
+    List<String> getUserPermissions(String publicId)throws NotFoundException;
     UserEntity findByEmail(String email)throws NotFoundException;
     void deleteUser(String publicId) throws NotFoundException;
     Page<UserEntity> searchUsers(UsersSearchRequestDTO searchObj, UserEntity loggedUser);

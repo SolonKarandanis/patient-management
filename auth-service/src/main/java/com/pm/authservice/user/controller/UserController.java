@@ -80,6 +80,12 @@ public class UserController {
         return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
 
+    @GetMapping("/{id}/permissions")
+    public ResponseEntity<List<String>> getUserPermissions(@PathVariable(name= "id", required=true) String publicId) throws NotFoundException {
+        List<String> permissions = usersService.getUserPermissions(publicId);
+        return ResponseEntity.ok(permissions);
+    }
+
     @GetMapping(value="/account")
     @Translate(path = "status", targetProperty = "statusLabel")
     @Translate(path = "roles[*].name", targetProperty = "nameLabel")

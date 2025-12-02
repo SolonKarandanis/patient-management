@@ -43,6 +43,10 @@ export class UserRepository extends BaseRepository{
     return this.http.get<User>(`${ApiRepositories.USERS}/${id}`);
   }
 
+  getUserPermissions(id:string):Observable<string[]>{
+    return this.http.get<string[]>(`${ApiRepositories.USERS}/${id}/permissions`);
+  }
+
   /**
    * Register a new user
    * @param request the request for creating a new user

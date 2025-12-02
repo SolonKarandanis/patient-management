@@ -1,8 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {I18nResourceStore} from '../store/i18n.store';
 import {SearchService} from '@core/services/search.service';
-import {TranslateService} from '@ngx-translate/core';
-import {UtilService} from '@core/services/util.service';
 import {FormControl, FormGroup} from '@angular/forms';
 import {I18nResource, UpdateI18nResource} from '@models/i18n-resource.model';
 import {I18nResourceSearchForm} from '../../forms';
@@ -15,8 +13,6 @@ export class I18nTranslationService extends GenericService{
 
   private resourceStore = inject(I18nResourceStore);
   private searchService = inject(SearchService);
-  private translateService = inject(TranslateService);
-  private utilService = inject(UtilService);
 
   public languagesAsSelectItems = this.resourceStore.getLanguagesAsSelectItems;
   public modulesAsSelectItems = this.resourceStore.getModulesAsSelectItems;

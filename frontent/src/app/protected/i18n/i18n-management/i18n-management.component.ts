@@ -246,10 +246,6 @@ export class I18nManagementComponent extends BaseComponent implements OnInit {
     this.search();
   }
 
-  protected getLangValues(values: Record<string, string>) {
-    return Object.entries(values).map(([lang, value]) => ({ lang, value }));
-  }
-
   protected getLanguageLabel(langId: unknown): string {
     return this.languages().find(lang => lang.value.toString() === langId)?.label ?? '';
   }

@@ -121,21 +121,25 @@ export const I18nResourceStore = signalStore(
           )
         )
       ),
-      updateTranslations: rxMethod<UpdateI18nResource[]>(
+      updateTranslations: rxMethod<{updates:UpdateI18nResource[],row:I18nResource}>(
         pipe(
           tap(() => {
             state.setLoadingState();
           }),
-          switchMap((request)=>
-            i18nRepo.updateTranslations(request).pipe(
+          switchMap(({updates,row})=>
+            i18nRepo.updateTranslations(updates).pipe(
               tapResponse({
                 next:()=>{
                   state.setLoadedState();
+                  delete row._translationList;
+                  row.editing = false;
                   utilService.showMessage('success',translate.instant('ADMINISTRATION.I18N-MANAGEMENT.MESSAGES.SUCCESS.update-success'));
                 },
                 error: (error:string) =>{
                   state.setErrorState(error);
                   state.setLoadedState();
+                  row.translationList = row._translationList ? [...row._translationList] : [];
+                  row.editing = true;
                   utilService.showMessage("error",translate.instant('ADMINISTRATION.I18N-MANAGEMENT.MESSAGES.ERROR.update-failure'))
                 }
               })

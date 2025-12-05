@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Gatherers;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -195,25 +196,16 @@ public class I18nInitServiceBean implements I18nInitService {
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         List<I18nLabel> i18nLabelsInsertedAsList = new ArrayList<>();
         if (!labelResourceKeys.isEmpty()) {
-            List<String> labelResKeysAsList = new ArrayList<>(labelResourceKeys);
-            // Assign insert of labels to a set of virtual threads, each inserting maximum LABELS_PER_THREAD entries
-            List<List<String>> labelResKeysTotal = CollectionUtil.splitList(labelResKeysAsList, LABELS_PER_THREAD);
             ExecutorService labelInsertService = Executors.newVirtualThreadPerTaskExecutor();
-            List<Future<List<I18nLabel>>> labelInsertOutputAsList = new ArrayList<>();
             try (labelInsertService) {
-                labelResKeysTotal.forEach(labelsAsList -> {
-                    Future<List<I18nLabel>> labInsertOutput = labelInsertService.submit(new I18nLabelInsertTask(i18nService, i18nModule.getId(), labelsAsList));
-                    labelInsertOutputAsList.add(labInsertOutput);
-                });
+                List<Future<List<I18nLabel>>> labelInsertOutputAsList = new ArrayList<>(labelResourceKeys).stream()
+                        .gather(Gatherers.windowFixed(LABELS_PER_THREAD))
+                        .map(labelsAsList -> labelInsertService.submit(new I18nLabelInsertTask(i18nService, i18nModule.getId(), labelsAsList)))
+                        .toList();
+
                 List<List<I18nLabel>> i18nLabelsTotal = getAndAggregate(labelInsertOutputAsList,
                         " ERROR-INIT-I18nTranslations: Import of Labels of I18nModule " + i18nModule.getModuleName() + " failed ");
-                i18nLabelsInsertedAsList.addAll(i18nLabelsTotal.stream().reduce(new ArrayList<>(), (a1, a2) -> {
-                    a1.addAll(a2);
-                    return a1;
-                }, (a1, a2) -> {
-                    a1.addAll(a2);
-                    return a1;
-                }));
+                i18nLabelsInsertedAsList.addAll(i18nLabelsTotal.stream().flatMap(List::stream).toList());
             }
         }
         // Step: Assign I18nLabel ids to translations

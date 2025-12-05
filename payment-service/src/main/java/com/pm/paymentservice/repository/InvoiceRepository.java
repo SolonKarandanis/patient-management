@@ -1,12 +1,21 @@
 package com.pm.paymentservice.repository;
 
 import com.pm.paymentservice.model.Invoice;
-import org.springframework.data.jpa.repository.JpaRepository;
+
+import jakarta.persistence.Query;
+import org.hibernate.jpa.HibernateHints;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 @Repository
-public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
-    Invoice findByPublicId(UUID publicId);
+public class InvoiceRepository extends AbstractRepository<Invoice, Long> {
+
+    public Invoice findByPublicId(UUID publicId){
+        Query q = getEntityManager()
+                .createQuery("SELECT inv FROM Invoice inv WHERE inv.publicId = :publicId")
+                .setParameter("publicId", publicId)
+                .setHint(HibernateHints.HINT_READ_ONLY, true);
+        return (Invoice) q.getSingleResult();
+    }
 }

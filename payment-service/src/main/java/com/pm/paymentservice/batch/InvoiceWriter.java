@@ -7,6 +7,8 @@ import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class InvoiceWriter implements ItemWriter<Invoice> {
 
@@ -18,6 +20,6 @@ public class InvoiceWriter implements ItemWriter<Invoice> {
 
     @Override
     public void write(Chunk<? extends Invoice> chunk) throws Exception {
-        invoiceRepository.saveAll(chunk.getItems());
+        invoiceRepository.bulkCreate((List<Invoice>) chunk.getItems());
     }
 }

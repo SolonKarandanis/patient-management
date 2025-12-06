@@ -2,10 +2,9 @@ package com.pm.notificationservice.config;
 
 import com.pm.notificationservice.model.NotificationEventEntity;
 import com.pm.notificationservice.model.NotificationEventStatus;
-import com.pm.notificationservice.service.NotificationService;
 import com.pm.notificationservice.repository.NotificationEventRepository;
+import com.pm.notificationservice.service.NotificationService;
 import lombok.extern.slf4j.Slf4j;
-import notification.events.NotificationEvent;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -82,25 +81,15 @@ public class BatchConfig {
     public ItemProcessor<NotificationEventEntity, NotificationEventEntity> notificationEventProcessor() {
         return item -> {
             try {
-                // Convert NotificationEventEntity to NotificationEvent (protobuf)
-                NotificationEvent notificationEvent = NotificationEvent.newBuilder()
-                        .addAllUserIds(item.getUserIds() != null ? item.getUserIds() : Collections.emptyList())
-                        .setTitle(item.getTitle() != null ? item.getTitle() : "")
-                        .setEventType(item.getEventType() != null ? item.getEventType() : "")
-                        .setMessage(item.getMessage() != null ? item.getMessage() : "")
-                        .build();
-
                 // Send notification using existing service
-                notificationService.handleNotification(notificationEvent);
-
-                // Update status and sentDate
+                notificationService.sendNotification(item);
+                // Update status and sentDate on the item (will be persisted by the writer)
                 item.setStatus(NotificationEventStatus.NOTIFICATION_EVENT_SENT);
                 item.setSentDate(LocalDateTime.now());
+
             } catch (Exception e) {
-                // Log error and set status to failed
+                // Log error and set status to failed on the item (will be persisted by the writer)
                 item.setStatus(NotificationEventStatus.NOTIFICATION_EVENT_FAILED);
-                // Optionally, store error details in the entity
-                // item.setErrorDetails(e.getMessage());
                 log.error("Failed to send notification for ID: {}, error: {}",  item.getId(), e.getMessage());
             }
             return item; // Return the updated entity

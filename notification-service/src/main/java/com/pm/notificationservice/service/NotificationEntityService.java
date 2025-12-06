@@ -9,4 +9,5 @@ public interface NotificationEntityService {
     NotificationEventEntity saveNotificationEvent(NotificationEventEntity notificationEventEntity);
     NotificationEventEntity getNotificationEvent(Long id);
     List<NotificationEventEntity> findByStatus(NotificationEventStatus status);
+    void updateNotificationStatus(Long id, NotificationEventStatus status);
 }

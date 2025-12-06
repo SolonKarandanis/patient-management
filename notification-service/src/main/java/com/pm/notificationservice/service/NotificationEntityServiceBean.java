@@ -36,4 +36,11 @@ public class NotificationEntityServiceBean implements NotificationEntityService 
     public List<NotificationEventEntity> findByStatus(NotificationEventStatus status) {
         return notificationEventRepository.findByStatus(status);
     }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public void updateNotificationStatus(Long id, NotificationEventStatus status) {
+        notificationEventRepository.findByIdWithLock(id)
+                .ifPresent(notificationEventEntity -> notificationEventRepository.updateStatusById(notificationEventEntity.getId(), status));
+    }
 }

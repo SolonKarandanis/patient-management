@@ -13,6 +13,12 @@ import java.util.List;
         query = "SELECT ne " +
                 "FROM NotificationEventEntity ne " +
                 "WHERE ne.status = :status ")
+@NamedQuery(name = NotificationEventEntity.FIND_BY_ID_WITH_LOCK,
+        query = "SELECT ne " +
+                "FROM NotificationEventEntity ne " +
+                "WHERE ne.id = :id")
+@NamedQuery(name = NotificationEventEntity.UPDATE_STATUS_BY_ID,
+        query = "UPDATE NotificationEventEntity n SET n.status = :status WHERE n.id = :id")
 @Entity
 @Table(name = "notification_event")
 @Data
@@ -22,6 +28,8 @@ import java.util.List;
 public class NotificationEventEntity {
 
     public static final String FIND_BY_STATUS= "NotificationEventEntity.findByStatus";
+    public static final String FIND_BY_ID_WITH_LOCK = "NotificationEventEntity.findByIdWithLock";
+    public static final String UPDATE_STATUS_BY_ID = "NotificationEventEntity.updateStatusById";
 
     @Id
     @GeneratedValue(

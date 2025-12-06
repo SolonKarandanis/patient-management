@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.MimeTypeUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 
@@ -36,8 +37,8 @@ public class NotificationServiceBean implements NotificationService {
         this.notificationEntityService = notificationEntityService;
     }
 
-    private void createNotificationEvent(NotificationEvent notificationEvent) {
-        NotificationEventEntity toBeSaved = NotificationEventEntity.builder()
+    private NotificationEventEntity createNotificationEvent(NotificationEvent notificationEvent) {
+        NotificationEventEntity notificationEntity = NotificationEventEntity.builder()
                 .userIds(notificationEvent.getUserIdsList())
                 .title(notificationEvent.getTitle())
                 .eventType(notificationEvent.getEventType())
@@ -45,42 +46,48 @@ public class NotificationServiceBean implements NotificationService {
                 .status(NotificationEventStatus.NOTIFICATION_EVENT_CREATED)
                 .createdDate(LocalDateTime.now())
                 .build();
-        notificationEntityService.saveNotificationEvent(toBeSaved);
+        log.info("Saving Notification to database with eventType:{}", notificationEntity.getEventType());
+        notificationEntity=notificationEntityService.saveNotificationEvent(notificationEntity);
+        log.info("Notification saved");
+        return notificationEntity;
     }
 
-    public void sendNotification(NotificationEvent notificationEvent) {
-        createNotificationEvent(notificationEvent);
-        ProtocolStringList userIdsList = notificationEvent.getUserIdsList();
-        MessageHeaders headers = new MessageHeaders(Map.of(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON));
-        if(!CollectionUtils.isEmpty(userIdsList)){
+    public void handleNotification(NotificationEvent notificationEvent) {
+        NotificationEventEntity notificationEntity=createNotificationEvent(notificationEvent);
+        String eventType = notificationEntity.getEventType();
+
+        sendImmediately(notificationEntity);
+    }
+
+    private void sendImmediately(NotificationEventEntity notificationEntity) {
+        List<String> userIdsList= notificationEntity.getUserIds();
+        if(!CollectionUtils.isEmpty(notificationEntity.getUserIds())){
             userIdsList.forEach(userId -> {
-                log.info("Sending {} notification to {} with payload {}", notificationEvent.getEventType(),userId, notificationEvent.getTitle());
-                NotificationDTO dto = new NotificationDTO(notificationEvent.getTitle(), notificationEvent.getMessage(),notificationEvent.getEventType());
-                try {
-                    String payload = objectMapper.writeValueAsString(dto);
-                    messagingTemplate.convertAndSend(
-                            "/topic/notifications/" + userId,
-                            payload,
-                            headers
-                    );
-                } catch (JsonProcessingException e) {
-                    log.error("Failed to serialize notification DTO for user {}", userId, e);
-                }
+                log.info("Sending {} notification to {} with payload {}", notificationEntity.getEventType(),userId, notificationEntity.getTitle());
+                NotificationDTO dto = new NotificationDTO(notificationEntity.getTitle(), notificationEntity.getMessage(),notificationEntity.getEventType());
+                String destination = "/topic/notifications/" + userId;
+                sendNotification(dto,destination);
             });
         }
         else{
-            log.info("Sending {} notification  with payload {}", notificationEvent.getEventType(), notificationEvent.getTitle());
-            NotificationDTO dto = new NotificationDTO(notificationEvent.getEventType());
-            try {
-                String payload = objectMapper.writeValueAsString(dto);
-                messagingTemplate.convertAndSend(
-                        "/topic/notifications",
-                        payload,
-                        headers
-                );
-            } catch (JsonProcessingException e) {
-                log.error("Failed to serialize notification DTO", e);
-            }
+            log.info("Sending {} notification  with payload {}", notificationEntity.getEventType(), notificationEntity.getTitle());
+            NotificationDTO dto = new NotificationDTO(notificationEntity.getEventType());
+            String destination = "/topic/notifications";
+            sendNotification(dto,destination);
+        }
+    }
+
+    private void sendNotification(NotificationDTO dto, String destination){
+        MessageHeaders headers = new MessageHeaders(Map.of(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON));
+        try {
+            String payload = objectMapper.writeValueAsString(dto);
+            messagingTemplate.convertAndSend(
+                    destination,
+                    payload,
+                    headers
+            );
+        } catch (JsonProcessingException e) {
+            log.error("Failed to serialize notification DTO to destination: {}",destination, e);
         }
     }
 }

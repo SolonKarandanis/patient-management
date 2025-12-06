@@ -25,7 +25,7 @@ public class KafkaConsumer {
         log.info("Received raw Kafka event (byte length: {}): {}", event.length, new String(event));
         try {
             NotificationEvent notification = NotificationEvent.parseFrom(event);
-            notificationService.sendNotification(notification);
+            notificationService.handleNotification(notification);
         }
         catch (InvalidProtocolBufferException e) {
             log.error(ERROR_DESERIALIZING_EVENT, e.getMessage());

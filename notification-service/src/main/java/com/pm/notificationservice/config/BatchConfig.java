@@ -91,7 +91,7 @@ public class BatchConfig {
                         .build();
 
                 // Send notification using existing service
-                notificationService.sendNotification(notificationEvent);
+                notificationService.handleNotification(notificationEvent);
 
                 // Update status and sentDate
                 item.setStatus(NotificationEventStatus.NOTIFICATION_EVENT_SENT);

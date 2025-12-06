@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="00000000000001-notification-event-seq" author="solon">
+        <createSequence sequenceName="notification_event_seq" startValue="1" incrementBy="1"/>
+    </changeSet>
+    <changeSet id="00000000000001" author="solon">
+        <createTable tableName="notification_event">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_ids" type="TEXT[]"/>
+            <column name="title" type="varchar(255)"/>
+            <column name="event_type" type="varchar(255)"/>
+            <column name="message" type="text"/>
+            <column name="status" type="varchar(255)"/>
+            <column name="created_date" type="timestamp"/>
+            <column name="sent_date" type="timestamp"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

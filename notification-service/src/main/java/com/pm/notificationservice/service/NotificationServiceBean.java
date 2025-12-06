@@ -2,7 +2,7 @@ package com.pm.notificationservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.protobuf.ProtocolStringList;
+import com.pm.notificationservice.dto.EventConstants;
 import com.pm.notificationservice.dto.NotificationDTO;
 import com.pm.notificationservice.model.NotificationEventEntity;
 import com.pm.notificationservice.model.NotificationEventStatus;
@@ -52,32 +52,46 @@ public class NotificationServiceBean implements NotificationService {
         return notificationEntity;
     }
 
-    public void handleNotification(NotificationEvent notificationEvent) {
-        NotificationEventEntity notificationEntity=createNotificationEvent(notificationEvent);
-        String eventType = notificationEntity.getEventType();
-
-        sendImmediately(notificationEntity);
+    private Boolean decideIfBatchNotification(String eventType){
+        return EventConstants.USER_PASSWORD_EXPIRED_NOTIFICATION.equals(eventType);
     }
 
-    private void sendImmediately(NotificationEventEntity notificationEntity) {
+    public void handleNotificationFromBroker(NotificationEvent notificationEvent) {
+        NotificationEventEntity notificationEntity=createNotificationEvent(notificationEvent);
+        String eventType = notificationEntity.getEventType();
+        if (decideIfBatchNotification(eventType)) {
+            // For batch notifications, we just save them and the batch job will pick them up
+            notificationEntityService.updateNotificationStatus(notificationEntity.getId(), NotificationEventStatus.NOTIFICATION_EVENT_PENDING);
+            log.info("Batch notification ({}): saved for later processing. ID: {}", eventType, notificationEntity.getId());
+        } else {
+            sendImmediately(notificationEntity,true);
+        }
+    }
+
+    @Override
+    public void sendNotification(NotificationEventEntity notificationEntity) {
+        sendImmediately(notificationEntity,false);
+    }
+
+    private void sendImmediately(NotificationEventEntity notificationEntity, Boolean handleSaveInDb) {
         List<String> userIdsList= notificationEntity.getUserIds();
         if(!CollectionUtils.isEmpty(notificationEntity.getUserIds())){
             userIdsList.forEach(userId -> {
                 log.info("Sending {} notification to {} with payload {}", notificationEntity.getEventType(),userId, notificationEntity.getTitle());
                 NotificationDTO dto = new NotificationDTO(notificationEntity.getTitle(), notificationEntity.getMessage(),notificationEntity.getEventType());
                 String destination = "/topic/notifications/" + userId;
-                sendNotification(dto,destination);
+                sendNotification(dto,destination,notificationEntity.getId(),handleSaveInDb);
             });
         }
         else{
             log.info("Sending {} notification  with payload {}", notificationEntity.getEventType(), notificationEntity.getTitle());
             NotificationDTO dto = new NotificationDTO(notificationEntity.getEventType());
             String destination = "/topic/notifications";
-            sendNotification(dto,destination);
+            sendNotification(dto,destination,notificationEntity.getId(),handleSaveInDb);
         }
     }
 
-    private void sendNotification(NotificationDTO dto, String destination){
+    private void sendNotification(NotificationDTO dto, String destination, Long id,Boolean handleSaveInDb){
         MessageHeaders headers = new MessageHeaders(Map.of(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON));
         try {
             String payload = objectMapper.writeValueAsString(dto);
@@ -86,7 +100,13 @@ public class NotificationServiceBean implements NotificationService {
                     payload,
                     headers
             );
+            if(handleSaveInDb){
+                notificationEntityService.updateNotificationStatus(id, NotificationEventStatus.NOTIFICATION_EVENT_SENT);
+            }
         } catch (JsonProcessingException e) {
+            if(handleSaveInDb){
+                notificationEntityService.updateNotificationStatus(id, NotificationEventStatus.NOTIFICATION_EVENT_FAILED);
+            }
             log.error("Failed to serialize notification DTO to destination: {}",destination, e);
         }
     }

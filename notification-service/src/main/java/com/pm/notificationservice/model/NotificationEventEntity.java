@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@NamedQuery(name = NotificationEventEntity.FIND_BY_STATUS,
+        query = "SELECT ne " +
+                "FROM NotificationEventEntity ne " +
+                "WHERE ne.status = :status ")
 @Entity
 @Table(name = "notification_event")
 @Data
@@ -16,6 +20,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NotificationEventEntity {
+
+    public static final String FIND_BY_STATUS= "NotificationEventEntity.findByStatus";
+
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,

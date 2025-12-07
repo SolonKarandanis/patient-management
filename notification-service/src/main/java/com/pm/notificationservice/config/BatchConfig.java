@@ -12,6 +12,8 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.integration.async.AsyncItemProcessor;
+import org.springframework.batch.integration.async.AsyncItemWriter;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
@@ -20,6 +22,7 @@ import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -96,8 +99,25 @@ public class BatchConfig {
             return item; // Return the updated entity
         };
     }
+
+    @Bean(name = "asyncNotificationEventProcessor")
+    public AsyncItemProcessor<NotificationEventEntity, NotificationEventEntity> asyncNotificationEventProcessor(){
+        AsyncItemProcessor<NotificationEventEntity, NotificationEventEntity> processor = new AsyncItemProcessor<>();
+        processor.setDelegate(notificationEventProcessor());
+        processor.setTaskExecutor(new SimpleAsyncTaskExecutor());
+        return processor;
+    }
+
+
     @Bean(name = "notificationEventWriter")
     public ItemWriter<NotificationEventEntity> notificationEventWriter() {
         return notificationEventRepository::saveAll;
+    }
+
+    @Bean(name = "asyncNotificationEventWriter")
+    public AsyncItemWriter<NotificationEventEntity> asyncNotificationEventWriter() {
+        AsyncItemWriter<NotificationEventEntity> writer = new AsyncItemWriter<>();
+        writer.setDelegate(notificationEventWriter());
+        return writer;
     }
 }

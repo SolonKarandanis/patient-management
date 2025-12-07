@@ -44,6 +44,22 @@
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.clickhouse</groupId>
+            <artifactId>clickhouse-jdbc</artifactId>
+            <version>0.6.0</version>
+            <classifier>all</classifier>
+        </dependency>
+        <dependency>
+            <groupId>io.arenadata</groupId>
+            <artifactId>liquibase-clickhouse</artifactId>
+
+            <version>0.7.4-arenadata</version>
+        </dependency>
         <!-- Spring Dependencies End-->
         <dependency>
             <groupId>com.google.protobuf</groupId>

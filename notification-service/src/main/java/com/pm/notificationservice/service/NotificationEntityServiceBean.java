@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import java.time.LocalDateTime;
+
 @Service
 @Transactional(readOnly = true)
 public class NotificationEntityServiceBean implements NotificationEntityService {
@@ -41,6 +43,12 @@ public class NotificationEntityServiceBean implements NotificationEntityService 
     @Override
     public void updateNotificationStatus(Long id, NotificationEventStatus status) {
         notificationEventRepository.findByIdWithLock(id)
-                .ifPresent(notificationEventEntity -> notificationEventRepository.updateStatusById(notificationEventEntity.getId(), status));
+                .ifPresent(notificationEventEntity -> {
+                    if (status == NotificationEventStatus.NOTIFICATION_EVENT_SENT) {
+                        notificationEventEntity.setSentDate(LocalDateTime.now());
+                    }
+                    notificationEventEntity.setStatus(status);
+                    notificationEventRepository.save(notificationEventEntity);
+                });
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.data.RepositoryItemReader;
 import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
@@ -54,9 +55,9 @@ public class BatchConfig {
     }
 
     @Bean
-    public Step sendNotificationsStep(ItemReader<NotificationEventEntity> reader,
-                                      ItemProcessor<NotificationEventEntity, NotificationEventEntity> processor,
-                                      ItemWriter<NotificationEventEntity> writer) {
+    public Step sendNotificationsStep(@Qualifier("notificationEventReader") ItemReader<NotificationEventEntity> reader,
+                                      @Qualifier("notificationEventProcessor")ItemProcessor<NotificationEventEntity, NotificationEventEntity> processor,
+                                      @Qualifier("notificationEventWriter") ItemWriter<NotificationEventEntity> writer) {
         return new StepBuilder("sendNotificationsStep", jobRepository)
                 .<NotificationEventEntity, NotificationEventEntity>chunk(10, transactionManager)
                 .reader(reader)
@@ -65,7 +66,7 @@ public class BatchConfig {
                 .build();
     }
 
-    @Bean
+    @Bean(name = "notificationEventReader")
     public RepositoryItemReader<NotificationEventEntity> notificationEventReader() {
         return new RepositoryItemReaderBuilder<NotificationEventEntity>()
                 .name("notificationEventReader")
@@ -77,7 +78,7 @@ public class BatchConfig {
                 .build();
     }
 
-    @Bean
+    @Bean(name = "notificationEventProcessor")
     public ItemProcessor<NotificationEventEntity, NotificationEventEntity> notificationEventProcessor() {
         return item -> {
             try {
@@ -95,7 +96,7 @@ public class BatchConfig {
             return item; // Return the updated entity
         };
     }
-    @Bean
+    @Bean(name = "notificationEventWriter")
     public ItemWriter<NotificationEventEntity> notificationEventWriter() {
         return notificationEventRepository::saveAll;
     }

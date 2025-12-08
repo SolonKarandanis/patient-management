@@ -63,6 +63,28 @@
             <artifactId>liquibase-clickhouse</artifactId>
             <version>0.7.4-arenadata</version>
         </dependency>
+
+        <!-- Spring Batch -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-batch</artifactId>
+        </dependency>
+
+        <!-- Spring Integration -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-integration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-http</artifactId>
+        </dependency>
+
+        <!-- Spring Integration Kafka -->
+        <dependency>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-kafka</artifactId>
+        </dependency>
         <!-- Spring Dependencies End-->
         <dependency>
             <groupId>com.google.protobuf</groupId>

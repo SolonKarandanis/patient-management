@@ -8,13 +8,14 @@
         <comment>Create patient_events table</comment>
         <sql>
             CREATE TABLE IF NOT EXISTS analyticsservice.patient_events (
+                id UUID,
                 patientId String,
                 name String,
                 email String,
                 event_type String,
                 event_timestamp DateTime DEFAULT now()
             ) ENGINE = MergeTree()
-            ORDER BY (event_timestamp);
+            ORDER BY (event_timestamp, id);
         </sql>
     </changeSet>
 
@@ -22,14 +23,14 @@
         <comment>Create payment_events table</comment>
         <sql>
             CREATE TABLE IF NOT EXISTS analyticsservice.payment_events (
-                id String,
+                id UUID,
                 patientId String,
                 state String,
                 amount Float64,
                 createdDate String,
                 event_timestamp DateTime DEFAULT now()
             ) ENGINE = MergeTree()
-            ORDER BY (event_timestamp);
+            ORDER BY (event_timestamp, id);
         </sql>
     </changeSet>
 
@@ -37,14 +38,14 @@
         <comment>Create user_events table</comment>
         <sql>
             CREATE TABLE IF NOT EXISTS analyticsservice.user_events (
-                id String,
+                id UUID,
                 userId String,
                 username String,
                 email String,
                 event_type String,
                 event_timestamp DateTime DEFAULT now()
             ) ENGINE = MergeTree()
-            ORDER BY (event_timestamp);
+            ORDER BY (event_timestamp, id);
         </sql>
     </changeSet>
 
@@ -52,13 +53,14 @@
         <comment>Create notification_events table</comment>
         <sql>
             CREATE TABLE IF NOT EXISTS analyticsservice.notification_events (
+                id UUID,
                 userIds Array(String),
                 title String,
                 eventType String,
                 message String,
                 event_timestamp DateTime DEFAULT now()
             ) ENGINE = MergeTree()
-            ORDER BY (event_timestamp);
+            ORDER BY (event_timestamp, id);
         </sql>
     </changeSet>
 

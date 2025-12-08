@@ -1,4 +1,4 @@
-package com.pm.analyticsservice.config;
+package com.pm.analyticsservice.config.batch;
 
 import com.pm.analyticsservice.model.PatientEventModel;
 import com.pm.analyticsservice.service.KafkaNotificationGateway;

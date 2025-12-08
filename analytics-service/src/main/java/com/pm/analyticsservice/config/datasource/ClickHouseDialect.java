@@ -1,4 +1,4 @@
-package com.pm.analyticsservice.config;
+package com.pm.analyticsservice.config.datasource;
 
 import org.springframework.data.relational.core.dialect.AbstractDialect;
 import org.springframework.data.relational.core.dialect.LimitClause;

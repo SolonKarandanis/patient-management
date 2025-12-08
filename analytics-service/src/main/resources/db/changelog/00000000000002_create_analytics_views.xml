@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="00000000000002-patient-daily-summary" author="solon">
+        <comment>Create materialized view for daily patient event counts</comment>
+        <sql>
+            CREATE MATERIALIZED VIEW IF NOT EXISTS analyticsservice.patient_events_daily_summary
+            ENGINE = SummingMergeTree()
+            ORDER BY (event_date, event_type)
+            POPULATE
+            AS SELECT
+                toDate(event_timestamp) AS event_date,
+                event_type,
+                count() as total_events
+            FROM analyticsservice.patient_events
+            GROUP BY event_date, event_type;
+        </sql>
+    </changeSet>
+
+    <changeSet id="00000000000002-user-daily-summary" author="solon">
+        <comment>Create materialized view for daily user event counts</comment>
+        <sql>
+            CREATE MATERIALIZED VIEW IF NOT EXISTS analyticsservice.user_events_daily_summary
+            ENGINE = SummingMergeTree()
+            ORDER BY (event_date, event_type)
+            POPULATE
+            AS SELECT
+                toDate(event_timestamp) AS event_date,
+                event_type,
+                count() as total_events
+            FROM analyticsservice.user_events
+            GROUP BY event_date, event_type;
+        </sql>
+    </changeSet>
+
+    <changeSet id="00000000000002-payment-daily-summary" author="solon">
+        <comment>Create materialized view for daily payment event counts and sums</comment>
+        <sql>
+            CREATE MATERIALIZED VIEW IF NOT EXISTS analyticsservice.payment_events_daily_summary
+            ENGINE = SummingMergeTree()
+            ORDER BY (event_date, state)
+            POPULATE
+            AS SELECT
+                toDate(event_timestamp) AS event_date,
+                state,
+                count() as total_payments,
+                sum(amount) as total_amount
+            FROM analyticsservice.payment_events
+            GROUP BY event_date, state;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

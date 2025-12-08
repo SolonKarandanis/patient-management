@@ -27,7 +27,7 @@
                 patientId String,
                 state String,
                 amount Float64,
-                createdDate String,
+                createdDate DateTime,
                 event_timestamp DateTime DEFAULT now()
             ) ENGINE = MergeTree()
             ORDER BY (event_timestamp, id);

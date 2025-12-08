@@ -1,6 +1,7 @@
 package com.pm.analyticsservice.broker;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.pm.analyticsservice.service.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -15,6 +16,12 @@ public class KafkaConsumer {
 
     private static final String ERROR_DESERIALIZING_EVENT = "Error deserializing event {}";
 
+    private final EventService eventService;
+
+    public KafkaConsumer(EventService eventService) {
+        this.eventService = eventService;
+    }
+
 
     @KafkaListener(topics="patient-events", groupId = "analytics-service")
     public void consumeEvent(byte[] event) {
@@ -26,6 +33,7 @@ public class KafkaConsumer {
                     patientEvent.getPatientId(),
                     patientEvent.getName(),
                     patientEvent.getEmail());
+            eventService.savePatientEvent(patientEvent);
         } catch (InvalidProtocolBufferException e) {
             log.error(ERROR_DESERIALIZING_EVENT, e.getMessage());
         }
@@ -39,6 +47,7 @@ public class KafkaConsumer {
                     userEvent.getUserId(),
                     userEvent.getUsername(),
                     userEvent.getEmail());
+            eventService.saveUserEvent(userEvent);
         } catch (InvalidProtocolBufferException e) {
             log.error(ERROR_DESERIALIZING_EVENT, e.getMessage());
         }
@@ -52,6 +61,7 @@ public class KafkaConsumer {
                     paymentEvent.getId(),
                     paymentEvent.getPatientId(),
                     paymentEvent.getAmount());
+            eventService.savePaymentEvent(paymentEvent);
         } catch (InvalidProtocolBufferException e) {
             log.error(ERROR_DESERIALIZING_EVENT, e.getMessage());
         }

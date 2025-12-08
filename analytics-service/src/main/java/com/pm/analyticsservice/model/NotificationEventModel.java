@@ -1,20 +1,21 @@
-package com.pm.analyticsservice.domain;
+package com.pm.analyticsservice.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Data
-@Table("payment_events")
-public class PaymentEvent {
+@Table("notification_events")
+public class NotificationEventModel {
     @Id
     private UUID id;
-    private String patientId;
-    private String state;
-    private Double amount;
-    private String createdDate;
+    private List<String> userIds;
+    private String title;
+    private String eventType;
+    private String message;
     private LocalDateTime event_timestamp;
 }

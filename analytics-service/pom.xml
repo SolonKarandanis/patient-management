@@ -55,9 +55,12 @@
             <classifier>all</classifier>
         </dependency>
         <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.arenadata</groupId>
             <artifactId>liquibase-clickhouse</artifactId>
-
             <version>0.7.4-arenadata</version>
         </dependency>
         <!-- Spring Dependencies End-->

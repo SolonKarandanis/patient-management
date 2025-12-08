@@ -62,12 +62,22 @@
             <groupId>io.arenadata</groupId>
             <artifactId>liquibase-clickhouse</artifactId>
             <version>0.7.4-arenadata</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.clickhouse</groupId>
+                    <artifactId>clickhouse-jdbc</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-        <!-- Spring Batch -->
+        <!-- Spring Batch (Manual Dependencies) -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-batch</artifactId>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-infrastructure</artifactId>
         </dependency>
 
         <!-- Spring Integration -->
@@ -84,6 +94,13 @@
         <dependency>
             <groupId>org.springframework.integration</groupId>
             <artifactId>spring-integration-kafka</artifactId>
+        </dependency>
+
+        <!-- H2 Database for Spring Batch Metadata (persistent file mode) -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <!-- Spring Dependencies End-->
         <dependency>

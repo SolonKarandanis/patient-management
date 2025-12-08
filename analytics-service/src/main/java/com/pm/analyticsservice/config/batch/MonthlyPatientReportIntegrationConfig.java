@@ -1,4 +1,4 @@
-package com.pm.analyticsservice.config;
+package com.pm.analyticsservice.config.batch;
 
 import lombok.RequiredArgsConstructor;
 import notification.events.NotificationEvent;

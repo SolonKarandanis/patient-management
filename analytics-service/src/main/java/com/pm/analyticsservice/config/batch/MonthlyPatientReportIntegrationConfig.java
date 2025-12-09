@@ -18,6 +18,9 @@ import org.springframework.integration.http.inbound.RequestMapping;
 import org.springframework.integration.kafka.outbound.KafkaProducerMessageHandler;
 import org.springframework.kafka.core.KafkaTemplate;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Configuration
 @RequiredArgsConstructor
@@ -43,17 +46,19 @@ public class MonthlyPatientReportIntegrationConfig {
     public HttpRequestHandlingMessagingGateway httpInboundGateway() {
         HttpRequestHandlingMessagingGateway gateway = new HttpRequestHandlingMessagingGateway(true);
         RequestMapping mapping = new RequestMapping();
-        mapping.setPathPatterns("/jobs/start-monthly-report");
+        mapping.setPathPatterns("/jobs/start-patient-report");
         mapping.setMethods(HttpMethod.POST);
         gateway.setRequestMapping(mapping);
         gateway.setRequestChannel(launchJobChannel());
+        gateway.setRequestPayloadTypeClass(List.class);
         return gateway;
     }
 
     @ServiceActivator(inputChannel = "launchJobChannel")
-    public void launchJob(String payload) throws Exception {
+    public void launchJob(List<String> userIds) throws Exception {
         jobLauncher.run(monthlyReportJob, new JobParametersBuilder()
                 .addLong("startTime", System.currentTimeMillis())
+                .addString("userIds", String.join(",", userIds))
                 .toJobParameters());
     }
 

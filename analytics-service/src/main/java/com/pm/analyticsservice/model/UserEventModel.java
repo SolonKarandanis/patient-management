@@ -19,7 +19,8 @@ public class UserEventModel {
     private String event_type;
     private LocalDateTime event_timestamp;
 
-    public static UserEventModel  createFromEvent(UserEvent userEvent) {
+
+    public static UserEventModel createFromEvent(UserEvent userEvent) {
         UserEventModel userEventModel = new UserEventModel();
         userEventModel.setId(UUID.randomUUID());
         userEventModel.setUserId(userEvent.getUserId());

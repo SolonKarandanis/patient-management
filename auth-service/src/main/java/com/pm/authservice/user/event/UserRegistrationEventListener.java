@@ -5,6 +5,7 @@ import com.pm.authservice.event.EventConstants;
 import com.pm.authservice.user.model.UserEntity;
 import com.pm.authservice.user.model.UserEventEntity;
 import com.pm.authservice.service.VerificationTokenService;
+import com.pm.authservice.user.model.UserStatus;
 import notification.events.NotificationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ public class UserRegistrationEventListener extends BaseEventListener implements 
         //4 Build the verification url to be sent to the user
         String url = event.getApplicationUrl()+"/register/verifyEmail?token="+verificationToken;
         //5 Save UserEventEntity and send Kafka event for analytics
-        UserEventEntity eventEntity= createUserEvent(user);
+        UserEventEntity eventEntity= createUserEvent(user, UserStatus.USER_CREATED);
         saveAndPublishEvents(eventEntity);
         //6 Send Kafka event for notification
         StringBuilder sb =new StringBuilder();

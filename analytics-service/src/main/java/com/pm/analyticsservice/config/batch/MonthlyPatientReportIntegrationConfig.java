@@ -19,7 +19,6 @@ import org.springframework.integration.kafka.outbound.KafkaProducerMessageHandle
 import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Configuration

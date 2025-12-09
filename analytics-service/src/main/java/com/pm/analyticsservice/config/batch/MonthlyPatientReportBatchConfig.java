@@ -1,5 +1,6 @@
 package com.pm.analyticsservice.config.batch;
 
+import com.pm.analyticsservice.config.AppConstants;
 import com.pm.analyticsservice.model.PatientEventModel;
 import com.pm.analyticsservice.service.KafkaNotificationGateway;
 import lombok.RequiredArgsConstructor;
@@ -94,10 +95,10 @@ public class MonthlyPatientReportBatchConfig {
             String message;
 
             if (jobExecution.getExitStatus().equals(ExitStatus.COMPLETED)) {
-                statusType = "MONTHLY_REPORT_JOB_COMPLETED_SUCCESS";
+                statusType = AppConstants.MONTHLY_PATIENT_REPORT_JOB_COMPLETED_SUCCESS;
                 message = "Monthly patient report job completed successfully. Processed " + recordCount + " records.";
             } else {
-                statusType = "MONTHLY_REPORT_JOB_COMPLETED_FAILED";
+                statusType = AppConstants.MONTHLY_PATIENT_REPORT_JOB_COMPLETED_FAILED;
                 message = "Monthly patient report job failed. Status: " + jobExecution.getExitStatus().getExitCode();
             }
 

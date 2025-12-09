@@ -1,5 +1,6 @@
 package com.pm.analyticsservice.config.batch;
 
+import com.pm.analyticsservice.config.AppConstants;
 import lombok.RequiredArgsConstructor;
 import notification.events.NotificationEvent;
 import org.springframework.batch.core.Job;
@@ -17,6 +18,7 @@ import org.springframework.integration.kafka.outbound.KafkaProducerMessageHandle
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.MessageChannel;
 
+
 @Configuration
 @RequiredArgsConstructor
 public class MonthlyPatientReportIntegrationConfig {
@@ -24,6 +26,7 @@ public class MonthlyPatientReportIntegrationConfig {
     private final JobLauncher jobLauncher;
     private final Job monthlyReportJob;
     private final KafkaTemplate<String, NotificationEvent> kafkaTemplate;
+
 
     @Bean
     public MessageChannel launchJobChannel() {
@@ -55,11 +58,11 @@ public class MonthlyPatientReportIntegrationConfig {
     }
 
     @Bean
-    @ServiceActivator(inputChannel = "notificationChannel")
+    @ServiceActivator(inputChannel = AppConstants.NOTIFICATION_CHANNEL)
     public KafkaProducerMessageHandler<String, NotificationEvent> kafkaOutboundAdapter() {
         KafkaProducerMessageHandler<String, NotificationEvent> handler =
                 new KafkaProducerMessageHandler<>(kafkaTemplate);
-        handler.setTopicExpression(new LiteralExpression("notification-events"));
+        handler.setTopicExpression(new LiteralExpression(AppConstants.NOTIFICATION_EVENTS));
         return handler;
     }
 }

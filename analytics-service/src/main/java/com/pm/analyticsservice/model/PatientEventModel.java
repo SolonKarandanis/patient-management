@@ -25,7 +25,7 @@ public class PatientEventModel {
         patientEventModel.setPatientId(patientEvent.getPatientId());
         patientEventModel.setName(patientEvent.getName());
         patientEventModel.setEmail(patientEvent.getEmail());
-        patientEventModel.setEvent_type(patientEventModel.getEvent_type());
+        patientEventModel.setEvent_type(patientEvent.getEventType());
         patientEventModel.setEvent_timestamp(LocalDateTime.now());
         return patientEventModel;
     }

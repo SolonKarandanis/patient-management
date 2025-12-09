@@ -139,7 +139,7 @@ services:
     restart: always
     ports:
       - "8123:8123"
-      - "9001:9000"
+      - "9002:9000"
     volumes:
       - ./clickhouse_data:/var/lib/clickhouse
       - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh

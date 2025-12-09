@@ -37,20 +37,26 @@ public class EventServiceBean implements EventService{
     @Override
     public PatientEventModel savePatientEvent(PatientEvent patientEvent) {
         PatientEventModel model = PatientEventModel.createFromEvent(patientEvent);
-        return patientEventRepository.save(model);
+        log.info("Saving Patient event");
+        patientEventRepository.insert(model);
+        return model;
     }
 
     @Transactional(propagation= Propagation.REQUIRED)
     @Override
     public UserEventModel saveUserEvent(UserEvent userEvent) {
         UserEventModel model = UserEventModel.createFromEvent(userEvent);
-        return userEventRepository.save(model);
+        log.info("Saving User event");
+        userEventRepository.insert(model);
+        return model;
     }
 
     @Transactional(propagation= Propagation.REQUIRED)
     @Override
     public PaymentEventModel savePaymentEvent(PaymentEvent paymentEvent) {
         PaymentEventModel model = PaymentEventModel.createFromEvent(paymentEvent);
-        return paymentEventRepository.save(model);
+        log.info("Saving Payment event");
+        paymentEventRepository.insert(model);
+        return model;
     }
 }

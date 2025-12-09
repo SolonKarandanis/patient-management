@@ -1,6 +1,7 @@
 package com.pm.analyticsservice.config.batch;
 
 import com.pm.analyticsservice.config.AppConstants;
+import org.springframework.messaging.MessageChannel;
 import lombok.RequiredArgsConstructor;
 import notification.events.NotificationEvent;
 import org.springframework.batch.core.Job;
@@ -16,7 +17,6 @@ import org.springframework.integration.http.inbound.HttpRequestHandlingMessaging
 import org.springframework.integration.http.inbound.RequestMapping;
 import org.springframework.integration.kafka.outbound.KafkaProducerMessageHandler;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.messaging.MessageChannel;
 
 
 @Configuration

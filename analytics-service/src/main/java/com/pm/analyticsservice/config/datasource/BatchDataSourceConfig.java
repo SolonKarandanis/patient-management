@@ -1,6 +1,6 @@
 package com.pm.analyticsservice.config.datasource;
 
-import org.springframework.boot.autoconfigure.batch.BatchDataSource;
+
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,8 +10,7 @@ import javax.sql.DataSource;
 @Configuration
 public class BatchDataSourceConfig {
 
-    @Bean
-    @BatchDataSource
+    @Bean("batchDataSource")
     public DataSource batchDataSource() {
         return DataSourceBuilder.create()
                 .driverClassName("org.h2.Driver")

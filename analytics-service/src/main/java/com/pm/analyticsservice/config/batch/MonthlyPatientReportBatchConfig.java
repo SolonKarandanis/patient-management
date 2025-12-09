@@ -102,15 +102,19 @@ public class MonthlyPatientReportBatchConfig {
                 message = "Monthly patient report job failed. Status: " + jobExecution.getExitStatus().getExitCode();
             }
 
-            NotificationEvent notification =
+            String userIds = jobExecution.getJobParameters().getString("userIds");
+
+            NotificationEvent.Builder notificationBuilder =
                     NotificationEvent.newBuilder()
-                            .addUserIds("admin-dashboard") //needs user ids
                             .setTitle("Monthly Patient Report Job")
                             .setEventType(statusType)
-                            .setMessage(message)
-                            .build();
+                            .setMessage(message);
 
-            kafkaNotificationGateway.sendNotification(notification);
+            if (userIds != null && !userIds.isEmpty()) {
+                notificationBuilder.addAllUserIds(java.util.Arrays.asList(userIds.split(",")));
+            }
+
+            kafkaNotificationGateway.sendNotification(notificationBuilder.build());
             log.info("Job completion notification sent to Kafka.");
         }
     }

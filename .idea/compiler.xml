@@ -10,6 +10,7 @@
         <module name="api-gateway" />
         <module name="stream-processor" />
         <module name="integration-tests" />
+        <module name="medical-records-service" />
       </profile>
       <profile name="Annotation profile for auth-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -68,6 +69,7 @@
       <module name="auth-service" options="-parameters" />
       <module name="billing-service" options="-parameters" />
       <module name="camel-integration" options="-parameters" />
+      <module name="medical-records-service" options="-parameters" />
       <module name="notification-service" options="-parameters" />
       <module name="patient-service" options="-parameters" />
       <module name="payment-service" options="-parameters" />

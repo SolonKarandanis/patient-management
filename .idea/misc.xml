@@ -15,6 +15,7 @@
         <option value="$PROJECT_DIR$/payment-service/pom.xml" />
         <option value="$PROJECT_DIR$/notification-service/pom.xml" />
         <option value="$PROJECT_DIR$/stream-processor/pom.xml" />
+        <option value="$PROJECT_DIR$/medical-records-service/pom.xml" />
       </list>
     </option>
   </component>

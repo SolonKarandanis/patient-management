@@ -16,6 +16,7 @@
     <file url="file://$PROJECT_DIR$/camel-integration/target/generated-sources/protobuf/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/integration-tests/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/integration-tests/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/medical-records-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/notification-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/notification-service/target/generated-sources/protobuf/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/patient-service/src/main/java" charset="UTF-8" />

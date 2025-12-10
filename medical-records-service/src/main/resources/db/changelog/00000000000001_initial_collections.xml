@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.27.xsd">
+
+    <changeSet id="00000000000001-create-patient-medical-records-collection" author="solon">
+        <customChange class="liquibase.ext.mongodb.change.MongoCommandChange">
+            <param name="command">{ "create": "patientMedicalRecords" }</param>
+        </customChange>
+    </changeSet>
+
+    <changeSet id="00000000000001-create-patient-id-index" author="solon">
+        <customChange class="liquibase.ext.mongodb.change.MongoCommandChange">
+            <param name="command">{
+                "createIndexes": "patientMedicalRecords",
+                "indexes": [
+                    {
+                        "key": { "patientId": 1 },
+                        "name": "patientIdIndex",
+                        "unique": true
+                    }
+                ]
+            }</param>
+        </customChange>
+    </changeSet>
+
+</databaseChangeLog>

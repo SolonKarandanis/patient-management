@@ -48,15 +48,15 @@
         </processorPath>
         <module name="analytics-service" />
       </profile>
-      <profile name="Annotation profile for payment-service" enabled="true">
+      <profile name="Annotation profile for camel-integration" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
         </processorPath>
-        <module name="patient-service" />
         <module name="camel-integration" />
+        <module name="patient-service" />
         <module name="payment-service" />
         <module name="notification-service" />
       </profile>

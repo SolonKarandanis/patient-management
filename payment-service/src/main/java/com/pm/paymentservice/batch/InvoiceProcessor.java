@@ -3,7 +3,7 @@ package com.pm.paymentservice.batch;
 
 import com.pm.paymentservice.model.Invoice;
 import com.pm.paymentservice.model.InvoiceStatus;
-import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.infrastructure.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

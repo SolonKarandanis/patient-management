@@ -4,10 +4,10 @@ import com.pm.paymentservice.batch.InvoiceProcessor;
 import com.pm.paymentservice.batch.InvoiceWriter;
 import com.pm.paymentservice.batch.PatientIdReader;
 import com.pm.paymentservice.model.Invoice;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
+import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +29,8 @@ public class BatchConfig {
     @Bean
     public Step generateInvoicesStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("generateInvoicesStep", jobRepository)
-                .<Long, Invoice>chunk(10, transactionManager)
+                .<Long, Invoice>chunk(10)
+                .transactionManager(transactionManager)
                 .reader(patientIdReader)
                 .processor(invoiceProcessor)
                 .writer(invoiceWriter)

@@ -1,20 +1,21 @@
 package com.pm.notificationservice.scheduler;
 
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.launch.JobLauncher;
+
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.job.parameters.JobParameters;
+import org.springframework.batch.core.job.parameters.JobParametersBuilder;
+import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 public class NotificationJobScheduler {
 
-    private final JobLauncher jobLauncher;
+    private final JobOperator jobOperator;
     private final Job sendPendingNotificationsJob;
 
-    public NotificationJobScheduler(JobLauncher jobLauncher, Job sendPendingNotificationsJob) {
-        this.jobLauncher = jobLauncher;
+    public NotificationJobScheduler(JobOperator jobOperator, Job sendPendingNotificationsJob) {
+        this.jobOperator = jobOperator;
         this.sendPendingNotificationsJob = sendPendingNotificationsJob;
     }
 
@@ -23,6 +24,6 @@ public class NotificationJobScheduler {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
                 .toJobParameters();
-        jobLauncher.run(sendPendingNotificationsJob, jobParameters);
+        jobOperator.start(sendPendingNotificationsJob, jobParameters);
     }
 }

@@ -3,11 +3,12 @@ package com.pm.notificationservice.service;
 import com.pm.notificationservice.model.NotificationEventEntity;
 import com.pm.notificationservice.model.NotificationEventStatus;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface NotificationEntityService {
     NotificationEventEntity saveNotificationEvent(NotificationEventEntity notificationEventEntity);
     NotificationEventEntity getNotificationEvent(Long id);
-    List<NotificationEventEntity> findByStatus(NotificationEventStatus status);
+    Page<NotificationEventEntity> findByStatus(NotificationEventStatus status, Pageable pageable);
     void updateNotificationStatus(Long id, NotificationEventStatus status);
 }

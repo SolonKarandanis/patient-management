@@ -1,7 +1,8 @@
 package com.pm.notificationservice.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import com.pm.notificationservice.dto.EventConstants;
 import com.pm.notificationservice.dto.NotificationDTO;
 import com.pm.notificationservice.model.NotificationEventEntity;
@@ -103,7 +104,7 @@ public class NotificationServiceBean implements NotificationService {
             if(handleSaveInDb){
                 notificationEntityService.updateNotificationStatus(id, NotificationEventStatus.NOTIFICATION_EVENT_SENT);
             }
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             if(handleSaveInDb){
                 notificationEntityService.updateNotificationStatus(id, NotificationEventStatus.NOTIFICATION_EVENT_FAILED);
             }

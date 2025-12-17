@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@NamedQuery(name = NotificationEventEntity.FIND_BY_STATUS,
-        query = "SELECT ne " +
-                "FROM NotificationEventEntity ne " +
-                "WHERE ne.status = :status ")
+
 @NamedQuery(name = NotificationEventEntity.FIND_BY_ID_WITH_LOCK,
         query = "SELECT ne " +
                 "FROM NotificationEventEntity ne " +

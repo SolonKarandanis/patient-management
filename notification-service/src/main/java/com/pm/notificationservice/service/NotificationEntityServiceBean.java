@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,8 +39,8 @@ public class NotificationEntityServiceBean implements NotificationEntityService 
     }
 
     @Override
-    public List<NotificationEventEntity> findByStatus(NotificationEventStatus status) {
-        return notificationEventRepository.findByStatus(status);
+    public Page<NotificationEventEntity> findByStatus(NotificationEventStatus status, Pageable pageable) {
+        return notificationEventRepository.findByStatus(status, pageable);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

@@ -9,15 +9,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import jakarta.persistence.LockModeType;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Repository
 public interface NotificationEventRepository extends JpaRepository<NotificationEventEntity, Long> {
 
-    @Query(name = NotificationEventEntity.FIND_BY_STATUS)
-    List<NotificationEventEntity> findByStatus(NotificationEventStatus status);
+    Page<NotificationEventEntity> findByStatus(NotificationEventStatus status, Pageable pageable);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query(name = NotificationEventEntity.FIND_BY_ID_WITH_LOCK)

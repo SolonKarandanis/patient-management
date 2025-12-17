@@ -3,8 +3,9 @@ package com.pm.paymentservice.batch;
 
 import com.pm.paymentservice.model.Invoice;
 import com.pm.paymentservice.repository.InvoiceRepository;
-import org.springframework.batch.item.Chunk;
-import org.springframework.batch.item.ItemWriter;
+
+import org.springframework.batch.infrastructure.item.Chunk;
+import org.springframework.batch.infrastructure.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

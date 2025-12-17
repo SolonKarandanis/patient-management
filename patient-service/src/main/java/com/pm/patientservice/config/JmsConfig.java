@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
+import org.springframework.boot.jms.autoconfigure.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
@@ -18,7 +18,7 @@ import org.springframework.jms.core.JmsTemplate;
 import jakarta.jms.Queue;
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
-import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
+import org.springframework.jms.support.converter.JacksonJsonMessageConverter;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.MessageType;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
@@ -118,7 +118,7 @@ public class JmsConfig {
     @Bean
     public MessageConverter jacksonJmsMessageConverter() {
         // Use MappingJackson2MessageConverter to convert JSON
-        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+        JacksonJsonMessageConverter converter = new JacksonJsonMessageConverter();
         converter.setTargetType(MessageType.TEXT);
         converter.setTypeIdPropertyName("_type");
         return converter;

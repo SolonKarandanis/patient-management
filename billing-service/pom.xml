@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.5</version>
+        <version>4.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.pm</groupId>
@@ -28,7 +28,7 @@
     </scm>
     <properties>
         <java.version>25</java.version>
-        <grpc.version>1.71.0</grpc.version>
+        <grpc.version>1.77.0</grpc.version>
         <protobuf.version>4.30.0</protobuf.version>
         <protobuf-plugin.version>0.6.1</protobuf-plugin.version>
         <lombok.version>1.18.40</lombok.version>

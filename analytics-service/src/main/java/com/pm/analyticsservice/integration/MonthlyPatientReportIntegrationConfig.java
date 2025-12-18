@@ -1,12 +1,13 @@
-package com.pm.analyticsservice.config.batch;
+package com.pm.analyticsservice.integration;
 
 import com.pm.analyticsservice.config.AppConstants;
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.job.parameters.JobParametersBuilder;
+import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.messaging.MessageChannel;
 import lombok.RequiredArgsConstructor;
 import notification.events.NotificationEvent;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParametersBuilder;
-import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.JobOperator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.expression.common.LiteralExpression;
@@ -25,9 +26,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MonthlyPatientReportIntegrationConfig {
 
-    private final JobLauncher jobLauncher;
+    private final JobOperator jobOperator;
     private final Job monthlyReportJob;
-    private final KafkaTemplate<String, NotificationEvent> kafkaTemplate;
+    private final KafkaTemplate<String, byte[]> kafkaTemplate;
 
 
     @Bean
@@ -55,18 +56,19 @@ public class MonthlyPatientReportIntegrationConfig {
 
     @ServiceActivator(inputChannel = "launchJobChannel")
     public void launchJob(List<String> userIds) throws Exception {
-        jobLauncher.run(monthlyReportJob, new JobParametersBuilder()
+        jobOperator.start(monthlyReportJob, new JobParametersBuilder()
                 .addLong("startTime", System.currentTimeMillis())
                 .addString("userIds", String.join(",", userIds))
                 .toJobParameters());
     }
 
     @Bean
-    @ServiceActivator(inputChannel = AppConstants.NOTIFICATION_CHANNEL)
-    public KafkaProducerMessageHandler<String, NotificationEvent> kafkaOutboundAdapter() {
-        KafkaProducerMessageHandler<String, NotificationEvent> handler =
-                new KafkaProducerMessageHandler<>(kafkaTemplate);
+    public IntegrationFlow kafkaOutboundFlow() {
+        KafkaProducerMessageHandler<String, byte[]> handler = new KafkaProducerMessageHandler<>(kafkaTemplate);
         handler.setTopicExpression(new LiteralExpression(AppConstants.NOTIFICATION_EVENTS));
-        return handler;
+        return IntegrationFlow.from(notificationChannel())
+                .transform(NotificationEvent.class, NotificationEvent::toByteArray)
+                .handle(handler)
+                .get();
     }
 }

@@ -1,10 +1,11 @@
-package com.pm.analyticsservice.config;
+package com.pm.analyticsservice.integration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.handler.LoggingHandler;
 import org.springframework.integration.kafka.dsl.Kafka;
 import org.springframework.integration.router.HeaderValueRouter;
 import org.springframework.kafka.core.ConsumerFactory;
@@ -15,6 +16,7 @@ import org.springframework.messaging.MessageChannel;
 @Configuration
 public class EventProcessingIntegrationConfig {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventProcessingIntegrationConfig.class);
     private static final String KAFKA_TOPIC = "latest-month-payments-events";
     private static final String EVENT_TYPE_HEADER = "event_type";
 
@@ -71,16 +73,20 @@ public class EventProcessingIntegrationConfig {
     @Bean
     public IntegrationFlow paymentProcessedFlow() {
         return IntegrationFlow.from(paymentProcessedChannel())
-                .handle(m -> System.out.println("Handling payment-processed event: " + m.getPayload()))
-                .log(LoggingHandler.Level.INFO, "com.pm.analyticsservice.payment", "Processed a standard payment event")
+                .handle(m -> {
+                    LOGGER.info("Handling payment-processed event: {}", m.getPayload());
+                    LOGGER.info("Processed a standard payment event");
+                })
                 .get();
     }
 
     @Bean
     public IntegrationFlow paymentFlaggedFlow() {
         return IntegrationFlow.from(paymentFlaggedChannel())
-                .handle(m -> System.out.println("Handling payment-flagged event: " + m.getPayload()))
-                .log(LoggingHandler.Level.INFO, "com.pm.analyticsservice.payment", "Processed a flagged payment event")
+                .handle(m -> {
+                    LOGGER.info("Handling payment-flagged event: {}", m.getPayload());
+                    LOGGER.info("Processed a flagged payment event");
+                })
                 .get();
     }
 }

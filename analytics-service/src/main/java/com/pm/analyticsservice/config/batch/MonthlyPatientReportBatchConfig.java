@@ -7,16 +7,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import notification.events.NotificationEvent;
 import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobExecution;
-import org.springframework.batch.core.JobExecutionListener;
-import org.springframework.batch.core.Step;
+import org.springframework.batch.core.job.Job;
+import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.listener.JobExecutionListener;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JdbcCursorItemReader;
+import org.springframework.batch.infrastructure.item.ItemReader;
+import org.springframework.batch.infrastructure.item.ItemWriter;
+import org.springframework.batch.infrastructure.item.database.JdbcCursorItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -36,10 +36,8 @@ public class MonthlyPatientReportBatchConfig {
 
     @Bean
     public ItemReader<PatientEventModel> monthlyPatientReportReader() {
-        JdbcCursorItemReader<PatientEventModel> reader = new JdbcCursorItemReader<>();
-        reader.setDataSource(dataSource);
-        reader.setSql("SELECT id, patientId, name, email, event_type, event_timestamp FROM analyticsservice.patient_events WHERE event_timestamp >= today() - 30");
-        reader.setRowMapper(new BeanPropertyRowMapper<>(PatientEventModel.class));
+        String sql ="SELECT id, patientId, name, email, event_type, event_timestamp FROM analyticsservice.patient_events WHERE event_timestamp >= today() - 30";
+        JdbcCursorItemReader<PatientEventModel> reader = new JdbcCursorItemReader<>(dataSource,sql,new BeanPropertyRowMapper<>(PatientEventModel.class));
         return reader;
     }
 
@@ -59,7 +57,8 @@ public class MonthlyPatientReportBatchConfig {
     @Bean
     public Step monthlyReportStep() {
         return new StepBuilder("monthlyReportStep", jobRepository)
-                .<PatientEventModel, PatientEventModel>chunk(100, transactionManager)
+                .<PatientEventModel, PatientEventModel>chunk(100)
+                .transactionManager(transactionManager)
                 .reader(monthlyPatientReportReader())
                 .writer(monthlyPatientReportWriter())
                 .build();

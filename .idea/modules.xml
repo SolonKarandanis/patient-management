@@ -5,7 +5,11 @@
       <module fileurl="file://$PROJECT_DIR$/analytics-service/analytics-service.iml" filepath="$PROJECT_DIR$/analytics-service/analytics-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/auth-service/auth-service.iml" filepath="$PROJECT_DIR$/auth-service/auth-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/billing-service/billing-service.iml" filepath="$PROJECT_DIR$/billing-service/billing-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/camel-integration/camel-integration.iml" filepath="$PROJECT_DIR$/camel-integration/camel-integration.iml" />
+      <module fileurl="file://$PROJECT_DIR$/notification-service/notification-service.iml" filepath="$PROJECT_DIR$/notification-service/notification-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/patient-management.iml" filepath="$PROJECT_DIR$/patient-management.iml" />
+      <module fileurl="file://$PROJECT_DIR$/patient-service/patient-service.iml" filepath="$PROJECT_DIR$/patient-service/patient-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/payment-service/payment-service.iml" filepath="$PROJECT_DIR$/payment-service/payment-service.iml" />
     </modules>
   </component>
 </project>

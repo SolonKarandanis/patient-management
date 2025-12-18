@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.5</version>
+        <version>4.0.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.pm</groupId>
@@ -70,6 +70,10 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-batch</artifactId>
+        </dependency>
         <!-- Spring Batch (Manual Dependencies) -->
         <dependency>
             <groupId>org.springframework.batch</groupId>
@@ -102,6 +106,11 @@
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.pelenthium</groupId>
+            <artifactId>clickhouse-dialect-spring-boot-starter</artifactId>
+            <version>1.2.0</version>
+        </dependency>
         <!-- Spring Dependencies End-->
         <dependency>
             <groupId>com.google.protobuf</groupId>
@@ -116,11 +125,13 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <version>1.21.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>kafka</artifactId>
+            <version>1.21.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>

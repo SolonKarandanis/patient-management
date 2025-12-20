@@ -1,7 +1,7 @@
 package com.pm.notificationservice.broker;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.pm.notificationservice.service.NotificationService;
+import com.pm.notificationservice.notification.service.NotificationService;
 import notification.events.NotificationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

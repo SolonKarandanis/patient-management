@@ -1,4 +1,4 @@
-package com.pm.notificationservice.model;
+package com.pm.notificationservice.notification.model;
 
 public enum NotificationEventStatus {
     NOTIFICATION_EVENT_CREATED,

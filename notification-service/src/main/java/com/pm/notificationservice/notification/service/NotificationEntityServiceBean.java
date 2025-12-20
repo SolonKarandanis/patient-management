@@ -1,8 +1,8 @@
-package com.pm.notificationservice.service;
+package com.pm.notificationservice.notification.service;
 
-import com.pm.notificationservice.model.NotificationEventEntity;
-import com.pm.notificationservice.model.NotificationEventStatus;
-import com.pm.notificationservice.repository.NotificationEventRepository;
+import com.pm.notificationservice.notification.model.NotificationEventEntity;
+import com.pm.notificationservice.notification.model.NotificationEventStatus;
+import com.pm.notificationservice.notification.repository.NotificationEventRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -12,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

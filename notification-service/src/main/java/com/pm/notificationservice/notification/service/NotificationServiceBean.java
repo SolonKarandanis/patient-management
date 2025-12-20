@@ -1,12 +1,12 @@
-package com.pm.notificationservice.service;
+package com.pm.notificationservice.notification.service;
 
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 import com.pm.notificationservice.dto.EventConstants;
 import com.pm.notificationservice.dto.NotificationDTO;
-import com.pm.notificationservice.model.NotificationEventEntity;
-import com.pm.notificationservice.model.NotificationEventStatus;
+import com.pm.notificationservice.notification.model.NotificationEventEntity;
+import com.pm.notificationservice.notification.model.NotificationEventStatus;
 import lombok.extern.slf4j.Slf4j;
 import notification.events.NotificationEvent;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

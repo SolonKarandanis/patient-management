@@ -1,4 +1,4 @@
-package com.pm.notificationservice.model;
+package com.pm.notificationservice.notification.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

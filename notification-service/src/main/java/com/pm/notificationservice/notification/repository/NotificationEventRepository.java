@@ -1,7 +1,7 @@
-package com.pm.notificationservice.repository;
+package com.pm.notificationservice.notification.repository;
 
-import com.pm.notificationservice.model.NotificationEventEntity;
-import com.pm.notificationservice.model.NotificationEventStatus;
+import com.pm.notificationservice.notification.model.NotificationEventEntity;
+import com.pm.notificationservice.notification.model.NotificationEventStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;

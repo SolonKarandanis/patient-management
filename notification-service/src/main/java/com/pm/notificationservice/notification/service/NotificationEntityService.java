@@ -1,7 +1,7 @@
-package com.pm.notificationservice.service;
+package com.pm.notificationservice.notification.service;
 
-import com.pm.notificationservice.model.NotificationEventEntity;
-import com.pm.notificationservice.model.NotificationEventStatus;
+import com.pm.notificationservice.notification.model.NotificationEventEntity;
+import com.pm.notificationservice.notification.model.NotificationEventStatus;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

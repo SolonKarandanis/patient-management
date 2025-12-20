@@ -1,11 +1,10 @@
-package com.pm.notificationservice.config;
+package com.pm.notificationservice.notification.batch;
 
-import com.pm.notificationservice.model.NotificationEventEntity;
-import com.pm.notificationservice.model.NotificationEventStatus;
-import com.pm.notificationservice.repository.NotificationEventRepository;
-import com.pm.notificationservice.service.NotificationService;
+import com.pm.notificationservice.notification.model.NotificationEventEntity;
+import com.pm.notificationservice.notification.model.NotificationEventStatus;
+import com.pm.notificationservice.notification.repository.NotificationEventRepository;
+import com.pm.notificationservice.notification.service.NotificationService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.job.parameters.RunIdIncrementer;
@@ -30,19 +29,18 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Configuration
-@EnableBatchProcessing
 @Slf4j
-public class BatchConfig {
+public class BatchNotificationConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final NotificationEventRepository notificationEventRepository;
     private final NotificationService notificationService;
 
-    public BatchConfig(JobRepository jobRepository,
-                       PlatformTransactionManager transactionManager,
-                       NotificationEventRepository notificationEventRepository,
-                       NotificationService notificationService) {
+    public BatchNotificationConfig(JobRepository jobRepository,
+                                   PlatformTransactionManager transactionManager,
+                                   NotificationEventRepository notificationEventRepository,
+                                   NotificationService notificationService) {
         this.jobRepository = jobRepository;
         this.transactionManager = transactionManager;
         this.notificationEventRepository = notificationEventRepository;

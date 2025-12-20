@@ -1,6 +1,6 @@
-package com.pm.notificationservice.service;
+package com.pm.notificationservice.notification.service;
 
-import com.pm.notificationservice.model.NotificationEventEntity;
+import com.pm.notificationservice.notification.model.NotificationEventEntity;
 import notification.events.NotificationEvent;
 
 public interface NotificationService {

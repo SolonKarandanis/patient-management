@@ -1,4 +1,4 @@
-package com.pm.notificationservice.scheduler;
+package com.pm.notificationservice.notification.scheduler;
 
 
 import org.springframework.batch.core.job.Job;

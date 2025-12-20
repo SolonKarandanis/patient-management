@@ -5,7 +5,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
     <changeSet id="000000000000010-seq_email" author="solon">
-        <createSequence sequenceName="email_generator" startValue="1" incrementBy="1"/>
+        <createSequence sequenceName="email_seq" startValue="1" incrementBy="1"/>
     </changeSet>
 
     <changeSet id="000000000000010-emails" author="solon">

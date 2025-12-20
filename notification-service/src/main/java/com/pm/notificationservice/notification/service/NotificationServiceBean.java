@@ -3,8 +3,8 @@ package com.pm.notificationservice.notification.service;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
-import com.pm.notificationservice.dto.EventConstants;
-import com.pm.notificationservice.dto.NotificationDTO;
+import com.pm.notificationservice.notification.dto.EventConstants;
+import com.pm.notificationservice.notification.dto.NotificationDTO;
 import com.pm.notificationservice.notification.model.NotificationEventEntity;
 import com.pm.notificationservice.notification.model.NotificationEventStatus;
 import lombok.extern.slf4j.Slf4j;

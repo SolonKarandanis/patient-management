@@ -1,4 +1,4 @@
-package com.pm.notificationservice.dto;
+package com.pm.notificationservice.notification.dto;
 
 public class EventConstants {
 

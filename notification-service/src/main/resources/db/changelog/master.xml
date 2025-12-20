@@ -3,5 +3,9 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <include file="/db/changelog/00000000000001_create_notification_event_table.xml"/>
+    <include file="00000000000001_create_notification_event_table.xml" relativeToChangelogFile="true"/>
+    <include file="00000000000002_email_types.xml" relativeToChangelogFile="true"/>
+    <include file="00000000000003_email_types_data.xml" relativeToChangelogFile="true"/>
+    <include file="00000000000004_email.xml" relativeToChangelogFile="true"/>
+    <include file="00000000000005_email_attachments.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

@@ -1,0 +1,14 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="00000000000008-email_types_data" author="solon">
+        <sql endDelimiter=";">
+            insert into email_types (id, resource_key) values (1, 'REGISTRATION USER');
+            insert into email_types (id, resource_key) values (3, 'USER VERIFIED');
+        </sql>
+    </changeSet>
+    
+</databaseChangeLog>

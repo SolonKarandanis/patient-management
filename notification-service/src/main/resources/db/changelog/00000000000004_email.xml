@@ -1,0 +1,49 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="000000000000010-seq_email" author="solon">
+        <createSequence sequenceName="email_generator" startValue="1" incrementBy="1"/>
+    </changeSet>
+
+    <changeSet id="000000000000010-emails" author="solon">
+        <createTable tableName="emails">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="header_subject" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="header_to" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="header_from" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="header_bcc" type="varchar(512)" />
+            <column name="header_cc" type="varchar(512)" />
+            <column name="header_reply_to" type="varchar(512)" />
+            <column name="message_body" type="text" />
+            <column name="email_types_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_created" type="timestamp"/>
+            <column name="date_sent" type="timestamp" />
+            <column name="status" type="varchar(24)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="details_1" type="varchar(1000)" />
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="email_types_id"
+                                 baseTableName="emails"
+                                 constraintName="fk_email_email_types_id"
+                                 deferrable="false"
+                                 initiallyDeferred="false"
+                                 referencedColumnNames="id"
+                                 referencedTableName="email_types"
+                                 validate="true"/>
+    </changeSet>
+
+</databaseChangeLog>

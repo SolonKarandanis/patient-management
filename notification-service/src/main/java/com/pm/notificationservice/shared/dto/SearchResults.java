@@ -1,30 +1,25 @@
 package com.pm.notificationservice.shared.dto;
 
+import lombok.Getter;
+
 import java.util.List;
 
+@Getter
 public class SearchResults<T> {
 	
 	private List<T> list;
-    private int countRows;
+    private long countRows;
 
-    public SearchResults(int countRows, List<T> list) {
+    public SearchResults(long countRows, List<T> list) {
         this.countRows = countRows;
         this.list = list;
-    }
-
-    public List<T> getList() {
-        return list;
     }
 
     public void setList(List<T> list) {
         this.list = list;
     }
 
-    public int getCountRows() {
-        return countRows;
-    }
-
-    public void setCountRows(int countRows) {
+    public void setCountRows(long countRows) {
         this.countRows = countRows;
     }
 

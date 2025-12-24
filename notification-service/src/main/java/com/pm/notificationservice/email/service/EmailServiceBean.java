@@ -70,12 +70,6 @@ public class EmailServiceBean  implements EmailService{
         catch (MessagingException | UnsupportedEncodingException ex){
             throw new NotificationServiceException("errors.send.email", ex);
         }
-//        try {
-//            SerializableObjectMessageCreator eMsgCreator = new SerializableObjectMessageCreator(emailId);
-//            jmsTemplate.send(mailsDestination, eMsgCreator);
-//        } catch (Exception e) {
-//            throw new EDException("errors.send.email", e);
-//        }
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

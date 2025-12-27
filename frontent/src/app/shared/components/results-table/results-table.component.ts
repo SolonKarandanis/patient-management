@@ -346,7 +346,7 @@ import {DatePickerModule} from 'primeng/datepicker';
             <button
               pButton
               type="button"
-              pButtonIcon="pi pi-file-export"
+              icon="pi pi-file-export"
               severity="info"
               (click)="overrideDefaultExport() ? exportParentFunction() : td.exportCSV()"
               [disabled]="totalRecords() >= maxResultsCsvExport || loading() || !tableItems() || tableItems().length === 0"
@@ -357,7 +357,7 @@ import {DatePickerModule} from 'primeng/datepicker';
               <button
                 pButton
                 type="button"
-                pButtonIcon="pi pi-check"
+                icon="pi pi-check"
                 (click)="handleSelectItemsClicked()"
                 [disabled]="!selectedItems || selectedItems.length === 0"
               >

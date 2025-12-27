@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, inject, input, output, signal, Templ
 import {AuthService} from '@core/services/auth.service';
 import {SavedSearch, SearchType} from '@models/search.model';
 import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {ButtonDirective, ButtonIcon} from 'primeng/button';
+import {ButtonDirective} from 'primeng/button';
 import {Ripple} from 'primeng/ripple';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';

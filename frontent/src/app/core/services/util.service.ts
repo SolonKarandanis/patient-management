@@ -275,9 +275,9 @@ export class UtilService{
 
   handleNotification(event: NotificationEvent): void {
     if (event.eventType === NotificationEventTypeEnum.I18N_RESOURCES_EDITED) {
-      this.translate.reloadLang(this.translate.currentLang).subscribe(() => {
-        this.translate.getTranslation(this.translate.currentLang).subscribe((translations) => {
-          this.translate.setTranslation(this.translate.currentLang, translations, true);
+      this.translate.reloadLang(this.translate.getCurrentLang()).subscribe(() => {
+        this.translate.get(this.translate.getCurrentLang()).subscribe((translations) => {
+          this.translate.setTranslation(this.translate.getCurrentLang(), translations, true);
         });
       });
     }

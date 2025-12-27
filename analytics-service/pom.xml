@@ -189,6 +189,15 @@
                         </exclude>
                     </excludes>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>process-aot</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>process-aot</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <!-- PROTO -->
             <plugin>

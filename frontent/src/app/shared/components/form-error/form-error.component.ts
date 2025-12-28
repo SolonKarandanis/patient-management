@@ -9,12 +9,12 @@ import {TranslatePipe} from '@ngx-translate/core';
   ],
   template: `
    @if(displayLabels()){
-     @for(errorName of errorNames(); track errorName){
+     @for(errorName of errorKeys(); track errorName){
        <p class="mt-2 text-sm text-red-600 dark:text-red-500">
-         @if(validationErrors(); as errors){
+         @if(getValidationErrorsObject(); as errors){
            {{
              (validationErrorsTranslationPrefix()[errorName]?? 'GLOBAL.FORMS.ERRORS.') + errorName
-               | translate :{requiredLength: errors['minLength']? errors['minLength']?.requiredLength: errors['maxLength']?.requiredLength}
+               | translate :{requiredLength: errors[errorName]?.minLength?.requiredLength ?? errors[errorName]?.maxLength?.requiredLength}
            }}
          }
        </p>
@@ -29,12 +29,25 @@ export class FormErrorComponent {
   validationErrors = input<ValidationErrors| null| undefined>();
   validationErrorsTranslationPrefix = input<any>({});
 
-  errorNames = computed(() => {
+  errorKeys = computed(() => {
     const errors = this.validationErrors();
-    if(errors && Object.keys(errors).length > 0){
-      return Object.keys(errors);
+    if (Array.isArray(errors)) {
+      return errors.map(errObj => errObj.kind).filter(Boolean);
+    }
+    if (errors && typeof errors === 'object') {
+      return Object.keys(errors).filter(key => !key.startsWith('__'));
     }
     return [];
   });
+
+  getValidationErrorsObject(): ValidationErrors | null {
+    const errors = this.validationErrors();
+    if (Array.isArray(errors)) {
+      return errors.reduce((acc, errObj) => ({
+        ...acc, [errObj.kind]: errObj
+      }), {});
+    }
+    return errors ?? null;
+  }
 
 }

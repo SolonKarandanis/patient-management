@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, effect, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, signal} from '@angular/core';
 import {Router, RouterLink} from '@angular/router';
 import {SignUpWithComponent} from '../../components/sign-up-with/sign-up-with.component';
 import {InputText} from 'primeng/inputtext';
@@ -7,11 +7,12 @@ import {Password} from 'primeng/password';
 import {ButtonDirective} from 'primeng/button';
 import {Ripple} from 'primeng/ripple';
 import {AuthService} from '@core/services/auth.service';
-import {BaseComponent} from '@shared/abstract/BaseComponent';
-import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ReactiveFormsModule} from '@angular/forms';
 import {SubmitCredentialsDTO} from '@models/auth.model';
 import {TranslatePipe} from '@ngx-translate/core';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
+import {LoginFormModel} from '../forms';
+import {form, Field, required, email, submit} from '@angular/forms/signals';
 
 @Component({
   selector: 'app-login',
@@ -25,7 +26,8 @@ import {FormErrorComponent} from '@components/form-error/form-error.component';
     Ripple,
     TranslatePipe,
     ReactiveFormsModule,
-    FormErrorComponent
+    FormErrorComponent,
+    Field
   ],
   template: `
     <div class="container mx-auto px-4 h-full">
@@ -39,7 +41,7 @@ import {FormErrorComponent} from '@components/form-error/form-error.component';
               <div class="text-blueGray-400 text-center mb-3 font-bold">
                 <small>{{ 'GLOBAL.sign-in-with-credentials' | translate }}</small>
               </div>
-              <form [formGroup]="form">
+              <form>
                 <div class="mb-6">
                   <p-float-label variant="on" class="w-full mb-3">
                     <input
@@ -47,27 +49,27 @@ import {FormErrorComponent} from '@components/form-error/form-error.component';
                       pInputText
                       type="email"
                       class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                      formControlName="email"
+                      [field]="loginForm.email"
                       autocomplete="email"/>
                     <label for="email">{{ 'LOGIN.LABELS.email' | translate }}</label>
                   </p-float-label>
                   <app-form-error
-                    [displayLabels]="isFieldValid('email')"
-                    [validationErrors]="form.get('email')?.errors" />
+                    [displayLabels]="loginForm.email().invalid() && loginForm.email().touched()"
+                    [validationErrors]="loginForm.email().errors()" />
                 </div>
                 <div class="mb-6">
                   <p-float-label variant="on" class="w-full mb-3">
                     <p-password
                       id="password"
                       inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
-                      formControlName="password"
+                      [field]="loginForm.password"
                       [feedback]="false"
                       [toggleMask]="true" />
                     <label for="password">{{ 'LOGIN.LABELS.password' | translate }}</label>
                   </p-float-label>
                   <app-form-error
-                    [displayLabels]="isFieldValid('password')"
-                    [validationErrors]="form.get('password')?.errors" />
+                    [displayLabels]="loginForm.password().invalid() && loginForm.password().touched()"
+                    [validationErrors]="loginForm.password().errors()" />
                 </div>
                 <div class="text-center mt-6">
                   <button
@@ -104,54 +106,57 @@ import {FormErrorComponent} from '@components/form-error/form-error.component';
   styleUrl: './login.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginComponent extends BaseComponent implements OnInit{
+export class LoginComponent{
   private authService = inject(AuthService);
-  private fb= inject(FormBuilder);
   private router= inject(Router);
 
   public isLoading = this.authService.isLoading;
 
+  public loginModel = signal<LoginFormModel>({
+    email:'',
+    password:''
+  })
+
+  public loginForm = form<LoginFormModel>(this.loginModel,(rootPath)=>{
+    required(rootPath.email);
+    email(rootPath.email);
+    required(rootPath.password);
+  });
+
   constructor() {
-    super();
     this.listenToSuccessfullLogin();
   }
 
-  ngOnInit(): void {
-    this.initForm();
-  }
 
-  public login():void{
-    if (this.form.invalid) {
-      Object.keys(this.controls).forEach(controlName =>
-        this.controls[controlName].markAsTouched()
-      );
+  public login(): void {
+    if (this.loginForm().invalid()) {
+      this.markAllAsTouched(this.loginForm, this.loginModel());
       return;
     }
-    const request:SubmitCredentialsDTO={
-      email: this.controls['email'].value,
-      password: this.controls['password'].value,
-    }
-    this.authService.login(request);
+    submit(this.loginForm,async (form)=>{
+      const request: SubmitCredentialsDTO = {
+        email: form.email().value(),
+        password: form.password().value(),
+      };
+      this.authService.login(request);
+    })
   }
 
-  private initForm():void{
-    this.form = this.fb.group({
-      email:[
-        '',
-        Validators.compose([
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(320),
-        ]),
-      ],
-      password:[
-        '',
-        Validators.compose([
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(100),
-        ]),
-      ]
+  private markAllAsTouched(formGroup: any, model: any): void {
+    Object.keys(model).forEach(key => {
+      const control = formGroup[key];
+      const modelValue = model[key];
+
+      if (control && typeof modelValue === 'object' && modelValue !== null && !Array.isArray(modelValue)) {
+        // It's a nested group, so recurse.
+        this.markAllAsTouched(control, modelValue);
+      } else if (control && typeof control === 'function') {
+        // It's a control. Invoke the signal to get its state, then mark that state as touched.
+        const controlState = control();
+        if (controlState && typeof controlState.markAsTouched === 'function') {
+          controlState.markAsTouched();
+        }
+      }
     });
   }
 

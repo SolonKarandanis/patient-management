@@ -14,8 +14,9 @@ import {Ripple} from 'primeng/ripple';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {UserRolesEnum} from '@models/constants';
 import {Select} from 'primeng/select';
-import {Field, FieldTree} from '@angular/forms/signals';
+import {Field, FieldTree, submit} from '@angular/forms/signals';
 import {CreateUserFormModel} from '../../protected/user/forms';
+import {SubmitCredentialsDTO} from '@models/auth.model';
 
 @Component({
   selector: 'app-register',
@@ -251,7 +252,10 @@ export class RegisterComponent{
       this.userService.markCreateUserFormAsDirty(this.form);
       return;
     }
-    this.userService.executeRegisterUser(this.form);
+    submit(this.form,async (form)=>{
+      this.userService.executeRegisterUser(form);
+    })
+
   }
 
   private initForm():void{

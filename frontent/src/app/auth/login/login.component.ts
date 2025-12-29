@@ -109,12 +109,12 @@ import {UtilService} from '@core/services/util.service';
 })
 export class LoginComponent{
   private authService = inject(AuthService);
-  private utilService = inject(UtilService)
+  private utilService = inject(UtilService);
   private router= inject(Router);
 
   public isLoading = this.authService.isLoading;
 
-  public loginModel = signal<LoginFormModel>({
+  private loginModel = signal<LoginFormModel>({
     email:'',
     password:''
   })

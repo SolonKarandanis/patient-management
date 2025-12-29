@@ -1,7 +1,6 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject,} from '@angular/core';
 import {SignUpWithComponent} from '../../components/sign-up-with/sign-up-with.component';
 import {TranslatePipe} from '@ngx-translate/core';
-import {BaseComponent} from '@shared/abstract/BaseComponent';
 import {ReactiveFormsModule} from '@angular/forms';
 import {UserService} from '../../protected/user/data/services/user.service';
 import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
@@ -15,6 +14,8 @@ import {Ripple} from 'primeng/ripple';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {UserRolesEnum} from '@models/constants';
 import {Select} from 'primeng/select';
+import {Field, FieldTree} from '@angular/forms/signals';
+import {CreateUserFormModel} from '../../protected/user/forms';
 
 @Component({
   selector: 'app-register',
@@ -30,7 +31,8 @@ import {Select} from 'primeng/select';
     RouterLink,
     ButtonDirective,
     Ripple,
-    Select
+    Select,
+    Field
   ],
   template: `
     <div class="container mx-auto px-4 h-full">
@@ -45,99 +47,99 @@ import {Select} from 'primeng/select';
                 <small>{{ 'GLOBAL.sign-in-with-credentials' | translate }}</small>
               </div>
               @if (vm(); as vm) {
-                <form [formGroup]="form">
+                <form>
                   <div class="mt-4">
                     <label for="email"
                            class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                           [ngClass]="{'app-required-label': form.enabled}">
+                           [ngClass]="{'app-required-label': !form().disabled()}">
                       {{ 'USER.DETAILS.LABELS.email' | translate }}
                     </label>
                     <app-form-control-wrap
-                      [editMode]="form.enabled"
-                      [displayValue]="form.get('email')?.value">
+                      [editMode]="!form().disabled()"
+                      [displayValue]="form.email().value()">
                       <input
                         id="email"
                         pInputText
                         type="text"
                         class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                        formControlName="email"
+                        [field]="form.email"
                         autocomplete="email"/>
                     </app-form-control-wrap>
                     <app-form-error
-                      [displayLabels]="isFieldValid('email')"
-                      [validationErrors]="form.get('email')?.errors"/>
+                      [displayLabels]="form.email().invalid() && form.email().touched()"
+                      [validationErrors]="form.email().errors()"/>
                   </div>
                   <div class="mt-4">
                     <label for="username"
                            class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                           [ngClass]="{'app-required-label': form.enabled}">
+                           [ngClass]="{'app-required-label': !form().disabled()}">
                       {{ 'USER.DETAILS.LABELS.username' | translate }}
                     </label>
                     <app-form-control-wrap
-                      [editMode]="form.enabled"
-                      [displayValue]="form.get('username')?.value">
+                      [editMode]="!form().disabled()"
+                      [displayValue]="form.username().value()">
                       <input
                         id="username"
                         pInputText
                         type="text"
                         class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                        formControlName="username"
+                        [field]="form.username"
                         autocomplete="username"/>
                     </app-form-control-wrap>
                     <app-form-error
-                      [displayLabels]="isFieldValid('username')"
-                      [validationErrors]="form.get('username')?.errors"/>
+                      [displayLabels]="form.username().invalid() && form.username().touched()"
+                      [validationErrors]="form.username().errors()"/>
                   </div>
                   <div class="mt-4">
                     <label for="firstName"
                            class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                           [ngClass]="{'app-required-label': form.enabled}">
+                           [ngClass]="{'app-required-label': !form().disabled()}">
                       {{ 'USER.DETAILS.LABELS.firstName' | translate }}
                     </label>
                     <app-form-control-wrap
-                      [editMode]="form.enabled"
-                      [displayValue]="form.get('firstName')?.value">
+                      [editMode]="!form().disabled()"
+                      [displayValue]="form.firstName().value()">
                       <input
                         id="firstName"
                         pInputText
                         type="text"
                         class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                        formControlName="firstName"
+                        [field]="form.firstName"
                         autocomplete="firstName"/>
                     </app-form-control-wrap>
                     <app-form-error
-                      [displayLabels]="isFieldValid('firstName')"
-                      [validationErrors]="form.get('firstName')?.errors"/>
+                      [displayLabels]="form.firstName().invalid() && form.firstName().touched()"
+                      [validationErrors]="form.firstName().errors()"/>
                   </div>
                   <div class="mt-4">
                     <label for="lastName"
                            class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                           [ngClass]="{'app-required-label': form.enabled}">
+                           [ngClass]="{'app-required-label': !form().disabled()}">
                       {{ 'USER.DETAILS.LABELS.lastName' | translate }}
                     </label>
                     <app-form-control-wrap
-                      [editMode]="form.enabled"
-                      [displayValue]="form.get('lastName')?.value">
+                      [editMode]="!form().disabled()"
+                      [displayValue]="form.lastName().value()">
                       <input
                         id="lastName"
                         pInputText
                         type="text"
                         class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                        formControlName="lastName"
+                        [field]="form.lastName"
                         autocomplete="lastName"/>
                     </app-form-control-wrap>
                     <app-form-error
-                      [displayLabels]="isFieldValid('lastName')"
-                      [validationErrors]="form.get('lastName')?.errors"/>
+                      [displayLabels]="form.lastName().invalid() && form.lastName().touched()"
+                      [validationErrors]="form.lastName().errors()"/>
                   </div>
                   <div class="mt-4">
                     <label for="role"
                            class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                           [ngClass]="{'app-required-label': form.enabled}">
+                           [ngClass]="{'app-required-label': !form().disabled()}">
                       {{ 'USER.DETAILS.LABELS.role' | translate }}
                     </label>
                     <p-select
-                      formControlName="role"
+                      [field]="form.role"
                       [options]="vm.availableRoles"
                       [checkmark]="true"
                       [showClear]="true"
@@ -146,42 +148,42 @@ import {Select} from 'primeng/select';
                   <div class="mt-4">
                     <label for="password"
                            class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                           [ngClass]="{'app-required-label': form.enabled}">
+                           [ngClass]="{'app-required-label': !form().disabled()}">
                       {{ 'USER.DETAILS.LABELS.password' | translate }}
                     </label>
                     <app-form-control-wrap
-                      [editMode]="form.enabled">
+                      [editMode]="!form().disabled()">
                       <p-password
                         id="password"
                         inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
                         class="w-full"
-                        formControlName="password"
+                        [field]="form.password"
                         [feedback]="true"
                         [toggleMask]="true" />
                     </app-form-control-wrap>
                     <app-form-error
-                      [displayLabels]="isFieldValid('password')"
-                      [validationErrors]="form.get('password')?.errors"/>
+                      [displayLabels]="form.password().invalid() && form.password().touched()"
+                      [validationErrors]="form.password().errors()"/>
                   </div>
                   <div class="mt-4">
                     <label for="password"
                            class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                           [ngClass]="{'app-required-label': form.enabled}">
+                           [ngClass]="{'app-required-label': !form().disabled()}">
                       {{ 'USER.DETAILS.LABELS.confirm-password' | translate }}
                     </label>
                     <app-form-control-wrap
-                      [editMode]="form.enabled">
+                      [editMode]="!form().disabled()">
                       <p-password
                         id="confirmPassword"
                         inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
                         class="w-full"
-                        formControlName="confirmPassword"
+                        [field]="form.confirmPassword"
                         [feedback]="true"
                         [toggleMask]="true" />
                     </app-form-control-wrap>
                     <app-form-error
-                      [displayLabels]="isFieldValid('confirmPassword')"
-                      [validationErrors]="form.get('confirmPassword')?.errors"/>
+                      [displayLabels]="form.confirmPassword().invalid() && form.confirmPassword().touched()"
+                      [validationErrors]="form.confirmPassword().errors()"/>
                   </div>
 
                   <div class="text-center mt-6">
@@ -215,18 +217,16 @@ import {Select} from 'primeng/select';
   styleUrl: './register.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RegisterComponent extends BaseComponent implements OnInit{
+export class RegisterComponent{
   private userService = inject(UserService);
   private commonEntitiesService = inject(CommonEntitiesService);
   private router= inject(Router);
 
-  constructor() {
-    super();
-    this.listenToSuccessfullUserRegistration();
-  }
+  form!: FieldTree<CreateUserFormModel, string | number>;
 
-  ngOnInit(): void {
+  constructor() {
     this.initForm();
+    this.listenToSuccessfullUserRegistration();
   }
 
   protected vm = computed(()=>{
@@ -241,7 +241,11 @@ export class RegisterComponent extends BaseComponent implements OnInit{
   });
 
   protected registerUser():void{
-    this.userService.executeRegisterUser(this.form);
+    if (this.form().invalid()) {
+      this.userService.markCreateUserFormAsDirty(this.form);
+      return;
+    }
+    // this.userService.executeRegisterUser(this.form);
   }
 
   private initForm():void{

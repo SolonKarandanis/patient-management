@@ -28,6 +28,6 @@ export class FormControlWrapComponent {
 
   editMode = input<boolean>(false);
   fetchingData = input<boolean>(false);
-  displayValue = input<string>('');
+  displayValue = input<string|null>('');
   skeletonHeightClass = input<string>('2rem');
 }

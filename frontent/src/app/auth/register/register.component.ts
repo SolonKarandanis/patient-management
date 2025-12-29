@@ -16,7 +16,6 @@ import {UserRolesEnum} from '@models/constants';
 import {Select} from 'primeng/select';
 import {Field, FieldTree, submit} from '@angular/forms/signals';
 import {CreateUserFormModel} from '../../protected/user/forms';
-import {SubmitCredentialsDTO} from '@models/auth.model';
 
 @Component({
   selector: 'app-register',

@@ -13,6 +13,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {LoginFormModel} from '../forms';
 import {form, Field, required, email, submit} from '@angular/forms/signals';
+import {UtilService} from '@core/services/util.service';
 
 @Component({
   selector: 'app-login',
@@ -108,6 +109,7 @@ import {form, Field, required, email, submit} from '@angular/forms/signals';
 })
 export class LoginComponent{
   private authService = inject(AuthService);
+  private utilService = inject(UtilService)
   private router= inject(Router);
 
   public isLoading = this.authService.isLoading;
@@ -130,7 +132,7 @@ export class LoginComponent{
 
   public login(): void {
     if (this.loginForm().invalid()) {
-      this.markAllAsTouched(this.loginForm, this.loginModel());
+      this.utilService.markAllAsTouched(this.loginForm, this.loginModel());
       return;
     }
     submit(this.loginForm,async (form)=>{
@@ -142,23 +144,7 @@ export class LoginComponent{
     })
   }
 
-  private markAllAsTouched(formGroup: any, model: any): void {
-    Object.keys(model).forEach(key => {
-      const control = formGroup[key];
-      const modelValue = model[key];
 
-      if (control && typeof modelValue === 'object' && modelValue !== null && !Array.isArray(modelValue)) {
-        // It's a nested group, so recurse.
-        this.markAllAsTouched(control, modelValue);
-      } else if (control && typeof control === 'function') {
-        // It's a control. Invoke the signal to get its state, then mark that state as touched.
-        const controlState = control();
-        if (controlState && typeof controlState.markAsTouched === 'function') {
-          controlState.markAsTouched();
-        }
-      }
-    });
-  }
 
   private listenToSuccessfullLogin():void{
     effect(() => {

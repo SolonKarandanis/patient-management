@@ -29,6 +29,16 @@ export interface ChangePasswordForm{
   confirmPassword: FormControl<string|null>;
 }
 
+export interface CreateUserForm2{
+  username:string;
+  password:string;
+  confirmPassword:string;
+  firstName:string;
+  lastName:string;
+  email:string;
+  role:RolesConstants;
+}
+
 export interface CreateUserForm{
   username: FormControl<string|null>;
   password: FormControl<string|null>;

@@ -79,6 +79,24 @@ export class UtilService{
     return false;
   }
 
+  markAllAsTouched(formGroup: any, model: any): void {
+    Object.keys(model).forEach(key => {
+      const control = formGroup[key];
+      const modelValue = model[key];
+
+      if (control && typeof modelValue === 'object' && modelValue !== null && !Array.isArray(modelValue)) {
+        // It's a nested group, so recurse.
+        this.markAllAsTouched(control, modelValue);
+      } else if (control && typeof control === 'function') {
+        // It's a control. Invoke the signal to get its state, then mark that state as touched.
+        const controlState = control();
+        if (controlState && typeof controlState.markAsTouched === 'function') {
+          controlState.markAsTouched();
+        }
+      }
+    });
+  }
+
   /**
    * Marks all the controls of a form group as dirty
    * @param formGroup The form group that contains the controls to be marked as dirty

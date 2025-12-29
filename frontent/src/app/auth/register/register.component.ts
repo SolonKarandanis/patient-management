@@ -154,7 +154,7 @@ import {Select} from 'primeng/select';
                       <p-password
                         id="password"
                         inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
-                        styleClass="w-full"
+                        class="w-full"
                         formControlName="password"
                         [feedback]="true"
                         [toggleMask]="true" />
@@ -174,7 +174,7 @@ import {Select} from 'primeng/select';
                       <p-password
                         id="confirmPassword"
                         inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
-                        styleClass="w-full"
+                        class="w-full"
                         formControlName="confirmPassword"
                         [feedback]="true"
                         [toggleMask]="true" />

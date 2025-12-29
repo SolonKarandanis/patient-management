@@ -247,12 +247,11 @@ export class RegisterComponent{
   });
 
   protected registerUser():void{
-    console.log(this.form.confirmPassword().errors())
     if (this.form().invalid()) {
       this.userService.markCreateUserFormAsDirty(this.form);
       return;
     }
-    // this.userService.executeRegisterUser(this.form);
+    this.userService.executeRegisterUser(this.form);
   }
 
   private initForm():void{

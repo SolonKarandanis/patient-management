@@ -53,7 +53,7 @@ export class UserService extends GenericService{
    * @param form the request for creating a new user
    * @returns nothing
    */
-  public executeRegisterUser(form: FormGroup<CreateUserForm>):void{
+  public executeRegisterUser(form: FieldTree<CreateUserFormModel, string | number>):void{
     const request = this.searchService.toCreateUserRequest(form);
     this.userStore.registerUser(request);
   }
@@ -214,21 +214,6 @@ export class UserService extends GenericService{
     this.utilService.markAllAsTouched(form,this.createUserModel())
   }
 
-  /**
-   * Initialize the reactive form for creating users
-   * @returns A FormGroup with the appropriate fields
-   */
-  // public initCreateUserForm():FormGroup<CreateUserForm>{
-  //   return this.formBuilder.group<CreateUserForm>({
-  //     email: new FormControl(null,[Validators.required,]),
-  //     username: new FormControl(null,[Validators.required,]),
-  //     password:new FormControl(null,[Validators.required,]),
-  //     confirmPassword:new FormControl(null,[Validators.required,]),
-  //     firstName: new FormControl(null,[Validators.required,]),
-  //     lastName:new FormControl(null,[Validators.required,]),
-  //     role:new FormControl(RolesConstants.ROLE_NO_ROLE,[Validators.required])
-  //   },{validators: this.samePasswords()});
-  // }
 
   public samePasswords(): ValidatorFn {
     return (frmGroup: AbstractControl): ValidationErrors | null => {

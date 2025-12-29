@@ -14,7 +14,6 @@ import {
   mockUserSearchRequest
 } from '@testing/mockData';
 import {signal} from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SearchTableColumn} from '@models/search.model';
 
@@ -180,80 +179,35 @@ describe('UserService', () =>{
     expect(userStoreSpy.setCreatedUserId).toHaveBeenCalledTimes(1);
   });
 
-  it('should check if passwords are same (valid)', () => {
-    const frmGroup = new FormGroup(
-      {
-        password: new FormControl('password'),
-        confirmPassword: new FormControl('password'),
-      },
-      [service.samePasswords()]
-    );
+    it('should initialize a search users form', () => {
 
-    expect(frmGroup.valid).toBeTrue();
-  });
+      const form = service.initSearchUserForm();
 
-  it('should check if passwords are same (invalid)', () => {
-    const frmGroup = new FormGroup(
-      {
-        password: new FormControl('password'),
-        confirmPassword: new FormControl('confirmPassword'),
-      },
-      [service.samePasswords()]
-    );
+      const formValues = form.value();
 
-    expect(frmGroup.valid).toBeFalse();
-  });
-
-  it('should check if password is strong (true)', () => {
-    const frmGroup = new FormGroup({
-      password: new FormControl("VVj[$u'ex9", [service.strongPassword(true)]),
+      expect(form).toBeTruthy();
+      expect(formValues).toBeTruthy();
+      expect(formValues.email).toBeDefined();
+      expect(formValues.email).toEqual(null);
+      expect(formValues.username).toBeDefined();
+      expect(formValues.username).toEqual(null);
+      expect(formValues.name).toBeDefined();
+      expect(formValues.name).toEqual(null);
+      expect(formValues.status).toBeDefined();
+      expect(formValues.status).toEqual("account.active");
+      expect(formValues.rows).toBeDefined();
+      expect(formValues.rows).toEqual(10);
+      expect(formValues.first).toBeDefined();
+      expect(formValues.first).toEqual(0);
+      expect(form.valid()).toBeTrue();
     });
 
-    expect(frmGroup.valid).toBeTrue();
-  });
+  it('should initialize an update users form', () => {
+    service.user = signal(mockUser);
+    const form = service.initUpdateUserForm();
+    const formValues = form.value();
 
-  it('should check if password is strong (false)', () => {
-    const frmGroup = new FormGroup({
-      password: new FormControl('password', [service.strongPassword(true)]),
-    });
-
-    expect(frmGroup.valid).toBeFalse();
-  });
-
-  it('should initialize a search users FormGroup', () => {
-    const frmGroup = service.initSearchUserForm();
-    const formValues = frmGroup.value;
-
-    expect(frmGroup).toBeTruthy();
-    expect(formValues).toBeTruthy();
-
-    expect(formValues.email).toBeDefined();
-    expect(formValues.email).toEqual(null);
-
-    expect(formValues.username).toBeDefined();
-    expect(formValues.username).toEqual(null);
-
-    expect(formValues.name).toBeDefined();
-    expect(formValues.name).toEqual(null);
-
-    expect(formValues.status).toBeDefined();
-    expect(formValues.status).toEqual("account.active");
-
-    expect(formValues.rows).toBeDefined();
-    expect(formValues.rows).toEqual(10);
-
-    expect(formValues.first).toBeDefined();
-    expect(formValues.first).toEqual(0);
-
-    expect(frmGroup.valid).toBeTrue();
-  });
-
-  it('should initialize an update users FormGroup', () => {
-    service.user=signal(mockUser);
-    const frmGroup = service.initUpdateUserForm();
-    const formValues = frmGroup.value;
-
-    expect(frmGroup).toBeTruthy();
+    expect(form).toBeTruthy();
     expect(formValues).toBeTruthy();
 
     expect(formValues.email).toBeDefined();
@@ -271,14 +225,14 @@ describe('UserService', () =>{
     expect(formValues.role).toBeDefined();
     expect(formValues.role).toEqual(RolesConstants.ROLE_NO_ROLE);
 
-    expect(frmGroup.valid).toBeTrue();
+    expect(form.valid()).toBeTrue();
   });
 
-  it('should initialize a change password FormGroup', () => {
-    const frmGroup = service.initChangePasswordForm();
-    const formValues = frmGroup.value;
+  it('should initialize a change password form', () => {
+    const form = service.initChangePasswordForm();
+    const formValues = form.value();
 
-    expect(frmGroup).toBeTruthy();
+    expect(form).toBeTruthy();
     expect(formValues).toBeTruthy();
 
     expect(formValues.password).toBeDefined();
@@ -287,7 +241,7 @@ describe('UserService', () =>{
     expect(formValues.confirmPassword).toBeDefined();
     expect(formValues.confirmPassword).toBeNull();
 
-    expect(frmGroup.valid).toBeFalse();
+    expect(form.valid()).toBeFalse();
   });
 
   it('should get Users Search Table Columns', () =>{

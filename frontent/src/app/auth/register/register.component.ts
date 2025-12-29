@@ -67,7 +67,8 @@ import {CreateUserFormModel} from '../../protected/user/forms';
                     </app-form-control-wrap>
                     <app-form-error
                       [displayLabels]="form.email().invalid() && form.email().touched()"
-                      [validationErrors]="form.email().errors()"/>
+                      [validationErrors]="form.email().errors()"
+                      validationErrorsTranslationPrefix="REGISTER.MESSAGES.ERROR."/>
                   </div>
                   <div class="mt-4">
                     <label for="username"
@@ -88,7 +89,8 @@ import {CreateUserFormModel} from '../../protected/user/forms';
                     </app-form-control-wrap>
                     <app-form-error
                       [displayLabels]="form.username().invalid() && form.username().touched()"
-                      [validationErrors]="form.username().errors()"/>
+                      [validationErrors]="form.username().errors()"
+                      validationErrorsTranslationPrefix="REGISTER.MESSAGES.ERROR."/>
                   </div>
                   <div class="mt-4">
                     <label for="firstName"
@@ -109,7 +111,8 @@ import {CreateUserFormModel} from '../../protected/user/forms';
                     </app-form-control-wrap>
                     <app-form-error
                       [displayLabels]="form.firstName().invalid() && form.firstName().touched()"
-                      [validationErrors]="form.firstName().errors()"/>
+                      [validationErrors]="form.firstName().errors()"
+                      validationErrorsTranslationPrefix="REGISTER.MESSAGES.ERROR."/>
                   </div>
                   <div class="mt-4">
                     <label for="lastName"
@@ -130,7 +133,8 @@ import {CreateUserFormModel} from '../../protected/user/forms';
                     </app-form-control-wrap>
                     <app-form-error
                       [displayLabels]="form.lastName().invalid() && form.lastName().touched()"
-                      [validationErrors]="form.lastName().errors()"/>
+                      [validationErrors]="form.lastName().errors()"
+                      validationErrorsTranslationPrefix="REGISTER.MESSAGES.ERROR."/>
                   </div>
                   <div class="mt-4">
                     <label for="role"
@@ -163,7 +167,8 @@ import {CreateUserFormModel} from '../../protected/user/forms';
                     </app-form-control-wrap>
                     <app-form-error
                       [displayLabels]="form.password().invalid() && form.password().touched()"
-                      [validationErrors]="form.password().errors()"/>
+                      [validationErrors]="form.password().errors()"
+                      validationErrorsTranslationPrefix="REGISTER.MESSAGES.ERROR."/>
                   </div>
                   <div class="mt-4">
                     <label for="password"
@@ -183,7 +188,8 @@ import {CreateUserFormModel} from '../../protected/user/forms';
                     </app-form-control-wrap>
                     <app-form-error
                       [displayLabels]="form.confirmPassword().invalid() && form.confirmPassword().touched()"
-                      [validationErrors]="form.confirmPassword().errors()"/>
+                      [validationErrors]="form.confirmPassword().errors()"
+                      validationErrorsTranslationPrefix="REGISTER.MESSAGES.ERROR."/>
                   </div>
 
                   <div class="text-center mt-6">
@@ -241,6 +247,7 @@ export class RegisterComponent{
   });
 
   protected registerUser():void{
+    console.log(this.form.confirmPassword().errors())
     if (this.form().invalid()) {
       this.userService.markCreateUserFormAsDirty(this.form);
       return;

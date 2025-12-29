@@ -1,15 +1,23 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, signal} from '@angular/core';
 import {GenericService} from '@core/services/generic.service';
 import {UserStore} from '../store/user.store';
 import {SearchService} from '@core/services/search.service';
 import {TranslateService} from '@ngx-translate/core';
 import {UtilService} from '@core/services/util.service';
-import {ChangePasswordForm, CreateUserForm, UpdateUserForm, UserSearchForm} from '../../forms';
+import {
+  ChangePasswordForm,
+  CreateUserForm,
+  CreateUserFormModel,
+  createUserFormSchema,
+  UpdateUserForm,
+  UserSearchForm
+} from '../../forms';
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SearchTableColumn} from '@models/search.model';
 import {UserAccountStatusEnum} from '@models/user.model';
 import {SelectItem} from 'primeng/api';
+import {FieldTree, form} from '@angular/forms/signals';
 
 @Injectable({
   providedIn: 'root'
@@ -188,21 +196,39 @@ export class UserService extends GenericService{
     })
   }
 
+  private createUserModel =signal<CreateUserFormModel>({
+    email:'',
+    username:'',
+    password:'',
+    confirmPassword:'',
+    firstName:'',
+    lastName:'',
+    role:RolesConstants.ROLE_NO_ROLE
+  });
+
+  public initCreateUserForm(): FieldTree<CreateUserFormModel, string | number>{
+    return form<CreateUserFormModel>(this.createUserModel,createUserFormSchema)
+  }
+
+  public markCreateUserFormAsDirty(form:FieldTree<CreateUserFormModel, string | number>):void{
+    this.utilService.markAllAsTouched(form,this.createUserModel())
+  }
+
   /**
    * Initialize the reactive form for creating users
    * @returns A FormGroup with the appropriate fields
    */
-  public initCreateUserForm():FormGroup<CreateUserForm>{
-    return this.formBuilder.group<CreateUserForm>({
-      email: new FormControl(null,[Validators.required,]),
-      username: new FormControl(null,[Validators.required,]),
-      password:new FormControl(null,[Validators.required,]),
-      confirmPassword:new FormControl(null,[Validators.required,]),
-      firstName: new FormControl(null,[Validators.required,]),
-      lastName:new FormControl(null,[Validators.required,]),
-      role:new FormControl(RolesConstants.ROLE_NO_ROLE,[Validators.required])
-    },{validators: this.samePasswords()});
-  }
+  // public initCreateUserForm():FormGroup<CreateUserForm>{
+  //   return this.formBuilder.group<CreateUserForm>({
+  //     email: new FormControl(null,[Validators.required,]),
+  //     username: new FormControl(null,[Validators.required,]),
+  //     password:new FormControl(null,[Validators.required,]),
+  //     confirmPassword:new FormControl(null,[Validators.required,]),
+  //     firstName: new FormControl(null,[Validators.required,]),
+  //     lastName:new FormControl(null,[Validators.required,]),
+  //     role:new FormControl(RolesConstants.ROLE_NO_ROLE,[Validators.required])
+  //   },{validators: this.samePasswords()});
+  // }
 
   public samePasswords(): ValidatorFn {
     return (frmGroup: AbstractControl): ValidationErrors | null => {

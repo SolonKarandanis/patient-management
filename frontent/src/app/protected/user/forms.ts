@@ -41,22 +41,36 @@ export interface CreateUserFormModel{
 }
 
 export const createUserFormSchema = schema<CreateUserFormModel>((field) => {
-  required(field.email);
+  required(field.email,{
+    message:'email-required',
+  });
   email(field.email);
 
-  required(field.username);
-  required(field.password);
-  required(field.confirmPassword);
-  required(field.firstName);
-  required(field.lastName);
-  required(field.role);
+  required(field.username,{
+    message:'username-required'
+  });
+  required(field.password,{
+    message:'password-required'
+  });
+  required(field.confirmPassword,{
+    message:'confirmPassword-required'
+  });
+  required(field.firstName,{
+    message:'firstName-required'
+  });
+  required(field.lastName,{
+    message:'lastName-required'
+  });
+  required(field.role,{
+    message:'role-required'
+  });
 
   validate(field.confirmPassword, (context)=>{
     const password = context.valueOf(field.password);
     const confirmPassword = context.valueOf(field.confirmPassword);
 
     const samePass: boolean = password === confirmPassword;
-    return samePass? null : customError({message:"Passwords don't match",kind:'passwordMismatch'});
+    return samePass? null : customError({message:"passwordMismatch",kind:'passwordMismatch'});
   })
 })
 

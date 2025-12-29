@@ -2,9 +2,16 @@ import {Injectable} from '@angular/core';
 import {GenericService} from './generic.service';
 import {ChangePasswordRequest, CreateUserRequest, UpdateUserRequest} from '@models/user.model';
 import {FormGroup} from '@angular/forms';
-import {ChangePasswordForm, CreateUserForm, UpdateUserForm, UserSearchForm} from '../../protected/user/forms';
+import {
+  ChangePasswordForm,
+  CreateUserForm,
+  CreateUserFormModel,
+  UpdateUserForm,
+  UserSearchForm
+} from '../../protected/user/forms';
 import {I18nResourceSearchRequest, UserSearchRequest} from '@models/search.model';
 import {I18nResourceSearchForm} from '../../protected/i18n/forms';
+import {FieldTree} from '@angular/forms/signals';
 
 @Injectable({
   providedIn: 'root'
@@ -63,20 +70,19 @@ export class SearchService extends GenericService{
   }
 
   /**
-   * Convert from FormGroup<UserSearchForm> to CreateUserForm
+   * Convert from FieldTree<CreateUserFormModel, string | number>
    * @param  form form of type UserSearchForm
-   * @returns A UserSearchRequest
+   * @returns A CreateUserRequest
    */
-  public toCreateUserRequest(form: FormGroup<CreateUserForm>):CreateUserRequest{
-    const {email,firstName,username,lastName,password,confirmPassword,role} = form.value;
+  public toCreateUserRequest(form: FieldTree<CreateUserFormModel, string | number>):CreateUserRequest{
     return {
-      email: email!,
-      firstName: firstName!,
-      lastName: lastName!,
-      password: password!,
-      confirmPassword:confirmPassword!,
-      role: role!,
-      username: username!
+      email: form.email().value(),
+      firstName: form.firstName().value(),
+      lastName: form.lastName().value(),
+      password: form.password().value(),
+      confirmPassword:form.confirmPassword().value(),
+      role: form.role().value()!,
+      username: form.username().value()
     };
   }
 

@@ -167,15 +167,17 @@ export const mockCreateUserRequest:CreateUserRequest={
   username:'test'
 };
 
-export const mockCreateUserForm:FormGroup= new FormGroup<CreateUserForm>({
-  email: new FormControl(''),
-  firstName: new FormControl(''),
-  username: new FormControl(''),
-  lastName: new FormControl(''),
-  role:new FormControl(RolesConstants.ROLE_PATIENT,{nonNullable: true}),
-  password:new FormControl(''),
-  confirmPassword:new FormControl(''),
-});
+export const mockCreateUserForm = {
+  value: () => ({
+    email: '',
+    firstName: '',
+    username: '',
+    lastName: '',
+    role: RolesConstants.ROLE_PATIENT,
+    password: '',
+    confirmPassword: '',
+  }),
+};
 
 
 export const mockUpdateUserRequest:UpdateUserRequest={

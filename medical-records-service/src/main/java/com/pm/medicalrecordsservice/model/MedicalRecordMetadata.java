@@ -1,7 +1,9 @@
 package com.pm.medicalrecordsservice.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 
@@ -10,11 +12,22 @@ public class MedicalRecordMetadata {
 
     @Id
     private String id;
+
+    @Indexed
+    @Field(name = "patient_id")
     private String patientId;
+
+    @Field(name = "file_name")
     private String filename;
+
+    @Field(name = "content_type")
     private String contentType;
     private long size;
+
+    @Field(name = "upload_date")
     private LocalDateTime uploadDate;
+
+    @Field(name = "file_id")
     private String fileId; // Reference to the file in GridFS
 
     // Getters and Setters

@@ -21,7 +21,10 @@ public class MedicalRecordServiceBean implements MedicalRecordService {
     private final MedicalRecordMetadataRepository metadataRepository;
 
     @Autowired
-    public MedicalRecordServiceBean(GridFsTemplate gridFsTemplate, MedicalRecordMetadataRepository metadataRepository) {
+    public MedicalRecordServiceBean(
+            GridFsTemplate gridFsTemplate,
+            MedicalRecordMetadataRepository metadataRepository
+    ) {
         this.gridFsTemplate = gridFsTemplate;
         this.metadataRepository = metadataRepository;
     }

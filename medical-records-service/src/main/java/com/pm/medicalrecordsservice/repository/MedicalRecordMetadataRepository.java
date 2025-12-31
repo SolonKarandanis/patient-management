@@ -2,6 +2,7 @@ package com.pm.medicalrecordsservice.repository;
 
 import com.pm.medicalrecordsservice.model.MedicalRecordMetadata;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,5 +16,6 @@ public interface MedicalRecordMetadataRepository extends MongoRepository<Medical
      * @param patientId The ID of the patient.
      * @return A list of medical record metadata.
      */
+    @Query("{patientId: ?0}")
     List<MedicalRecordMetadata> findByPatientId(String patientId);
 }

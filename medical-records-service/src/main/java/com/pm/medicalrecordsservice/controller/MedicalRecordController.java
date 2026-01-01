@@ -1,6 +1,7 @@
 package com.pm.medicalrecordsservice.controller;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
+import com.pm.medicalrecordsservice.model.GeoLocation;
 import com.pm.medicalrecordsservice.service.MedicalRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -30,9 +31,10 @@ public class MedicalRecordController {
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,
-                                             @RequestParam("patientId") String patientId) {
+                                             @RequestBody MedicalRecordUploadRequest request) {
         try {
-            String fileId = medicalRecordService.storeFile(file, patientId);
+            GeoLocation location = request.toGeoLocation();
+            String fileId = medicalRecordService.storeFile(file, request.getPatientId(), location);
             return ResponseEntity.ok("File uploaded successfully with ID: " + fileId);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

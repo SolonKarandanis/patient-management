@@ -1,6 +1,7 @@
 package com.pm.medicalrecordsservice.service;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
+import com.pm.medicalrecordsservice.model.GeoLocation;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -15,10 +16,11 @@ public interface MedicalRecordService {
      *
      * @param file      The file to store.
      * @param patientId The ID of the patient associated with the file.
+     * @param location  The geolocation where the record was uploaded.
      * @return The ID of the stored metadata.
      * @throws IOException If an I/O error occurs.
      */
-    String storeFile(MultipartFile file, String patientId) throws IOException;
+    String storeFile(MultipartFile file, String patientId, GeoLocation location) throws IOException;
 
     /**
      * Retrieves a file from GridFS.

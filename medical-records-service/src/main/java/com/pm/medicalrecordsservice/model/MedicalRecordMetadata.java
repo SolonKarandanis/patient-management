@@ -30,6 +30,9 @@ public class MedicalRecordMetadata {
     @Field(name = "file_id")
     private String fileId; // Reference to the file in GridFS
 
+    @Field(name = "location")
+    private GeoLocation location;
+
     // Getters and Setters
     public String getId() {
         return id;
@@ -85,5 +88,13 @@ public class MedicalRecordMetadata {
 
     public void setFileId(String fileId) {
         this.fileId = fileId;
+    }
+
+    public GeoLocation getLocation() {
+        return location;
+    }
+
+    public void setLocation(GeoLocation location) {
+        this.location = location;
     }
 }

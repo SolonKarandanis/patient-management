@@ -1,6 +1,7 @@
 package com.pm.medicalrecordsservice.service;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
+import com.pm.medicalrecordsservice.model.GeoLocation;
 import com.pm.medicalrecordsservice.model.MedicalRecordMetadata;
 import com.pm.medicalrecordsservice.repository.MedicalRecordMetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ public class MedicalRecordServiceBean implements MedicalRecordService {
     }
 
     @Override
-    public String storeFile(MultipartFile file, String patientId) throws IOException {
+    public String storeFile(MultipartFile file, String patientId, GeoLocation location) throws IOException {
         InputStream inputStream = file.getInputStream();
         String filename = file.getOriginalFilename();
         String contentType = file.getContentType();
@@ -46,6 +47,7 @@ public class MedicalRecordServiceBean implements MedicalRecordService {
         metadata.setSize(file.getSize());
         metadata.setUploadDate(LocalDateTime.now());
         metadata.setFileId(fileId.toString());
+        metadata.setLocation(location);
 
         MedicalRecordMetadata savedMetadata = metadataRepository.save(metadata);
         return savedMetadata.getId();

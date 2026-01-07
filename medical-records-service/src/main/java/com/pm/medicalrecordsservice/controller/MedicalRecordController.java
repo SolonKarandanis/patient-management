@@ -1,10 +1,10 @@
 package com.pm.medicalrecordsservice.controller;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
-import com.pm.medicalrecordsservice.model.GeoLocation;
 import com.pm.medicalrecordsservice.service.MedicalRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,8 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/records")
-public class MedicalRecordController {
+public class MedicalRecordController
+{
 
     private final MedicalRecordService medicalRecordService;
     private final GridFsTemplate gridFsTemplate;
@@ -33,7 +34,7 @@ public class MedicalRecordController {
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,
                                              @RequestBody MedicalRecordUploadRequest request) {
         try {
-            GeoLocation location = request.toGeoLocation();
+            Point location = request.toPoint();
             String fileId = medicalRecordService.storeFile(file, request.getPatientId(), location);
             return ResponseEntity.ok("File uploaded successfully with ID: " + fileId);
         } catch (IOException e) {

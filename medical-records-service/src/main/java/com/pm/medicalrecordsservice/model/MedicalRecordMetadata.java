@@ -1,6 +1,9 @@
 package com.pm.medicalrecordsservice.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -30,8 +33,9 @@ public class MedicalRecordMetadata {
     @Field(name = "file_id")
     private String fileId; // Reference to the file in GridFS
 
+    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
     @Field(name = "location")
-    private GeoLocation location;
+    private Point location;
 
     // Getters and Setters
     public String getId() {
@@ -90,11 +94,11 @@ public class MedicalRecordMetadata {
         this.fileId = fileId;
     }
 
-    public GeoLocation getLocation() {
+    public Point getLocation() {
         return location;
     }
 
-    public void setLocation(GeoLocation location) {
+    public void setLocation(Point location) {
         this.location = location;
     }
 }

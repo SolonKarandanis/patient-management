@@ -151,7 +151,7 @@ import {RolesConstants} from '@core/guards/SecurityConstants';
                                   (resetClicked)="resetForm()"/>
             </form>
           </app-fieldset>
-<!--          @if (resultsVisible()) {-->
+          @if (resultsVisible()) {
             <div class="mt-6" [ngClass]="{'fade-in': hasSearched(), 'fade-out': !hasSearched()}">
               <app-results-table
                 tableFilter
@@ -168,7 +168,7 @@ import {RolesConstants} from '@core/guards/SecurityConstants';
                 [exportFunction]="exportReport.bind(this)"
               />
             </div>
-<!--          }-->
+          }
         </div>
       </div>
     </div>
@@ -210,7 +210,6 @@ export class SearchUsersComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.initTableColumns();
     this.initUserStatuses();
   }

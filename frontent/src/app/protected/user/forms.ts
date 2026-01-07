@@ -17,12 +17,38 @@ export interface UserSearchForm{
   sortOrder:FormControl<SortDirection>;
 }
 
+export interface UserSearchFormModel{
+  email: string;
+  username:string;
+  name:string;
+  status: UserAccountStatus;
+  role: RolesConstants|null;
+  rows:number;
+  first:number;
+  sortField:string;
+  sortOrder:SortDirection;
+}
+
+
+export interface UpdateUserFormModel{
+  email: string;
+  username:string;
+  firstName:string;
+  lastName: string;
+  role: RolesConstants;
+}
+
 export interface UpdateUserForm{
   username: FormControl<string|null|undefined>;
   firstName: FormControl<string|null|undefined>;
   lastName: FormControl<string|null|undefined>;
   email: FormControl<string|null|undefined>;
   role:FormControl<RolesConstants>;
+}
+
+export interface ChangePasswordFormModel{
+  password: string;
+  confirmPassword:string;
 }
 
 export interface ChangePasswordForm{

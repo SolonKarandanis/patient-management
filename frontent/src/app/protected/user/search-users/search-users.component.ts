@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, WritableSignal,} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
-import {BaseComponent} from '@shared/abstract/BaseComponent';
 import {FloatLabel} from 'primeng/floatlabel';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {InputText} from 'primeng/inputtext';

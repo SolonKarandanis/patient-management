@@ -1,6 +1,6 @@
 package com.pm.medicalrecordsservice.controller;
 
-import com.pm.medicalrecordsservice.model.GeoLocation;
+import org.springframework.data.geo.Point;
 
 public class MedicalRecordUploadRequest {
     private String patientId;
@@ -31,7 +31,7 @@ public class MedicalRecordUploadRequest {
         this.longitude = longitude;
     }
 
-    public GeoLocation toGeoLocation() {
-        return new GeoLocation(this.latitude, this.longitude);
+    public Point toPoint() {
+        return new Point(this.longitude, this.latitude);
     }
 }

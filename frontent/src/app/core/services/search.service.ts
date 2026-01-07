@@ -7,7 +7,7 @@ import {
   CreateUserForm,
   CreateUserFormModel,
   UpdateUserForm,
-  UserSearchForm
+  UserSearchForm, UserSearchFormModel
 } from '../../protected/user/forms';
 import {I18nResourceSearchRequest, UserSearchRequest} from '@models/search.model';
 import {I18nResourceSearchForm} from '../../protected/i18n/forms';
@@ -49,22 +49,21 @@ export class SearchService extends GenericService{
 
   /**
    * Convert from FormGroup<UserSearchForm> to UserSearchRequest
-   * @param  searchForm form of type UserSearchForm
+   * @param  form form of type UserSearchForm
    * @returns A UserSearchRequest
    */
-  public toUserSearchRequest(searchForm: FormGroup<UserSearchForm>):UserSearchRequest{
-    const {email,name,status,role,username,rows,first,sortField,sortOrder} = searchForm.value;
+  public toUserSearchRequest(form: FieldTree<UserSearchFormModel, string | number>):UserSearchRequest{
     return {
-      email,
-      name,
-      status: status!,
-      roleName:role!,
-      username,
+      email:form.email().value(),
+      name:form.name().value(),
+      status: form.status().value(),
+      roleName:form.role().value()!,
+      username:form.username().value(),
       paging: {
-        limit: rows!,
-        page: first!,
-        sortField: sortField!,
-        sortDirection: sortOrder!,
+        limit: form.rows().value(),
+        page: form.first().value(),
+        sortField: form.sortField().value(),
+        sortDirection:form.sortOrder().value(),
       }
     };
   }

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, effect, inject, OnInit,} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, WritableSignal,} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
 import {FloatLabel} from 'primeng/floatlabel';
@@ -26,8 +26,9 @@ import {ResultsTablePaginatorDirective} from '@directives/results-table-paginato
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {NgClass} from "@angular/common";
-import {Field, FieldTree} from '@angular/forms/signals';
+import {Field, FieldTree, submit} from '@angular/forms/signals';
 import {UserSearchFormModel} from '../forms';
+import {RolesConstants} from '@core/guards/SecurityConstants';
 
 @Component({
   selector: 'app-search-users',
@@ -60,7 +61,7 @@ import {UserSearchFormModel} from '../forms';
           <app-fieldset legend="{{ 'SEARCH.COMMON.search-criteria' | translate }}"
                         [toggleable]="true"
                         [collapsed]="criteriaCollapsed()">
-            <form >
+            <form>
               <div class="grid gap-6 mt-6 md:grid-cols-3">
                 <div class="mb-6">
                   <p-float-label variant="on" class="w-full mb-3">
@@ -189,21 +190,23 @@ export class SearchUsersComponent implements OnInit {
   protected userStatuses: SelectItem[] = [];
   protected readonly searchType: SearchType = SearchTypeEnum.USERS;
   protected tableColumns: SearchTableColumn[] = [];
+  protected resultsVisible: WritableSignal<boolean> = signal(false);
+  protected animationTimer: any;
 
   form!: FieldTree<UserSearchFormModel, string | number>;
 
   constructor() {
     this.initForm();
-    // effect(() => {
-    //   clearTimeout(this.animationTimer);
-    //   if (this.hasSearched()) {
-    //     this.resultsVisible.set(true);
-    //   } else {
-    //     this.animationTimer = setTimeout(() => {
-    //       this.resultsVisible.set(false);
-    //     }, 300); // Must match the animation duration in CSS
-    //   }
-    // });
+    effect(() => {
+      clearTimeout(this.animationTimer);
+      if (this.hasSearched()) {
+        this.resultsVisible.set(true);
+      } else {
+        this.animationTimer = setTimeout(() => {
+          this.resultsVisible.set(false);
+        }, 300); // Must match the animation duration in CSS
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -213,21 +216,27 @@ export class SearchUsersComponent implements OnInit {
   }
 
   protected search(): void {
-    // this.userService.executeSearchUsers(this.form);
+    submit(this.form,async (form)=>{
+      this.userService.executeSearchUsers(form);
+    })
+
   }
 
   protected resetForm(): void {
-    // this.form.reset();
+    this.form().reset();
     this.userService.resetSearchResults();
   }
 
   protected exportReport(): void {
-    // this.userService.exportUsersToCsv(this.form);
+    this.userService.exportUsersToCsv(this.form);
   }
 
   protected handleTableLazyLoad(event: TableLazyLoadEvent): void {
     const {first, rows, sortField, sortOrder} = event;
-    // this.form.patchValue({first, rows, sortField, sortOrder});
+    this.form.first().value.set(first??0);
+    this.form.rows().value.set(rows??10);
+    this.form.sortField().value.set(sortField as string);
+    this.form.sortOrder().value.set(sortOrder == 1 ? "ASC" : "DESC");
     this.search();
   }
 
@@ -238,13 +247,11 @@ export class SearchUsersComponent implements OnInit {
 
   private loadSavedSearch(searchRequest: SearchRequestCriteria): void {
     const {email, name, status, roleName, username} = searchRequest as UserSearchRequest;
-    // this.form.patchValue({
-    //   email,
-    //   status,
-    //   roleName,
-    //   username,
-    //   name
-    // });
+    this.form.email().value.set(email??'');
+    this.form.status().value.set(status);
+    this.form.role().value.set(roleName as RolesConstants);
+    this.form.username().value.set(username??'');
+    this.form.name().value.set(name??'');
     this.search();
   }
 

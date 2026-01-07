@@ -123,7 +123,7 @@ export class UserService extends GenericService{
    * @param searchForm The search criteria
    * @returns nothing
    */
-  public executeSearchUsers(searchForm: FormGroup<UserSearchForm>):void{
+  public executeSearchUsers(searchForm: FieldTree<UserSearchFormModel, string | number>):void{
     const request = this.searchService.toUserSearchRequest(searchForm);
     this.userStore.searchUsers(request);
   }
@@ -133,7 +133,7 @@ export class UserService extends GenericService{
    * @param searchForm The search criteria
    * @returns nothing
    */
-  public exportUsersToCsv(searchForm: FormGroup<UserSearchForm>):void{
+  public exportUsersToCsv(searchForm: FieldTree<UserSearchFormModel, string | number>):void{
     const request = this.searchService.toUserSearchRequest(searchForm);
     this.userStore.exportUsersToCsv(request);
   }

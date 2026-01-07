@@ -33,7 +33,7 @@ import {FieldTree} from '@angular/forms/signals';
             class="w-full"
             pButton
             pRipple
-            type="submit"
+            type="button"
             severity="info"
             (click)="handleSearchClick($event)"
             [disabled]="isDisabled() || isLoading()"

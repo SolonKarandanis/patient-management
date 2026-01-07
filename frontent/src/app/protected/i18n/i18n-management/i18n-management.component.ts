@@ -87,12 +87,12 @@ import {Ripple} from 'primeng/ripple';
                   </p-float-label>
                 </div>
               </div>
-              <app-search-buttons #searchBtns
-                                  [searchType]="searchType"
-                                  [enableSaveSearch]="true"
-                                  [searchForm]="form"
-                                  (searchClicked)="search()"
-                                  (resetClicked)="resetForm()"/>
+<!--              <app-search-buttons #searchBtns-->
+<!--                                  [searchType]="searchType"-->
+<!--                                  [enableSaveSearch]="true"-->
+<!--                                  [searchForm]="form"-->
+<!--                                  (searchClicked)="search()"-->
+<!--                                  (resetClicked)="resetForm()"/>-->
             </form>
           </app-fieldset>
           @if (resultsVisible()) {

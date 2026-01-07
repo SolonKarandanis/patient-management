@@ -26,6 +26,8 @@ import {ResultsTablePaginatorDirective} from '@directives/results-table-paginato
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {NgClass} from "@angular/common";
+import {Field, FieldTree} from '@angular/forms/signals';
+import {UserSearchFormModel} from '../forms';
 
 @Component({
   selector: 'app-search-users',
@@ -45,6 +47,7 @@ import {NgClass} from "@angular/common";
     ResultsTablePaginatorDirective,
     FieldsetComponent,
     NgClass,
+    Field,
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
@@ -57,7 +60,7 @@ import {NgClass} from "@angular/common";
           <app-fieldset legend="{{ 'SEARCH.COMMON.search-criteria' | translate }}"
                         [toggleable]="true"
                         [collapsed]="criteriaCollapsed()">
-            <form [formGroup]="form">
+            <form >
               <div class="grid gap-6 mt-6 md:grid-cols-3">
                 <div class="mb-6">
                   <p-float-label variant="on" class="w-full mb-3">
@@ -66,13 +69,13 @@ import {NgClass} from "@angular/common";
                       pInputText
                       type="email"
                       class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                      formControlName="email"
+                      [field]="form.email"
                       autocomplete="email"/>
                     <label for="email">{{ 'USER.SEARCH.LABELS.email' | translate }}</label>
                   </p-float-label>
                   <app-form-error
-                    [displayLabels]="isFieldValid('email')"
-                    [validationErrors]="form.get('email')?.errors"/>
+                    [displayLabels]="form.email().invalid() && form.email().touched()"
+                    [validationErrors]="form.email().errors()"/>
                 </div>
                 <div class="mb-6">
                   <p-float-label variant="on" class="w-full mb-3">
@@ -81,13 +84,13 @@ import {NgClass} from "@angular/common";
                       pInputText
                       type="text"
                       class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                      formControlName="username"
+                      [field]="form.username"
                       autocomplete="username"/>
                     <label for="username">{{ 'USER.SEARCH.LABELS.username' | translate }}</label>
                   </p-float-label>
                   <app-form-error
-                    [displayLabels]="isFieldValid('username')"
-                    [validationErrors]="form.get('username')?.errors"/>
+                    [displayLabels]="form.username().invalid() && form.username().touched()"
+                    [validationErrors]="form.username().errors()"/>
                 </div>
                 <div class="mb-6">
                   <p-float-label variant="on" class="w-full mb-3">
@@ -96,20 +99,20 @@ import {NgClass} from "@angular/common";
                       pInputText
                       type="text"
                       class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                      formControlName="name"
+                      [field]="form.name"
                       autocomplete="name"/>
                     <label for="name">{{ 'USER.SEARCH.LABELS.name' | translate }}</label>
                   </p-float-label>
                   <app-form-error
-                    [displayLabels]="isFieldValid('name')"
-                    [validationErrors]="form.get('name')?.errors"/>
+                    [displayLabels]="form.name().invalid() && form.name().touched()"
+                    [validationErrors]="form.name().errors()"/>
                 </div>
               </div>
               <div class="grid gap-6 mt-6 md:grid-cols-2">
                 <div class="mb-6">
                   <p-float-label variant="on" class="w-full mb-3">
                     <p-select
-                      formControlName="status"
+                      [field]="form.status"
                       [options]="userStatuses"
                       [checkmark]="true"
                       [showClear]="true"
@@ -119,13 +122,13 @@ import {NgClass} from "@angular/common";
                     </label>
                   </p-float-label>
                   <app-form-error
-                    [displayLabels]="isFieldValid('status')"
-                    [validationErrors]="form.get('status')?.errors"/>
+                    [displayLabels]="form.status().invalid() && form.status().touched()"
+                    [validationErrors]="form.status().errors()"/>
                 </div>
                 <div class="mb-6">
                   <p-float-label variant="on" class="w-full mb-3">
                     <p-select
-                      formControlName="role"
+                      [field]="form.role"
                       [options]="commonEntitiesService.rolesAsSelectItems()"
                       [checkmark]="true"
                       [showClear]="true"
@@ -135,8 +138,8 @@ import {NgClass} from "@angular/common";
                     </label>
                   </p-float-label>
                   <app-form-error
-                    [displayLabels]="isFieldValid('role')"
-                    [validationErrors]="form.get('role')?.errors"/>
+                    [displayLabels]="form.status().invalid() && form.status().touched()"
+                    [validationErrors]="form.status().errors()"/>
                 </div>
               </div>
               <app-search-buttons #searchBtns
@@ -147,7 +150,7 @@ import {NgClass} from "@angular/common";
                                   (resetClicked)="resetForm()"/>
             </form>
           </app-fieldset>
-          @if (resultsVisible()) {
+<!--          @if (resultsVisible()) {-->
             <div class="mt-6" [ngClass]="{'fade-in': hasSearched(), 'fade-out': !hasSearched()}">
               <app-results-table
                 tableFilter
@@ -155,16 +158,16 @@ import {NgClass} from "@angular/common";
                 [colTitles]="tableColumns"
                 [tableItems]="results()"
                 [totalRecords]="totalCount()"
-                [resultsPerPage]="form.controls['rows'].value"
+                [resultsPerPage]="form.rows().value()"
                 (tableStateChanged)="handleTableLazyLoad($event)"
-                [first]="form.controls['first'].value"
+                [first]="form.first().value()"
                 [lazy]="true"
                 [loading]="tableLoading()"
                 [overrideDefaultExport]="true"
                 [exportFunction]="exportReport.bind(this)"
               />
             </div>
-          }
+<!--          }-->
         </div>
       </div>
     </div>
@@ -172,7 +175,7 @@ import {NgClass} from "@angular/common";
   styleUrl: './search-users.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchUsersComponent extends BaseComponent implements OnInit {
+export class SearchUsersComponent implements OnInit {
   private userService = inject(UserService);
   protected commonEntitiesService = inject(CommonEntitiesService);
 
@@ -187,42 +190,44 @@ export class SearchUsersComponent extends BaseComponent implements OnInit {
   protected readonly searchType: SearchType = SearchTypeEnum.USERS;
   protected tableColumns: SearchTableColumn[] = [];
 
+  form!: FieldTree<UserSearchFormModel, string | number>;
+
   constructor() {
-    super();
-    effect(() => {
-      clearTimeout(this.animationTimer);
-      if (this.hasSearched()) {
-        this.resultsVisible.set(true);
-      } else {
-        this.animationTimer = setTimeout(() => {
-          this.resultsVisible.set(false);
-        }, 300); // Must match the animation duration in CSS
-      }
-    });
+    this.initForm();
+    // effect(() => {
+    //   clearTimeout(this.animationTimer);
+    //   if (this.hasSearched()) {
+    //     this.resultsVisible.set(true);
+    //   } else {
+    //     this.animationTimer = setTimeout(() => {
+    //       this.resultsVisible.set(false);
+    //     }, 300); // Must match the animation duration in CSS
+    //   }
+    // });
   }
 
   ngOnInit(): void {
-    this.initForm();
+
     this.initTableColumns();
     this.initUserStatuses();
   }
 
   protected search(): void {
-    this.userService.executeSearchUsers(this.form);
+    // this.userService.executeSearchUsers(this.form);
   }
 
   protected resetForm(): void {
-    this.form.reset();
+    // this.form.reset();
     this.userService.resetSearchResults();
   }
 
   protected exportReport(): void {
-    this.userService.exportUsersToCsv(this.form);
+    // this.userService.exportUsersToCsv(this.form);
   }
 
   protected handleTableLazyLoad(event: TableLazyLoadEvent): void {
     const {first, rows, sortField, sortOrder} = event;
-    this.form.patchValue({first, rows, sortField, sortOrder});
+    // this.form.patchValue({first, rows, sortField, sortOrder});
     this.search();
   }
 
@@ -233,13 +238,13 @@ export class SearchUsersComponent extends BaseComponent implements OnInit {
 
   private loadSavedSearch(searchRequest: SearchRequestCriteria): void {
     const {email, name, status, roleName, username} = searchRequest as UserSearchRequest;
-    this.form.patchValue({
-      email,
-      status,
-      roleName,
-      username,
-      name
-    });
+    // this.form.patchValue({
+    //   email,
+    //   status,
+    //   roleName,
+    //   username,
+    //   name
+    // });
     this.search();
   }
 

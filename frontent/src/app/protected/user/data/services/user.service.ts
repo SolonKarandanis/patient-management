@@ -10,7 +10,7 @@ import {
   CreateUserFormModel,
   createUserFormSchema,
   UpdateUserForm,
-  UserSearchForm
+  UserSearchForm, UserSearchFormModel
 } from '../../forms';
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {RolesConstants} from '@core/guards/SecurityConstants';
@@ -18,6 +18,7 @@ import {SearchTableColumn} from '@models/search.model';
 import {UserAccountStatusEnum} from '@models/user.model';
 import {SelectItem} from 'primeng/api';
 import {FieldTree, form} from '@angular/forms/signals';
+import {sign} from 'jsonwebtoken';
 
 @Injectable({
   providedIn: 'root'
@@ -178,22 +179,24 @@ export class UserService extends GenericService{
     },{validators: this.samePasswords()});
   }
 
+  private searchUserModel = signal<UserSearchFormModel>({
+    email:'',
+    username:'',
+    name:'',
+    role:null,
+    status:UserAccountStatusEnum.ACTIVE,
+    rows: 10,
+    first:0,
+    sortField:'',
+    sortOrder: "ASC"
+  });
+
   /**
    * Initialize the reactive form for searching users
    * @returns A FormGroup with the appropriate fields
    */
-  public initSearchUserForm(): FormGroup<UserSearchForm>{
-    return this.formBuilder.group<UserSearchForm>({
-      email: new FormControl(null),
-      name: new FormControl(null),
-      status: new FormControl(UserAccountStatusEnum.ACTIVE,{nonNullable: true}),
-      username: new FormControl(null),
-      role: new FormControl(null),
-      rows:new FormControl(10,{nonNullable: true}),
-      first: new FormControl(0,{nonNullable: true}),
-      sortField: new FormControl('',{nonNullable: true}),
-      sortOrder: new FormControl('ASC',{nonNullable: true})
-    })
+  public initSearchUserForm():FieldTree<UserSearchFormModel, string | number>{
+    return form<UserSearchFormModel>(this.searchUserModel);
   }
 
   private createUserModel =signal<CreateUserFormModel>({

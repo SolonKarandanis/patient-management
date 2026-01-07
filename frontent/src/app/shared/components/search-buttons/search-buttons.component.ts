@@ -11,6 +11,7 @@ import {Tooltip} from 'primeng/tooltip';
 import {FloatLabel} from 'primeng/floatlabel';
 import {InputText} from 'primeng/inputtext';
 import {NgTemplateOutlet} from '@angular/common';
+import {FieldTree} from '@angular/forms/signals';
 
 @Component({
   selector: 'app-search-buttons',
@@ -99,7 +100,7 @@ import {NgTemplateOutlet} from '@angular/common';
   styleUrl: './search-buttons.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchButtonsComponent {
+export class SearchButtonsComponent<T> {
 
   private authService= inject(AuthService);
   private searchService= inject(SearchService);
@@ -113,7 +114,7 @@ export class SearchButtonsComponent {
   isDisabled = input(false);
   enableSaveSearch = input(false);
   searchType = input.required<SearchType>();
-  searchForm = input.required<FormGroup>();
+  searchForm = input.required<FieldTree<T extends Record<any, any> ? T : never>>();
   resetBtnTemplate = input<TemplateRef<Record<string, unknown>>>();
 
   searchClicked = output<MouseEvent>();

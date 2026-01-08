@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {UserService} from '../data/services/user.service';
@@ -16,7 +16,7 @@ import {SplitButton} from 'primeng/splitbutton';
 import {MenuItem} from 'primeng/api';
 import {UserAccountStatusEnum} from '@models/user.model';
 import {ConfirmDialog} from 'primeng/confirmdialog';
-import {FieldTree, } from '@angular/forms/signals';
+import {FieldTree} from '@angular/forms/signals';
 import {UpdateUserFormModel} from '../forms';
 
 
@@ -103,17 +103,33 @@ export class UserDetailsComponent  {
   protected changePasswordForm!: FormGroup;
   protected accountActions!:MenuItem[];
 
-  form!: FieldTree<UpdateUserFormModel, string | number>;
+  protected form: FieldTree<UpdateUserFormModel, string | number>;
 
   constructor() {
+    this.form = this.userService.userUpdateForm;
     const userId = injectParams('id')();
     this.userService.executeGetUserById(userId as string);
+
+    effect(() => {
+      const user = this.userService.user();
+      if (user) {
+        const userRoles = this.userService.rolesAsSelectItems();
+        this.initChangePasswordForm();
+        this.initMenuActions(user.status);
+        this.userService.updateUserDetailsForm({
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          role: userRoles[0]?.value,
+        });
+        this.userService.setUpdateFormDisabled(true);
+      }
+    });
   }
 
   protected vm = computed(()=>{
-    const loading = this.userService.isLoading();
-    const user = this. userService.user();
-    const userRoles=this.userService.rolesAsSelectItems();
+    const user = this.userService.user();
     let availableRoles = this.commonEntitiesService.rolesAsSelectItems();
 
     const isAdmin =this.authService.hasRole(UserRolesEnum.ROLE_SYSTEM_ADMIN)();
@@ -122,25 +138,11 @@ export class UserDetailsComponent  {
     }
     const isEditAllowed =  isAdmin || this.authService.isUserMe(user?.publicId)();
 
-    if(user){
-      this.initDetailsForm();
-      this.initChangePasswordForm();
-      this.initMenuActions(user.status);
-      // this.formGroup = toFormGroup(this.form);
-      // this.form.patchValue({
-      //   username:user.username,
-      //   firstName:user.firstName,
-      //   lastName:user.lastName,
-      //   email:user.email,
-      //   role:userRoles[0]?.value,
-      // });
-    }
-
     return {
       user,
-      loading,
+      loading: this.userService.isLoading(),
       availableRoles,
-      userRoles,
+      userRoles: this.userService.rolesAsSelectItems(),
       isEditAllowed,
     }
   });
@@ -157,16 +159,14 @@ export class UserDetailsComponent  {
   }
 
   protected detailsSaveClickHandler():void{
-    // if(this.form.valid){
+    // if(!this.form.valid){
     //   this.userService.executeUpdateUser(this.form);
     // }
   }
 
   protected detailsEditHandler(isEditMode: boolean):void{
-    this.form = this.userService.initUpdateUserForm(!isEditMode);
+    this.userService.setUpdateFormDisabled(!isEditMode);
   }
-
-
 
   protected changePasswordFormValidateHandler():void{
     if(!this.changePasswordForm.valid){
@@ -186,10 +186,6 @@ export class UserDetailsComponent  {
 
   protected changePasswordEditHandler(isEditMode: boolean):void{
     isEditMode ?  this.changePasswordForm.enable():this.changePasswordForm.disable();
-  }
-
-  private initDetailsForm():void{
-    this.form = this.userService.initUpdateUserForm(true);
   }
 
   private initChangePasswordForm():void{

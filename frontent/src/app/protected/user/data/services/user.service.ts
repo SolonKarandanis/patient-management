@@ -22,6 +22,15 @@ import {FieldTree, form} from '@angular/forms/signals';
   providedIn: 'root'
 })
 export class UserService extends GenericService{
+
+  private isUpdateFormDisabled = signal(true);
+  public userUpdateForm: FieldTree<UpdateUserFormModel, string | number>;
+
+  constructor() {
+    super();
+    this.userUpdateForm = form(this.updateUserModel, updateUserFormSchema(this.isUpdateFormDisabled));
+  }
+
   private userStore = inject(UserStore);
   private searchService = inject(SearchService);
   private translateService = inject(TranslateService);
@@ -152,20 +161,22 @@ export class UserService extends GenericService{
     this.userStore.setCreatedUserId(null);
   }
 
-  private updateUserModel =signal<UpdateUserFormModel>({
-    email:'',
-    username:'',
-    firstName:'',
-    lastName:'',
-    role:RolesConstants.ROLE_NO_ROLE
+  private updateUserModel = signal<UpdateUserFormModel>({
+    email: '',
+    username: '',
+    firstName: '',
+    lastName: '',
+    role: RolesConstants.ROLE_NO_ROLE,
   });
 
-  /**
-   * Initialize the reactive form for updating a user
-   * @returns A FormGroup with the appropriate fields
-   */
-  public initUpdateUserForm(disabled: boolean): FieldTree<UpdateUserFormModel, string | number>{
-    return form<UpdateUserFormModel>(this.updateUserModel,{...updateUserFormSchema, disabled});
+
+
+  public setUpdateFormDisabled(isDisabled: boolean): void {
+    this.isUpdateFormDisabled.set(isDisabled);
+  }
+
+  public updateUserDetailsForm(data: Partial<UpdateUserFormModel>): void {
+    this.updateUserModel.update(current => ({ ...current, ...data }));
   }
 
   /**

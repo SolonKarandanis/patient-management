@@ -2,7 +2,8 @@ import { FormControl } from "@angular/forms";
 import {UserAccountStatus} from '@models/user.model';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SortDirection} from '@models/search.model';
-import {customError, email, required, schema, validate} from '@angular/forms/signals';
+import {customError, disabled, email, required, schema, validate} from '@angular/forms/signals';
+import {Signal} from '@angular/core';
 
 
 export interface UserSearchForm{
@@ -38,7 +39,7 @@ export interface UpdateUserFormModel{
   role: RolesConstants;
 }
 
-export const updateUserFormSchema = schema<UpdateUserFormModel>((field)=>{
+export const updateUserFormSchema = (isDisabled: Signal<boolean>) => schema<UpdateUserFormModel>((field) => {
   required(field.email,{
     message:'email-required',
   });
@@ -56,6 +57,7 @@ export const updateUserFormSchema = schema<UpdateUserFormModel>((field)=>{
   required(field.role,{
     message:'role-required'
   });
+  disabled(field, () => isDisabled());
 });
 
 export interface UpdateUserForm{

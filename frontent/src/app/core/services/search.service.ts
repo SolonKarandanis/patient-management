@@ -4,10 +4,9 @@ import {ChangePasswordRequest, CreateUserRequest, UpdateUserRequest} from '@mode
 import {FormGroup} from '@angular/forms';
 import {
   ChangePasswordForm,
-  CreateUserForm,
   CreateUserFormModel,
   UpdateUserForm,
-  UserSearchForm, UserSearchFormModel
+  UserSearchFormModel
 } from '../../protected/user/forms';
 import {I18nResourceSearchRequest, UserSearchRequest} from '@models/search.model';
 import {I18nResourceSearchForm} from '../../protected/i18n/forms';

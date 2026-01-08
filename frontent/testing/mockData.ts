@@ -7,7 +7,6 @@ import {
   Role,
   UpdateUserRequest,
   User,
-  UserAccountStatus
 } from '@models/user.model';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {
@@ -17,14 +16,24 @@ import {
   UserSearchRequest
 } from '@models/search.model';
 import {FormControl, FormGroup} from '@angular/forms';
-import {ChangePasswordForm, CreateUserForm, UpdateUserForm, UserSearchForm} from '../src/app/protected/user/forms';
+import {
+  ChangePasswordForm,
+  CreateUserFormModel,
+  createUserFormSchema,
+  UpdateUserForm,
+  UserSearchForm, UserSearchFormModel
+} from '../src/app/protected/user/forms';
 import {JwtDTO, SubmitCredentialsDTO} from '@models/auth.model';
 import {GenericFile} from '@models/file.model';
+import {FieldTree, form} from '@angular/forms/signals';
+import {signal} from '@angular/core';
+
 
 export const mockRole:Role={
   id:1,
   name:RolesConstants.ROLE_ADMIN
 }
+
 
 export const mockOperation:Operation={
   id:1,
@@ -77,17 +86,17 @@ export const mockUserSearchRequest:UserSearchRequest={
   roleName:mockRole.name
 }
 
-export const mockSearchUserForm:FormGroup= new FormGroup<UserSearchForm>({
-  email: new FormControl(''),
-  first: new FormControl(0,{nonNullable: true}),
-  rows: new FormControl(10,{nonNullable: true}),
-  name: new FormControl(''),
-  status:new FormControl("account.active",{nonNullable: true}),
-  role: new FormControl(),
-  username: new FormControl(''),
-  sortOrder:  new FormControl(SortDirectionEnum.ASC,{nonNullable: true}),
-  sortField: new FormControl('id',{nonNullable: true})
-});
+export const mockSearchUserForm: FieldTree<UserSearchFormModel, string | number> = form<UserSearchFormModel>(signal({
+  email: '',
+  first: 0,
+  rows: 10,
+  name: '',
+  status:"account.active",
+  role: null,
+  username: '',
+  sortOrder: SortDirectionEnum.ASC,
+  sortField: 'id'
+}));
 
 export const mockSavedSearch: SavedSearch = {
   id: 123,
@@ -167,17 +176,16 @@ export const mockCreateUserRequest:CreateUserRequest={
   username:'test'
 };
 
-export const mockCreateUserForm = {
-  value: () => ({
-    email: '',
-    firstName: '',
-    username: '',
-    lastName: '',
-    role: RolesConstants.ROLE_PATIENT,
-    password: '',
-    confirmPassword: '',
-  }),
-};
+export const mockCreateUserForm: FieldTree<CreateUserFormModel, string | number> = form<CreateUserFormModel>(signal({
+  email: 'test@test.com',
+  firstName: 'test',
+  username: 'test',
+  lastName: 'test',
+  role: RolesConstants.ROLE_PATIENT,
+  password: 'password',
+  confirmPassword: 'password',
+}),createUserFormSchema);
+
 
 
 export const mockUpdateUserRequest:UpdateUserRequest={

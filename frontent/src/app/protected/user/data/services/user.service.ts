@@ -6,11 +6,10 @@ import {TranslateService} from '@ngx-translate/core';
 import {UtilService} from '@core/services/util.service';
 import {
   ChangePasswordForm,
-  CreateUserForm,
   CreateUserFormModel,
   createUserFormSchema,
   UpdateUserForm,
-  UserSearchForm, UserSearchFormModel
+  UserSearchFormModel
 } from '../../forms';
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {RolesConstants} from '@core/guards/SecurityConstants';
@@ -18,7 +17,6 @@ import {SearchTableColumn} from '@models/search.model';
 import {UserAccountStatusEnum} from '@models/user.model';
 import {SelectItem} from 'primeng/api';
 import {FieldTree, form} from '@angular/forms/signals';
-import {sign} from 'jsonwebtoken';
 
 @Injectable({
   providedIn: 'root'

@@ -3,7 +3,6 @@ import {PageHeaderComponent} from '@components/page-header/page-header.component
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {UserService} from '../data/services/user.service';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
-import {BaseComponent} from '@shared/abstract/BaseComponent';
 import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {UserDetailsFormComponent} from '../user-details-form/user-details-form.component';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
@@ -17,6 +16,8 @@ import {SplitButton} from 'primeng/splitbutton';
 import {MenuItem} from 'primeng/api';
 import {UserAccountStatusEnum} from '@models/user.model';
 import {ConfirmDialog} from 'primeng/confirmdialog';
+import {FieldTree, } from '@angular/forms/signals';
+import {UpdateUserFormModel} from '../forms';
 
 
 
@@ -47,13 +48,13 @@ import {ConfirmDialog} from 'primeng/confirmdialog';
             legend="{{ 'USER.DETAILS.LABELS.details' | translate }}"
             [toggleable]="false"
             [allowEdit]="vm.isEditAllowed"
-            [allowSave]="form.valid"
+            [allowSave]="form().valid()"
             (saveClicked)="detailsSaveClickHandler()"
             (validateFormClicked)="detailsSaveFormValidateHandler()"
             (resetFormValidityClicked)="detailsSaveFormResetValidationHandler()"
             (editModeChanged)="detailsEditHandler($event)">
             <app-user-details-form
-              [formGroup]="form"
+              [formInput]="form"
               [fetchingData]="vm.loading"
               [availableRoles]="vm.availableRoles"/>
           </app-fieldset>
@@ -92,18 +93,19 @@ import {ConfirmDialog} from 'primeng/confirmdialog';
   styleUrl: './user-details.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UserDetailsComponent extends BaseComponent {
+export class UserDetailsComponent  {
   private userService = inject(UserService);
   private authService = inject(AuthService);
   private utilService = inject(UtilService);
   private commonEntitiesService = inject(CommonEntitiesService);
-  private translateService = inject(TranslateService);
+  private translate = inject(TranslateService);
 
   protected changePasswordForm!: FormGroup;
   protected accountActions!:MenuItem[];
 
+  form!: FieldTree<UpdateUserFormModel, string | number>;
+
   constructor() {
-    super();
     const userId = injectParams('id')();
     this.userService.executeGetUserById(userId as string);
   }
@@ -124,13 +126,14 @@ export class UserDetailsComponent extends BaseComponent {
       this.initDetailsForm();
       this.initChangePasswordForm();
       this.initMenuActions(user.status);
-      this.form.patchValue({
-        username:user.username,
-        firstName:user.firstName,
-        lastName:user.lastName,
-        email:user.email,
-        role:userRoles[0]?.value,
-      });
+      // this.formGroup = toFormGroup(this.form);
+      // this.form.patchValue({
+      //   username:user.username,
+      //   firstName:user.firstName,
+      //   lastName:user.lastName,
+      //   email:user.email,
+      //   role:userRoles[0]?.value,
+      // });
     }
 
     return {
@@ -138,15 +141,15 @@ export class UserDetailsComponent extends BaseComponent {
       loading,
       availableRoles,
       userRoles,
-      isEditAllowed
+      isEditAllowed,
     }
   });
 
 
   protected detailsSaveFormValidateHandler():void{
-    if(!this.form.valid){
-      this.utilService.markAllAsDirty(this.form);
-    }
+    // if(!this.form.valid){
+    //   this.utilService.markAllAsDirty(this.form);
+    // }
   }
 
   protected detailsSaveFormResetValidationHandler():void{
@@ -154,13 +157,13 @@ export class UserDetailsComponent extends BaseComponent {
   }
 
   protected detailsSaveClickHandler():void{
-    if(this.form.valid){
-      this.userService.executeUpdateUser(this.form);
-    }
+    // if(this.form.valid){
+    //   this.userService.executeUpdateUser(this.form);
+    // }
   }
 
   protected detailsEditHandler(isEditMode: boolean):void{
-    isEditMode ?  this.form.enable():this.form.disable();
+    this.form = this.userService.initUpdateUserForm(!isEditMode);
   }
 
 
@@ -186,8 +189,7 @@ export class UserDetailsComponent extends BaseComponent {
   }
 
   private initDetailsForm():void{
-    this.form = this.userService.initUpdateUserForm();
-    this.form.disable();
+    this.form = this.userService.initUpdateUserForm(true);
   }
 
   private initChangePasswordForm():void{
@@ -251,7 +253,7 @@ export class UserDetailsComponent extends BaseComponent {
     const translationPrefix: string = 'USER.DETAILS.LABELS';
     this.accountActions=[
       {
-        label: this.translateService.instant(`${translationPrefix}.activate`),
+        label: this.translate.instant(`${translationPrefix}.activate`),
         icon: 'pi pi-check',
         disabled: status ===UserAccountStatusEnum.ACTIVE,
         command: () => {
@@ -259,7 +261,7 @@ export class UserDetailsComponent extends BaseComponent {
         },
       },
       {
-        label: this.translateService.instant(`${translationPrefix}.deactivate`),
+        label: this.translate.instant(`${translationPrefix}.deactivate`),
         icon: 'pi pi-ban',
         disabled: status ===UserAccountStatusEnum.INACTIVE,
         command: () => {
@@ -267,7 +269,7 @@ export class UserDetailsComponent extends BaseComponent {
         },
       },
       {
-        label: this.translateService.instant(`${translationPrefix}.delete`),
+        label: this.translate.instant(`${translationPrefix}.delete`),
         icon: 'pi pi-times',
         disabled: status ===UserAccountStatusEnum.DELETED,
         command: () => {

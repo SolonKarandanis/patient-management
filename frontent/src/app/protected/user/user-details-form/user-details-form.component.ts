@@ -8,6 +8,9 @@ import {NgClass} from '@angular/common';
 import {Select} from 'primeng/select';
 import {SelectItem} from 'primeng/api';
 import {BaseFormComponent} from '@shared/abstract/BaseFormComponent';
+import {Field, FieldTree} from '@angular/forms/signals';
+import {UpdateUserFormModel} from '../forms';
+import {Password} from 'primeng/password';
 
 @Component({
   selector: 'app-user-details-form',
@@ -18,111 +21,118 @@ import {BaseFormComponent} from '@shared/abstract/BaseFormComponent';
     ReactiveFormsModule,
     TranslatePipe,
     NgClass,
-    Select
+    Select,
+    Password,
+    Field
   ],
   template: `
-    @let form = formGroup();
-    <form [formGroup]="form">
+    @let form = formInput();
+    <form>
       <div class="flex-auto px-4 lg:px-10 py-10 pt-0 ">
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           <div class="mt-4">
             <label for="firstName"
-                   [ngClass]="{'app-required-label': form.enabled}">
+                   [ngClass]="{'app-required-label': !form().disabled()}">
               {{ 'USER.DETAILS.LABELS.firstName' | translate }}
             </label>
             <app-form-control-wrap
-              [editMode]="form.enabled"
-              [displayValue]="form.get('firstName')?.value"
+              [editMode]="!form().disabled()"
+              [displayValue]="form.firstName().value()"
               [fetchingData]="fetchingData()">
               <input
                 id="firstName"
                 pInputText
                 type="text"
                 class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                formControlName="firstName"
+                [field]="form.firstName"
                 autocomplete="firstName"/>
             </app-form-control-wrap>
             <app-form-error
-              [displayLabels]="isFieldValid('firstName')"
-              [validationErrors]="form.get('firstName')?.errors"/>
+              [displayLabels]="form.firstName().invalid() && form.firstName().touched()"
+              [validationErrors]="form.firstName().errors()"
+              validationErrorsTranslationPrefix="REGISTER.MESSAGES.ERROR."/>
           </div>
           <div class="mt-4">
             <label for="lastName"
-                   [ngClass]="{'app-required-label': form.enabled}">
+                   [ngClass]="{'app-required-label': !form().disabled()}">
               {{ 'USER.DETAILS.LABELS.lastName' | translate }}
             </label>
             <app-form-control-wrap
-              [editMode]="form.enabled"
-              [displayValue]="form.get('lastName')?.value"
+              [editMode]="!form().disabled()"
+              [displayValue]="form.lastName().value()"
               [fetchingData]="fetchingData()">
               <input
                 id="lastName"
                 pInputText
                 type="text"
                 class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                formControlName="lastName"
+                [field]="form.lastName"
                 autocomplete="lastName"/>
             </app-form-control-wrap>
             <app-form-error
-              [displayLabels]="isFieldValid('lastName')"
-              [validationErrors]="form.get('lastName')?.errors"/>
+              [displayLabels]="form.lastName().invalid() && form.lastName().touched()"
+              [validationErrors]="form.lastName().errors()"
+              validationErrorsTranslationPrefix="REGISTER.MESSAGES.ERROR."/>
           </div>
           <div class="mt-4">
             <label for="username"
-                   [ngClass]="{'app-required-label': form.enabled}">
+                   [ngClass]="{'app-required-label': !form().disabled()}">
               {{ 'USER.DETAILS.LABELS.username' | translate }}
             </label>
             <app-form-control-wrap
-              [editMode]="form.enabled"
-              [displayValue]="form.get('username')?.value"
+              [editMode]="!form().disabled()"
+              [displayValue]="form.username().value()"
               [fetchingData]="fetchingData()">
               <input
                 id="username"
                 pInputText
                 type="text"
                 class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                formControlName="username"
+                [field]="form.username"
                 autocomplete="username"/>
             </app-form-control-wrap>
             <app-form-error
-              [displayLabels]="isFieldValid('username')"
-              [validationErrors]="form.get('username')?.errors"/>
+              [displayLabels]="form.username().invalid() && form.username().touched()"
+              [validationErrors]="form.username().errors()"
+              validationErrorsTranslationPrefix="REGISTER.MESSAGES.ERROR."/>
           </div>
           <div class="mt-4">
             <label for="email"
-                   [ngClass]="{'app-required-label': form.enabled}">
+                   [ngClass]="{'app-required-label':!form().disabled()}">
               {{ 'USER.DETAILS.LABELS.email' | translate }}
             </label>
             <app-form-control-wrap
-              [editMode]="form.enabled"
-              [displayValue]="form.get('email')?.value"
+              [editMode]="!form().disabled()"
+              [displayValue]="form.email().value()"
               [fetchingData]="fetchingData()">
               <input
                 id="email"
                 pInputText
                 type="email"
                 class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                formControlName="email"
+                [field]="form.email"
                 autocomplete="email"/>
             </app-form-control-wrap>
             <app-form-error
-              [displayLabels]="isFieldValid('email')"
-              [validationErrors]="form.get('email')?.errors"/>
+              [displayLabels]="form.email().invalid() && form.email().touched()"
+              [validationErrors]="form.email().errors()"
+              validationErrorsTranslationPrefix="REGISTER.MESSAGES.ERROR."/>
           </div>
           <div class="mt-4">
             <label for="role"
-                   [ngClass]="{'app-required-label': form.enabled}">
+                   [ngClass]="{'app-required-label': !form().disabled()}">
               {{ 'USER.DETAILS.LABELS.role' | translate }}
             </label>
             <p-select
-              formControlName="role"
+              [field]="form.role"
               [options]="availableRoles()"
               [checkmark]="true"
               [showClear]="true"
               class="border-0 !bg-white text-sm shadow w-full"/>
             <app-form-error
-              [displayLabels]="isFieldValid('role')"
-              [validationErrors]="form.get('role')?.errors"/>
+              [displayLabels]="form.role().invalid() && form.role().touched()"
+              [validationErrors]="form.role().errors()"
+              validationErrorsTranslationPrefix="REGISTER.MESSAGES.ERROR."/>
           </div>
         </div>
       </div>
@@ -134,10 +144,7 @@ import {BaseFormComponent} from '@shared/abstract/BaseFormComponent';
 export class UserDetailsFormComponent  extends BaseFormComponent{
 
   fetchingData = input<boolean>(false);
-  formGroup = input.required<FormGroup>();
+  formInput = input.required<FieldTree<UpdateUserFormModel, string | number>>();
   availableRoles = input.required<SelectItem[]>();
 
-  protected isFieldValid(field: string): boolean | undefined {
-    return this.isFieldValidBase(field, this.formGroup());
-  }
 }

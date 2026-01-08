@@ -38,6 +38,26 @@ export interface UpdateUserFormModel{
   role: RolesConstants;
 }
 
+export const updateUserFormSchema = schema<UpdateUserFormModel>((field)=>{
+  required(field.email,{
+    message:'email-required',
+  });
+  email(field.email);
+
+  required(field.username,{
+    message:'username-required'
+  });
+  required(field.firstName,{
+    message:'firstName-required'
+  });
+  required(field.lastName,{
+    message:'lastName-required'
+  });
+  required(field.role,{
+    message:'role-required'
+  });
+});
+
 export interface UpdateUserForm{
   username: FormControl<string|null|undefined>;
   firstName: FormControl<string|null|undefined>;
@@ -99,13 +119,3 @@ export const createUserFormSchema = schema<CreateUserFormModel>((field) => {
     return samePass? null : customError({message:"passwordMismatch",kind:'passwordMismatch'});
   })
 })
-
-export interface CreateUserForm{
-  username: FormControl<string|null>;
-  password: FormControl<string|null>;
-  confirmPassword: FormControl<string|null>;
-  firstName: FormControl<string|null>;
-  lastName: FormControl<string|null>;
-  email: FormControl<string|null>;
-  role:FormControl<RolesConstants|null>;
-}

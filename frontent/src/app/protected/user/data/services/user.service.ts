@@ -8,7 +8,7 @@ import {
   ChangePasswordForm,
   CreateUserFormModel,
   createUserFormSchema,
-  UpdateUserForm,
+  UpdateUserForm, UpdateUserFormModel, updateUserFormSchema,
   UserSearchFormModel
 } from '../../forms';
 import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
@@ -152,18 +152,20 @@ export class UserService extends GenericService{
     this.userStore.setCreatedUserId(null);
   }
 
+  private updateUserModel =signal<UpdateUserFormModel>({
+    email:'',
+    username:'',
+    firstName:'',
+    lastName:'',
+    role:RolesConstants.ROLE_NO_ROLE
+  });
+
   /**
    * Initialize the reactive form for updating a user
    * @returns A FormGroup with the appropriate fields
    */
-  public initUpdateUserForm(): FormGroup<UpdateUserForm>{
-    return this.formBuilder.group<UpdateUserForm>({
-      username: new FormControl(),
-      firstName: new FormControl(),
-      lastName: new FormControl(),
-      email: new FormControl(),
-      role: new FormControl(RolesConstants.ROLE_NO_ROLE,{nonNullable: true}),
-    })
+  public initUpdateUserForm(disabled: boolean): FieldTree<UpdateUserFormModel, string | number>{
+    return form<UpdateUserFormModel>(this.updateUserModel,{...updateUserFormSchema, disabled});
   }
 
   /**

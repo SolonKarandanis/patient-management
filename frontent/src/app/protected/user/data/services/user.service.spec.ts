@@ -183,29 +183,29 @@ describe('UserService', () =>{
 
       const form = service.initSearchUserForm();
 
-      const formValues = form.value();
+      const formValues = form().value();
 
       expect(form).toBeTruthy();
       expect(formValues).toBeTruthy();
       expect(formValues.email).toBeDefined();
-      expect(formValues.email).toEqual(null);
+      expect(formValues.email).toEqual('');
       expect(formValues.username).toBeDefined();
-      expect(formValues.username).toEqual(null);
+      expect(formValues.username).toEqual('');
       expect(formValues.name).toBeDefined();
-      expect(formValues.name).toEqual(null);
+      expect(formValues.name).toEqual('');
       expect(formValues.status).toBeDefined();
       expect(formValues.status).toEqual("account.active");
       expect(formValues.rows).toBeDefined();
       expect(formValues.rows).toEqual(10);
       expect(formValues.first).toBeDefined();
       expect(formValues.first).toEqual(0);
-      expect(form.valid()).toBeTrue();
+      expect(form().valid).toBeTrue();
     });
 
   it('should initialize an update users form', () => {
     service.user = signal(mockUser);
     const form = service.initUpdateUserForm();
-    const formValues = form.value();
+    const formValues = form.value;
 
     expect(form).toBeTruthy();
     expect(formValues).toBeTruthy();
@@ -225,12 +225,12 @@ describe('UserService', () =>{
     expect(formValues.role).toBeDefined();
     expect(formValues.role).toEqual(RolesConstants.ROLE_NO_ROLE);
 
-    expect(form.valid()).toBeTrue();
+    expect(form.valid).toBeTrue();
   });
 
   it('should initialize a change password form', () => {
     const form = service.initChangePasswordForm();
-    const formValues = form.value();
+    const formValues = form.value;
 
     expect(form).toBeTruthy();
     expect(formValues).toBeTruthy();
@@ -241,7 +241,7 @@ describe('UserService', () =>{
     expect(formValues.confirmPassword).toBeDefined();
     expect(formValues.confirmPassword).toBeNull();
 
-    expect(form.valid()).toBeFalse();
+    expect(form.valid).toBeFalse();
   });
 
   it('should get Users Search Table Columns', () =>{

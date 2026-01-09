@@ -1,10 +1,9 @@
 import {
   ApplicationConfig,
   importProvidersFrom,
-  provideZoneChangeDetection
+  provideZonelessChangeDetection
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import Aura from '@primeng/themes/aura';
@@ -25,6 +24,9 @@ import {authExpired} from '@core/interceptors/auth-expired.interceptor';
 import { TranslationController } from '@core/repositories/translation.controller';
 import { CustomTranslateLoader } from '@core/helpers/translation.loader';
 import { NgxPermissionsModule } from "ngx-permissions";
+import {provideSignalFormsConfig} from '@angular/forms/signals';
+import {NG_STATUS_CLASSES} from '@angular/forms/signals/compat';
+import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 
 export function createCustomTranslateLoader(translationController: TranslationController): CustomTranslateLoader {
   return new CustomTranslateLoader(translationController);
@@ -44,9 +46,12 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     ErrorService,
     ConfirmationService,
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
+    provideZonelessChangeDetection(),
     provideAnimationsAsync(),
+    provideSignalFormsConfig({
+      classes:NG_STATUS_CLASSES
+    }),
+    provideRouter(routes),
     providePrimeNG({
       theme: {
         preset: Aura

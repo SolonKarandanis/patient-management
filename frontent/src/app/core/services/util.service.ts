@@ -101,10 +101,22 @@ export class UtilService{
    * Marks all the controls of a form group as dirty
    * @param formGroup The form group that contains the controls to be marked as dirty
    */
-  markAllAsDirty(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach((key: string) => {
-      formGroup.controls[key].markAsDirty();
-      formGroup.controls[key].markAsTouched({ onlySelf: true });
+  markAllAsDirty(formGroup: any, model: any): void {
+    Object.keys(model).forEach(key => {
+      const control = formGroup[key];
+      const modelValue = model[key];
+
+      if (control && typeof modelValue === 'object' && modelValue !== null && !Array.isArray(modelValue)) {
+        // It's a nested group, so recurse.
+        this.markAllAsTouched(control, modelValue);
+      } else if (control && typeof control === 'function') {
+        // It's a control. Invoke the signal to get its state, then mark that state as touched.
+        const controlState = control();
+        if (controlState && typeof controlState.markAsDirty === 'function') {
+          controlState.markAsDirty();
+          controlState.markAsTouched({ onlySelf: true });
+        }
+      }
     });
   }
 
@@ -112,10 +124,22 @@ export class UtilService{
    * Marks all the controls of a form group as pristine
    * @param formGroup The form group that contains the controls to be marked as pristine
    */
-  markAllAsPristine(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach((key: string) => {
-      formGroup.controls[key].markAsPristine();
-      formGroup.controls[key].markAsUntouched({ onlySelf: true });
+  markAllAsPristine(formGroup: any, model: any): void {
+    Object.keys(model).forEach(key => {
+      const control = formGroup[key];
+      const modelValue = model[key];
+
+      if (control && typeof modelValue === 'object' && modelValue !== null && !Array.isArray(modelValue)) {
+        // It's a nested group, so recurse.
+        this.markAllAsTouched(control, modelValue);
+      } else if (control && typeof control === 'function') {
+        // It's a control. Invoke the signal to get its state, then mark that state as touched.
+        const controlState = control();
+        if (controlState && typeof controlState.markAsPristine === 'function') {
+          controlState.markAsPristine();
+          controlState.markAsUntouched({ onlySelf: true });
+        }
+      }
     });
   }
 

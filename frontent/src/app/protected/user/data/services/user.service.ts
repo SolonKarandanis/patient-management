@@ -5,13 +5,14 @@ import {SearchService} from '@core/services/search.service';
 import {TranslateService} from '@ngx-translate/core';
 import {UtilService} from '@core/services/util.service';
 import {
-  ChangePasswordForm, ChangePasswordFormModel, changePasswordFormSchema,
+  ChangePasswordFormModel,
+  changePasswordFormSchema,
   CreateUserFormModel,
   createUserFormSchema,
-  UpdateUserForm, UpdateUserFormModel, updateUserFormSchema,
+  UpdateUserFormModel,
+  updateUserFormSchema,
   UserSearchFormModel
 } from '../../forms';
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SearchTableColumn} from '@models/search.model';
 import {UserAccountStatusEnum} from '@models/user.model';
@@ -76,7 +77,7 @@ export class UserService extends GenericService{
    * @param form the request for updating user
    * @returns nothing
    */
-  public executeUpdateUser(form: FormGroup<UpdateUserForm>):void{
+  public executeUpdateUser(form: FieldTree<UpdateUserFormModel, string | number>):void{
     const id = this.userId();
     if(id){
       const request = this.searchService.toUpdateUserRequest(form);
@@ -89,7 +90,7 @@ export class UserService extends GenericService{
    * @param form the request for updating user
    * @returns nothing
    */
-  public executeChangeUserPassword(form: FormGroup<ChangePasswordForm>):void{
+  public executeChangeUserPassword(form: FieldTree<ChangePasswordFormModel, string | number>):void{
     const id = this.userId();
     if(id){
       const request = this.searchService.toChangePasswordRequest(form);
@@ -233,30 +234,23 @@ export class UserService extends GenericService{
   }
 
   public markCreateUserFormAsDirty(form:FieldTree<CreateUserFormModel, string | number>):void{
-    this.utilService.markAllAsTouched(form,this.createUserModel())
+    this.utilService.markAllAsDirty(form,this.createUserModel())
   }
 
-
-  public samePasswords(): ValidatorFn {
-    return (frmGroup: AbstractControl): ValidationErrors | null => {
-      const pass: string = frmGroup.get('password')?.value;
-      const passConf: string = frmGroup.get('confirmPassword')?.value;
-      const samePass: boolean = pass === passConf;
-
-      return samePass ? null : { samePassword: {message: "Passwords don't match"} };
-    };
+  public markUpdateUserFormAsDirty(form:FieldTree<UpdateUserFormModel, string | number>):void{
+    this.utilService.markAllAsDirty(form,this.updateUserModel())
   }
 
-  public strongPassword(isViewEdit?: boolean): ValidatorFn {
-    return (frmGroup: AbstractControl): ValidationErrors | null => {
-      if (isViewEdit && frmGroup.value && frmGroup.value.length === 0) {
-        return null;
-      }
+  public markUpdateUserFormAsPristine(form:FieldTree<UpdateUserFormModel, string | number>):void{
+    this.utilService.markAllAsPristine(form,this.updateUserModel())
+  }
 
-      const regExp: RegExp = new RegExp(this.utilService.strongPasswordRegex);
-      const res = regExp.test(frmGroup.value);
-      return res ? null : { strongPassword: true };
-    };
+  public markChangePasswordFormAsDirty(form:FieldTree<ChangePasswordFormModel, string | number>):void{
+    this.utilService.markAllAsDirty(form,this.changePasswordModel())
+  }
+
+  public markChangePasswordFormAsPristine(form:FieldTree<ChangePasswordFormModel, string | number>):void{
+    this.utilService.markAllAsPristine(form,this.changePasswordModel())
   }
 
   /**

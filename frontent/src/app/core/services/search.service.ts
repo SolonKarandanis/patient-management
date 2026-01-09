@@ -3,9 +3,9 @@ import {GenericService} from './generic.service';
 import {ChangePasswordRequest, CreateUserRequest, UpdateUserRequest} from '@models/user.model';
 import {FormGroup} from '@angular/forms';
 import {
-  ChangePasswordForm,
+  ChangePasswordForm, ChangePasswordFormModel,
   CreateUserFormModel,
-  UpdateUserForm,
+  UpdateUserForm, UpdateUserFormModel,
   UserSearchFormModel
 } from '../../protected/user/forms';
 import {I18nResourceSearchRequest, UserSearchRequest} from '@models/search.model';
@@ -22,14 +22,13 @@ export class SearchService extends GenericService{
    * @param  form form of type UpdateUserForm
    * @returns A UpdateUserRequest
    */
-  public toUpdateUserRequest(form: FormGroup<UpdateUserForm>):UpdateUserRequest{
-    const {email,firstName,username,lastName,role} = form.value;
+  public toUpdateUserRequest(form: FieldTree<UpdateUserFormModel, string | number>):UpdateUserRequest{
     return {
-      email: email!,
-      firstName: firstName!,
-      username: username!,
-      lastName: lastName!,
-      role: role!
+      email: form.email().value(),
+      firstName: form.firstName().value(),
+      username: form.username().value(),
+      lastName: form.lastName().value(),
+      role: form.role().value()
     };
   }
 
@@ -38,11 +37,10 @@ export class SearchService extends GenericService{
    * @param  form form of type ChangePasswordForm
    * @returns A ChangePasswordRequest
    */
-  public toChangePasswordRequest(form:FormGroup<ChangePasswordForm>):ChangePasswordRequest{
-    const {password,confirmPassword} = form.value;
+  public toChangePasswordRequest(form:FieldTree<ChangePasswordFormModel, string | number>):ChangePasswordRequest{
     return {
-      password: password!,
-      confirmPassword: confirmPassword!
+      password:form.password().value(),
+      confirmPassword: form.confirmPassword().value()
     };
   }
 

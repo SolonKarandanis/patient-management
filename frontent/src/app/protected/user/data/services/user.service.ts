@@ -5,7 +5,7 @@ import {SearchService} from '@core/services/search.service';
 import {TranslateService} from '@ngx-translate/core';
 import {UtilService} from '@core/services/util.service';
 import {
-  ChangePasswordForm,
+  ChangePasswordForm, ChangePasswordFormModel, changePasswordFormSchema,
   CreateUserFormModel,
   createUserFormSchema,
   UpdateUserForm, UpdateUserFormModel, updateUserFormSchema,
@@ -24,11 +24,16 @@ import {FieldTree, form} from '@angular/forms/signals';
 export class UserService extends GenericService{
 
   private isUpdateFormDisabled = signal(true);
+  private isChangePasswordFormDisabled = signal(true);
+
   public userUpdateForm: FieldTree<UpdateUserFormModel, string | number>;
+  public changePasswordForm:FieldTree<ChangePasswordFormModel, string | number>;
+
 
   constructor() {
     super();
     this.userUpdateForm = form(this.updateUserModel, updateUserFormSchema(this.isUpdateFormDisabled));
+    this.changePasswordForm = form(this.changePasswordModel, changePasswordFormSchema(this.isChangePasswordFormDisabled));
   }
 
   private userStore = inject(UserStore);
@@ -179,16 +184,19 @@ export class UserService extends GenericService{
     this.updateUserModel.update(current => ({ ...current, ...data }));
   }
 
-  /**
-   * Initialize the reactive form for changing a user password
-   * @returns A FormGroup with the appropriate fields
-   */
-  public initChangePasswordForm():FormGroup<ChangePasswordForm>{
-    return this.formBuilder.group<ChangePasswordForm>({
-      password:new FormControl(null,[Validators.required,]),
-      confirmPassword:new FormControl(null,[Validators.required,]),
-    },{validators: this.samePasswords()});
+  private changePasswordModel = signal<ChangePasswordFormModel>({
+    password:'',
+    confirmPassword:''
+  });
+
+  public setChangePasswordFormDisabled(isDisabled: boolean): void {
+    this.isChangePasswordFormDisabled.set(isDisabled);
   }
+
+  public updateChangePasswordForm(data: Partial<ChangePasswordFormModel>): void {
+    this.changePasswordModel.update(current => ({ ...current, ...data }));
+  }
+
 
   private searchUserModel = signal<UserSearchFormModel>({
     email:'',

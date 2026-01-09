@@ -27,6 +27,8 @@ import { NgxPermissionsModule } from "ngx-permissions";
 import {provideSignalFormsConfig} from '@angular/forms/signals';
 import {NG_STATUS_CLASSES} from '@angular/forms/signals/compat';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
+import {PreventDefaultEventPlugin} from '@core/events/prevent-default-events';
+import {EVENT_MANAGER_PLUGINS} from '@angular/platform-browser';
 
 export function createCustomTranslateLoader(translationController: TranslationController): CustomTranslateLoader {
   return new CustomTranslateLoader(translationController);
@@ -66,6 +68,11 @@ export const appConfig: ApplicationConfig = {
       provide: HTTP_INTERCEPTORS,
       useClass: LanguageInterceptor,
       multi: true,
+    },
+    {
+      provide: EVENT_MANAGER_PLUGINS,
+      multi: true,
+      useClass: PreventDefaultEventPlugin
     },
     provideHttpClient(
       withInterceptors([

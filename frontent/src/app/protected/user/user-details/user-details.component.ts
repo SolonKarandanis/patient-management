@@ -144,6 +144,11 @@ export class UserDetailsComponent  {
     }
   });
 
+  private initChangePasswordForm():void{
+    this.changePasswordForm = this.userService.changePasswordForm;
+    this.userService.setChangePasswordFormDisabled(true);
+  }
+
 
   protected detailsSaveFormValidateHandler():void{
     if(this.form().invalid()){
@@ -183,11 +188,6 @@ export class UserDetailsComponent  {
 
   protected changePasswordEditHandler(isEditMode: boolean):void{
     this.userService.setChangePasswordFormDisabled(!isEditMode);
-  }
-
-  private initChangePasswordForm():void{
-    this.changePasswordForm = this.userService.changePasswordForm;
-    this.userService.setChangePasswordFormDisabled(true);
   }
 
   private getTranslationPrefix():string{

@@ -1,5 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, input} from '@angular/core';
-import {FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {ChangeDetectionStrategy, Component, input} from '@angular/core';
 import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {InputText} from 'primeng/inputtext';
@@ -10,7 +9,6 @@ import {SelectItem} from 'primeng/api';
 import {BaseFormComponent} from '@shared/abstract/BaseFormComponent';
 import {Field, FieldTree} from '@angular/forms/signals';
 import {UpdateUserFormModel} from '../forms';
-import {Password} from 'primeng/password';
 
 @Component({
   selector: 'app-user-details-form',
@@ -18,11 +16,9 @@ import {Password} from 'primeng/password';
     FormControlWrapComponent,
     FormErrorComponent,
     InputText,
-    ReactiveFormsModule,
     TranslatePipe,
     NgClass,
     Select,
-    Password,
     Field
   ],
   template: `

@@ -17,7 +17,7 @@ import {MenuItem} from 'primeng/api';
 import {UserAccountStatusEnum} from '@models/user.model';
 import {ConfirmDialog} from 'primeng/confirmdialog';
 import {FieldTree} from '@angular/forms/signals';
-import {UpdateUserFormModel} from '../forms';
+import {ChangePasswordFormModel, UpdateUserFormModel} from '../forms';
 
 
 
@@ -62,12 +62,12 @@ import {UpdateUserFormModel} from '../forms';
             legend="{{ 'USER.DETAILS.LABELS.change-password' | translate }}"
             [toggleable]="false"
             [allowEdit]="vm.isEditAllowed"
-            [allowSave]="changePasswordForm.valid"
+            [allowSave]="changePasswordForm().valid()"
             (saveClicked)="changePasswordSaveClickHandler()"
             (validateFormClicked)="changePasswordFormValidateHandler()"
             (resetFormValidityClicked)="changePasswordFormResetValidationHandler()"
             (editModeChanged)="changePasswordEditHandler($event)">
-            <app-user-password-change-form [formGroup]="changePasswordForm" />
+            <app-user-password-change-form [formInput]="changePasswordForm" />
           </app-fieldset>
           <app-fieldset
             legend="{{ 'USER.DETAILS.LABELS.account-status' | translate }}"
@@ -100,7 +100,7 @@ export class UserDetailsComponent  {
   private commonEntitiesService = inject(CommonEntitiesService);
   private translate = inject(TranslateService);
 
-  protected changePasswordForm!: FormGroup;
+  protected changePasswordForm!: FieldTree<ChangePasswordFormModel, string | number>;
   protected accountActions!:MenuItem[];
 
   protected form: FieldTree<UpdateUserFormModel, string | number>;
@@ -124,6 +124,7 @@ export class UserDetailsComponent  {
           role: userRoles[0]?.value,
         });
         this.userService.setUpdateFormDisabled(true);
+
       }
     });
   }
@@ -155,7 +156,7 @@ export class UserDetailsComponent  {
   }
 
   protected detailsSaveFormResetValidationHandler():void{
-    this.utilService.markAllAsPristine(this.changePasswordForm)
+    // this.utilService.markAllAsPristine(this.changePasswordForm)
   }
 
   protected detailsSaveClickHandler():void{
@@ -169,28 +170,28 @@ export class UserDetailsComponent  {
   }
 
   protected changePasswordFormValidateHandler():void{
-    if(!this.changePasswordForm.valid){
-      this.utilService.markAllAsDirty(this.changePasswordForm);
-    }
+    // if(!this.changePasswordForm.valid){
+    //   this.utilService.markAllAsDirty(this.changePasswordForm);
+    // }
   }
 
   protected changePasswordFormResetValidationHandler():void{
-    this.utilService.markAllAsPristine(this.changePasswordForm);
+    // this.utilService.markAllAsPristine(this.changePasswordForm);
   }
 
   protected changePasswordSaveClickHandler():void{
-    if(this.changePasswordForm.valid){
-      this.userService.executeChangeUserPassword(this.changePasswordForm);
-    }
+    // if(this.changePasswordForm.valid){
+    //   this.userService.executeChangeUserPassword(this.changePasswordForm);
+    // }
   }
 
   protected changePasswordEditHandler(isEditMode: boolean):void{
-    isEditMode ?  this.changePasswordForm.enable():this.changePasswordForm.disable();
+    this.userService.setChangePasswordFormDisabled(!isEditMode);
   }
 
   private initChangePasswordForm():void{
-    this.changePasswordForm = this.userService.initChangePasswordForm();
-    this.changePasswordForm.disable();
+    this.changePasswordForm = this.userService.changePasswordForm;
+    this.userService.setChangePasswordFormDisabled(true);
   }
 
   private getTranslationPrefix():string{

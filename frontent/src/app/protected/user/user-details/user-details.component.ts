@@ -3,7 +3,6 @@ import {PageHeaderComponent} from '@components/page-header/page-header.component
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {UserService} from '../data/services/user.service';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
-import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {UserDetailsFormComponent} from '../user-details-form/user-details-form.component';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
@@ -27,8 +26,6 @@ import {ChangePasswordFormModel, UpdateUserFormModel} from '../forms';
     PageHeaderComponent,
     TranslatePipe,
     RequiredFieldsLabelComponent,
-    FormsModule,
-    ReactiveFormsModule,
     UserDetailsFormComponent,
     FieldsetComponent,
     UserPasswordChangeFormComponent,
@@ -96,10 +93,9 @@ import {ChangePasswordFormModel, UpdateUserFormModel} from '../forms';
 export class UserDetailsComponent  {
   private userService = inject(UserService);
   private authService = inject(AuthService);
-  private utilService = inject(UtilService);
   private commonEntitiesService = inject(CommonEntitiesService);
   private translate = inject(TranslateService);
-
+  private utilService = inject(UtilService);
   protected changePasswordForm!: FieldTree<ChangePasswordFormModel, string | number>;
   protected accountActions!:MenuItem[];
 
@@ -150,19 +146,19 @@ export class UserDetailsComponent  {
 
 
   protected detailsSaveFormValidateHandler():void{
-    // if(!this.form.valid){
-    //   this.utilService.markAllAsDirty(this.form);
-    // }
+    if(this.form().invalid()){
+      this.userService.markUpdateUserFormAsDirty(this.form);
+    }
   }
 
   protected detailsSaveFormResetValidationHandler():void{
-    // this.utilService.markAllAsPristine(this.changePasswordForm)
+    this.userService.markUpdateUserFormAsPristine(this.form)
   }
 
   protected detailsSaveClickHandler():void{
-    // if(!this.form.valid){
-    //   this.userService.executeUpdateUser(this.form);
-    // }
+    if(this.form().valid()){
+      this.userService.executeUpdateUser(this.form);
+    }
   }
 
   protected detailsEditHandler(isEditMode: boolean):void{
@@ -170,19 +166,19 @@ export class UserDetailsComponent  {
   }
 
   protected changePasswordFormValidateHandler():void{
-    // if(!this.changePasswordForm.valid){
-    //   this.utilService.markAllAsDirty(this.changePasswordForm);
-    // }
+    if(!this.changePasswordForm().invalid()){
+      this.userService.markChangePasswordFormAsDirty(this.changePasswordForm);
+    }
   }
 
   protected changePasswordFormResetValidationHandler():void{
-    // this.utilService.markAllAsPristine(this.changePasswordForm);
+    this.userService.markChangePasswordFormAsPristine(this.changePasswordForm);
   }
 
   protected changePasswordSaveClickHandler():void{
-    // if(this.changePasswordForm.valid){
-    //   this.userService.executeChangeUserPassword(this.changePasswordForm);
-    // }
+    if(this.changePasswordForm().valid()){
+      this.userService.executeChangeUserPassword(this.changePasswordForm);
+    }
   }
 
   protected changePasswordEditHandler(isEditMode: boolean):void{

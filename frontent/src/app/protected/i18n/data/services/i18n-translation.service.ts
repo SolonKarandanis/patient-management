@@ -1,10 +1,13 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, signal} from '@angular/core';
 import {I18nResourceStore} from '../store/i18n.store';
 import {SearchService} from '@core/services/search.service';
-import {FormControl, FormGroup} from '@angular/forms';
+import { FormGroup} from '@angular/forms';
 import {I18nResource, UpdateI18nResource} from '@models/i18n-resource.model';
-import {I18nResourceSearchForm} from '../../forms';
+import {I18nResourceSearchForm, I18nResourceSearchFormModel} from '../../forms';
 import {GenericService} from '@core/services/generic.service';
+
+import {FieldTree, form} from '@angular/forms/signals';
+
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +26,7 @@ export class I18nTranslationService extends GenericService{
   public hasSearched = this.resourceStore.hasSearched;
   public tableLoading = this.resourceStore.tableLoading;
 
-  public executeSearchResources(searchForm:FormGroup<I18nResourceSearchForm>):void{
+  public executeSearchResources(searchForm:FieldTree<I18nResourceSearchFormModel, string | number>):void{
     const request = this.searchService.toI18nResourceSearchRequest(searchForm);
     this.resourceStore.searchResources(request);
   }
@@ -40,15 +43,17 @@ export class I18nTranslationService extends GenericService{
     this.resourceStore.updateTranslations({updates:request,row:row});
   }
 
-  public initSearchI18nResourceForm(): FormGroup<I18nResourceSearchForm>{
-    return this.formBuilder.group<I18nResourceSearchForm>({
-      language: new FormControl(null),
-      module:  new FormControl(null),
-      term:  new FormControl(null),
-      rows:new FormControl(10,{nonNullable: true}),
-      first: new FormControl(0,{nonNullable: true}),
-      sortField: new FormControl('',{nonNullable: true}),
-      sortOrder: new FormControl('ASC',{nonNullable: true})
-    });
+  private searchI18nModel = signal<I18nResourceSearchFormModel>({
+    language:null,
+    module:null,
+    term:'',
+    rows: 10,
+    first:0,
+    sortField:'id',
+    sortOrder: "ASC"
+  });
+
+  public initSearchI18nResourceForm(): FieldTree<I18nResourceSearchFormModel, string | number>{
+    return form<I18nResourceSearchFormModel>(this.searchI18nModel);
   }
 }

@@ -1,7 +1,6 @@
-import {ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, WritableSignal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, signal, WritableSignal} from '@angular/core';
 import {I18nTranslationService} from '../data/services/i18n-translation.service';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
-import {BaseComponent} from '@shared/abstract/BaseComponent';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
@@ -17,9 +16,8 @@ import {NgClass} from '@angular/common';
 import {Textarea} from 'primeng/textarea';
 import {ButtonDirective} from 'primeng/button';
 import {Ripple} from 'primeng/ripple';
-import {Field, FieldTree} from '@angular/forms/signals';
-import {UserSearchFormModel} from '../../user/forms';
 import {I18nResourceSearchFormModel} from '../forms';
+import {Field, FieldTree} from '@angular/forms/signals';
 
 @Component({
   selector: 'app-i18n-management',
@@ -38,7 +36,7 @@ import {I18nResourceSearchFormModel} from '../forms';
     Textarea,
     ButtonDirective,
     Ripple,
-    Field
+    Field,
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
@@ -116,9 +114,11 @@ import {I18nResourceSearchFormModel} from '../forms';
               >
                 <ng-template pTemplate="header">
                   <tr class="">
-                    <th [pSortableColumn]="'key'" scope="col" class="flex-initial w-[16%] bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-key' | translate }}</th>
-                    <th  scope="col" class="flex-initial w-[58%]  bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-value' | translate }}</th>
-                    <th  scope="col" class="flex-initial w-[8%]  bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.action' | translate }}</th>
+                    <th [pSortableColumn]="'key'"  scope="col" class="flex-initial w-[16%] bg-blueGray-100">
+                      {{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-key' | translate }}
+                    </th>
+                    <th [pSortableColumn]="'value'" scope="col" class="flex-initial w-[58%]  bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-value' | translate }}</th>
+                    <th [pSortableColumn]="'action'" scope="col" class="flex-initial w-[8%]  bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.action' | translate }}</th>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage" let-columns>

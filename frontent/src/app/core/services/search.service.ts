@@ -82,17 +82,17 @@ export class SearchService extends GenericService{
     };
   }
 
-  public toI18nResourceSearchRequest(form:FieldTree<I18nResourceSearchFormModel, string | number>):I18nResourceSearchRequest{
-    console.log(form.sortField())
+  public toI18nResourceSearchRequest(form:  FieldTree<I18nResourceSearchFormModel, string | number>):I18nResourceSearchRequest{
+    const {language,term, module, rows, first, sortField, sortOrder} = form;
     return {
-      languageId:form.language().value()!,
-      term:form.term().value()!,
-      moduleId:form.module().value()!,
+      languageId:language().value()!,
+      term:term().value(),
+      moduleId:module().value()!,
       paging: {
-        limit: form.rows().value(),
-        page: form.first().value(),
-        sortField: form.sortField().value()??'',
-        sortDirection:form.sortOrder().value(),
+        limit: rows().value(),
+        page: first().value(),
+        sortField: sortField().value(),
+        sortDirection:sortOrder().value(),
       }
     }
   }

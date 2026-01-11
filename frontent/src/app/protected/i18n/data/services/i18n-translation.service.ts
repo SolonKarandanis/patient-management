@@ -26,7 +26,7 @@ export class I18nTranslationService extends GenericService{
   public hasSearched = this.resourceStore.hasSearched;
   public tableLoading = this.resourceStore.tableLoading;
 
-  public executeSearchResources(searchForm:FieldTree<I18nResourceSearchFormModel, string | number>):void{
+  public executeSearchResources(searchForm: FieldTree<I18nResourceSearchFormModel, string | number>):void{
     const request = this.searchService.toI18nResourceSearchRequest(searchForm);
     this.resourceStore.searchResources(request);
   }
@@ -49,7 +49,7 @@ export class I18nTranslationService extends GenericService{
     term:'',
     rows: 10,
     first:0,
-    sortField:'id',
+    sortField:'key',
     sortOrder: "ASC"
   });
 

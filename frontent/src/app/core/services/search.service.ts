@@ -9,7 +9,7 @@ import {
   UserSearchFormModel
 } from '../../protected/user/forms';
 import {I18nResourceSearchRequest, UserSearchRequest} from '@models/search.model';
-import {I18nResourceSearchForm} from '../../protected/i18n/forms';
+import {I18nResourceSearchForm, I18nResourceSearchFormModel} from '../../protected/i18n/forms';
 import {FieldTree} from '@angular/forms/signals';
 
 @Injectable({
@@ -82,17 +82,17 @@ export class SearchService extends GenericService{
     };
   }
 
-  public toI18nResourceSearchRequest(form: FormGroup<I18nResourceSearchForm>):I18nResourceSearchRequest{
-    const {language,module,term,rows,first,sortField,sortOrder} = form.value
+  public toI18nResourceSearchRequest(form:FieldTree<I18nResourceSearchFormModel, string | number>):I18nResourceSearchRequest{
+    console.log(form.sortField())
     return {
-      languageId:language!,
-      term:term!,
-      moduleId:module!,
+      languageId:form.language().value()!,
+      term:form.term().value()!,
+      moduleId:form.module().value()!,
       paging: {
-        limit: rows!,
-        page: first!,
-        sortField: sortField!,
-        sortDirection: sortOrder!,
+        limit: form.rows().value(),
+        page: form.first().value(),
+        sortField: form.sortField().value()??'',
+        sortDirection:form.sortOrder().value(),
       }
     }
   }

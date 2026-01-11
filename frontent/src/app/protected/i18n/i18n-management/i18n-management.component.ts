@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, effect, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import {I18nTranslationService} from '../data/services/i18n-translation.service';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {BaseComponent} from '@shared/abstract/BaseComponent';
@@ -17,6 +17,9 @@ import {NgClass} from '@angular/common';
 import {Textarea} from 'primeng/textarea';
 import {ButtonDirective} from 'primeng/button';
 import {Ripple} from 'primeng/ripple';
+import {Field, FieldTree} from '@angular/forms/signals';
+import {UserSearchFormModel} from '../../user/forms';
+import {I18nResourceSearchFormModel} from '../forms';
 
 @Component({
   selector: 'app-i18n-management',
@@ -34,7 +37,8 @@ import {Ripple} from 'primeng/ripple';
     TableModule,
     Textarea,
     ButtonDirective,
-    Ripple
+    Ripple,
+    Field
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
@@ -46,12 +50,12 @@ import {Ripple} from 'primeng/ripple';
           <app-fieldset legend="{{ 'ADMINISTRATION.I18N-MANAGEMENT.search-resources' | translate }}"
                         [toggleable]="true"
                         [collapsed]="criteriaCollapsed()">
-            <form [formGroup]="form">
+            <form >
               <div class="grid gap-6 mt-6 md:grid-cols-3">
                 <div class="mb-6">
                   <p-float-label variant="on" class="w-full mb-3">
                     <p-select
-                      formControlName="module"
+                      [field]="form.module"
                       [options]="modules()"
                       [checkmark]="true"
                       [showClear]="true"
@@ -64,7 +68,7 @@ import {Ripple} from 'primeng/ripple';
                 <div class="mb-6">
                   <p-float-label variant="on" class="w-full mb-3">
                     <p-select
-                      formControlName="language"
+                      [field]="form.language"
                       [options]="languages()"
                       [checkmark]="true"
                       [showClear]="true"
@@ -81,18 +85,18 @@ import {Ripple} from 'primeng/ripple';
                       pInputText
                       type="text"
                       class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                      formControlName="term"
+                      [field]="form.term"
                       autocomplete="term"/>
                     <label for="term">{{ 'ADMINISTRATION.I18N-MANAGEMENT.search-term' | translate }}</label>
                   </p-float-label>
                 </div>
               </div>
-<!--              <app-search-buttons #searchBtns-->
-<!--                                  [searchType]="searchType"-->
-<!--                                  [enableSaveSearch]="true"-->
-<!--                                  [searchForm]="form"-->
-<!--                                  (searchClicked)="search()"-->
-<!--                                  (resetClicked)="resetForm()"/>-->
+              <app-search-buttons #searchBtns
+                                  [searchType]="searchType"
+                                  [enableSaveSearch]="true"
+                                  [searchForm]="form"
+                                  (searchClicked)="search()"
+                                  (resetClicked)="resetForm()"/>
             </form>
           </app-fieldset>
           @if (resultsVisible()) {
@@ -103,8 +107,8 @@ import {Ripple} from 'primeng/ripple';
                 editMode="row"
                 [paginator]="true"
                 [totalRecords]="totalCount()"
-                [first]="form.controls['first'].value"
-                [rows]="form.controls['rows'].value"
+                [first]="form.first().value()"
+                [rows]="form.rows().value()"
                 [rowsPerPageOptions]="[10, 20, 50]"
                 [lazy]="true"
                 [loading]="loading()"
@@ -112,9 +116,9 @@ import {Ripple} from 'primeng/ripple';
               >
                 <ng-template pTemplate="header">
                   <tr class="">
-                    <th scope="col" class="flex-initial w-[16%] bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-key' | translate }}</th>
-                    <th scope="col" class="flex-initial w-[58%]  bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-value' | translate }}</th>
-                    <th scope="col" class="flex-initial w-[8%]  bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.action' | translate }}</th>
+                    <th [pSortableColumn]="'key'" scope="col" class="flex-initial w-[16%] bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-key' | translate }}</th>
+                    <th  scope="col" class="flex-initial w-[58%]  bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-value' | translate }}</th>
+                    <th  scope="col" class="flex-initial w-[8%]  bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.action' | translate }}</th>
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage" let-columns>
@@ -196,7 +200,7 @@ import {Ripple} from 'primeng/ripple';
   styleUrl: './i18n-management.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class I18nManagementComponent extends BaseComponent implements OnInit {
+export class I18nManagementComponent {
   private i18nResourceService = inject(I18nTranslationService);
   protected commonEntitiesService = inject(CommonEntitiesService);
 
@@ -210,10 +214,15 @@ export class I18nManagementComponent extends BaseComponent implements OnInit {
   protected modules = this.i18nResourceService.modulesAsSelectItems;
 
   protected readonly searchType: SearchType = SearchTypeEnum.RESOURCES;
+  protected resultsVisible: WritableSignal<boolean> = signal(false);
+  protected animationTimer: any;
+
+  form!: FieldTree<I18nResourceSearchFormModel, string | number>;
 
 
   constructor() {
-    super();
+    this.initForm();
+    this.initResourceBundleData();
     effect(() => {
       clearTimeout(this.animationTimer);
       if (this.hasSearched()) {
@@ -226,23 +235,21 @@ export class I18nManagementComponent extends BaseComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.initForm();
-    this.initResourceBundleData();
-  }
-
   protected search(): void {
     this.i18nResourceService.executeSearchResources(this.form);
   }
 
   protected resetForm(): void {
-    this.form.reset();
+    this.form().reset();
     this.search();
   }
 
   protected handleTableLazyLoad(event: TableLazyLoadEvent): void {
     const {first, rows, sortField, sortOrder} = event;
-    this.form.patchValue({first, rows, sortField, sortOrder});
+    this.form.first().value.set(first??0);
+    this.form.rows().value.set(rows??10);
+    this.form.sortField().value.set(sortField as string);
+    this.form.sortOrder().value.set(sortOrder == 1 ? "ASC" : "DESC");
     this.search();
   }
 

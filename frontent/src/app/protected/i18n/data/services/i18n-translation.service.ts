@@ -1,9 +1,8 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {I18nResourceStore} from '../store/i18n.store';
 import {SearchService} from '@core/services/search.service';
-import { FormGroup} from '@angular/forms';
 import {I18nResource, UpdateI18nResource} from '@models/i18n-resource.model';
-import {I18nResourceSearchForm, I18nResourceSearchFormModel} from '../../forms';
+import { I18nResourceSearchFormModel} from '../../forms';
 import {GenericService} from '@core/services/generic.service';
 
 import {FieldTree, form} from '@angular/forms/signals';

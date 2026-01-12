@@ -1,15 +1,14 @@
 import {Injectable} from '@angular/core';
 import {GenericService} from './generic.service';
 import {ChangePasswordRequest, CreateUserRequest, UpdateUserRequest} from '@models/user.model';
-import {FormGroup} from '@angular/forms';
 import {
-  ChangePasswordForm, ChangePasswordFormModel,
+  ChangePasswordFormModel,
   CreateUserFormModel,
-  UpdateUserForm, UpdateUserFormModel,
+  UpdateUserFormModel,
   UserSearchFormModel
 } from '../../protected/user/forms';
 import {I18nResourceSearchRequest, UserSearchRequest} from '@models/search.model';
-import {I18nResourceSearchForm, I18nResourceSearchFormModel} from '../../protected/i18n/forms';
+import { I18nResourceSearchFormModel} from '../../protected/i18n/forms';
 import {FieldTree} from '@angular/forms/signals';
 
 @Injectable({

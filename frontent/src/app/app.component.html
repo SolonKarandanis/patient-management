@@ -2,10 +2,8 @@
   [preventOpenDuplicates]="true"
   styleClass="app-overflow-wrap-anywhere"
 ></p-toast>
-<div
-    [@routeTransition]="route.snapshot.data"
-    style="display: contents">
-  <router-outlet></router-outlet>
+<div style="display: contents">
+  <router-outlet #outlet="outlet"></router-outlet>
   <app-loader></app-loader>
 </div>
 

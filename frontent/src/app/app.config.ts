@@ -8,7 +8,6 @@ import { providePrimeNG } from 'primeng/config';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import Aura from '@primeng/themes/aura';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-
 import { routes } from './app.routes';
 import {
   HTTP_INTERCEPTORS,
@@ -25,14 +24,14 @@ import { TranslationController } from '@core/repositories/translation.controller
 import { CustomTranslateLoader } from '@core/helpers/translation.loader';
 import { NgxPermissionsModule } from "ngx-permissions";
 import {provideSignalFormsConfig} from '@angular/forms/signals';
-import {NG_STATUS_CLASSES} from '@angular/forms/signals/compat';
-import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
-import {PreventDefaultEventPlugin} from '@core/events/prevent-default-events';
-import {EVENT_MANAGER_PLUGINS} from '@angular/platform-browser';
+import { NG_STATUS_CLASSES } from '@angular/forms/signals/compat';
+import { PreventDefaultEventPlugin } from '@core/events/prevent-default-events';
+import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
 export function createCustomTranslateLoader(translationController: TranslationController): CustomTranslateLoader {
   return new CustomTranslateLoader(translationController);
 }
+
 
 
 export const provideTranslation = () => ({
@@ -49,7 +48,6 @@ export const appConfig: ApplicationConfig = {
     ErrorService,
     ConfirmationService,
     provideZonelessChangeDetection(),
-    provideAnimationsAsync(),
     provideSignalFormsConfig({
       classes:NG_STATUS_CLASSES
     }),

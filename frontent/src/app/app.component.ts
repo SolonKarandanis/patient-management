@@ -4,7 +4,6 @@ import {
   inject,
   OnDestroy,
   OnInit,
-  HostBinding,
   ElementRef,
   ViewChild,
   AfterViewInit,

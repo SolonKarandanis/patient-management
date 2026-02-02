@@ -17,17 +17,17 @@ export class CommonEntitiesRepository extends BaseRepository{
    * @returns An observable with a list of all roles found
    */
   public getAllRoles():Observable<Role[]> {
-    return this.http.get<Role[]>(`${ApiRepositories.ROLES}`,{
+    return this.http.get<Role[]>(`${ApiRepositories.AUTH}/${ApiRepositories.ROLES}`,{
       context: new HttpContext().set(AUTHENTICATE_REQUEST, false),
     });
   }
 
   public getApplicationConfig():Observable<ApplicationConfig>{
-    return this.http.get<ApplicationConfig>(`${ApiRepositories.COMMON}/config`)
+    return this.http.get<ApplicationConfig>(`${ApiRepositories.AUTH}/${ApiRepositories.COMMON}/config`)
   }
 
   public getPublicApplicationConfig():Observable<ApplicationConfig>{
-    return this.http.get<ApplicationConfig>(`${ApiRepositories.PUBLIC}/config`,{
+    return this.http.get<ApplicationConfig>(`${ApiRepositories.AUTH}/${ApiRepositories.PUBLIC}/config`,{
       context: new HttpContext().set(AUTHENTICATE_REQUEST, false),
     })
   }

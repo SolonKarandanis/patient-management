@@ -23,6 +23,7 @@ public class WebSecurityConfiguration extends BaseSecurityConfig{
 	
 	@Value("${security.jwt.key}")
     private String signKey;
+
 	private final JwtAuthenticationFilter jwtAuthFilter;
 	
 	public WebSecurityConfiguration(JwtAuthenticationFilter jwtAuthFilter) {
@@ -33,7 +34,6 @@ public class WebSecurityConfiguration extends BaseSecurityConfig{
     public SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity
 		.csrf(AbstractHttpConfigurer::disable)
-        .cors(c->c.configurationSource(corsConfigurationSource()))
         .authorizeHttpRequests(auth-> auth
                 .requestMatchers(SecurityConstants.AUTH_WHITELIST).permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
@@ -48,6 +48,9 @@ public class WebSecurityConfiguration extends BaseSecurityConfig{
         		.accessDeniedHandler(new CustomAccessDeniedHandler())
         )
                 .authenticationProvider(customAuthProvider);
+		if(corsConfigEnabled){
+			httpSecurity.cors(c->c.configurationSource(corsConfigurationSource()));
+		}
 		return httpSecurity.build();
 	}
 }

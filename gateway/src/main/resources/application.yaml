@@ -1,3 +1,60 @@
+server:
+  port: 4004
+
+logging:
+  level:
+    org.springframework.web.HttpLogging: TRACE
+    reactor.netty.http.server: DEBUG
+    reactor.netty.http.client: DEBUG
+
 spring:
-  application:
-    name: gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: "http://localhost:4200"
+                allowedHeaders: "*"
+                allowedMethods: "*"
+          routes:
+            - id: auth-service-route
+              uri: http://localhost:4005
+              predicates:
+                - Path=/auth/**
+              filters:
+                - RewritePath=/auth/(?<segment>.*), /auth-service/$\{segment}
+
+            - id: i18n-service-route
+              uri: http://localhost:4005
+              predicates:
+                - Path=/i18n/**
+              filters:
+                - RewritePath=/i18n/(?<segment>.*), /auth-service/i18n/$\{segment}
+
+            - id: patient-service-route
+              uri: http://localhost:4000
+              predicates:
+                - Path=/api/patients/**
+              filters:
+                - RewritePath=/api/(?<segment>.*), /patient-service/$\{segment}
+
+            - id: analytics-service-route
+              uri: http://localhost:4002
+              predicates:
+                - Path=/api/analytics/**
+              filters:
+                - RewritePath=/api/(?<segment>.*), /analytics-service/$\{segment}
+
+            - id: notification-service-ws-route
+              uri: ws://localhost:4010
+              predicates:
+                - Path=/ws/**
+              filters:
+                - RewritePath=/ws/(?<segment>.*), /notification-service/ws/$\{segment}
+                - AddRequestHeader=Upgrade,websocket
+                - AddRequestHeader=Connection,Upgrade
+                - AddRequestHeader=Sec-WebSocket-Key, {header:Sec-WebSocket-Key}
+                - AddRequestHeader=Sec-WebSocket-Version, {header:Sec-WebSocket-Version}
+                - AddRequestHeader=Sec-WebSocket-Extensions, {header:Sec-WebSocket-Extensions}

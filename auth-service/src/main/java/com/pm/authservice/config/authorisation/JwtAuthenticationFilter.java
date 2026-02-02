@@ -23,6 +23,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
 	private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
+	private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
 	@Autowired
 	private JwtService jwtService;
@@ -72,9 +74,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	}
 
 	private boolean isWhitelisted(HttpServletRequest request) {
-		String requestURI = request.getRequestURI();
+		String requestURI = request.getServletPath();
 		return Arrays.stream(SecurityConstants.AUTH_WHITELIST)
-				.anyMatch(pattern -> requestURI.startsWith(pattern.replace("/**", "")));
+				.anyMatch(pattern -> antPathMatcher.match(pattern, requestURI));
 	}
 	
 	private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request,String jwt) throws AuthException {

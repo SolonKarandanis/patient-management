@@ -38,9 +38,6 @@ public class WebSecurityClusterConfiguration extends BaseSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .anyRequest().hasAnyAuthority(getRoleNames())
                 )
-                .cors(c->
-                        c.configurationSource(corsConfigurationSource())
-                )
                 .exceptionHandling(handling ->
                         handling.authenticationEntryPoint(restAuthenticationEntryPoint())
                 )
@@ -53,6 +50,9 @@ public class WebSecurityClusterConfiguration extends BaseSecurityConfig {
                                     httpServletResponse.setStatus(HttpServletResponse.SC_OK);
                                 })
                 );
+        if(corsConfigEnabled){
+            http.cors(c->c.configurationSource(corsConfigurationSource()));
+        }
         return http.build();
     }
 }

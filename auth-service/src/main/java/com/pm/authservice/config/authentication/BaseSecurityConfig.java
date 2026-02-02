@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -37,6 +38,9 @@ public class BaseSecurityConfig {
 
     @Autowired
     protected CustomAuthProvider customAuthProvider;
+
+    @Value("${cors.enabled}")
+    protected Boolean corsConfigEnabled;
 
     protected String[] getRoleNames()  {
         List<String> roleNames = roleRepository.findAll().stream()

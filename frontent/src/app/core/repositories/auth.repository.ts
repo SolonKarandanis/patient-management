@@ -28,10 +28,10 @@ export class AuthRepository extends BaseRepository{
    * @returns An observable with the UserModel
    */
   getUserByToken(): Observable<User> {
-    return this.http.get<User>(`${ApiRepositories.USERS}/account`);
+    return this.http.get<User>(`${ApiRepositories.AUTH}/${ApiRepositories.USERS}/account`);
   }
 
   getUserPermissions(id:string):Observable<string[]>{
-    return this.http.get<string[]>(`${ApiRepositories.USERS}/${id}/permissions`);
+    return this.http.get<string[]>(`${ApiRepositories.AUTH}/${ApiRepositories.USERS}/${id}/permissions`);
   }
 }

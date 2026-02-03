@@ -9,7 +9,7 @@ import {User} from '@models/user.model';
 describe('AuthRepository', () =>{
   let repository: AuthRepository;
   let httpTesting: HttpTestingController;
-  const loginApiUrl: string = 'auth';
+  const authUrl: string = 'auth';
   const usersApiUrl: string = 'users';
 
   beforeEach(() =>{
@@ -37,7 +37,7 @@ describe('AuthRepository', () =>{
       }
     });
 
-    const req = httpTesting.expectOne(`${loginApiUrl}/login`, 'Request perform login request');
+    const req = httpTesting.expectOne(`${authUrl}/login`, 'Request perform login request');
 
     expect(req.request.method).toBe('POST');
     expect(req.request.params.keys().length).toBe(0);
@@ -53,7 +53,7 @@ describe('AuthRepository', () =>{
       }
     });
 
-    const req = httpTesting.expectOne(`${usersApiUrl}/account`, 'Request for the logged in users account');
+    const req = httpTesting.expectOne(`${authUrl}/${usersApiUrl}/account`, 'Request for the logged in users account');
 
     expect(req.request.method).toBe('GET');
     expect(req.request.params.keys().length).toBe(0);

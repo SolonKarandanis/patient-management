@@ -36,7 +36,7 @@ public class WebSecurityConfiguration extends BaseSecurityConfig{
 		.csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(auth-> auth
                 .requestMatchers(SecurityConstants.AUTH_WHITELIST).permitAll()
-                .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
                 .anyRequest()
                 .hasAnyAuthority(getRoleNames())

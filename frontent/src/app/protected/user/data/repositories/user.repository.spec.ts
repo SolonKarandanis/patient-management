@@ -17,7 +17,7 @@ describe('UserRepository', () =>{
   let httpTesting: HttpTestingController;
   let searchResult: SearchResult<any>;
 
-  const apiUrl: string = 'users';
+  const apiUrl: string = 'auth/users';
 
   beforeEach(() =>{
     TestBed.configureTestingModule({

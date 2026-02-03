@@ -18,6 +18,7 @@ spring:
                 allowedOrigins: "http://localhost:4200"
                 allowedHeaders: "*"
                 allowedMethods: "*"
+                allowCredentials: true
           routes:
             - id: auth-service-route
               uri: http://localhost:4005
@@ -47,14 +48,3 @@ spring:
               filters:
                 - RewritePath=/api/(?<segment>.*), /analytics-service/$\{segment}
 
-            - id: notification-service-ws-route
-              uri: ws://localhost:4010
-              predicates:
-                - Path=/ws/**
-              filters:
-                - RewritePath=/ws/(?<segment>.*), /notification-service/ws/$\{segment}
-                - AddRequestHeader=Upgrade,websocket
-                - AddRequestHeader=Connection,Upgrade
-                - AddRequestHeader=Sec-WebSocket-Key, {header:Sec-WebSocket-Key}
-                - AddRequestHeader=Sec-WebSocket-Version, {header:Sec-WebSocket-Version}
-                - AddRequestHeader=Sec-WebSocket-Extensions, {header:Sec-WebSocket-Extensions}

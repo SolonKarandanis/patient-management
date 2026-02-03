@@ -19,7 +19,7 @@ export class UserRepository extends BaseRepository{
    */
   public searchUsers(request:UserSearchRequest):Observable<SearchResult<User>>{
     return this.http
-      .post<SearchResult<User>>(`${ApiRepositories.USERS}/search`,request);
+      .post<SearchResult<User>>(`${ApiRepositories.AUTH}/${ApiRepositories.USERS}/search`,request);
   }
 
   /**
@@ -28,7 +28,7 @@ export class UserRepository extends BaseRepository{
    * @returns An observable with the ArrayBuffer of the csv
    */
   public exportUsersToCsv(request:UserSearchRequest):Observable<HttpResponse<ArrayBuffer>>{
-    return this.http.post(`${ApiRepositories.USERS}/export/csv`, request, {
+    return this.http.post(`${ApiRepositories.AUTH}/${ApiRepositories.USERS}/export/csv`, request, {
       responseType: 'arraybuffer',
       observe: 'response',
     });
@@ -40,11 +40,11 @@ export class UserRepository extends BaseRepository{
    * @returns An Observable with the details of the user
    */
   public getUserById(id:string):Observable<User>{
-    return this.http.get<User>(`${ApiRepositories.USERS}/${id}`);
+    return this.http.get<User>(`${ApiRepositories.AUTH}/${ApiRepositories.USERS}/${id}`);
   }
 
   getUserPermissions(id:string):Observable<string[]>{
-    return this.http.get<string[]>(`${ApiRepositories.USERS}/${id}/permissions`);
+    return this.http.get<string[]>(`${ApiRepositories.AUTH}/${ApiRepositories.USERS}/${id}/permissions`);
   }
 
   /**
@@ -53,7 +53,7 @@ export class UserRepository extends BaseRepository{
    * @returns An Observable with the created user
    */
   public registerUser(request:CreateUserRequest):Observable<User>{
-    return this.http.post<User>(`${ApiRepositories.USERS}`,request,{
+    return this.http.post<User>(`${ApiRepositories.AUTH}/${ApiRepositories.USERS}`,request,{
       context: new HttpContext().set(AUTHENTICATE_REQUEST, false),
     });
   }
@@ -65,7 +65,7 @@ export class UserRepository extends BaseRepository{
    * @returns An Observable with the updated user
    */
   public updateUser(id:string,request:UpdateUserRequest):Observable<User>{
-    return this.http.put<User>(`${ApiRepositories.USERS}/${id}`,request);
+    return this.http.put<User>(`${ApiRepositories.AUTH}/${ApiRepositories.USERS}/${id}`,request);
   }
 
   /**
@@ -75,7 +75,7 @@ export class UserRepository extends BaseRepository{
    * @returns An Observable with the updated user
    */
   public changeUserPassword(id:string,request:ChangePasswordRequest):Observable<User>{
-    return this.http.put<User>(`${ApiRepositories.USERS}/${id}/password-change`,request);
+    return this.http.put<User>(`${ApiRepositories.AUTH}/${ApiRepositories.USERS}/${id}/password-change`,request);
   }
 
   /**
@@ -84,7 +84,7 @@ export class UserRepository extends BaseRepository{
    * @returns An observable that resolves to no data
    */
   public deleteUser(id:string):Observable<void>{
-    return this.http.delete<void>(`${ApiRepositories.USERS}/${id}`);
+    return this.http.delete<void>(`${ApiRepositories.AUTH}/${ApiRepositories.USERS}/${id}`);
   }
 
   /**
@@ -93,7 +93,7 @@ export class UserRepository extends BaseRepository{
    * @returns An observable with the activated user
    */
   public activateUser(id:string):Observable<User>{
-    return this.http.put<User>(`${ApiRepositories.USERS}/${id}/activate`,null);
+    return this.http.put<User>(`${ApiRepositories.AUTH}/${ApiRepositories.USERS}/${id}/activate`,null);
   }
 
   /**
@@ -102,6 +102,6 @@ export class UserRepository extends BaseRepository{
    * @returns An observable with the de-activated user
    */
   public deactivateUser(id:string):Observable<User>{
-    return this.http.put<User>(`${ApiRepositories.USERS}/${id}/deactivate`,null);
+    return this.http.put<User>(`${ApiRepositories.AUTH}/${ApiRepositories.USERS}/${id}/deactivate`,null);
   }
 }

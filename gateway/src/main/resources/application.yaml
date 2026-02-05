@@ -44,7 +44,7 @@ spring:
             - id: analytics-service-route
               uri: http://localhost:4002
               predicates:
-                - Path=/api/analytics/**
+                - Path=/analytics/**
               filters:
-                - RewritePath=/api/(?<segment>.*), /analytics-service/$\{segment}
+                - RewritePath=/analytics/(?<segment>.*), /analytics-service/$\{segment}
 

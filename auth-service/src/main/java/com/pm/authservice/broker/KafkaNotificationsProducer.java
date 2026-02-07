@@ -27,7 +27,7 @@ public class KafkaNotificationsProducer implements Producer<NotificationEvent>{
     @Override
     public void sendEvent(NotificationEvent object) {
         try {
-            log.info("Sending user analytics event to kafka: {}", object);
+            log.info("Sending user notification event to kafka: {}", object);
             CompletableFuture<SendResult<String, byte[]>> message =kafkaTemplate.send(topicName, object.toByteArray());
         }
         catch (Exception e) {

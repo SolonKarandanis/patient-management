@@ -1,6 +1,5 @@
 package com.pm.notificationservice.config;
 
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.converter.DefaultContentTypeResolver;
@@ -11,7 +10,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -49,11 +48,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
         registry.setApplicationDestinationPrefixes("/app");
         registry.enableStompBrokerRelay("/topic")
-                .setRelayHost(host)      // Use explicit IPv4 address
-                .setRelayPort(port)          // Default STOMP port for Artemis
-                .setClientLogin(user)    // Credentials for client connections
+                .setRelayHost(host)
+                .setRelayPort(port)
+                .setClientLogin(user)
                 .setClientPasscode(password)
-                .setSystemLogin(user)    // Credentials for the relay's "system" connection
+                .setSystemLogin(user)
                 .setSystemPasscode(password)
                 .setTaskScheduler(taskScheduler);
     }
@@ -69,7 +68,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
         DefaultContentTypeResolver resolver = new DefaultContentTypeResolver();
         resolver.setDefaultMimeType(APPLICATION_JSON);
-        JsonMapper objectMapper = JsonMapper.builder().build();
+        ObjectMapper objectMapper = new ObjectMapper();
         JacksonJsonMessageConverter converter = new JacksonJsonMessageConverter(objectMapper);
         converter.setContentTypeResolver(resolver);
         messageConverters.add(converter);

@@ -7,15 +7,15 @@ import com.pm.notificationservice.notification.service.NotificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.job.parameters.RunIdIncrementer;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.infrastructure.item.ItemProcessor;
-import org.springframework.batch.infrastructure.item.ItemReader;
-import org.springframework.batch.infrastructure.item.ItemWriter;
-import org.springframework.batch.infrastructure.item.data.RepositoryItemReader;
-import org.springframework.batch.infrastructure.item.data.builder.RepositoryItemReaderBuilder;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.data.RepositoryItemReader;
+import org.springframework.batch.item.data.builder.RepositoryItemReaderBuilder;
 import org.springframework.batch.integration.async.AsyncItemProcessor;
 import org.springframework.batch.integration.async.AsyncItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,8 +60,7 @@ public class BatchNotificationConfig {
                                       @Qualifier("notificationEventProcessor") ItemProcessor<NotificationEventEntity, NotificationEventEntity> processor,
                                       @Qualifier("notificationEventWriter") ItemWriter<NotificationEventEntity> writer) {
         return new StepBuilder("sendNotificationsStep", jobRepository)
-                .<NotificationEventEntity, NotificationEventEntity>chunk(10)
-                .transactionManager(transactionManager)
+                .<NotificationEventEntity, NotificationEventEntity>chunk(10, transactionManager)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
@@ -101,8 +100,9 @@ public class BatchNotificationConfig {
 
     @Bean(name = "asyncNotificationEventProcessor")
     public AsyncItemProcessor<NotificationEventEntity, NotificationEventEntity> asyncNotificationEventProcessor(){
-        AsyncItemProcessor<NotificationEventEntity, NotificationEventEntity> processor = new AsyncItemProcessor<>(notificationEventProcessor());
+        AsyncItemProcessor<NotificationEventEntity, NotificationEventEntity> processor = new AsyncItemProcessor<>();
         processor.setTaskExecutor(new SimpleAsyncTaskExecutor());
+        processor.setDelegate(notificationEventProcessor());
         return processor;
     }
 
@@ -114,7 +114,8 @@ public class BatchNotificationConfig {
 
     @Bean(name = "asyncNotificationEventWriter")
     public AsyncItemWriter<NotificationEventEntity> asyncNotificationEventWriter() {
-        AsyncItemWriter<NotificationEventEntity> writer = new AsyncItemWriter<>(notificationEventWriter());
+        AsyncItemWriter<NotificationEventEntity> writer = new AsyncItemWriter<>();
+        writer.setDelegate(notificationEventWriter());
         return writer;
     }
 }

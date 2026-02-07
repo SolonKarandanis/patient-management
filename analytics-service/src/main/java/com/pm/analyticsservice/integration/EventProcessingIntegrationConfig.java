@@ -2,6 +2,7 @@ package com.pm.analyticsservice.integration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.channel.DirectChannel;
@@ -42,7 +43,7 @@ public class EventProcessingIntegrationConfig {
 
     @Bean
     public KafkaMessageListenerContainer<String, String> messageListenerContainer(
-            ConsumerFactory<String, String> consumerFactory,
+            @Qualifier("integrationConsumerFactory") ConsumerFactory<String, String> consumerFactory,
             ContainerProperties containerProperties) {
         return new KafkaMessageListenerContainer<>(consumerFactory, containerProperties);
     }

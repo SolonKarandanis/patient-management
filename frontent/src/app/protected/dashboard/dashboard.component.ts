@@ -1,9 +1,8 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, inject, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {AnalyticsService} from './data/service/analytics.service';
-import * as d3 from 'd3';
-import {DailyPaymentSummary} from '@core/models/analytics.model';
 import {UsersDailySummaryComponent} from '@components/users-daily-summary/users-daily-summary.component';
 import {PatientsDailySummaryComponent} from '@components/patients-daily-summary/patients-daily-summary.component';
+import {PaymentsDailySummaryComponent} from '@components/payments-daily-summary/payments-daily-summary.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,89 +11,29 @@ import {PatientsDailySummaryComponent} from '@components/patients-daily-summary/
       <div class="w-full xl:w-8/12 mb-12 xl:mb-0 px-4 text-black">
         <app-users-daily-summary [userDailySummary]="userDailySummary()"/>
         <app-patients-daily-summary [patientsDailySummary]="patientsDailySummary()" />
-        <div #paymentsChart></div>
+        <app-payments-daily-summary [paymentDailySummary]="paymentDailySummary()" />
       </div>
     </div>
   `,
   styleUrl: './dashboard.component.css',
   imports: [
     UsersDailySummaryComponent,
-    PatientsDailySummaryComponent
+    PatientsDailySummaryComponent,
+    PaymentsDailySummaryComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardComponent implements OnInit, AfterViewInit {
-  @ViewChild('paymentsChart') private paymentsChartContainer!: ElementRef;
-
+export class DashboardComponent implements OnInit {
   private analyticsService = inject(AnalyticsService);
 
   public patientsDailySummary = this.analyticsService.patientsDailySummary;
   public userDailySummary = this.analyticsService.userDailySummary;
   public paymentDailySummary = this.analyticsService.paymentDailySummary;
 
-  constructor() {
-    effect(() => {
-      this.createPaymentSummaryChart(this.paymentDailySummary(), this.paymentsChartContainer);
-    });
-  }
 
   ngOnInit(): void {
     this.analyticsService.executeGetPatientsDailySummary();
     this.analyticsService.executeGetUserDailySummary();
     this.analyticsService.executeGetPaymentDailySummary();
-  }
-
-  ngAfterViewInit(): void {
-    this.createPaymentSummaryChart(this.paymentDailySummary(), this.paymentsChartContainer);
-  }
-
-  private createPaymentSummaryChart(data: DailyPaymentSummary[], chartContainer: ElementRef): void {
-    if (!data || data.length === 0 || !chartContainer) {
-      return;
-    }
-
-    const element = chartContainer.nativeElement;
-    d3.select(element).select('svg').remove();
-
-    const margin = {top: 20, right: 20, bottom: 30, left: 40};
-    const width = 600 - margin.left - margin.right;
-    const height = 400 - margin.top - margin.bottom;
-
-    const svg = d3.select(element).append('svg')
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom)
-      .append('g')
-      .attr('transform', `translate(${margin.left},${margin.top})`);
-
-    const x = d3.scaleBand()
-      .range([0, width])
-      .padding(0.1);
-
-    const y = d3.scaleLinear()
-      .range([height, 0]);
-
-    x.domain(data.map(d => new Date(d.eventDate).toLocaleDateString()));
-    y.domain([0, d3.max(data, d => d.totalPayments) || 0]);
-
-    svg.append('g')
-      .attr('transform', `translate(0,${height})`)
-      .call(d3.axisBottom(x))
-      .selectAll('text')
-      .style('text-anchor', 'end')
-      .attr('dx', '-.8em')
-      .attr('dy', '.15em')
-      .attr('transform', 'rotate(-65)');
-
-    svg.append('g')
-      .call(d3.axisLeft(y));
-
-    svg.selectAll('.bar')
-      .data(data)
-      .enter().append('rect')
-      .attr('class', 'bar')
-      .attr('x', d => x(new Date(d.eventDate).toLocaleDateString()) || 0)
-      .attr('width', x.bandwidth())
-      .attr('y', d => y(d.totalPayments) || 0)
-      .attr('height', d => height - (y(d.totalPayments) || 0));
   }
 }

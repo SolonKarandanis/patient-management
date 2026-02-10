@@ -1,32 +1,32 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, input, ViewChild} from '@angular/core';
-import {DailyEventCount} from '@models/analytics.model';
+import {DailyPaymentSummary} from '@models/analytics.model';
 import * as d3 from 'd3';
 
 @Component({
-  selector: 'app-patients-daily-summary',
+  selector: 'app-payments-daily-summary',
   imports: [],
   template: `
-    <div #patientsChart></div>
+    <div #paymentsChart></div>
   `,
-  styleUrl: './patients-daily-summary.component.css',
+  styleUrl: './payments-daily-summary.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PatientsDailySummaryComponent implements AfterViewInit{
-  patientsDailySummary = input<DailyEventCount[]>([]);
+export class PaymentsDailySummaryComponent implements AfterViewInit{
+  paymentDailySummary = input<DailyPaymentSummary[]>([]);
 
-  @ViewChild('patientsChart') private patientsChartContainer!: ElementRef;
+  @ViewChild('paymentsChart') private paymentsChartContainer!: ElementRef;
 
-  constructor(){
-    effect(()=>{
-      this.createEventCountChart(this.patientsDailySummary(), this.patientsChartContainer);
-    })
+  constructor() {
+    effect(() => {
+      this.createPaymentSummaryChart(this.paymentDailySummary(), this.paymentsChartContainer);
+    });
   }
 
-  ngAfterViewInit(): void{
-    this.createEventCountChart(this.patientsDailySummary(), this.patientsChartContainer);
+  ngAfterViewInit(): void {
+    this.createPaymentSummaryChart(this.paymentDailySummary(), this.paymentsChartContainer);
   }
 
-  private createEventCountChart(data: DailyEventCount[], chartContainer: ElementRef): void {
+  private createPaymentSummaryChart(data: DailyPaymentSummary[], chartContainer: ElementRef): void {
     if (!data || data.length === 0 || !chartContainer) {
       return;
     }
@@ -52,7 +52,7 @@ export class PatientsDailySummaryComponent implements AfterViewInit{
       .range([height, 0]);
 
     x.domain(data.map(d => new Date(d.eventDate).toLocaleDateString()));
-    y.domain([0, d3.max(data, d => d.totalEvents) || 0]);
+    y.domain([0, d3.max(data, d => d.totalPayments) || 0]);
 
     svg.append('g')
       .attr('transform', `translate(0,${height})`)
@@ -72,8 +72,7 @@ export class PatientsDailySummaryComponent implements AfterViewInit{
       .attr('class', 'bar')
       .attr('x', d => x(new Date(d.eventDate).toLocaleDateString()) || 0)
       .attr('width', x.bandwidth())
-      .attr('y', d => y(d.totalEvents) || 0)
-      .attr('height', d => height - (y(d.totalEvents) || 0));
+      .attr('y', d => y(d.totalPayments) || 0)
+      .attr('height', d => height - (y(d.totalPayments) || 0));
   }
-
 }

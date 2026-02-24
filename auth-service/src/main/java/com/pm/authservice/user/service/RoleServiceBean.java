@@ -1,7 +1,7 @@
 package com.pm.authservice.user.service;
 
+import com.pm.authservice.service.GenericService;
 import com.pm.authservice.user.dto.RoleDTO;
-import com.pm.authservice.service.GenericServiceBean;
 import com.pm.authservice.user.model.RoleEntity;
 import com.pm.authservice.user.repository.RoleRepository;
 import org.springframework.cache.annotation.Cacheable;
@@ -15,12 +15,14 @@ import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
-public class RoleServiceBean extends GenericServiceBean implements RoleService {
+public class RoleServiceBean  implements RoleService {
 
     private final RoleRepository roleRepository;
+    private final GenericService genericService;
 
-    public RoleServiceBean(RoleRepository roleRepository) {
+    public RoleServiceBean(RoleRepository roleRepository, GenericService genericService) {
         this.roleRepository = roleRepository;
+        this.genericService = genericService;
     }
 
     @Override
@@ -28,7 +30,7 @@ public class RoleServiceBean extends GenericServiceBean implements RoleService {
         RoleDTO dto = new RoleDTO();
         dto.setId(role.getId());
         dto.setName(role.getName());
-        dto.setNameLabel(translate(role.getName()));
+        dto.setNameLabel(genericService.translate(role.getName()));
         return dto;
     }
 

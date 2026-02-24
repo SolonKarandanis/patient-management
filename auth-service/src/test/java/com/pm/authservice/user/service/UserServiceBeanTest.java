@@ -1,5 +1,6 @@
 package com.pm.authservice.user.service;
 
+import com.pm.authservice.service.GenericService;
 import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.service.VerificationTokenService;
@@ -45,6 +46,9 @@ public class UserServiceBeanTest {
     protected PasswordEncoder passwordEncoder;
 
     @Mock
+    protected GenericService genericService;
+
+    @Mock
     protected ApplicationEventPublisher publisher;
 
     protected final Integer userId = 1;
@@ -56,7 +60,6 @@ public class UserServiceBeanTest {
 
     @BeforeEach
     public void setup(){
-        service.setPublisher(publisher);
         user = TestUtil.createTestUser(userId);
         userDto = TestUtil.createTestUserDto(userId);
         detailsDTO = TestUtil.createTestUserDetailsDTO(userId);
@@ -203,10 +206,13 @@ public class UserServiceBeanTest {
     @Test
     void testDeleteUser(){
         when(userRepository.findByPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID))).thenReturn(Optional.of(user));
+        when(genericService.getPublisher()).thenReturn(publisher);
 
         service.deleteUser(TestConstants.TEST_USER_PUBLIC_ID);
 
         verify(userRepository,times(1)).findByPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
         verify(userRepository,times(1)).delete(user);
+        verify(genericService, times(1)).getPublisher();
+        verify(publisher, times(1)).publishEvent(any());
     }
 }

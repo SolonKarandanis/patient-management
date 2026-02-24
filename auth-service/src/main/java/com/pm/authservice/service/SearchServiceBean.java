@@ -15,7 +15,7 @@ import java.util.List;
 @Service("searchService")
 @Transactional(propagation = Propagation.SUPPORTS)
 @Slf4j
-public class SearchServiceBean extends GenericServiceBean implements SearchService{
+public class SearchServiceBean  implements SearchService{
 
     @Override
     public Sort getPageSort(Paging paging) {

@@ -4,7 +4,7 @@ import com.pm.authservice.i18n.dto.I18nResourceManagementRequestDTO;
 import com.pm.authservice.i18n.dto.I18nResourceManagementResponseDTO;
 import com.pm.authservice.dto.SearchResults;
 import com.pm.authservice.i18n.repository.I18nLabelRepository;
-import com.pm.authservice.service.GenericServiceBean;
+import com.pm.authservice.service.GenericService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,12 +16,14 @@ import java.util.*;
 @Slf4j
 @Service("i18nResourceManagementService")
 @Transactional(readOnly = true)
-public class I18nResourceManagementServiceBean extends GenericServiceBean implements I18nResourceManagementService{
+public class I18nResourceManagementServiceBean implements I18nResourceManagementService{
 
     private final I18nLabelRepository i18nLabelRepository;
+    private final GenericService genericService;
 
-    public I18nResourceManagementServiceBean(I18nLabelRepository i18nLabelRepository) {
+    public I18nResourceManagementServiceBean(I18nLabelRepository i18nLabelRepository, GenericService genericService) {
         this.i18nLabelRepository = i18nLabelRepository;
+        this.genericService = genericService;
     }
 
 
@@ -31,7 +33,7 @@ public class I18nResourceManagementServiceBean extends GenericServiceBean implem
         Integer langId = searchRequest.getLanguageId() == null || searchRequest.getLanguageId().isEmpty() ? null : Integer.parseInt(searchRequest.getLanguageId());
         Integer modId = searchRequest.getModuleId() == null || searchRequest.getModuleId().isEmpty() ? null : Integer.parseInt(searchRequest.getModuleId());
 
-        pageRequest = transformPageSorting(pageRequest, Collections.emptyMap(), Collections.emptySet());
+        pageRequest = genericService.transformPageSorting(pageRequest, Collections.emptyMap(), Collections.emptySet());
 
         Page<Long> resultsIds = i18nLabelRepository.searchI18nResourcesDistinctLabelIds(langId, modId, searchRequest.getTerm(), pageRequest);
 

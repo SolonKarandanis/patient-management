@@ -1,5 +1,6 @@
 package com.pm.authservice.user.service;
 
+import com.pm.authservice.service.GenericService;
 import com.pm.authservice.user.dto.ChangePasswordDTO;
 import com.pm.authservice.dto.Paging;
 import com.pm.authservice.user.dto.RoleDTO;
@@ -8,7 +9,6 @@ import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.user.model.AccountStatus;
 import com.pm.authservice.user.model.RoleEntity;
 import com.pm.authservice.model.VerificationTokenEntity;
-import com.pm.authservice.service.GenericServiceBean;
 import com.pm.authservice.service.VerificationTokenService;
 import com.pm.authservice.user.dto.*;
 import com.pm.authservice.user.event.*;
@@ -38,7 +38,7 @@ import java.util.stream.StreamSupport;
 
 @Service
 @Transactional(readOnly = true)
-public class UserServiceBean extends GenericServiceBean implements UserService{
+public class UserServiceBean implements UserService{
     protected static final String USER_NOT_FOUND="error.user.not.found";
     private static final Logger log = LoggerFactory.getLogger(UserServiceBean.class);
 
@@ -46,17 +46,19 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     private final RoleService roleService;
     private final VerificationTokenService verificationTokenService;
     private final PasswordEncoder passwordEncoder;
+    private final GenericService genericService;
 
     public UserServiceBean(
             UserRepository userRepository,
             RoleService roleService,
             VerificationTokenService verificationTokenService,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder, GenericService genericService
     ){
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.verificationTokenService = verificationTokenService;
         this.passwordEncoder = passwordEncoder;
+        this.genericService = genericService;
     }
 
 
@@ -195,7 +197,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         RoleEntity role = roleService.findByName(dto.getRole());
         user.setRoles(Set.of(role));
         user = userRepository.save(user);
-        getPublisher().publishEvent(new UserRegistrationEvent(user, applicationUrl));
+        genericService.getPublisher().publishEvent(new UserRegistrationEvent(user, applicationUrl));
         return user;
     }
 
@@ -212,7 +214,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         RoleEntity role = roleService.findByName(dto.getRole());
         user.removeRoles();
         user.addRole(role);
-        getPublisher().publishEvent(new UserUpdateEvent(user));
+        genericService.getPublisher().publishEvent(new UserUpdateEvent(user));
         return userRepository.save(user);
     }
 
@@ -221,7 +223,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     public UserEntity activateUser(UserEntity user) throws BusinessException {
         user.activate();
         userRepository.save(user);
-        getPublisher().publishEvent(new UserActivationEvent(user));
+        genericService.getPublisher().publishEvent(new UserActivationEvent(user));
         return user;
     }
 
@@ -230,7 +232,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
     public UserEntity deactivateUser(UserEntity user) throws BusinessException {
         user.deactivate();
         userRepository.save(user);
-        getPublisher().publishEvent(new UserDeactivationEvent(user));
+        genericService.getPublisher().publishEvent(new UserDeactivationEvent(user));
         return user;
     }
 
@@ -240,7 +242,7 @@ public class UserServiceBean extends GenericServiceBean implements UserService{
         Optional<UserEntity> usrOpt  =userRepository.findByPublicId(UUID.fromString(publicId));
         usrOpt.ifPresent(usr->{
             userRepository.delete(usr);
-            getPublisher().publishEvent(new UserDeletionEvent(usr));
+            genericService.getPublisher().publishEvent(new UserDeletionEvent(usr));
         });
     }
 

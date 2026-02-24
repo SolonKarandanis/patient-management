@@ -1,16 +1,16 @@
 package com.pm.authservice.service;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Getter
-public class GenericServiceBean {
+@Service
+public class GenericServiceBean  implements GenericService{
 
     @Autowired
     private MessageSource messageSource;
@@ -22,22 +22,26 @@ public class GenericServiceBean {
         this.publisher = publisher;
     }
 
-    protected String translate(String key) {
+    public ApplicationEventPublisher getPublisher(){
+       return this.publisher;
+    }
+
+    public String translate(String key) {
         return Optional.of(messageSource.getMessage(key, null, getDefaultLocale())).orElse(key);
     }
 
 
-    protected String translate(String key, Locale locale) {
+    public String translate(String key, Locale locale) {
         return Optional.of(messageSource.getMessage(key, null, locale)).orElse(key);
     }
 
-    protected Locale getDefaultLocale() {
+    public Locale getDefaultLocale() {
         return Locale.ENGLISH;
     }
 
 
 
-    protected PageRequest transformPageSorting(PageRequest pageRequest, Map<String, String> sortingFieldsMap,
+    public PageRequest transformPageSorting(PageRequest pageRequest, Map<String, String> sortingFieldsMap,
                                                Set<String> allowedSortingFields) {
         if (pageRequest == null) {
             return null;
@@ -56,7 +60,7 @@ public class GenericServiceBean {
         return pageRequest.withSort(Sort.by(mappedOrders));
     }
 
-    protected String getDefaultSortingProperty() {
+    public String getDefaultSortingProperty() {
         return "id";
     }
 

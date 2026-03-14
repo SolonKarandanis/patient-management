@@ -28,7 +28,7 @@ public interface EmailService {
      *            <code>EMailMessage</code>
      *            The message to send. Contains all the necessary
      *            fields.
-     * @throws EDException
+     * @throws NotificationServiceException
      *             If there is a problem with the back-end.
      */
     public void saveAndSendEmailSynchronous(Email eMess) throws NotificationServiceException;
@@ -44,7 +44,7 @@ public interface EmailService {
      * @param id
      *            - message id.
      * @return email object along with the email body
-     * @throws EDException
+     * @throws NotificationServiceException
      *             If there is a problem with the back-end.
      */
     Email getEmailById(Integer id) throws NotificationServiceException;
@@ -60,7 +60,7 @@ public interface EmailService {
      *
      * @param emailIds
      *            - list of email ids
-     * @throws EDException
+     * @throws NotificationServiceException
      *             If there is a problem with the back-end.
      */
     void resendEmails(List<Integer> emailIds) throws NotificationServiceException;

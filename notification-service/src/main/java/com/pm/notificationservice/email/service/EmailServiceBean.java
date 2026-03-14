@@ -1,5 +1,6 @@
 package com.pm.notificationservice.email.service;
 
+import com.pm.notificationservice.email.AttachmentDataSource;
 import com.pm.notificationservice.email.EMailConstants;
 import com.pm.notificationservice.email.dto.EmailDTO;
 import com.pm.notificationservice.email.dto.EmailSearchRequestDTO;
@@ -7,6 +8,10 @@ import com.pm.notificationservice.email.model.*;
 import com.pm.notificationservice.email.repository.EmailAttachmentRepository;
 import com.pm.notificationservice.email.repository.EmailRepository;
 import com.pm.notificationservice.email.repository.EmailTypeRepository;
+import com.pm.notificationservice.file.common.FileConstants;
+import com.pm.notificationservice.file.common.FileUtil;
+import com.pm.notificationservice.file.model.FileInfo;
+import com.pm.notificationservice.file.service.FileService;
 import com.pm.notificationservice.shared.dto.Paging;
 import com.pm.notificationservice.shared.dto.SearchResults;
 import com.pm.notificationservice.shared.exception.NotificationServiceException;
@@ -31,6 +36,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -43,16 +49,18 @@ public class EmailServiceBean  implements EmailService{
     private final EmailTypeRepository emailTypeRepository;
     private final EmailAttachmentRepository emailAttachmentRepository;
     private final JavaMailSender mailSender;
-//    private final FileService fileService;
+    private final FileService fileService;
 
     public EmailServiceBean(
             EmailRepository emailRepository,
             EmailTypeRepository emailTypeRepository,
             EmailAttachmentRepository emailAttachmentRepository,
+            FileService fileService,
             JavaMailSender mailSender) {
         this.emailRepository = emailRepository;
         this.emailTypeRepository = emailTypeRepository;
         this.emailAttachmentRepository = emailAttachmentRepository;
+        this.fileService = fileService;
         this.mailSender = mailSender;
     }
 
@@ -126,14 +134,14 @@ public class EmailServiceBean  implements EmailService{
              */
             if (eMess.getEmailAttachments() != null) {
                 List<EmailAttachment> fileList = eMess.getEmailAttachments();
-//                for (EmailAttachment emailAttachment : fileList) {
-//                    MimeBodyPart attachmenBodyPart = new MimeBodyPart();
-//                    DataSource source = new AttachmentDataSource(emailAttachment.getData(),
-//                            FileUtil.getContentTypeByFileName(emailAttachment.getFileName()), emailAttachment.getFileName());
-//                    attachmenBodyPart.setDataHandler(new DataHandler(source));
-//                    attachmenBodyPart.setFileName(emailAttachment.getFileName());
-//                    multipart.addBodyPart(attachmenBodyPart);
-//                }
+                for (EmailAttachment emailAttachment : fileList) {
+                    MimeBodyPart attachmenBodyPart = new MimeBodyPart();
+                    DataSource source = new AttachmentDataSource(emailAttachment.getData(),
+                            FileUtil.getContentTypeByFileName(emailAttachment.getFileName()), emailAttachment.getFileName());
+                    attachmenBodyPart.setDataHandler(new DataHandler(source));
+                    attachmenBodyPart.setFileName(emailAttachment.getFileName());
+                    multipart.addBodyPart(attachmenBodyPart);
+                }
             }
             // Put parts in message
             msg.setContent(multipart);
@@ -164,10 +172,10 @@ public class EmailServiceBean  implements EmailService{
         Optional<Email> emailMaybe = emailRepository.findById(id);
         if(emailMaybe.isPresent()){
             List<EmailAttachment> attachments = emailAttachmentRepository.getEmailAttachmentsByEmailId(id);
-//            for (EmailAttachment emailAttachment : attachments) {
-//                byte[] data = fileService.getFileContentById(BigInteger.valueOf(emailAttachment.getFileReferenceId()));
-//                emailAttachment.setData(data);
-//            }
+            for (EmailAttachment emailAttachment : attachments) {
+                byte[] data = fileService.getFileContentById(BigInteger.valueOf(emailAttachment.getFileReferenceId()));
+                emailAttachment.setData(data);
+            }
             return emailMaybe.get();
         }
         return null;
@@ -203,14 +211,14 @@ public class EmailServiceBean  implements EmailService{
         if (EmailStatus.SENT.equals(email.getStatus())) {
             email.setDateSent(LocalDateTime.now());
         }
-//        if(!CollectionUtils.isEmpty(email.getEmailAttachments())){
-//            for(EmailAttachment att : email.getEmailAttachments()){
-//                BigInteger fileId = fileService.createFile(att.getData(), new FileInfo(att.getFileName(), FileUtil.getContentTypeByFileName(att.getFileName()),
-//                        FileConstants.EMAIL_ATTACHMENT, att.getData().length));
-//                att.setFileReferenceId(fileId.longValue());
-//                att.setEmail(email);
-//            }
-//        }
+        if(!CollectionUtils.isEmpty(email.getEmailAttachments())){
+            for(EmailAttachment att : email.getEmailAttachments()){
+                BigInteger fileId = fileService.createFile(att.getData(), new FileInfo(att.getFileName(), FileUtil.getContentTypeByFileName(att.getFileName()),
+                        FileConstants.EMAIL_ATTACHMENT, att.getData().length));
+                att.setFileReferenceId(fileId.longValue());
+                att.setEmail(email);
+            }
+        }
         try {
             return emailRepository.save(email);
         } catch (Exception e) {

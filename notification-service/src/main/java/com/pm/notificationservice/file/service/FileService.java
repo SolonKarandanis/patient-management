@@ -16,7 +16,7 @@ public interface FileService {
      * @return the ID from the sequencer of the created file
      * @throws NotificationServiceException
      */
-    public BigInteger createFile(byte[] content, FileInfo fileInfo) throws NotificationServiceException;
+    BigInteger createFile(byte[] content, FileInfo fileInfo) throws NotificationServiceException;
     /**
      * Method stores group of files on file system.
      *
@@ -25,7 +25,7 @@ public interface FileService {
      * @return Number of files stored.
      * @throws NotificationServiceException
      */
-    public int createFiles(Map<FileInfo, byte[]> dataMap) throws NotificationServiceException;
+    int createFiles(Map<FileInfo, byte[]> dataMap) throws NotificationServiceException;
 
     /**
      * Method checks if file exists.
@@ -34,7 +34,7 @@ public interface FileService {
      *            Unique file identifier.
      * @return true if exists, false otherwise.
      */
-    public boolean fileExistsInStorage(BigInteger fid);
+    boolean fileExistsInStorage(BigInteger fid);
 
     /**
      * Method retrieves file from disk and returns content.
@@ -44,7 +44,7 @@ public interface FileService {
      * @return File content as array of bytes.
      * @throws NotificationServiceException
      */
-    public byte[] getFileContentById(BigInteger fid) throws NotificationServiceException;
+    byte[] getFileContentById(BigInteger fid) throws NotificationServiceException;
     /**
      * Deletes file from storage
      *
@@ -52,11 +52,11 @@ public interface FileService {
      *            Unique file identifier.
      * @return true if success.
      */
-    public boolean deleteFile(BigInteger fid);
+    boolean deleteFile(BigInteger fid);
 
-    public boolean deleteFileInfo(BigInteger fid);
+    boolean deleteFileInfo(BigInteger fid);
 
-    public boolean deleteOnFileSystem(BigInteger fid);
+    boolean deleteOnFileSystem(BigInteger fid);
     /**
      * Unzips an existing saved file and returns a map with keys the zip entry names
      * (i.e. the filenames inside the zip) and value the fid of the saved entry.
@@ -68,7 +68,7 @@ public interface FileService {
      *         entry.
      * @throws NotificationServiceException
      */
-    public Map<String, FileInfo> unzipFile(BigInteger fid) throws NotificationServiceException;
+    Map<String, FileInfo> unzipFile(BigInteger fid) throws NotificationServiceException;
 
     BigInteger createFileInfo(FileInfo fileInfo) throws NotificationServiceException;
 
@@ -78,13 +78,13 @@ public interface FileService {
      * @return Returns all files included in the specified path and subdirectories, excluding directories specified in
      *         constants
      */
-    public Map<String, FileDTO> getAllFilesInFileSystem(String fileSystemPath);
+    Map<String, FileDTO> getAllFilesInFileSystem(String fileSystemPath);
     /**
      * @param fid
      *            BigInteger Id of the file
      * @return Returns the 12 digit string of the Id
      */
-    public String getFileId(BigInteger fid);
+    String getFileId(BigInteger fid);
 
     /**
      * @param path
@@ -95,35 +95,35 @@ public interface FileService {
      *            The map of files.
      * @return Returns all the files under the initial path
      */
-    public Map<String, FileDTO> crawlDirectoryForFiles(String path, String pathId, Map<String, FileDTO> files);
+    Map<String, FileDTO> crawlDirectoryForFiles(String path, String pathId, Map<String, FileDTO> files);
     /**
      * Deletes all redundant files from the filesystem.
      *
      * @param ccmFilesToDelete
      *            Map that contains the redundant files in the filesystem
      */
-    public void deleteRedundantFiles(Map<String, FileDTO> ccmFilesToDelete);
+    void deleteRedundantFiles(Map<String, FileDTO> ccmFilesToDelete);
 
     /**
      * This method finds which ccm files in file storage are not referenced in the db and deletes them.
      */
-    public void filesystemCleanUp();
+    void filesystemCleanUp();
 
     /**
      * Method to start the scheduler for filesystem cleanup
      *
      * @throws Exception
      */
-    public void scheduleStartCronJobFilesystemCleanUp() throws Exception;
+    void scheduleStartCronJobFilesystemCleanUp() throws Exception;
 
     /**
      * Method to delete filesystem cleanup job
      *
      * @throws Exception
      */
-    public void scheduleDeleteCronJobFilesystemCleanUp() throws Exception;
+    void scheduleDeleteCronJobFilesystemCleanUp() throws Exception;
 
-    public void deleteFiles(List<BigInteger> fileReferencesToDelete) throws Exception;
+    void deleteFiles(List<BigInteger> fileReferencesToDelete) throws Exception;
 
-    public FileInfo getFileInfoByFileReferenceId(Long fileReferenceId);
+    FileInfo getFileInfoByFileReferenceId(Long fileReferenceId);
 }

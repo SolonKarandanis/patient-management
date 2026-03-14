@@ -161,7 +161,7 @@ public class FileServiceBean implements FileService{
         for (BigInteger fid : fileReferencesToDelete) {
             refs.add(fid.longValue());
         }
-        fileInfoRepository.deleteByFileRefIds(refs);
+        fileInfoRepository.deleteByFileRefIdsInBatch(refs);
         for (BigInteger fid : fileReferencesToDelete) {
             String[] paths = convertIdToPath(fid);
             File res = new File(paths[0], paths[1]);

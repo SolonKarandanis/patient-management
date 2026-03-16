@@ -45,36 +45,11 @@ public class FileUtil {
      */
     public static byte[] getBytesFromFile(File file) throws IOException {
         InputStream is = null;
-        int length = (int) file.length();
-        byte[] bytes = new byte[length];
-        IOException thrown = null;
-
         try {
             is = new FileInputStream(file);
-            // Read the bytes
-            int offset = 0;
-            int numRead = 0;
-            int bytesLen = Math.min(READ_BUFFER_SIZE, length - offset);
-
-            while ((numRead = is.read(bytes, offset, bytesLen)) == READ_BUFFER_SIZE) {
-                offset += numRead;
-                bytesLen = Math.min(READ_BUFFER_SIZE, length - offset);
-            }
-            offset += numRead;
-            // Ensure all bytes have been read
-            if (offset != length) {
-                throw new IOException("Could not completely read file " + file.getName());
-            }
-        } catch (IOException e) {
-            thrown = e;
+            return IOUtils.toByteArray(is);
         } finally {
             closeSilently(is);
-        }
-
-        if (thrown != null) {
-            throw thrown;
-        } else {
-            return bytes;
         }
     }
 
@@ -358,6 +333,88 @@ public class FileUtil {
         }
 
         return retVal;
+    }
+
+    /**
+     * This method renames the existing zip file to a temporary file<br/>
+     * and then adds all entries in the existing zip along with the new files,
+     * <br/>
+     * excluding the zip entries that have the same name as one of the new files.
+     **/
+    public static void addFilesToExistingZip(File zipFile, File... files) throws NotificationServiceException{
+        if (zipFile == null)
+            return;
+        File tempFile = null;
+        ZipInputStream zin = null;
+        ZipOutputStream zout = null;
+        try {
+            tempFile = File.createTempFile(zipFile.getName(), null, new File("/home/solonk/4TB/notification_filestore"));
+            boolean exists = tempFile.exists();
+            log.info("[addFilesToExistingZip] temp file created: {}", exists);
+            // delete it, otherwise you cannot rename your existing zip to it.
+            boolean deleted = tempFile.delete();
+            log.info("[addFilesToExistingZip] temp file deleted: {}", deleted);
+            boolean renameOk = zipFile.renameTo(tempFile);
+            log.info("[addFilesToExistingZip] zip file renamed to temp file: {}", renameOk);
+            if (!renameOk) {
+                throw new NotificationServiceException(
+                        "could not rename " + zipFile.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
+            }
+            byte[] buf = new byte[1024];
+            zin = new ZipInputStream(new FileInputStream(tempFile));
+            zout = new ZipOutputStream(new FileOutputStream(zipFile));
+            ZipEntry entry = zin.getNextEntry();
+            while (entry != null) {
+                String name = entry.getName();
+                boolean notInFiles = true;
+                for (File f : files) {
+                    if (f.getName().equals(name)) {
+                        notInFiles = false;
+                        break;
+                    }
+                }
+                if (notInFiles) {
+                    // Add ZIP entry to output stream.
+                    zout.putNextEntry(new ZipEntry(name));
+                    // Transfer bytes from the ZIP file to the output file
+                    int len;
+                    while ((len = zin.read(buf)) > 0) {
+                        zout.write(buf, 0, len);
+                    }
+                }
+                entry = zin.getNextEntry();
+            }
+            // Close the streams
+            zin.close();
+            // Compress the files
+            for (int i = 0; i < files.length; i++) {
+                InputStream in = new FileInputStream(files[i]);
+                // Add ZIP entry to output stream.
+                zout.putNextEntry(new ZipEntry(files[i].getName()));
+                // Transfer bytes from the file to the ZIP file
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    zout.write(buf, 0, len);
+                }
+                // Complete the entry
+                try {
+                    zout.closeEntry();
+                    in.close();
+                } catch (IOException ioe) {
+                    throw ioe;
+                } finally {
+                    closeSilently(in);
+                }
+            }
+            // Complete the ZIP file
+            zout.close();
+        } catch (IOException ioe) {
+            throw new NotificationServiceException("IO error", ioe);
+        } finally {
+            closeSilently(zin);
+            closeSilently(zout);
+            deleteFile(tempFile);
+        }
     }
 
     public static ByteArrayInputStream getByteArrayInputStream(InputStream inputStream) throws IOException {

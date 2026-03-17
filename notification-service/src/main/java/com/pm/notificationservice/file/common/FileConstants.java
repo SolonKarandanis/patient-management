@@ -6,6 +6,7 @@ import java.util.Map;
 
 public class FileConstants {
     public static final String EMAIL_ATTACHMENT = "EMAIL_ATTACHMENT";
+    public static final String UNZIPPED_FILE = "UNZIPPED_FILE";
 
     public static final Map<String,String> fileUsages = new HashedMap();
 

@@ -213,9 +213,9 @@ public class EmailServiceBean  implements EmailService{
         }
         if(!CollectionUtils.isEmpty(email.getEmailAttachments())){
             for(EmailAttachment att : email.getEmailAttachments()){
-                BigInteger fileId = fileService.createFile(att.getData(), new FileInfo(att.getFileName(), FileUtil.getContentTypeByFileName(att.getFileName()),
+                FileInfo fileInfo = fileService.createFile(att.getData(), new FileInfo(att.getFileName(), FileUtil.getContentTypeByFileName(att.getFileName()),
                         FileConstants.EMAIL_ATTACHMENT, att.getData().length));
-                att.setFileReferenceId(fileId.longValue());
+                att.setFileReferenceId(fileInfo.getFileRefId());
                 att.setEmail(email);
             }
         }

@@ -12,8 +12,16 @@ import java.util.List;
 @Repository
 public interface FileInfoRepository extends BaseRepository<FileInfo, Long>{
 
-    @Query(nativeQuery = true,value = "SELECT nextval(:sequencerName)")
-    BigInteger generateIdFromSequencer(String sequencerName);
+    @Query(nativeQuery = true,value = "SELECT nextval(file_info_generator)")
+    BigInteger generateIdFromSequencer();
+
+    default BigInteger[] generateIdsFromSequencer(int size) {
+        BigInteger[] output = new BigInteger[size];
+        for (int i = 0; i <= size - 1; i++) {
+            output[i] = generateIdFromSequencer();
+        }
+        return output;
+    }
 
     @Query("SELECT fileInfo FROM FileInfo fileInfo WHERE fileInfo.fileRefId= :fid")
     FileInfo findByFileRefId(Long fid);

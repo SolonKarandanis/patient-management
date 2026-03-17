@@ -16,7 +16,7 @@ public interface FileService {
      * @return the ID from the sequencer of the created file
      * @throws NotificationServiceException
      */
-    BigInteger createFile(byte[] content, FileInfo fileInfo) throws NotificationServiceException;
+    FileInfo createFile(byte[] content, FileInfo fileInfo) throws NotificationServiceException;
     /**
      * Method stores group of files on file system.
      *
@@ -70,7 +70,7 @@ public interface FileService {
      */
     Map<String, FileInfo> unzipFile(BigInteger fid) throws NotificationServiceException;
 
-    BigInteger createFileInfo(FileInfo fileInfo) throws NotificationServiceException;
+    FileInfo createFileInfo(FileInfo fileInfo) throws NotificationServiceException;
 
     /**
      * @param fileSystemPath

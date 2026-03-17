@@ -45,20 +45,21 @@ public class FileServiceBean implements FileService{
      * ************************************************************************************************
      */
     @Override
-    public BigInteger createFileInfo(FileInfo fileInfo)
+    public FileInfo createFileInfo(FileInfo fileInfo)
             throws NotificationServiceException {
+        FileInfo outputAsFileInfo = null;
         try {
             if (fileInfo.getFileRefId() == null) {
-                BigInteger fid = fileInfoRepository.generateIdFromSequencer("file_info_generator");
+                BigInteger fid = fileInfoRepository.generateIdFromSequencer();
                 fileInfo.setFileRefId(fid.longValue());
             }
-            fileInfoRepository.save(fileInfo);
-            return BigInteger.valueOf(fileInfo.getFileRefId());
+            outputAsFileInfo = fileInfoRepository.save(fileInfo);
         }
         catch (Exception ex) {
             log.error(ex.getMessage());
             throw new NotificationServiceException("error.create.file", ex);
         }
+        return outputAsFileInfo;
     }
 
     /* **********************A T T E N T I O N********** I M P O R T A N T ****************************
@@ -72,16 +73,17 @@ public class FileServiceBean implements FileService{
      * @see com.ed.ccm.service.FileService#createFile(byte[], com.ed.ccm.domain.FileInfo)
      */
     @Override
-    public BigInteger createFile(byte[] content, FileInfo fileInfo)
+    public FileInfo createFile(byte[] content, FileInfo fileInfo)
             throws NotificationServiceException {
+        FileInfo outputAsFileInfo = null;
         try {
-            createFileInfo(fileInfo);
+            outputAsFileInfo = createFileInfo(fileInfo);
             storeFile(fileInfo, content);
-            return BigInteger.valueOf(fileInfo.getFileRefId());
         } catch (Exception ex) {
             log.error(ex.getMessage());
             throw new NotificationServiceException("error.create.file", ex);
         }
+        return outputAsFileInfo;
     }
 
     /* **********************A T T E N T I O N********** I M P O R T A N T ****************************
@@ -170,8 +172,42 @@ public class FileServiceBean implements FileService{
     }
 
     @Override
-    public Map<String, FileInfo> unzipFile(BigInteger fid) throws NotificationServiceException {
-        return Map.of();
+    public Map<String, FileInfo> unzipFile(BigInteger zipId) throws NotificationServiceException {
+        String[] paths = convertIdToPath(zipId);
+        File zippedFile = new File(paths[0], paths[1]);
+        File tempDir = new File(TEMP_DIR, zipId.toString() + ".zip");
+        //Clean up tempDir, in case it has been created in the past and there are any garbage left there
+        FileUtil.delete(tempDir);
+        List<File> unzippedFiles = FileUtil.unZip(zippedFile, tempDir);
+        int n = unzippedFiles.size();
+        Map<String, FileInfo> retVal = new HashMap<>(n);
+        File tempFile;
+        File outFile;
+        File parentDir;
+        BigInteger[] fids = fileInfoRepository.generateIdsFromSequencer(n);
+        BigInteger fid;
+        for (int i = 0; i < n; i++){
+            Long time1 = System.currentTimeMillis();
+            Long timeEnd = System.currentTimeMillis();
+
+            tempFile = unzippedFiles.get(i);
+            fid = fids[i];
+            FileInfo fileInfo = null;
+            FileInfo thumbFileInfo = null;
+            Long timeThumbTotal = 0L;
+
+            try{
+                fileInfo = new FileInfo(tempFile.getName(), FileUtil.getContentTypeByFileName(tempFile.getName()), FileConstants.UNZIPPED_FILE,
+                        FileUtil.getBytesFromFile(tempFile).length);
+                fileInfo.setFileRefId(fid.longValue());
+                createFileInfo(fileInfo);
+                retVal.put(tempFile.getName(), fileInfo);
+            }catch (Exception ex){
+                throw new NotificationServiceException("error.unzip.files",ex);
+            }
+
+        }
+        return retVal;
     }
 
     /**
@@ -328,7 +364,7 @@ public class FileServiceBean implements FileService{
     private int storeFile(FileInfo fileInfo, byte[] content) throws NotificationServiceException{
         BigInteger fid = null;
         if (fileInfo.getId() <= 0) {
-            createFileInfo(fileInfo).longValue();
+            createFileInfo(fileInfo);
         }
         fid = BigInteger.valueOf(fileInfo.getFileRefId());
         String[] paths = convertIdToPath(BigInteger.valueOf(fileInfo.getFileRefId()));

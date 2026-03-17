@@ -1,0 +1,13 @@
+{
+  "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+  "plugin.name": "pgoutput",
+  "database.hostname": "192.168.1.6",
+  "database.port": "5432",
+  "database.user": "authservice",
+  "database.password": "authservice",
+  "database.dbname": "authservice",
+  "table.include.list": "public.users",
+  "topic.prefix": "patient-management.auth-service",
+  "publication.autocreate.mode": "filtered",
+  "publication.name": "dbz_publication_authservice"
+}

@@ -109,7 +109,9 @@ services:
       - STATUS_STORAGE_REPLICATION_FACTOR=1
       # These ensure Debezium can find your Postgres databases
       - CONNECT_KEY_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE=false
       - CONNECT_VALUE_CONVERTER=org.apache.kafka.connect.json.JsonConverter
+      - CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE=false
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8083/"]
       interval: 10s
@@ -117,8 +119,11 @@ services:
       retries: 5
     depends_on:
       - kafka1
+    volumes:
+      - ./plugins/confluentinc-kafka-connect-elasticsearch-15.1.1/confluentinc-kafka-connect-elasticsearch-15.1.1/lib:/kafka/connect/elasticsearch
     networks:
       - kafka-cluster
+      - elastic
 
   connect-init:
     image: curlimages/curl:8.18.0
@@ -126,18 +131,23 @@ services:
     depends_on:
       connect:
         condition: service_healthy
+      es01:
+        condition: service_started
     volumes:
       - ./connectors:/connectors
     networks:
       - kafka-cluster
+      - elastic
     command: >
       sh -c "
       echo 'Waiting for Kafka Connect to be ready...' &&
       while [ $$(curl -s -o /dev/null -w %{http_code} http://connect:8083/) -ne 200 ]; do 
         sleep 5; 
       done &&
-      echo 'Registering patient-connector...' &&
-      curl -i -X PUT -H 'Content-Type: application/json' --data @/connectors/patient-connector.json http://connect:8083/connectors/auth-connector/config
+      echo 'Registering user-connector...' &&
+      curl -i -X PUT -H 'Content-Type: application/json' --data @/connectors/user-connector.json http://connect:8083/connectors/user-connector/config &&
+      echo 'Registering elastic-sink...' &&
+      curl -i -X PUT -H 'Content-Type: application/json' --data @/connectors/elastic-sink.json http://connect:8083/connectors/elastic-sink/config
       "
 
   prometheus:

@@ -1,0 +1,12 @@
+{
+  "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+  "type.name": "_doc",
+  "topics": "auth_service_users",
+  "connection.url": "http://es01:9200",
+  "connection.username": "elastic",
+  "connection.password": "changeme",
+  "key.ignore": "false",
+  "schema.ignore": "true",
+  "behavior.on.null.values": "delete",
+  "key.converter": "org.apache.kafka.connect.converters.LongConverter"
+}

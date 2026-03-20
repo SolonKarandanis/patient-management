@@ -1,0 +1,21 @@
+{
+  "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+  "plugin.name": "pgoutput",
+  "database.hostname": "192.168.1.6",
+  "database.port": "5432",
+  "database.user": "authservice",
+  "database.password": "authservice",
+  "database.dbname": "authservice",
+  "table.include.list": "public.users,public.user_roles,public.roles",
+  "topic.prefix": "patient-management.auth-service",
+  "publication.autocreate.mode": "filtered",
+  "publication.name": "dbz_publication_authservice",
+  "transforms": "unwrap",
+  "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+  "transforms.unwrap.drop.tombstones": "false",
+  "transforms.unwrap.delete.handling.mode": "none",
+  "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+  "key.converter.schemas.enable": "false",
+  "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+  "value.converter.schemas.enable": "false"
+}

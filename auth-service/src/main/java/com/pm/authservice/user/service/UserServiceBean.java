@@ -12,6 +12,7 @@ import com.pm.authservice.model.VerificationTokenEntity;
 import com.pm.authservice.service.VerificationTokenService;
 import com.pm.authservice.user.dto.*;
 import com.pm.authservice.user.event.*;
+import com.pm.authservice.outbox.service.OutboxService;
 import com.pm.authservice.user.model.QUserEntity;
 import com.pm.authservice.user.model.UserEntity;
 import com.pm.authservice.user.repository.UserRepository;
@@ -47,18 +48,21 @@ public class UserServiceBean implements UserService{
     private final VerificationTokenService verificationTokenService;
     private final PasswordEncoder passwordEncoder;
     private final GenericService genericService;
+    private final OutboxService outboxService;
 
     public UserServiceBean(
             UserRepository userRepository,
             RoleService roleService,
             VerificationTokenService verificationTokenService,
-            PasswordEncoder passwordEncoder, GenericService genericService
+            PasswordEncoder passwordEncoder, GenericService genericService,
+            OutboxService outboxService
     ){
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.verificationTokenService = verificationTokenService;
         this.passwordEncoder = passwordEncoder;
         this.genericService = genericService;
+        this.outboxService = outboxService;
     }
 
 
@@ -197,6 +201,7 @@ public class UserServiceBean implements UserService{
         RoleEntity role = roleService.findByName(dto.getRole());
         user.setRoles(Set.of(role));
         user = userRepository.save(user);
+        outboxService.createEvent(user, "UserCreated");
         genericService.getPublisher().publishEvent(new UserRegistrationEvent(user, applicationUrl));
         return user;
     }
@@ -215,14 +220,17 @@ public class UserServiceBean implements UserService{
         user.removeRoles();
         user.addRole(role);
         genericService.getPublisher().publishEvent(new UserUpdateEvent(user));
-        return userRepository.save(user);
+        user = userRepository.save(user);
+        outboxService.createEvent(user, "UserUpdated");
+        return user;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public UserEntity activateUser(UserEntity user) throws BusinessException {
         user.activate();
-        userRepository.save(user);
+        user = userRepository.save(user);
+        outboxService.createEvent(user, "UserActivated");
         genericService.getPublisher().publishEvent(new UserActivationEvent(user));
         return user;
     }
@@ -231,7 +239,8 @@ public class UserServiceBean implements UserService{
     @Override
     public UserEntity deactivateUser(UserEntity user) throws BusinessException {
         user.deactivate();
-        userRepository.save(user);
+        user = userRepository.save(user);
+        outboxService.createEvent(user, "UserDeactivated");
         genericService.getPublisher().publishEvent(new UserDeactivationEvent(user));
         return user;
     }
@@ -242,6 +251,7 @@ public class UserServiceBean implements UserService{
         Optional<UserEntity> usrOpt  =userRepository.findByPublicId(UUID.fromString(publicId));
         usrOpt.ifPresent(usr->{
             userRepository.delete(usr);
+            outboxService.createEvent(usr, "UserDeleted");
             genericService.getPublisher().publishEvent(new UserDeletionEvent(usr));
         });
     }
@@ -253,7 +263,8 @@ public class UserServiceBean implements UserService{
         if(verificationResult){
             UserEntity user = verificationToken.getUser();
             user.setIsVerified(Boolean.TRUE);
-            userRepository.save(user);
+            user = userRepository.save(user);
+            outboxService.createEvent(user, "UserVerified");
         }
     }
 
@@ -281,7 +292,9 @@ public class UserServiceBean implements UserService{
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         LocalDate today = LocalDate.now();
         user.setLastModifiedDate(today);
-        return userRepository.save(user);
+        user = userRepository.save(user);
+        outboxService.createEvent(user, "UserUpdated");
+        return user;
     }
 
     protected Predicate getSearchPredicate(UsersSearchRequestDTO searchObj,UserEntity loggedUser){

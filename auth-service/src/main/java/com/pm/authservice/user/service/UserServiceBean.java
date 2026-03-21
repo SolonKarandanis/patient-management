@@ -201,7 +201,7 @@ public class UserServiceBean implements UserService{
         RoleEntity role = roleService.findByName(dto.getRole());
         user.setRoles(Set.of(role));
         user = userRepository.save(user);
-        outboxService.createEvent(user, "UserCreated");
+        outboxService.createUserEvent(user, "UserCreated");
         genericService.getPublisher().publishEvent(new UserRegistrationEvent(user, applicationUrl));
         return user;
     }
@@ -221,7 +221,7 @@ public class UserServiceBean implements UserService{
         user.addRole(role);
         genericService.getPublisher().publishEvent(new UserUpdateEvent(user));
         user = userRepository.save(user);
-        outboxService.createEvent(user, "UserUpdated");
+        outboxService.createUserEvent(user, "UserUpdated");
         return user;
     }
 
@@ -230,7 +230,7 @@ public class UserServiceBean implements UserService{
     public UserEntity activateUser(UserEntity user) throws BusinessException {
         user.activate();
         user = userRepository.save(user);
-        outboxService.createEvent(user, "UserActivated");
+        outboxService.createUserEvent(user, "UserActivated");
         genericService.getPublisher().publishEvent(new UserActivationEvent(user));
         return user;
     }
@@ -240,7 +240,7 @@ public class UserServiceBean implements UserService{
     public UserEntity deactivateUser(UserEntity user) throws BusinessException {
         user.deactivate();
         user = userRepository.save(user);
-        outboxService.createEvent(user, "UserDeactivated");
+        outboxService.createUserEvent(user, "UserDeactivated");
         genericService.getPublisher().publishEvent(new UserDeactivationEvent(user));
         return user;
     }
@@ -251,7 +251,7 @@ public class UserServiceBean implements UserService{
         Optional<UserEntity> usrOpt  =userRepository.findByPublicId(UUID.fromString(publicId));
         usrOpt.ifPresent(usr->{
             userRepository.delete(usr);
-            outboxService.createEvent(usr, "UserDeleted");
+            outboxService.createUserEvent(usr, "UserDeleted");
             genericService.getPublisher().publishEvent(new UserDeletionEvent(usr));
         });
     }
@@ -264,7 +264,7 @@ public class UserServiceBean implements UserService{
             UserEntity user = verificationToken.getUser();
             user.setIsVerified(Boolean.TRUE);
             user = userRepository.save(user);
-            outboxService.createEvent(user, "UserVerified");
+            outboxService.createUserEvent(user, "UserVerified");
         }
     }
 
@@ -293,7 +293,7 @@ public class UserServiceBean implements UserService{
         LocalDate today = LocalDate.now();
         user.setLastModifiedDate(today);
         user = userRepository.save(user);
-        outboxService.createEvent(user, "UserUpdated");
+        outboxService.createUserEvent(user, "UserUpdated");
         return user;
     }
 

@@ -137,11 +137,6 @@
             <artifactId>protobuf-java</artifactId>
             <version>${protobuf.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.gavlyukovskiy</groupId>
-            <artifactId>datasource-proxy-spring-boot-starter</artifactId>
-            <version>1.12.0</version>
-        </dependency>
         <!-- Utility Dependencies End-->
 		<!-- QueryDSL Dependencies Start-->
 		<dependency>
@@ -239,15 +234,6 @@
 						</exclude>
 					</excludes>
 				</configuration>
-                <executions>
-                    <execution>
-                        <id>process-aot</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>process-aot</goal>
-                        </goals>
-                    </execution>
-                </executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

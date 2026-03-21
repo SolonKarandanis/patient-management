@@ -1,12 +1,20 @@
 {
   "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
   "type.name": "_doc",
-  "topics": "auth_service_users",
+  "topics": "outbox.event.com.pm.authservice.user.model.UserEntity",
   "connection.url": "http://es01:9200",
   "connection.username": "elastic",
   "connection.password": "changeme",
   "key.ignore": "false",
   "schema.ignore": "true",
   "behavior.on.null.values": "delete",
-  "key.converter": "org.apache.kafka.connect.converters.LongConverter"
+  "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+  "flush.synchronously": "true",
+  "transforms": "routeIndex",
+  "transforms.routeIndex.type": "org.apache.kafka.connect.transforms.RegexRouter",
+  "transforms.routeIndex.regex": "outbox.event.com.pm.authservice.user.model.UserEntity",
+  "transforms.routeIndex.replacement": "auth_service_users",
+  "errors.tolerance": "all",
+  "errors.log.enable": "true",
+  "errors.log.include.messages": "true"
 }

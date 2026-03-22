@@ -1,0 +1,77 @@
+{
+  "index.max_ngram_diff": 20,
+  "analysis": {
+    "analyzer": {
+      "my_comma": {
+        "type": "custom",
+        "tokenizer": "comma_sep"
+      },
+      "greek_lowercase_analyzer": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "char_filter": ["greek_normalizer_char_filter"],
+        "filter": ["lowercase", "asciifolding", "word_delimiter_graph_filter"]
+      },
+      "autocomplete_analyzer": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "char_filter": ["greek_normalizer_char_filter"],
+        "filter": ["lowercase", "asciifolding", "edge_ngram_filter"]
+      },
+      "ngram_analyzer": {
+        "type": "custom",
+        "tokenizer": "standard",
+        "char_filter": ["greek_normalizer_char_filter"],
+        "filter": ["lowercase", "asciifolding", "ngram_filter"]
+      }
+    },
+    "tokenizer": {
+      "comma_sep": {
+        "type": "pattern",
+        "pattern": ",", "flags": "", "group": -1
+      }
+    },
+    "normalizer": {
+      "lowercase_normalizer": {
+        "type": "custom",
+        "char_filter": ["greek_normalizer_char_filter"],
+        "filter": ["lowercase"]
+      }
+    },
+    "char_filter": {
+      "greek_normalizer_char_filter": {
+        "type": "mapping",
+        "mappings": [
+          "ά => a", "έ => e", "ή => h", "ί => i", "ό => o", "ύ => y", "ώ => w",
+          "Ά => A", "Έ => E", "Ή => H", "Ί => I", "Ό => O", "Ύ => Y", "Ώ => W",
+          "ς => s",
+          "α => a", "β => b", "γ => g", "δ => d", "ε => e", "ζ => z", "η => h", "θ => th", "ι => i", "κ => k", "λ => l", "μ => m", "ν => n", "ξ => ks", "ο => o", "π => p", "ρ => r", "σ => s", "τ => t", "υ => y", "φ => f", "χ => ch", "ψ => ps", "ω => w",
+          "Α => A", "Β => B", "Γ => G", "Δ => D", "Ε => E", "Ζ => Z", "Η => H", "Θ => TH", "Ι => I", "Κ => K", "Λ => L", "Μ => M", "Ν => N", "Ξ => KS", "Ο => O", "Π => P", "Ρ => R", "Σ => S", "Τ => T", "Υ => Y", "Φ => F", "Χ => CH", "Ψ => PS", "Ω => W"
+        ]
+      }
+    },
+    "filter": {
+      "word_delimiter_graph_filter": {
+        "type": "word_delimiter_graph",
+        "split_on_numerics": true,
+        "split_on_case_change": true,
+        "generate_word_parts": true,
+        "generate_number_parts": true,
+        "catenate_words": false,
+        "catenate_numbers": false,
+        "catenate_all": false,
+        "preserve_original": true
+      },
+      "edge_ngram_filter": {
+        "type": "edge_ngram",
+        "min_gram": 1,
+        "max_gram": 20
+      },
+      "ngram_filter": {
+        "type": "ngram",
+        "min_gram": 1,
+        "max_gram": 20
+      }
+    }
+  }
+}

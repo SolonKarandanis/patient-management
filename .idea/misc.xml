@@ -17,6 +17,7 @@
         <option value="$PROJECT_DIR$/stream-processor/pom.xml" />
         <option value="$PROJECT_DIR$/medical-records-service/pom.xml" />
         <option value="$PROJECT_DIR$/gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/fts-service/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

@@ -47,25 +47,25 @@ public class OutboxServiceBean implements OutboxService {
 
             Map<String, Object> payloadMap = new HashMap<>();
             payloadMap.put("id", user.getId());
-            payloadMap.put("public_id", user.getPublicId().toString());
+            payloadMap.put("publicId", user.getPublicId().toString());
             payloadMap.put("username", user.getUsername());
-            payloadMap.put("first_name", user.getFirstName());
-            payloadMap.put("last_name", user.getLastName());
+            payloadMap.put("firstName", user.getFirstName());
+            payloadMap.put("lastName", user.getLastName());
             payloadMap.put("email", user.getEmail());
             payloadMap.put("status", user.getStatus() != null ? user.getStatus().getValue() : null);
-            payloadMap.put("is_enabled", user.getIsEnabled());
-            payloadMap.put("is_verified", user.getIsVerified());
+            payloadMap.put("isEnabled", user.getIsEnabled());
+            payloadMap.put("isVerified", user.getIsVerified());
 
             if (user.getRoles() != null) {
                 List<String> roleNames = user.getRoles().stream()
                         .map(RoleEntity::getName)
                         .collect(Collectors.toList());
-                payloadMap.put("roles", roleNames);
+                payloadMap.put("rolesNames", roleNames);
 
                 List<Integer> roleIds = user.getRoles().stream()
                         .map(RoleEntity::getId)
                         .collect(Collectors.toList());
-                payloadMap.put("role_ids", roleIds);
+                payloadMap.put("roleIds", roleIds);
             }
 
             String payload = objectMapper.writeValueAsString(payloadMap);

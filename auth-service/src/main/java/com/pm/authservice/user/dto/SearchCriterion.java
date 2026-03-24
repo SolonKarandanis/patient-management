@@ -1,4 +1,4 @@
-package com.pm.fts.web.dto;
+package com.pm.authservice.user.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

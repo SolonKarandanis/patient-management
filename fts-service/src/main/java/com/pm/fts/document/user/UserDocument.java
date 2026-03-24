@@ -28,14 +28,14 @@ public class UserDocument extends AbstractDocument {
     @MultiField(mainField = @Field(index = true, type = FieldType.Text, name = "firstName", analyzer = "greek_lowercase_analyzer"),
             otherFields = {
                     @InnerField(index = true, type = FieldType.Keyword, suffix = "keyword",  normalizer = "lowercase_normalizer"),
-                    @InnerField(index = true, type = FieldType.Text, suffix = "ngram", analyzer = "ngram_analyzer")
+                    @InnerField(index = true, type = FieldType.Text, suffix = "ngram", analyzer = "ngram_analyzer", searchAnalyzer = "greek_lowercase_analyzer")
             })
     protected String firstName;
 
     @MultiField(mainField = @Field(index = true, type = FieldType.Text, name = "lastName", analyzer = "greek_lowercase_analyzer"),
             otherFields = {
                     @InnerField(index = true, type = FieldType.Keyword, suffix = "keyword",  normalizer = "lowercase_normalizer"),
-                    @InnerField(index = true, type = FieldType.Text, suffix = "ngram", analyzer = "ngram_analyzer")
+                    @InnerField(index = true, type = FieldType.Text, suffix = "ngram", analyzer = "ngram_analyzer", searchAnalyzer = "greek_lowercase_analyzer")
             })
     @Field(type = FieldType.Keyword, name = "lastName")
     protected String lastName;
@@ -43,7 +43,7 @@ public class UserDocument extends AbstractDocument {
     @MultiField(mainField = @Field(index = true, type = FieldType.Text, name = "lastName"),
             otherFields = {
                     @InnerField(index = true, type = FieldType.Keyword, suffix = "keyword",  normalizer = "lowercase_normalizer"),
-                    @InnerField(index = true, type = FieldType.Text, suffix = "ngram", analyzer = "ngram_analyzer")
+                    @InnerField(index = true, type = FieldType.Text, suffix = "ngram", analyzer = "ngram_analyzer",searchAnalyzer = "greek_lowercase_analyzer")
             })
     @Field(type = FieldType.Keyword, name = "email")
     protected String email;

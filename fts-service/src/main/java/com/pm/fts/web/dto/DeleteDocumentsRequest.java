@@ -7,6 +7,6 @@ import java.util.List;
 
 @Getter
 @Setter
-public class DeleteItemsRequest {
-    private List<Integer> itemIds;
+public class DeleteDocumentsRequest {
+    private List<Integer> documentIds;
 }

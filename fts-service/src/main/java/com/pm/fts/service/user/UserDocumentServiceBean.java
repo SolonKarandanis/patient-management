@@ -8,9 +8,13 @@ import com.pm.fts.web.dto.DocumentSearchRequest;
 import com.pm.fts.web.dto.UserDocumentDTO;
 import com.pm.fts.web.dto.UserDocumentSearchResultsDTO;
 import com.pm.fts.web.dto.UserSearchResponseDTO;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserDocumentServiceBean extends BaseDocumentServiceBean implements UserDocumentService{
@@ -40,26 +44,43 @@ public class UserDocumentServiceBean extends BaseDocumentServiceBean implements 
         document.setUsername(dto.getUsername());
         document.setFirstName(dto.getFirstName());
         document.setLastName(dto.getLastName());
+        document.setEmail(dto.getEmail());
+        document.setStatus(dto.getStatus());
+        document.setIsEnabled(dto.getIsEnabled());
+        document.setIsVerified(dto.getIsVerified());
+        document.setRoleIds(dto.getRoleIds());
+        document.setRolesNames(dto.getRolesNames());
         return document;
     }
 
     @Override
     public List<UserDocument> convertToDocuments(List<UserDocumentDTO> dtoList) {
-        return List.of();
+        List<UserDocument> result = new ArrayList<>();
+        if (CollectionUtils.isEmpty(dtoList)) {
+            return result;
+        }
+        for (UserDocumentDTO dto : dtoList) {
+            result.add(convertToDocument(dto));
+        }
+        return result;
     }
 
     @Override
-    public UserSearchResponseDTO search(DocumentSearchRequest payload) throws Exception {
-        return null;
+    public UserSearchResponseDTO search(@Valid DocumentSearchRequest payload) throws Exception {
+        if (Objects.equals(DocumentSearchRequest.Type.QUICK, payload.getType())) {
+            return userDocumentCustomRepositoryImpl.quickSearch(payload);
+        } else {
+            return userDocumentCustomRepositoryImpl.advancedSearch(payload);
+        }
     }
 
     @Override
     public Long countItems(DocumentSearchRequest payload) throws Exception {
-        return 0L;
+        return userDocumentCustomRepositoryImpl.countItems(payload);
     }
 
     @Override
-    public List<UserDocumentSearchResultsDTO> findDocumentItems(DocumentSearchRequest payload) throws Exception {
-        return List.of();
+    public List<UserDocumentSearchResultsDTO> findDocumentUsers(DocumentSearchRequest payload) throws Exception {
+        return userDocumentCustomRepositoryImpl.findDocumentItems(payload).getContent();
     }
 }

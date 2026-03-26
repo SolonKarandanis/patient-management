@@ -21,5 +21,5 @@ public interface UserDocumentService {
 
     Long countItems(@Valid DocumentSearchRequest payload) throws Exception;
 
-    List<UserDocumentSearchResultsDTO> findDocumentItems(@Valid DocumentSearchRequest payload) throws Exception;
+    List<UserDocumentSearchResultsDTO> findDocumentUsers(@Valid DocumentSearchRequest payload) throws Exception;
 }

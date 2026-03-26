@@ -11,5 +11,5 @@ public interface BaseDocumentService {
 
     void deleteByIds(List<Integer> itemIds);
 
-    Boolean deleteDocumentIndex() throws FtsEsException;
+    void deleteDocumentIndex() throws FtsEsException;
 }

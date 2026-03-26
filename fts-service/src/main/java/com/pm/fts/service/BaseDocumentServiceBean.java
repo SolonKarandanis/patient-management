@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 
-@Service
+@Service("baseDocumentService")
 @Log
 public abstract class BaseDocumentServiceBean implements BaseDocumentService{
 
@@ -83,7 +83,7 @@ public abstract class BaseDocumentServiceBean implements BaseDocumentService{
     }
 
     @Override
-    public Boolean deleteDocumentIndex() throws FtsEsException {
+    public void deleteDocumentIndex() throws FtsEsException {
         Boolean doesIndexExist = existsActiveItemIndex();
         if (!doesIndexExist) {
             throw new FtsEsException("Index does not exist");
@@ -93,7 +93,6 @@ public abstract class BaseDocumentServiceBean implements BaseDocumentService{
 
         try {
             DeleteIndexResponse response = client.indices().delete(deleteRequest);
-            return response.acknowledged();
         } catch (ElasticsearchException | IOException e) {
             log.log(Level.SEVERE, "Caught Error: {}", e.getMessage());
             throw new FtsEsException("Error when deleting index");

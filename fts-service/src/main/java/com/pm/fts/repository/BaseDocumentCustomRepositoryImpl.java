@@ -15,7 +15,7 @@ import java.util.Objects;
 @Component
 public abstract class BaseDocumentCustomRepositoryImpl {
 
-    @Value("${ccm.document.index.pfx}")
+    @Value("${document.index.pfx}")
     protected String indexPrefix;
 
     protected String getIndexPrefix() {

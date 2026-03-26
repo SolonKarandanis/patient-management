@@ -11,5 +11,5 @@ public interface UserDocumentCustomRepository <T extends SearchResponseDTO, P ex
 
     Long countItems(P payload) throws Exception;
 
-    T findActiveItems(P payload) throws Exception;
+    T findDocumentItems(P payload) throws Exception;
 }

@@ -8,10 +8,8 @@ import java.util.List;
 
 @Getter
 @Setter
-public class UserDocumentDTO {
+public class UserDocumentDTO extends AbstractDocumentDTO{
 
-    protected Integer id;
-    protected String publicId;
     protected String username;
     protected String firstName;
     protected String lastName;

@@ -55,11 +55,11 @@ public class UserDocumentCustomRepositoryImpl extends BaseDocumentCustomReposito
     }
 
     @Override
-    public UserSearchResponseDTO findActiveItems(DocumentSearchRequest payload) throws Exception {
+    public UserSearchResponseDTO findDocumentItems(DocumentSearchRequest payload) throws Exception {
         NativeQuery searchQuery = getNativeQuery(payload,false);
         // 2. Execute search
         SearchHits<UserDocument> hits = esOps.search(searchQuery, UserDocument.class, IndexCoordinates.of(getIndex()));
-        log.info("UserDocumentCustomRepositoryImpl -> findActiveItems-> hits " + hits.getTotalHits());
+        log.info("UserDocumentCustomRepositoryImpl -> findDocumentItems-> hits " + hits.getTotalHits());
         return new UserSearchResponseDTO(hits, hits.getTotalHits());
     }
 }

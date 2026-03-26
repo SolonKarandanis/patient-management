@@ -5,6 +5,8 @@ import com.pm.fts.exception.UnsupportedEsQueryException;
 import com.pm.fts.web.dto.DocumentSearchRequest;
 import com.pm.fts.web.dto.SearchCriterion;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
+import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -26,7 +28,26 @@ public abstract class BaseDocumentCustomRepositoryImpl {
         return RepositoryUtils.getRoleAccessQuery(payload);
     }
 
-    protected void setSearchItemStatus(BoolQuery.Builder bqbFilter, DocumentSearchRequest.Status status) {
+    protected NativeQuery getNativeQuery(DocumentSearchRequest payload,Boolean withPageable) throws UnsupportedEsQueryException {
+        NativeQueryBuilder searchQueryBuilder = NativeQuery.builder();
+        searchQueryBuilder.withFilter(new Query(getBoolQueryBuilder(payload).build())).withSourceFilter(RepositoryUtils.getSourceFilter(payload.getResultFields(), null));
+        if(withPageable){
+            searchQueryBuilder.withPageable(RepositoryUtils.toPageable(payload.getPaging()));
+        }
+        return searchQueryBuilder.build();
+    }
+
+    protected BoolQuery.Builder getBoolQueryBuilder(DocumentSearchRequest payload) throws UnsupportedEsQueryException {
+        BoolQuery.Builder bqbFilter = QueryBuilders.bool();
+        // add role security
+        bqbFilter = getRoleAccess(payload);
+        //search for status active or for all items
+        setItemStatus(bqbFilter, payload.getStatus());
+        addSearchCriteria(payload, bqbFilter);
+        return bqbFilter;
+    }
+
+    protected void setItemStatus(BoolQuery.Builder bqbFilter, DocumentSearchRequest.Status status) {
         MatchQuery.Builder matchQueryBuilder = QueryBuilders.match();
         if (Objects.equals(DocumentSearchRequest.Status.ACTIVE, status)) {
             matchQueryBuilder.field("status").query("status.active");

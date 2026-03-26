@@ -37,7 +37,6 @@ public class UserDocument extends AbstractDocument {
                     @InnerField(index = true, type = FieldType.Keyword, suffix = "keyword",  normalizer = "lowercase_normalizer"),
                     @InnerField(index = true, type = FieldType.Text, suffix = "ngram", analyzer = "ngram_analyzer", searchAnalyzer = "greek_lowercase_analyzer")
             })
-    @Field(type = FieldType.Keyword, name = "lastName")
     protected String lastName;
 
     @MultiField(mainField = @Field(index = true, type = FieldType.Text, name = "lastName"),
@@ -45,7 +44,6 @@ public class UserDocument extends AbstractDocument {
                     @InnerField(index = true, type = FieldType.Keyword, suffix = "keyword",  normalizer = "lowercase_normalizer"),
                     @InnerField(index = true, type = FieldType.Text, suffix = "ngram", analyzer = "ngram_analyzer",searchAnalyzer = "greek_lowercase_analyzer")
             })
-    @Field(type = FieldType.Keyword, name = "email")
     protected String email;
 
     @Field(type = FieldType.Keyword, name = "status")

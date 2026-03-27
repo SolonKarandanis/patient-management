@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pm.authservice.outbox.model.OutboxEvent;
 import com.pm.authservice.outbox.repository.OutboxEventRepository;
-import com.pm.authservice.user.dto.UserDocumentDTO;
+import com.pm.authservice.dto.UserDocumentDTO;
 import com.pm.authservice.user.model.RoleEntity;
 import com.pm.authservice.user.model.UserEntity;
 import org.slf4j.Logger;

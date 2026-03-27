@@ -1,5 +1,6 @@
-package com.pm.authservice.user.dto;
+package com.pm.authservice.dto;
 
+import com.pm.authservice.user.dto.Paging;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

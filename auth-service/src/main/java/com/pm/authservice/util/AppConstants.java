@@ -11,4 +11,11 @@ public class AppConstants {
     public static final Integer MAX_RESULTS_CSV_EXPORT=10000;
 
     public static final String EMAIL_TOPIC = "email";
+
+    public static final String STATUS_ACTIVE = "account.active";
+    public static final String STATUS_ALL = "status.all";
+
+    public static final String SEARCH_TYPE_AND = "search.type.and";
+    public static final String SEARCH_TYPE_OR = "search.type.or";
+
 }

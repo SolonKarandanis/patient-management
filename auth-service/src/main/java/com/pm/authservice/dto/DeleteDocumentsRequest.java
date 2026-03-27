@@ -1,10 +1,12 @@
-package com.pm.authservice.user.dto;
+package com.pm.authservice.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Getter
 @Setter
 public class DeleteDocumentsRequest {

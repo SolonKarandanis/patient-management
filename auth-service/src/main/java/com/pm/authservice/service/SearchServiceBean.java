@@ -1,13 +1,24 @@
 package com.pm.authservice.service;
 
+import com.pm.authservice.dto.DocumentSearchRequest;
 import com.pm.authservice.dto.Paging;
+import com.pm.authservice.dto.SearchResults;
+import com.pm.authservice.dto.UserDocumentSearchResultsDTO;
+import com.pm.authservice.exception.AuthException;
+import com.pm.authservice.service.fts.FtsUtil;
+import com.pm.authservice.service.fts.UserFullTextSearchService;
+import com.pm.authservice.user.dto.UsersSearchRequestDTO;
+import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +27,17 @@ import java.util.List;
 @Transactional(propagation = Propagation.SUPPORTS)
 @Slf4j
 public class SearchServiceBean  implements SearchService{
+
+    private final UserService userService;
+    private final UserFullTextSearchService userFullTextSearchService;
+
+    @Value("${search.elasticSearch.enable:false}")
+    private Boolean elasticSearchEnable;
+
+    public SearchServiceBean(UserService userService, UserFullTextSearchService userFullTextSearchService) {
+        this.userService = userService;
+        this.userFullTextSearchService = userFullTextSearchService;
+    }
 
     @Override
     public Sort getPageSort(Paging paging) {
@@ -91,5 +113,59 @@ public class SearchServiceBean  implements SearchService{
         paging.setSortingColumn(sortField);
         Sort sort = getPageSort(paging, secondaryOrdering);
         return PageRequest.of(pageNo, size, sort);
+    }
+
+    protected void logIfElasticSearchIsEnabled(){
+        log.debug("isElasticSearchEnabled: {}", elasticSearchEnable);
+    }
+
+    protected void checkRequestParamsValidity(String status, String searchMethod) throws AuthException {
+        boolean isPermittedItemStatusValue = FtsUtil.getPermittedSearchUsersStatusValues().stream()
+                .anyMatch(s -> s.equals(status));
+        boolean isPermittedItemSearchMethodValue = FtsUtil.getPermittedSearchUsersSearchMethodValues().stream()
+                .anyMatch(s -> s.equals(searchMethod));
+        String[] arguments = null;
+        if (!isPermittedItemStatusValue) {
+            arguments = FtsUtil.getPermittedSearchUsersStatusValues().toArray(new String[0]);
+            throw new AuthException("error.search.user.status", arguments);
+        }
+        if (!isPermittedItemSearchMethodValue) {
+            arguments = FtsUtil.getPermittedSearchUsersSearchMethodValues().toArray(new String[0]);
+            throw new AuthException("error.search.user.method", arguments);
+        }
+    }
+
+    @Override
+    public SearchResults<UserDocumentSearchResultsDTO> advancedSearchUsers(UsersSearchRequestDTO request, UserEntity loggedUser)
+            throws ResourceAccessException, AuthException {
+        log.debug("in SearchServiceBean ----> advancedSearchUsers");
+        logIfElasticSearchIsEnabled();
+        String status = request.getStatus();
+//        String searchMethod = request.getSearchMethod();
+        return null;
+    }
+
+    @Override
+    public Long countItems(UsersSearchRequestDTO request, UserEntity loggedUser) throws ResourceAccessException, AuthException {
+        log.debug("in SearchServiceBean ----> countItems");
+        logIfElasticSearchIsEnabled();
+        return 0L;
+    }
+
+    @Override
+    public List<UserDocumentSearchResultsDTO> findUsersForExport(UsersSearchRequestDTO searchRequest, UserEntity user)
+            throws ResourceAccessException, AuthException {
+        log.debug("in SearchServiceBean ----> findUsersForExport");
+        logIfElasticSearchIsEnabled();
+        return List.of();
+    }
+
+    @Override
+    public SearchResults<UserDocumentSearchResultsDTO> quickSearchUsers(String quickSearchValueParam, UserEntity loggedUser,
+                                                                        Integer page, Integer size, String sortField, String sortOrder)
+            throws ResourceAccessException, AuthException {
+        log.debug("in SearchServiceBean ----> quickSearchUsers");
+        logIfElasticSearchIsEnabled();
+        return null;
     }
 }

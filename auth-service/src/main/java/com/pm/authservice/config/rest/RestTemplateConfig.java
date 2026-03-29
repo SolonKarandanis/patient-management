@@ -2,7 +2,6 @@ package com.pm.authservice.config.rest;
 
 import com.pm.authservice.config.rest.interceptor.LoggingInterceptor;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -17,8 +16,8 @@ import java.util.List;
 public class RestTemplateConfig {
 
     @Bean
-    RestTemplate restTemplate() {
-        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
+    RestTemplate restTemplate(HttpComponentsClientHttpRequestFactory clientHttpRequestFactory) {
+        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
         restTemplate.setErrorHandler(new RestTemplateResponseErrorHandler());
         List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
         if(CollectionUtils.isEmpty(interceptors)) {
@@ -30,9 +29,8 @@ public class RestTemplateConfig {
     }
 
     @Bean
-    HttpComponentsClientHttpRequestFactory clientHttpRequestFactory() {
+    HttpComponentsClientHttpRequestFactory clientHttpRequestFactory(CloseableHttpClient httpClient) {
         HttpComponentsClientHttpRequestFactory clientHttpRequestFactory= new HttpComponentsClientHttpRequestFactory();
-        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         clientHttpRequestFactory.setHttpClient(httpClient);
         return clientHttpRequestFactory;
     }

@@ -71,7 +71,7 @@ public class UserFullTextSearchServiceBean implements UserFullTextSearchService{
         HttpEntity<List<UserDocumentDTO>> request = new HttpEntity<>(documents, headers);
         ResponseEntity<Void> response = restTemplate.exchange(getEndpoint() + "/users", HttpMethod.POST, request,
                 Void.class);
-        log.debug(RESPONSE_STATUS, response.getStatusCode());
+        logResponse(response);
         return response.getStatusCode().is2xxSuccessful();
     }
 
@@ -79,7 +79,7 @@ public class UserFullTextSearchServiceBean implements UserFullTextSearchService{
     public Boolean deleteUsersByIds(List<Integer> itemIds) throws ResourceAccessException {
         HttpEntity<DeleteDocumentsRequest> request = new HttpEntity<>(new DeleteDocumentsRequest(itemIds), getDefaultHeaders());
         ResponseEntity<Void> response = restTemplate.exchange(getEndpoint() + "/users/byIds", HttpMethod.DELETE, request, Void.class);
-        log.debug(RESPONSE_STATUS, response.getStatusCode());
+        logResponse(response);
         return response.getStatusCode().is2xxSuccessful();
     }
 
@@ -87,7 +87,11 @@ public class UserFullTextSearchServiceBean implements UserFullTextSearchService{
     public Boolean deleteUserIndex() throws ResourceAccessException {
         HttpEntity<Integer> request = new HttpEntity<>(getDefaultHeaders());
         ResponseEntity<Void> response = restTemplate.exchange(getEndpoint() + "/users", HttpMethod.DELETE, request, Void.class);
-        log.debug(RESPONSE_STATUS, response.getStatusCode());
+        logResponse(response);
         return response.getStatusCode().is2xxSuccessful();
+    }
+
+    protected void logResponse(ResponseEntity<Void> response){
+        log.debug(RESPONSE_STATUS, response.getStatusCode());
     }
 }

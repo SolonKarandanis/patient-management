@@ -62,7 +62,10 @@ public class UserFullTextSearchServiceBean implements UserFullTextSearchService{
         HttpHeaders headers = getDefaultHeaders();
         HttpEntity<DocumentSearchRequest> request = new HttpEntity<>(payload, headers);
         UserDocumentSearchResultsDTO[] result = restTemplate.postForObject(getEndpoint() + "/items/search/export", request, UserDocumentSearchResultsDTO[].class);
-        return List.of(result);
+        if(result != null && result.length >0){
+            return List.of(result);
+        }
+        return List.of();
     }
 
     @Override

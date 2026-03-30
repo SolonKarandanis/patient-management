@@ -1,6 +1,5 @@
 package com.pm.authservice.dto;
 
-import com.pm.authservice.user.dto.Paging;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -36,7 +35,7 @@ public class DocumentSearchRequest {
     private Type type;
 
     @Valid
-    private Paging paging;
+    private PagingFts paging;
 
     @NotNull
     private Status status;

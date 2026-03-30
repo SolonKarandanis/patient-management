@@ -23,6 +23,7 @@ public class FtsUtil {
     public static final String ES_USER_FIELD_STATUS = "status";
     public static final String ES_USER_FIELD_IS_ENABLED= "isEnabled";
     public static final String ES_USER_FIELD_IS_VERIFIED = "isVerified";
+    public static final String ES_USER_FIELD_ROLE_NAMES="rolesNames";
 
 
     protected static final Map<String, String> userColumnsForFTSSortOrGroupOps = new HashMap<>();

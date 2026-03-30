@@ -220,12 +220,42 @@ public class SearchServiceBean  implements SearchService{
         return null;
     }
 
+    protected DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?> getQuickSearchUsersRequestBuilder(String quickSearchValueParam,
+                                                                                      Integer page, Integer size, String sortField, String sortOrder){
+        List<SearchCriterion> criteria = new ArrayList<>();
+        PagingFts paging = addPaging(page, size, sortField, sortOrder);
+        //value is 'search.type.or'
+        SearchCriterion.FTSOperation operation = SearchCriterion.FTSOperation.OR;
+        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_USERNAME, quickSearchValueParam, SearchCriterion.SearchType.WILDCARD);
+        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_FIRST_NAME, quickSearchValueParam);
+        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_LAST_NAME, quickSearchValueParam);
+        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_EMAIL, quickSearchValueParam);
+        return DocumentSearchRequest.builder().type(DocumentSearchRequest.Type.QUICK).paging(paging).criteria(criteria).status(DocumentSearchRequest.Status.ALL);
+    }
+
+    protected SearchResults<UserDocumentSearchResultsDTO> searchItemsOrThrow(DocumentSearchRequest ftsRequest)
+            throws ResourceAccessException{
+        try {
+            log.debug(" [FTS SEARCH]  ftsRequest: {}", ftsRequest);
+            UserSearchResponseDTO ftsResponse = userFullTextSearchService.searchUsers(ftsRequest);
+            int count = ftsResponse.getTotalElements().intValue();
+            log.debug(" [FTS SEARCH]  results count: {}", count);
+            return new SearchResults<>(count, ftsResponse.getContent());
+        } catch (ResourceAccessException exc) {
+            throw new ResourceAccessException("error.fts.connection.failure");
+        }
+    }
+
     protected List<SearchCriterion> setUserCriteria(UsersSearchRequestDTO request, SearchCriterion.FTSOperation operation){
         List<SearchCriterion> criteria = new ArrayList<>();
         String username = request.getUsername();
         String name = request.getName();
         String email = request.getEmail();
         String roleName = request.getRoleName();
+        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_USERNAME, username, SearchCriterion.SearchType.WILDCARD);
+        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_ROLE_NAMES, roleName);
+        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_FIRST_NAME, name, SearchCriterion.SearchType.MATCH_PREFIX);
+        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_EMAIL, email, SearchCriterion.SearchType.MATCH_PREFIX);
         return criteria;
     }
 
@@ -323,6 +353,19 @@ public class SearchServiceBean  implements SearchService{
         }
         return pagingBuilder.build();
     }
+
+    protected PagingFts addPaging(Integer page, Integer size, String sortField, String sortOrder) {
+        Integer calculatedPage = calculatePage(page, size);
+        PagingFts.PagingFtsBuilder pagingBuilder = PagingFts.builder().page(calculatedPage).limit(size);
+        if (StringUtils.hasLength(sortField)) {
+            pagingBuilder.sortFields(List.of(getUserColumnsForFTSSortOrGroupOps().get(sortField)));
+        }
+        if (StringUtils.hasLength(sortOrder)) {
+            pagingBuilder.sortDirection(sortOrder);
+        }
+        return pagingBuilder.build();
+    }
+
 
     protected Map<String, String> getUserColumnsForFTSSortOrGroupOps() {
         return FtsUtil.getUserColumnsForFTSSortOrGroupOps();

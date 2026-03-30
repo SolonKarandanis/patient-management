@@ -1,17 +1,17 @@
 package com.pm.authservice.service;
 
-import com.pm.authservice.dto.DocumentSearchRequest;
-import com.pm.authservice.dto.Paging;
-import com.pm.authservice.dto.SearchResults;
-import com.pm.authservice.dto.UserDocumentSearchResultsDTO;
+import com.pm.authservice.dto.*;
 import com.pm.authservice.exception.AuthException;
 import com.pm.authservice.service.fts.FtsUtil;
 import com.pm.authservice.service.fts.UserFullTextSearchService;
+import com.pm.authservice.user.dto.UserDTO;
 import com.pm.authservice.user.dto.UsersSearchRequestDTO;
 import com.pm.authservice.user.model.UserEntity;
 import com.pm.authservice.user.service.UserService;
+import com.pm.authservice.util.AppConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -20,8 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service("searchService")
 @Transactional(propagation = Propagation.SUPPORTS)
@@ -136,36 +135,200 @@ public class SearchServiceBean  implements SearchService{
     }
 
     @Override
-    public SearchResults<UserDocumentSearchResultsDTO> advancedSearchUsers(UsersSearchRequestDTO request, UserEntity loggedUser)
+    public SearchResults<UserDTO> advancedSearchUsers(UsersSearchRequestDTO request, UserEntity loggedUser)
             throws ResourceAccessException, AuthException {
         log.debug("in SearchServiceBean ----> advancedSearchUsers");
         logIfElasticSearchIsEnabled();
         String status = request.getStatus();
-//        String searchMethod = request.getSearchMethod();
+        String searchMethod = request.getSearchMethod();
+        checkRequestParamsValidity(status, searchMethod);
+        if (!elasticSearchEnable){
+            Page<UserEntity> results = userService.searchUsers(request,loggedUser);
+        }
         return null;
+    }
+
+    protected DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?> getFindUsersRequestBuilder(String status){
+        PagingFts.PagingFtsBuilder builder = PagingFts.builder();
+        builder.page(0).limit(AppConstants.MAX_RESULTS_CSV_EXPORT);
+        DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?> requestBuilder = DocumentSearchRequest.builder()
+                .type(DocumentSearchRequest.Type.ADVANCED).paging(builder.build());
+        requestBuilder = addStatus(requestBuilder, status);
+        return requestBuilder;
+    }
+
+    protected DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?> addStatus(DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?> requestBuilder,
+                                                                                 String status){
+        if (status.equals(AppConstants.STATUS_ACTIVE)) {
+            requestBuilder.status(DocumentSearchRequest.Status.ACTIVE);
+        } else if (status.equals(AppConstants.STATUS_ALL)) {
+            requestBuilder.status(DocumentSearchRequest.Status.ALL);
+        }
+        return requestBuilder;
+    }
+
+    @Override
+    public List<UserDTO> findUsersForExport(UsersSearchRequestDTO request, UserEntity user)
+            throws ResourceAccessException, AuthException {
+        log.debug("in SearchServiceBean ----> findUsersForExport");
+        logIfElasticSearchIsEnabled();
+        String status = request.getStatus();
+        String searchMethod = request.getSearchMethod();
+        checkRequestParamsValidity(status, searchMethod);
+        if (!elasticSearchEnable){
+            return userService.findAllUsersForExport(request,user);
+        }
+        DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?> requestBuilder = getFindUsersRequestBuilder(status);
+        //default value is 'search.type.and'
+        SearchCriterion.FTSOperation operation = SearchCriterion.FTSOperation.AND;
+        if (searchMethod.equals(AppConstants.SEARCH_TYPE_OR)) {
+            operation = SearchCriterion.FTSOperation.OR;
+        }
+        List<SearchCriterion> criteria = setUserCriteria(request, operation);
+//        CcmDocumentSearchRequest ftsRequest = (CcmDocumentSearchRequest) withItemSecurity(requestBuilder, user).criteria(criteria).build();
+//        try {
+//            log.debug(" [CCM FTS findActiveItemsForExport]  ftsRequest: {}", ftsRequest);
+//            return activeItemFullTextSearchService.findActiveItems(ftsRequest);
+//        } catch (ResourceAccessException exc) {
+//            throw new ResourceAccessException("error.fts.connection.failure");
+//        }
+        return List.of();
     }
 
     @Override
     public Long countItems(UsersSearchRequestDTO request, UserEntity loggedUser) throws ResourceAccessException, AuthException {
         log.debug("in SearchServiceBean ----> countItems");
         logIfElasticSearchIsEnabled();
+        String status = request.getStatus();
+        String searchMethod = request.getSearchMethod();
+        checkRequestParamsValidity(status, searchMethod);
+        if (!elasticSearchEnable){
+            return userService.countUsers(request,loggedUser);
+        }
         return 0L;
     }
 
     @Override
-    public List<UserDocumentSearchResultsDTO> findUsersForExport(UsersSearchRequestDTO searchRequest, UserEntity user)
-            throws ResourceAccessException, AuthException {
-        log.debug("in SearchServiceBean ----> findUsersForExport");
-        logIfElasticSearchIsEnabled();
-        return List.of();
-    }
-
-    @Override
-    public SearchResults<UserDocumentSearchResultsDTO> quickSearchUsers(String quickSearchValueParam, UserEntity loggedUser,
+    public SearchResults<UserDTO> quickSearchUsers(String quickSearchValueParam, UserEntity loggedUser,
                                                                         Integer page, Integer size, String sortField, String sortOrder)
             throws ResourceAccessException, AuthException {
         log.debug("in SearchServiceBean ----> quickSearchUsers");
         logIfElasticSearchIsEnabled();
+        if (!elasticSearchEnable){
+
+        }
         return null;
+    }
+
+    protected List<SearchCriterion> setUserCriteria(UsersSearchRequestDTO request, SearchCriterion.FTSOperation operation){
+        List<SearchCriterion> criteria = new ArrayList<>();
+        String username = request.getUsername();
+        String name = request.getName();
+        String email = request.getEmail();
+        String roleName = request.getRoleName();
+        return criteria;
+    }
+
+    protected void logSearchCriterion(String field,String value){
+        log.debug(" [USER SEARCH] - {}: {}", field, value);
+    }
+
+    protected void logSearchCriterion(String field,Integer value){
+        log.debug(" [USER SEARCH] - {}: {}", field, value);
+    }
+
+    protected void logSearchCriterion(String field,Boolean value){
+        log.debug(" [USER SEARCH] - {}: {}", field, value);
+    }
+
+    protected void addTextCriterion(SearchCriterion.FTSOperation operation, List<SearchCriterion> criteria, String field,
+                                        String value) {
+        if (StringUtils.hasLength(value)) {
+            logSearchCriterion(field,value);
+            SearchCriterion criterion = SearchCriterion.builder().type(SearchCriterion.Type.TEXT)
+                    .operation(operation).searchType(SearchCriterion.SearchType.MATCH).field(field)
+                    .values(List.of(value)).build();
+            criteria.add(criterion);
+        }
+    }
+
+    protected void addTextCriterion(SearchCriterion.FTSOperation operation, List<SearchCriterion> criteria, String field, String value,
+                                    SearchCriterion.SearchType searchType) {
+        if (StringUtils.hasLength(value)) {
+            logSearchCriterion(field,value);
+            SearchCriterion criterion = SearchCriterion.builder().type(SearchCriterion.Type.TEXT).operation(operation).searchType(searchType)
+                    .field(field).values(List.of(value)).build();
+            criteria.add(criterion);
+        }
+    }
+
+    protected void addIntegerCriterion(SearchCriterion.FTSOperation operation, List<SearchCriterion> criteria, String field, Integer value) {
+        if (Objects.nonNull(value)) {
+            logSearchCriterion(field,value);
+            SearchCriterion criterion = SearchCriterion.builder().type(SearchCriterion.Type.INTEGER).operation(operation)
+                    .searchType(SearchCriterion.SearchType.MATCH).field(field).values(List.of(value)).build();
+
+            criteria.add(criterion);
+        }
+    }
+
+    protected void addIntegerCriterion(SearchCriterion.FTSOperation operation, List<SearchCriterion> criteria, String field, Integer value,
+                                       SearchCriterion.SearchType searchType) {
+        if (Objects.nonNull(value)) {
+            logSearchCriterion(field,value);
+            SearchCriterion criterion = SearchCriterion.builder().type(SearchCriterion.Type.INTEGER).operation(operation).searchType(searchType)
+                    .field(field).values(List.of(value)).build();
+
+            criteria.add(criterion);
+        }
+    }
+
+    protected void addBooleanCriterion(SearchCriterion.FTSOperation operation, List<SearchCriterion> criteria, String field, Boolean value) {
+        if (Objects.nonNull(value)) {
+            logSearchCriterion(field,value);
+            SearchCriterion criterion = SearchCriterion.builder().type(SearchCriterion.Type.BOOLEAN).operation(operation)
+                    .searchType(SearchCriterion.SearchType.MATCH).field(field).values(List.of(value)).build();
+
+            criteria.add(criterion);
+        }
+    }
+
+    protected PagingFts addPaging(Paging paging){
+        PagingFts.PagingFtsBuilder pagingBuilder = PagingFts.builder();
+        if (Objects.isNull(paging)) {
+            Integer defaultPage = Paging.DEFAULT_PAGE_START;
+            Integer defaultSize = Paging.DEFAULT_PAGE_SIZE;
+            pagingBuilder.page(defaultPage).limit(defaultSize);
+            return pagingBuilder.build();
+        }
+        Integer calculatedPage = calculatePage(paging.getPagingStart(), paging.getPagingSize());
+        pagingBuilder.page(calculatedPage).limit(paging.getPagingSize());
+        String sortField = paging.getSortingColumn();
+        String sortOrder = paging.getSortingDirection();
+        Map<String, String> sortingColsMap = getUserColumnsForFTSSortOrGroupOps();
+
+        log.info(" [addPaging] - sortField: {}", sortField);
+        log.info(" [addPaging] - sortOrder: {}", sortOrder);
+        if (StringUtils.hasLength(sortField)) {
+            Optional.ofNullable(sortingColsMap.get(sortField)).ifPresentOrElse(sortFieldMapped -> {
+                log.info(" [addPaging] - sortFieldMapped: {}", sortFieldMapped);
+                pagingBuilder.sortFields(List.of(sortFieldMapped));
+            }, () -> {
+                log.error(" ERROR-addPaging: Could not find mapping for SortBy={} (Setting default) ", sortField);
+                pagingBuilder.sortFields(List.of(FtsUtil.ES_USER_FIELD_ID));
+            });
+        }
+        if (StringUtils.hasLength(sortOrder)) {
+            pagingBuilder.sortDirection(sortOrder);
+        }
+        return pagingBuilder.build();
+    }
+
+    protected Map<String, String> getUserColumnsForFTSSortOrGroupOps() {
+        return FtsUtil.getUserColumnsForFTSSortOrGroupOps();
+    }
+
+    protected Integer calculatePage(Integer page, Integer size) {
+        return page / size;
     }
 }

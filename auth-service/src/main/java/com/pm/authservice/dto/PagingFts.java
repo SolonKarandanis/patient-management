@@ -1,4 +1,4 @@
-package com.pm.authservice.user.dto;
+package com.pm.authservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
-public class Paging {
+public class PagingFts {
     private int page;
     private int limit;
     private List<String> sortFields;

@@ -18,4 +18,11 @@ public class AppConstants {
     public static final String SEARCH_TYPE_AND = "search.type.and";
     public static final String SEARCH_TYPE_OR = "search.type.or";
 
+    public static final String OUTBOX_USER_CREATED="UserCreated";
+    public static final String OUTBOX_USER_UPDATED="UserUpdated";
+    public static final String OUTBOX_USER_ACTIVATED="UserActivated";
+    public static final String OUTBOX_USER_DEACTIVATED="UserDeactivated";
+    public static final String OUTBOX_USER_DELETED="UserDeleted";
+    public static final String OUTBOX_USER_VERIFIED="UserVerified";
+
 }

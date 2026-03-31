@@ -29,7 +29,7 @@ public interface SearchService {
     SearchResults<UserDTO> advancedSearchUsers(UsersSearchRequestDTO request,
                                                                     UserEntity loggedUser) throws ResourceAccessException, AuthException;
 
-    Long countItems(UsersSearchRequestDTO request, UserEntity loggedUser) throws ResourceAccessException, AuthException;
+    Long countUsers(UsersSearchRequestDTO request, UserEntity loggedUser) throws ResourceAccessException, AuthException;
 
     List<UserDTO> findUsersForExport(UsersSearchRequestDTO searchRequest, UserEntity user)
             throws ResourceAccessException, AuthException;

@@ -6,7 +6,9 @@ import com.pm.authservice.service.fts.FtsUtil;
 import com.pm.authservice.service.fts.UserFullTextSearchService;
 import com.pm.authservice.user.dto.UserDTO;
 import com.pm.authservice.user.dto.UsersSearchRequestDTO;
+import com.pm.authservice.user.model.RoleEntity;
 import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.user.service.RoleService;
 import com.pm.authservice.user.service.UserService;
 import com.pm.authservice.util.AppConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -28,13 +31,17 @@ import java.util.*;
 public class SearchServiceBean  implements SearchService{
 
     private final UserService userService;
+    private final RoleService roleService;
     private final UserFullTextSearchService userFullTextSearchService;
 
     @Value("${search.elasticSearch.enable:false}")
     private Boolean elasticSearchEnable;
 
-    public SearchServiceBean(UserService userService, UserFullTextSearchService userFullTextSearchService) {
+    public SearchServiceBean(UserService userService,
+                             RoleService roleService,
+                             UserFullTextSearchService userFullTextSearchService) {
         this.userService = userService;
+        this.roleService = roleService;
         this.userFullTextSearchService = userFullTextSearchService;
     }
 
@@ -185,18 +192,42 @@ public class SearchServiceBean  implements SearchService{
             operation = SearchCriterion.FTSOperation.OR;
         }
         List<SearchCriterion> criteria = setUserCriteria(request, operation);
-//        CcmDocumentSearchRequest ftsRequest = (CcmDocumentSearchRequest) withItemSecurity(requestBuilder, user).criteria(criteria).build();
-//        try {
-//            log.debug(" [CCM FTS findActiveItemsForExport]  ftsRequest: {}", ftsRequest);
-//            return activeItemFullTextSearchService.findActiveItems(ftsRequest);
-//        } catch (ResourceAccessException exc) {
-//            throw new ResourceAccessException("error.fts.connection.failure");
-//        }
-        return List.of();
+        DocumentSearchRequest ftsRequest = requestBuilder.criteria(criteria).build();
+        try {
+            log.debug("[FTS findUsersForExport]  ftsRequest: {}", ftsRequest);
+            List<UserDocumentSearchResultsDTO> ftsResult = userFullTextSearchService.findUsers(ftsRequest);
+            return convertFromFtsResultList(ftsResult);
+        } catch (ResourceAccessException exc) {
+            throw new ResourceAccessException("error.fts.connection.failure");
+        }
+    }
+
+    protected List<UserDTO>convertFromFtsResultList(List<UserDocumentSearchResultsDTO> ftsResult){
+        if(CollectionUtils.isEmpty(ftsResult)){
+            return Collections.emptyList();
+        }
+        return ftsResult.stream()
+                .map(this::convertFromFtsResult)
+                .toList();
+    }
+
+    protected UserDTO convertFromFtsResult(UserDocumentSearchResultsDTO ftsResultDto){
+        UserDTO dto = new UserDTO();
+        dto.setUsername(ftsResultDto.getUsername());
+        dto.setFirstName(ftsResultDto.getFirstName());
+        dto.setLastName(ftsResultDto.getLastName());
+        dto.setEmail(ftsResultDto.getEmail());
+        dto.setPublicId(ftsResultDto.getPublicId());
+        dto.setStatus(ftsResultDto.getStatus());
+        Set<RoleEntity> roles = new HashSet<>(roleService.findByIds(ftsResultDto.getRoleIds()));
+        if(!CollectionUtils.isEmpty(roles)){
+            dto.setRoles(roleService.convertToDtoList(roles));
+        }
+        return dto;
     }
 
     @Override
-    public Long countItems(UsersSearchRequestDTO request, UserEntity loggedUser) throws ResourceAccessException, AuthException {
+    public Long countUsers(UsersSearchRequestDTO request, UserEntity loggedUser) throws ResourceAccessException, AuthException {
         log.debug("in SearchServiceBean ----> countItems");
         logIfElasticSearchIsEnabled();
         String status = request.getStatus();
@@ -205,7 +236,21 @@ public class SearchServiceBean  implements SearchService{
         if (!elasticSearchEnable){
             return userService.countUsers(request,loggedUser);
         }
-        return 0L;
+        DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?>  requestBuilder = getAdvancedSearchUsersRequestBuilder(request.getPaging(), status);
+        //default value is 'search.type.and'
+        SearchCriterion.FTSOperation operation = SearchCriterion.FTSOperation.AND;
+
+        if (searchMethod.equals(AppConstants.SEARCH_TYPE_OR)) {
+            operation = SearchCriterion.FTSOperation.OR;
+        }
+        List<SearchCriterion> criteria = setUserCriteria(request, operation);
+        DocumentSearchRequest ftsRequest = requestBuilder.criteria(criteria).build();
+        try {
+            log.debug(" [CCM FTS COUNT ITEMS]  ftsRequest: {}", ftsRequest);
+            return userFullTextSearchService.countUsers(ftsRequest);
+        } catch (ResourceAccessException exc) {
+            throw new ResourceAccessException("error.fts.connection.failure");
+        }
     }
 
     @Override
@@ -218,6 +263,14 @@ public class SearchServiceBean  implements SearchService{
 
         }
         return null;
+    }
+
+    protected DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?> getAdvancedSearchUsersRequestBuilder(Paging paging, String status){
+        PagingFts pagingFts = addPaging(paging);
+        DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?> requestBuilder = DocumentSearchRequest.builder().type(DocumentSearchRequest.Type.ADVANCED)
+                .paging(pagingFts);
+        requestBuilder = addStatus(requestBuilder, status);
+        return requestBuilder;
     }
 
     protected DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?> getQuickSearchUsersRequestBuilder(String quickSearchValueParam,

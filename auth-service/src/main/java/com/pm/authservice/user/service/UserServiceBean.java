@@ -149,6 +149,33 @@ public class UserServiceBean implements UserService{
     }
 
     @Override
+    public Page<UserEntity> quickSearchUsers(String quickSearchValueParam, PageRequest pageRequest, UserEntity loggedUser) {
+        return null;
+    }
+
+    protected PageRequest transformPageSorting(PageRequest pageRequest) {
+        return genericService.transformPageSorting(pageRequest, usersSortingFieldsMap(), getUsersSortingFields());
+    }
+
+    protected Map<String, String> usersSortingFieldsMap() {
+        HashMap<String, String> result = new HashMap<>();
+        result.put("sku", "sku");
+        result.put("itemName", "itemName");
+        result.put("description", "description");
+        result.put("manufacturerName", "manufacturerName");
+        result.put("brand", "brand");
+        result.put("supplierName", "supplierName");
+        result.put("uop", "uop");
+        result.put("price", "price");
+        result.put("cataloguesId", "cataloguesId");
+        return result;
+    }
+
+    protected Set<String> getUsersSortingFields() {
+        return Set.of("id", "sku", "itemName", "manufacturerName", "description", "brand", "supplierName", "uop", "price", "cataloguesId");
+    }
+
+    @Override
     public Long countUsers(UsersSearchRequestDTO searchObj, UserEntity loggedUser) {
         Predicate predicate = getSearchPredicate(searchObj,loggedUser);
         return userRepository.count(predicate);
@@ -164,6 +191,48 @@ public class UserServiceBean implements UserService{
             results.add(dto);
         }
         return results;
+    }
+
+    protected Predicate getSearchPredicate(UsersSearchRequestDTO searchObj,UserEntity loggedUser){
+        QUserEntity user = QUserEntity.userEntity;
+        BooleanBuilder builder = new BooleanBuilder();
+        String email =searchObj.getEmail();
+        String username = searchObj.getUsername();
+        String name= searchObj.getName();
+        String status = searchObj.getStatus();
+        String roleName = searchObj.getRoleName();
+        boolean isAdmin = UserUtil.hasRole(loggedUser, AuthorityConstants.ROLE_SYSTEM_ADMIN);
+        if(!isAdmin){
+            builder.and(user.status.ne(AccountStatus.DELETED));
+        }
+
+        if(StringUtils.hasLength(email)){
+            builder.and(user.email.eq(email));
+        }
+        if(StringUtils.hasLength(username)){
+            builder.and(user.username.eq(username));
+        }
+        if(StringUtils.hasLength(name)){
+            builder.and(user.firstName.eq(name).or(user.lastName.eq(name)));
+        }
+        if(StringUtils.hasLength(status)){
+            builder.and(user.status.eq(AccountStatus.fromValue(status)));
+        }
+        if(StringUtils.hasLength(roleName)){
+            RoleEntity role = roleService.findByName(roleName);
+            if(role != null){
+                builder.and(user.roles.contains(role));
+            }
+        }
+        return builder;
+    }
+
+    protected PageRequest toPageRequest(Paging paging) {
+        Sort sortBy = Sort.by(Sort.Direction.ASC,"id");
+        if(Objects.nonNull(paging.getSortingDirection()) && Objects.nonNull(paging.getSortingColumn())){
+            sortBy = Sort.by(Sort.Direction.valueOf(paging.getSortingDirection()), paging.getSortingColumn());
+        }
+        return PageRequest.of(paging.getPagingStart(), paging.getPagingSize(), sortBy);
     }
 
     protected void validateUsernameExistence(String username)throws BusinessException{
@@ -296,47 +365,5 @@ public class UserServiceBean implements UserService{
         user = userRepository.save(user);
         outboxService.createUserEvent(user, AppConstants.OUTBOX_USER_UPDATED);
         return user;
-    }
-
-    protected Predicate getSearchPredicate(UsersSearchRequestDTO searchObj,UserEntity loggedUser){
-        QUserEntity user = QUserEntity.userEntity;
-        BooleanBuilder builder = new BooleanBuilder();
-        String email =searchObj.getEmail();
-        String username = searchObj.getUsername();
-        String name= searchObj.getName();
-        String status = searchObj.getStatus();
-        String roleName = searchObj.getRoleName();
-        boolean isAdmin = UserUtil.hasRole(loggedUser, AuthorityConstants.ROLE_SYSTEM_ADMIN);
-        if(!isAdmin){
-            builder.and(user.status.ne(AccountStatus.DELETED));
-        }
-
-        if(StringUtils.hasLength(email)){
-            builder.and(user.email.eq(email));
-        }
-        if(StringUtils.hasLength(username)){
-            builder.and(user.username.eq(username));
-        }
-        if(StringUtils.hasLength(name)){
-            builder.and(user.firstName.eq(name).or(user.lastName.eq(name)));
-        }
-        if(StringUtils.hasLength(status)){
-            builder.and(user.status.eq(AccountStatus.fromValue(status)));
-        }
-        if(StringUtils.hasLength(roleName)){
-            RoleEntity role = roleService.findByName(roleName);
-            if(role != null){
-                builder.and(user.roles.contains(role));
-            }
-        }
-        return builder;
-    }
-
-    protected PageRequest toPageRequest(Paging paging) {
-        Sort sortBy = Sort.by(Sort.Direction.ASC,"id");
-        if(Objects.nonNull(paging.getSortingDirection()) && Objects.nonNull(paging.getSortingColumn())){
-            sortBy = Sort.by(Sort.Direction.valueOf(paging.getSortingDirection()), paging.getSortingColumn());
-        }
-        return PageRequest.of(paging.getPagingStart(), paging.getPagingSize(), sortBy);
     }
 }

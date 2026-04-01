@@ -6,6 +6,7 @@ import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.user.model.UserEntity;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public interface UserService {
     UserEntity findByEmail(String email)throws NotFoundException;
     void deleteUser(String publicId) throws NotFoundException;
     Page<UserEntity> searchUsers(UsersSearchRequestDTO searchObj, UserEntity loggedUser);
+    Page<UserEntity> quickSearchUsers(String quickSearchValueParam, PageRequest pageRequest, UserEntity loggedUser);
     Long countUsers(UsersSearchRequestDTO searchObj,UserEntity loggedUser);
     List<UserDTO> findAllUsersForExport(UsersSearchRequestDTO searchObj, UserEntity loggedUser);
     UserEntity registerUser(CreateUserDTO dto, String applicationUrl) throws BusinessException;

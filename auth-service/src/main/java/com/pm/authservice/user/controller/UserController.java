@@ -2,6 +2,8 @@ package com.pm.authservice.user.controller;
 
 import com.pm.authservice.auth.dto.UserDetailsDTO;
 import com.pm.authservice.config.Translate;
+import com.pm.authservice.exception.AuthException;
+import com.pm.authservice.service.SearchService;
 import com.pm.authservice.user.dto.*;
 import com.pm.authservice.user.dto.ChangePasswordDTO;
 import com.pm.authservice.dto.SearchResults;
@@ -16,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,9 +34,14 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final UserService usersService;
+    private final SearchService searchService;
 
-    public UserController(UserService usersService) {
+    public UserController(
+            UserService usersService,
+            SearchService searchService
+    ) {
         this.usersService = usersService;
+        this.searchService = searchService;
     }
 
 
@@ -46,7 +52,7 @@ public class UserController {
             Authentication authentication) throws Exception{
         UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
         UserEntity user = usersService.findByPublicId(dto.getPublicId());
-        Long resultsCount = usersService.countUsers(searchObj,user);
+        Long resultsCount = searchService.countUsers(searchObj,user);
         log.info("UserController --> exportUsersToCsv --> results: {}", resultsCount);
         if (resultsCount >= AppConstants.MAX_RESULTS_CSV_EXPORT) {
             throw new BusinessException("error.max.csv.results");
@@ -54,7 +60,7 @@ public class UserController {
         response.setContentType(HttpUtil.MEDIA_TYPE_CSV);
         response.setCharacterEncoding("UTF-8");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"users-results.csv\"");
-        List<UserDTO> results =usersService.findAllUsersForExport(searchObj,user);
+        List<UserDTO> results =searchService.findUsersForExport(searchObj,user);
         UserCsvExporter exporter= new UserCsvExporter(results, response);
         exporter.exportData();
     }
@@ -62,12 +68,11 @@ public class UserController {
     @PostMapping("/search")
     @Translate(path = "list[*].status", targetProperty = "statusLabel")
     public ResponseEntity<SearchResults<UserDTO>> findAllUsers(@RequestBody @Valid UsersSearchRequestDTO searchObj,
-                                                               Authentication authentication){
+                                                               Authentication authentication) throws AuthException {
         UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
         UserEntity user = usersService.findByPublicId(dto.getPublicId());
-        Page<UserEntity> results = usersService.searchUsers(searchObj,user);
-        List<UserDTO> dtos=usersService.convertToDTOList(results.getContent(),false);
-        return ResponseEntity.ok().body(new SearchResults<UserDTO>(Math.toIntExact(results.getTotalElements()), dtos));
+        SearchResults<UserDTO>results= searchService.advancedSearchUsers(searchObj,user);
+        return ResponseEntity.ok().body(results);
     }
 
     @GetMapping("/{id}")

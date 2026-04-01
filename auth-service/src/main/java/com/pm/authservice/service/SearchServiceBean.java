@@ -151,8 +151,23 @@ public class SearchServiceBean  implements SearchService{
         checkRequestParamsValidity(status, searchMethod);
         if (!elasticSearchEnable){
             Page<UserEntity> results = userService.searchUsers(request,loggedUser);
+            List<UserDTO> dtos=userService.convertToDTOList(results.getContent(),false);
+            return new SearchResults<>(Math.toIntExact(results.getTotalElements()), dtos);
         }
-        return null;
+        //default value is 'search.type.and'
+        SearchCriterion.FTSOperation operation = SearchCriterion.FTSOperation.AND;
+        if (searchMethod.equals(AppConstants.SEARCH_TYPE_OR)) {
+            operation = SearchCriterion.FTSOperation.OR;
+        }
+        List<SearchCriterion> criteria = setUserCriteria(request, operation);
+        DocumentSearchRequest ftsRequest = getAdvancedSearchUsersRequestBuilder(request.getPaging(),status).criteria(criteria).build();
+        try {
+            log.debug("[FTS advancedSearchUsers]  ftsRequest: {}", ftsRequest);
+            UserSearchResponseDTO ftsResult = userFullTextSearchService.searchUsers(ftsRequest);
+            return new SearchResults<>(Math.toIntExact(ftsResult.getTotalElements()), convertFromFtsResultList(ftsResult.getContent()));
+        } catch (ResourceAccessException exc) {
+            throw new ResourceAccessException("error.fts.connection.failure");
+        }
     }
 
     protected DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?> getFindUsersRequestBuilder(String status){
@@ -185,14 +200,13 @@ public class SearchServiceBean  implements SearchService{
         if (!elasticSearchEnable){
             return userService.findAllUsersForExport(request,user);
         }
-        DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?> requestBuilder = getFindUsersRequestBuilder(status);
         //default value is 'search.type.and'
         SearchCriterion.FTSOperation operation = SearchCriterion.FTSOperation.AND;
         if (searchMethod.equals(AppConstants.SEARCH_TYPE_OR)) {
             operation = SearchCriterion.FTSOperation.OR;
         }
         List<SearchCriterion> criteria = setUserCriteria(request, operation);
-        DocumentSearchRequest ftsRequest = requestBuilder.criteria(criteria).build();
+        DocumentSearchRequest ftsRequest = getAdvancedSearchUsersRequestBuilder(request.getPaging(),status).criteria(criteria).build();
         try {
             log.debug("[FTS findUsersForExport]  ftsRequest: {}", ftsRequest);
             List<UserDocumentSearchResultsDTO> ftsResult = userFullTextSearchService.findUsers(ftsRequest);
@@ -262,7 +276,16 @@ public class SearchServiceBean  implements SearchService{
         if (!elasticSearchEnable){
 
         }
-        return null;
+        DocumentSearchRequest ftsRequest = getQuickSearchUsersRequestBuilder(quickSearchValueParam,page,size,sortField,sortOrder)
+                .status(DocumentSearchRequest.Status.ACTIVE)
+                .build();
+        try {
+            log.debug("[FTS quickSearchUsers]  ftsRequest: {}", ftsRequest);
+            UserSearchResponseDTO ftsResult = userFullTextSearchService.searchUsers(ftsRequest);
+            return new SearchResults<>(Math.toIntExact(ftsResult.getTotalElements()), convertFromFtsResultList(ftsResult.getContent()));
+        } catch (ResourceAccessException exc) {
+            throw new ResourceAccessException("error.fts.connection.failure");
+        }
     }
 
     protected DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?> getAdvancedSearchUsersRequestBuilder(Paging paging, String status){

@@ -161,13 +161,7 @@ public class SearchServiceBean  implements SearchService{
         }
         List<SearchCriterion> criteria = setUserCriteria(request, operation);
         DocumentSearchRequest ftsRequest = getAdvancedSearchUsersRequestBuilder(request.getPaging(),status).criteria(criteria).build();
-        try {
-            log.debug("[FTS advancedSearchUsers]  ftsRequest: {}", ftsRequest);
-            UserSearchResponseDTO ftsResult = userFullTextSearchService.searchUsers(ftsRequest);
-            return new SearchResults<>(Math.toIntExact(ftsResult.getTotalElements()), convertFromFtsResultList(ftsResult.getContent()));
-        } catch (ResourceAccessException exc) {
-            throw new ResourceAccessException("error.fts.connection.failure");
-        }
+        return searchUsersOrThrow(ftsRequest);
     }
 
     protected DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?> getFindUsersRequestBuilder(String status){
@@ -270,22 +264,19 @@ public class SearchServiceBean  implements SearchService{
     @Override
     public SearchResults<UserDTO> quickSearchUsers(String quickSearchValueParam, UserEntity loggedUser,
                                                                         Integer page, Integer size, String sortField, String sortOrder)
-            throws ResourceAccessException, AuthException {
+            throws ResourceAccessException {
         log.debug("in SearchServiceBean ----> quickSearchUsers");
         logIfElasticSearchIsEnabled();
         if (!elasticSearchEnable){
-
+            PageRequest pageRequest = toPageRequest(page,size,sortField,sortOrder);
+            Page<UserEntity> results = userService.quickSearchUsers(quickSearchValueParam,pageRequest,loggedUser);
+            List<UserDTO> dtos=userService.convertToDTOList(results.getContent(),false);
+            return new SearchResults<>(Math.toIntExact(results.getTotalElements()), dtos);
         }
         DocumentSearchRequest ftsRequest = getQuickSearchUsersRequestBuilder(quickSearchValueParam,page,size,sortField,sortOrder)
                 .status(DocumentSearchRequest.Status.ACTIVE)
                 .build();
-        try {
-            log.debug("[FTS quickSearchUsers]  ftsRequest: {}", ftsRequest);
-            UserSearchResponseDTO ftsResult = userFullTextSearchService.searchUsers(ftsRequest);
-            return new SearchResults<>(Math.toIntExact(ftsResult.getTotalElements()), convertFromFtsResultList(ftsResult.getContent()));
-        } catch (ResourceAccessException exc) {
-            throw new ResourceAccessException("error.fts.connection.failure");
-        }
+        return searchUsersOrThrow(ftsRequest);
     }
 
     protected DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?> getAdvancedSearchUsersRequestBuilder(Paging paging, String status){
@@ -309,14 +300,14 @@ public class SearchServiceBean  implements SearchService{
         return DocumentSearchRequest.builder().type(DocumentSearchRequest.Type.QUICK).paging(paging).criteria(criteria).status(DocumentSearchRequest.Status.ALL);
     }
 
-    protected SearchResults<UserDocumentSearchResultsDTO> searchItemsOrThrow(DocumentSearchRequest ftsRequest)
+    protected SearchResults<UserDTO> searchUsersOrThrow(DocumentSearchRequest ftsRequest)
             throws ResourceAccessException{
         try {
             log.debug(" [FTS SEARCH]  ftsRequest: {}", ftsRequest);
             UserSearchResponseDTO ftsResponse = userFullTextSearchService.searchUsers(ftsRequest);
             int count = ftsResponse.getTotalElements().intValue();
             log.debug(" [FTS SEARCH]  results count: {}", count);
-            return new SearchResults<>(count, ftsResponse.getContent());
+            return new SearchResults<>(count, convertFromFtsResultList(ftsResponse.getContent()));
         } catch (ResourceAccessException exc) {
             throw new ResourceAccessException("error.fts.connection.failure");
         }

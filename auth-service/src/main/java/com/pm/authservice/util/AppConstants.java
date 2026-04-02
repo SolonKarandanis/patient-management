@@ -25,4 +25,8 @@ public class AppConstants {
     public static final String OUTBOX_USER_DELETED="UserDeleted";
     public static final String OUTBOX_USER_VERIFIED="UserVerified";
 
+
+    public static final String ELASTIC_SEARCH_INDEXING_METHOD_OUTBOX="elastic.search.indexing.outbox";
+    public static final String ELASTIC_SEARCH_INDEXING_METHOD_HTTP="elastic.search.indexing.http";
+    public static final String ELASTIC_SEARCH_INDEXING_METHOD_BROKER="elastic.search.indexing.broker";
 }

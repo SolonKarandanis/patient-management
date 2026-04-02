@@ -1,9 +1,12 @@
 package com.pm.authservice.controller;
 
+import com.pm.authservice.service.AdministrationService;
 import com.pm.authservice.util.AuthorityConstants;
 import jakarta.annotation.security.RolesAllowed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,13 +20,29 @@ public class AdminController {
 
     private static final Logger log = LoggerFactory.getLogger(AdminController.class);
 
+    private final AdministrationService administrationService;
+
+    @Value("${search.elasticSearch.enable:false}")
+    private Boolean elasticSearchEnable;
+
+    public AdminController(AdministrationService administrationService) {
+        this.administrationService = administrationService;
+    }
+
     @PostMapping("/indexing")
     public ResponseEntity<Void> triggerAdHocIndexing(){
-        return ResponseEntity.ok(null);
+        if(elasticSearchEnable){
+            return ResponseEntity.ok(null);
+        }
+       return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     @DeleteMapping("/indexing/user")
-    public Boolean deleteUserIndex(){
-        return null;
+    public ResponseEntity<Void> deleteUserIndex(){
+        Boolean result = administrationService.deleteUserIndex();
+        if(result){
+            return ResponseEntity.ok(null);
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 }

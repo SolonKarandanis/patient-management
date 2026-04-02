@@ -16,6 +16,7 @@ import com.pm.authservice.outbox.service.OutboxService;
 import com.pm.authservice.user.model.QUserEntity;
 import com.pm.authservice.user.model.UserEntity;
 import com.pm.authservice.user.repository.UserRepository;
+import com.pm.authservice.user.repository.projections.MinMaxUserId;
 import com.pm.authservice.util.AppConstants;
 import com.pm.authservice.util.AuthorityConstants;
 import com.pm.authservice.util.UserUtil;
@@ -139,6 +140,17 @@ public class UserServiceBean implements UserService{
     public UserEntity findByEmail(String email) throws NotFoundException {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+    }
+
+    @Override
+    public List<UserEntity> findUsersToBeIndexedByIdRange(Integer minId, Integer maxId) {
+        return userRepository.getUsersByIdRange(minId,maxId);
+    }
+
+    @Override
+    public MinMaxUserIdDTO getMinAndMaxUserId() {
+        MinMaxUserId result =userRepository.getMinAndMaxUserId();
+        return new MinMaxUserIdDTO(result.getMinId(),result.getMaxId());
     }
 
     @Override

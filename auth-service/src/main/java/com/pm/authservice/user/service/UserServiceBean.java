@@ -150,8 +150,11 @@ public class UserServiceBean implements UserService{
 
     @Override
     public Page<UserEntity> quickSearchUsers(String quickSearchValueParam, PageRequest pageRequest, UserEntity loggedUser) {
-        return null;
+        PageRequest transformedPageRequest = transformPageSorting(pageRequest);
+        Predicate searchPredicate = getUserQuickSearchPredicate(quickSearchValueParam, loggedUser);
+        return userRepository.findAll(searchPredicate,transformedPageRequest);
     }
+
 
     protected PageRequest transformPageSorting(PageRequest pageRequest) {
         return genericService.transformPageSorting(pageRequest, usersSortingFieldsMap(), getUsersSortingFields());
@@ -159,20 +162,32 @@ public class UserServiceBean implements UserService{
 
     protected Map<String, String> usersSortingFieldsMap() {
         HashMap<String, String> result = new HashMap<>();
-        result.put("sku", "sku");
-        result.put("itemName", "itemName");
-        result.put("description", "description");
-        result.put("manufacturerName", "manufacturerName");
-        result.put("brand", "brand");
-        result.put("supplierName", "supplierName");
-        result.put("uop", "uop");
-        result.put("price", "price");
-        result.put("cataloguesId", "cataloguesId");
+        result.put("id", "id");
+        result.put("publicId", "publicId");
+        result.put("username", "username");
+        result.put("firstName", "firstName");
+        result.put("lastName", "lastName");
+        result.put("status", "status");
+        result.put("email", "email");
+        result.put("isEnabled", "isEnabled");
+        result.put("isVerified", "isVerified");
+        result.put("createdDate", "createdDate");
         return result;
     }
 
     protected Set<String> getUsersSortingFields() {
-        return Set.of("id", "sku", "itemName", "manufacturerName", "description", "brand", "supplierName", "uop", "price", "cataloguesId");
+        return Set.of("id", "publicId", "username", "firstName", "lastName", "status", "email", "isEnabled", "isVerified", "createdDate");
+    }
+
+    protected Predicate getUserQuickSearchPredicate(String quickSearchValueParam, UserEntity loggedUser) {
+        QUserEntity user = QUserEntity.userEntity;
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(user.status.eq(AccountStatus.valueOf(AppConstants.STATUS_ACTIVE)));
+        builder.or(user.username.eq(quickSearchValueParam))
+                .or(user.firstName.eq(quickSearchValueParam))
+                .or(user.lastName.eq(quickSearchValueParam))
+                .or(user.email.eq(quickSearchValueParam));
+        return builder;
     }
 
     @Override
@@ -196,15 +211,29 @@ public class UserServiceBean implements UserService{
     protected Predicate getSearchPredicate(UsersSearchRequestDTO searchObj,UserEntity loggedUser){
         QUserEntity user = QUserEntity.userEntity;
         BooleanBuilder builder = new BooleanBuilder();
+        String searchMethod = searchObj.getSearchMethod();
+        boolean isAdmin = UserUtil.hasRole(loggedUser, AuthorityConstants.ROLE_SYSTEM_ADMIN);
+        if(!isAdmin){
+            builder.and(user.status.ne(AccountStatus.DELETED));
+        }
+        if(AppConstants.SEARCH_TYPE_AND.equals(searchMethod)){
+            builder= setSearchMethodAndCriteria(searchObj,builder,user);
+        }
+        else{
+            builder= setSearchMethodOrCriteria(searchObj,builder,user);
+        }
+        return builder;
+    }
+
+    protected BooleanBuilder setSearchMethodAndCriteria(
+            UsersSearchRequestDTO searchObj,
+            BooleanBuilder builder,
+            QUserEntity user){
         String email =searchObj.getEmail();
         String username = searchObj.getUsername();
         String name= searchObj.getName();
         String status = searchObj.getStatus();
         String roleName = searchObj.getRoleName();
-        boolean isAdmin = UserUtil.hasRole(loggedUser, AuthorityConstants.ROLE_SYSTEM_ADMIN);
-        if(!isAdmin){
-            builder.and(user.status.ne(AccountStatus.DELETED));
-        }
 
         if(StringUtils.hasLength(email)){
             builder.and(user.email.eq(email));
@@ -222,6 +251,37 @@ public class UserServiceBean implements UserService{
             RoleEntity role = roleService.findByName(roleName);
             if(role != null){
                 builder.and(user.roles.contains(role));
+            }
+        }
+        return builder;
+    }
+
+    protected BooleanBuilder setSearchMethodOrCriteria(
+            UsersSearchRequestDTO searchObj,
+            BooleanBuilder builder,
+            QUserEntity user){
+        String email =searchObj.getEmail();
+        String username = searchObj.getUsername();
+        String name= searchObj.getName();
+        String status = searchObj.getStatus();
+        String roleName = searchObj.getRoleName();
+
+        if(StringUtils.hasLength(email)){
+            builder.or(user.email.eq(email));
+        }
+        if(StringUtils.hasLength(username)){
+            builder.or(user.username.eq(username));
+        }
+        if(StringUtils.hasLength(name)){
+            builder.or(user.firstName.eq(name).or(user.lastName.eq(name)));
+        }
+        if(StringUtils.hasLength(status)){
+            builder.or(user.status.eq(AccountStatus.fromValue(status)));
+        }
+        if(StringUtils.hasLength(roleName)){
+            RoleEntity role = roleService.findByName(roleName);
+            if(role != null){
+                builder.or(user.roles.contains(role));
             }
         }
         return builder;

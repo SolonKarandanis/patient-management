@@ -200,7 +200,7 @@ public class SearchServiceBean  implements SearchService{
             operation = SearchCriterion.FTSOperation.OR;
         }
         List<SearchCriterion> criteria = setUserCriteria(request, operation);
-        DocumentSearchRequest ftsRequest = getAdvancedSearchUsersRequestBuilder(request.getPaging(),status).criteria(criteria).build();
+        DocumentSearchRequest ftsRequest = getFindUsersRequestBuilder(status).criteria(criteria).build();
         try {
             log.debug("[FTS findUsersForExport]  ftsRequest: {}", ftsRequest);
             List<UserDocumentSearchResultsDTO> ftsResult = userFullTextSearchService.findUsers(ftsRequest);

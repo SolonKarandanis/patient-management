@@ -1,13 +1,18 @@
 package com.pm.authservice.service;
 
+import com.pm.authservice.dto.UserDocumentDTO;
+import com.pm.authservice.user.model.RoleEntity;
+import com.pm.authservice.user.model.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GenericServiceBean  implements GenericService{
@@ -62,6 +67,43 @@ public class GenericServiceBean  implements GenericService{
 
     public String getDefaultSortingProperty() {
         return "id";
+    }
+
+    @Override
+    public UserDocumentDTO convertToDocumentDto(UserEntity user) {
+        UserDocumentDTO dto = new UserDocumentDTO();
+        dto.setId(user.getId());
+        dto.setPublicId(user.getPublicId().toString());
+        dto.setUsername(user.getUsername());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setEmail(user.getEmail());
+        dto.setStatus(user.getStatus() != null ? user.getStatus().getValue() : null);
+        dto.setIsVerified(user.getIsVerified());
+        dto.setIsEnabled(user.getIsEnabled());
+
+        if (user.getRoles() != null) {
+            List<String> roleNames = user.getRoles().stream()
+                    .map(RoleEntity::getName)
+                    .collect(Collectors.toList());
+            dto.setRolesNames(roleNames);
+
+            List<Integer> roleIds = user.getRoles().stream()
+                    .map(RoleEntity::getId)
+                    .collect(Collectors.toList());
+            dto.setRoleIds(roleIds);
+        }
+        return dto;
+    }
+
+    @Override
+    public List<UserDocumentDTO> convertToDocumentDtoList(List<UserEntity> userList) {
+        if(CollectionUtils.isEmpty(userList)){
+            return Collections.emptyList();
+        }
+        return userList.stream()
+                .map(this::convertToDocumentDto)
+                .toList();
     }
 
 

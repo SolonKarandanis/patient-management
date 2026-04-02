@@ -15,10 +15,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -93,7 +93,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 				 user.setFirstName(claims.get("firstName", String.class));
 				 user.setLastName(claims.get("lastName", String.class));
 				 user.setStatus(AccountStatus.fromValue(claims.get("status", String.class)));
-				 if (user.getUsername() != null && jwtService.isTokenValid(jwt, user)) {
+				 if (jwtService.isTokenValid(jwt, user)) {
 					 List<RoleDTO> roleClaims = mapper.convertValue(claims.get("roles", List.class), new TypeReference<List<RoleDTO>>() { });
 					 for(RoleDTO role : roleClaims){
 						 log.info("JwtAuthenticationFilter -> claims -> roles : {}",role.getName());

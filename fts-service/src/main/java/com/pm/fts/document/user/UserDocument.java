@@ -12,6 +12,7 @@ import java.util.List;
 @Document(indexName = "#{@indexPrefix}auth_service_users", createIndex = true)
 @Getter
 @Setter
+@Setting(settingPath = "elasticsearch-settings.json")
 public class UserDocument extends AbstractDocument {
 
     public UserDocument(AbstractDocument abs) {
@@ -55,7 +56,7 @@ public class UserDocument extends AbstractDocument {
     @Field(type = FieldType.Boolean, name = "isVerified")
     protected Boolean isVerified;
 
-    @Field(type = FieldType.Integer, name = "rolesNames")
+    @Field(type = FieldType.Keyword, name = "rolesNames")
     protected List<String> rolesNames;
 
     @Field(type = FieldType.Integer, name = "roleIds")

@@ -244,7 +244,7 @@ public class SearchServiceBean  implements SearchService{
         if (!elasticSearchEnable){
             return userService.countUsers(request,loggedUser);
         }
-        DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?>  requestBuilder = getAdvancedSearchUsersRequestBuilder(request.getPaging(), status);
+        DocumentSearchRequest.DocumentSearchRequestBuilder<?, ?>  requestBuilder = getFindUsersRequestBuilder( status);
         //default value is 'search.type.and'
         SearchCriterion.FTSOperation operation = SearchCriterion.FTSOperation.AND;
 

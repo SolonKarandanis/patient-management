@@ -1,5 +1,7 @@
 package com.pm.authservice.config.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pm.authservice.config.i18n.ChangeableLocaleResolver;
 import com.pm.authservice.config.i18n.I18nDbReloadableResourceBundleMessageSource;
 import com.pm.authservice.config.i18n.I18nDbResourceBundleMessageSource;
@@ -36,6 +38,13 @@ public class ApplicationConfig {
     @Bean
     public PasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
     }
 
     @Bean

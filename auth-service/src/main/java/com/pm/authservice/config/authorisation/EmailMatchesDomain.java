@@ -11,9 +11,9 @@ import java.util.function.Supplier;
 
 public class EmailMatchesDomain implements AuthorizationManager<RequestAuthorizationContext> {
     @Override
-    public @Nullable AuthorizationResult authorize(Supplier<Authentication> authenticationSupplier, RequestAuthorizationContext object) {
+    public @Nullable AuthorizationResult authorize(Supplier<? extends @Nullable Authentication> authenticationSupplier, RequestAuthorizationContext object) {
         Authentication authentication = authenticationSupplier.get();
-
         return new AuthorizationDecision(false);
     }
+    
 }

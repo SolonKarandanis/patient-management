@@ -95,7 +95,7 @@ public class UserControllerTest {
 
     @DisplayName("Find All Users")
     @Test
-    void testFindAllUsers(){
+    void testFindAllUsers() throws Exception {
         UsersSearchRequestDTO searchObj = TestUtil.generateUsersSearchRequestDTO();
         when(userService.findByPublicId(detailsDTO.getPublicId())).thenReturn(user);
         when(userService.searchUsers(searchObj,user)).thenReturn(results);

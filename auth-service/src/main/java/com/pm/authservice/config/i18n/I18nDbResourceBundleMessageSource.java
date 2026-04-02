@@ -53,7 +53,7 @@ public class I18nDbResourceBundleMessageSource extends ResourceBundleMessageSour
         return outputAsResBundle;
     }
 
-    private Charset getDefaultCharset() {
+    protected Charset getDefaultCharset() {
         return Optional.ofNullable(this.getDefaultEncoding()).map(Charset::forName).orElse(StandardCharsets.UTF_8);
     }
 

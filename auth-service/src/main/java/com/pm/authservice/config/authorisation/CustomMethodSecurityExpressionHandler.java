@@ -1,6 +1,8 @@
 package com.pm.authservice.config.authorisation;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.context.expression.MethodBasedEvaluationContext;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -49,9 +51,10 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
         return standardEvaluationContext;
     }
 
+
     @Override
-    public EvaluationContext createEvaluationContext(Supplier<Authentication> authentication, MethodInvocation mi) {
-        MethodSecurityExpressionOperations root = createSecurityExpressionRoot(authentication, mi);
+    public EvaluationContext createEvaluationContext(@NonNull Supplier<? extends @Nullable Authentication>authentication, @NonNull MethodInvocation mi) {
+        MethodSecurityExpressionOperations root = createSecurityExpressionRoot(authentication.get(), mi);
         MethodBasedEvaluationContext ctx = new MethodBasedEvaluationContext(root, mi.getMethod(), mi.getArguments(), getParameterNameDiscoverer());
         ctx.setBeanResolver(getBeanResolver());
         return ctx;

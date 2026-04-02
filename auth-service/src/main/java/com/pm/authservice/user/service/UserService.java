@@ -18,6 +18,8 @@ public interface UserService {
     UserEntity findByPublicId(String publicId)throws NotFoundException;
     List<String> getUserPermissions(String publicId)throws NotFoundException;
     UserEntity findByEmail(String email)throws NotFoundException;
+    List<UserEntity> findUsersToBeIndexedByIdRange(Integer minId, Integer maxId);
+    MinMaxUserIdDTO getMinAndMaxUserId();
     void deleteUser(String publicId) throws NotFoundException;
     Page<UserEntity> searchUsers(UsersSearchRequestDTO searchObj, UserEntity loggedUser);
     Page<UserEntity> quickSearchUsers(String quickSearchValueParam, PageRequest pageRequest, UserEntity loggedUser);

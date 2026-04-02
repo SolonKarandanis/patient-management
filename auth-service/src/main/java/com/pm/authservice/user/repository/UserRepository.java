@@ -1,6 +1,7 @@
 package com.pm.authservice.user.repository;
 
 import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.user.repository.projections.MinMaxUserId;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -59,5 +60,15 @@ public interface UserRepository extends JpaRepository<UserEntity,Integer> ,
     List<Object> getOperationKeysByRoleIdsAsObjectsNativeQuery(List<Integer> roleIds);
 
 
+
+    @Query("SELECT MIN(u.id) AS minId, MAX(u.id) AS maxId FROM UserEntity u")
+    MinMaxUserId getMinAndMaxUserId();
+
+    @Query("SELECT user FROM UserEntity user " +
+            "LEFT JOIN FETCH user.roles r "+
+            "WHERE user.id >= :minId " +
+            "AND user.id <= :maxId " +
+            "ORDER BY user.id ASC")
+    List<UserEntity> getUsersByIdRange(@Param("minId") Integer minId, @Param("maxId") Integer maxId);
 
 }

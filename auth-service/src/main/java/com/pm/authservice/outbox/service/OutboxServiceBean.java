@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -63,5 +64,10 @@ public class OutboxServiceBean implements OutboxService {
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize Outbox payload for user: {}", user.getId(), e);
         }
+    }
+
+    @Override
+    public void indexUsersByCreatingUserEvents(List<UserDocumentDTO> documents) {
+
     }
 }

@@ -1,15 +1,18 @@
 package com.pm.authservice.service;
 
+import com.pm.authservice.dto.UserDocumentDTO;
 import com.pm.authservice.outbox.service.OutboxService;
 import com.pm.authservice.service.fts.UserFullTextSearchService;
 import com.pm.authservice.user.dto.MinMaxUserIdDTO;
 import com.pm.authservice.user.model.UserEntity;
 import com.pm.authservice.user.service.UserService;
+import com.pm.authservice.util.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
 
@@ -51,15 +54,25 @@ public class AdministrationServiceBean implements AdministrationService{
                 log.info(" CASE-Processing: minId={}, maxId={} ", i, j);
                 List<UserEntity> users = userService.findUsersToBeIndexedByIdRange(i,j);
                 if(!CollectionUtils.isEmpty(users)){
-                    initiateReindexing(users);
+                    try{
+                        handleReindexing(users);
+                    }catch (Exception ex){
+                        return false;
+                    }
                 }
             }
         }
-        return null;
+        return true;
     }
 
-    protected void initiateReindexing(List<UserEntity> users){
-
+    protected void handleReindexing(List<UserEntity> users) throws ResourceAccessException {
+        List<UserDocumentDTO> documentDto = genericService.convertToDocumentDtoList(users);
+        if(AppConstants.ELASTIC_SEARCH_INDEXING_METHOD_HTTP.equals(elasticSearchIndexingMethod)){
+            userFullTextSearchService.indexUsers(documentDto);
+        }
+        if(AppConstants.ELASTIC_SEARCH_INDEXING_METHOD_OUTBOX.equals(elasticSearchIndexingMethod)){
+            outboxService.indexUsersByCreatingUserEvents(documentDto);
+        }
     }
 
     @Override

@@ -20,6 +20,7 @@ public class AdministrationServiceBean implements AdministrationService{
 
     private final UserFullTextSearchService userFullTextSearchService;
     private final UserService userService;
+    private final GenericService genericService;
     private final OutboxService outboxService;
 
     @Value("${search.elasticSearch.indexing.method:elastic.search.indexing.outbox}")
@@ -28,9 +29,11 @@ public class AdministrationServiceBean implements AdministrationService{
     public AdministrationServiceBean(
             UserFullTextSearchService userFullTextSearchService,
             UserService userService,
+            GenericService genericService,
             OutboxService outboxService) {
         this.userFullTextSearchService = userFullTextSearchService;
         this.userService = userService;
+        this.genericService = genericService;
         this.outboxService = outboxService;
     }
 

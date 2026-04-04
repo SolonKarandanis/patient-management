@@ -4,6 +4,7 @@ import com.pm.authservice.config.rest.interceptor.LoggingInterceptor;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.CollectionUtils;
@@ -17,7 +18,7 @@ public class RestTemplateConfig {
 
     @Bean
     RestTemplate restTemplate(HttpComponentsClientHttpRequestFactory clientHttpRequestFactory) {
-        RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
+        RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(clientHttpRequestFactory));
         restTemplate.setErrorHandler(new RestTemplateResponseErrorHandler());
         List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
         if(CollectionUtils.isEmpty(interceptors)) {

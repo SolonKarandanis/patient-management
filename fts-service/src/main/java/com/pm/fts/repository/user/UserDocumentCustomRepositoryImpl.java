@@ -62,4 +62,9 @@ public class UserDocumentCustomRepositoryImpl extends BaseDocumentCustomReposito
         log.info("UserDocumentCustomRepositoryImpl -> findDocumentItems-> hits " + hits.getTotalHits());
         return new UserSearchResponseDTO(hits, hits.getTotalHits());
     }
+
+    @Override
+    protected String getActiveStatus(){
+        return "account.active";
+    }
 }

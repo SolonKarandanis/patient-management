@@ -37,10 +37,8 @@ public class DocumentSearchRequest {
     @Valid
     private Paging paging;
 
-    @NotNull
     private Status status;
 
-    @NotNull
     private Role role;
 
     @Singular("criterion")

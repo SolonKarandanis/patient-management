@@ -12,6 +12,7 @@ import java.util.List;
 @SuperBuilder
 @Getter
 @Setter
+@ToString
 public class DocumentSearchRequest {
     public enum Type {
         QUICK,

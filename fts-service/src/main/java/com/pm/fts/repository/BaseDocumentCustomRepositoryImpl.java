@@ -4,6 +4,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import com.pm.fts.exception.UnsupportedEsQueryException;
 import com.pm.fts.web.dto.DocumentSearchRequest;
 import com.pm.fts.web.dto.SearchCriterion;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
@@ -13,6 +14,7 @@ import org.springframework.util.CollectionUtils;
 import java.util.Objects;
 
 @Component
+@Log
 public abstract class BaseDocumentCustomRepositoryImpl {
 
     @Value("${document.index.pfx}")
@@ -30,11 +32,29 @@ public abstract class BaseDocumentCustomRepositoryImpl {
 
     protected NativeQuery getNativeQuery(DocumentSearchRequest payload,Boolean withPageable) throws UnsupportedEsQueryException {
         NativeQueryBuilder searchQueryBuilder = NativeQuery.builder();
-        searchQueryBuilder.withFilter(new Query(getBoolQueryBuilder(payload).build())).withSourceFilter(RepositoryUtils.getSourceFilter(payload.getResultFields(), null));
+        searchQueryBuilder.withFilter(new Query(getBoolQueryBuilder(payload).build()));
+        
+        // Only apply SourceFilter if specific fields are requested, otherwise it defaults to returning the full source
+        if (!CollectionUtils.isEmpty(payload.getResultFields())) {
+            searchQueryBuilder.withSourceFilter(RepositoryUtils.getSourceFilter(payload.getResultFields(), null));
+        }
+
         if(withPageable){
             searchQueryBuilder.withPageable(RepositoryUtils.toPageable(payload.getPaging()));
         }
-        return searchQueryBuilder.build();
+        NativeQuery searchQuery = searchQueryBuilder.build();
+        // Manual Logging for Visibility
+        if (searchQuery.getFilter() != null) {
+            log.info("----------------------------------------------------------------");
+            log.info("ES Query Filter Payload: " + searchQuery.getFilter().toString());
+            log.info("----------------------------------------------------------------");
+        }
+        if (searchQuery.getQuery() != null) {
+            log.info("----------------------------------------------------------------");
+            log.info("ES Query Payload: " + searchQuery.getQuery().toString());
+            log.info("----------------------------------------------------------------");
+        }
+        return searchQuery;
     }
 
     protected BoolQuery.Builder getBoolQueryBuilder(DocumentSearchRequest payload) throws UnsupportedEsQueryException {
@@ -47,10 +67,14 @@ public abstract class BaseDocumentCustomRepositoryImpl {
         return bqbFilter;
     }
 
+    protected String getActiveStatus(){
+        return "status.active";
+    }
+
     protected void setItemStatus(BoolQuery.Builder bqbFilter, DocumentSearchRequest.Status status) {
         MatchQuery.Builder matchQueryBuilder = QueryBuilders.match();
         if (Objects.equals(DocumentSearchRequest.Status.ACTIVE, status)) {
-            matchQueryBuilder.field("status").query("status.active");
+            matchQueryBuilder.field("status").query(getActiveStatus());
             bqbFilter.must(new Query(matchQueryBuilder.build()));
         }
     }

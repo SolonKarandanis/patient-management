@@ -25,7 +25,7 @@ public class AbstractDocument implements Serializable {
     @Field(type = FieldType.Integer, name = "id")
     protected Integer id;
 
-    @Field(type = FieldType.Keyword, name = "publicId")
+    @Field(type = FieldType.Keyword, name = "public_id")
     protected String publicId;
 
     protected AbstractDocument(AbstractDocument abs){

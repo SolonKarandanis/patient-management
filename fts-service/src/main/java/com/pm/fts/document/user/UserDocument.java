@@ -26,21 +26,21 @@ public class UserDocument extends AbstractDocument {
     @Field(type = FieldType.Keyword, name = "username")
     protected String username;
 
-    @MultiField(mainField = @Field(index = true, type = FieldType.Text, name = "firstName", analyzer = "greek_lowercase_analyzer"),
+    @MultiField(mainField = @Field(index = true, type = FieldType.Text, name = "first_name", analyzer = "greek_lowercase_analyzer"),
             otherFields = {
                     @InnerField(index = true, type = FieldType.Keyword, suffix = "keyword",  normalizer = "lowercase_normalizer"),
                     @InnerField(index = true, type = FieldType.Text, suffix = "ngram", analyzer = "ngram_analyzer", searchAnalyzer = "greek_lowercase_analyzer")
             })
     protected String firstName;
 
-    @MultiField(mainField = @Field(index = true, type = FieldType.Text, name = "lastName", analyzer = "greek_lowercase_analyzer"),
+    @MultiField(mainField = @Field(index = true, type = FieldType.Text, name = "last_name", analyzer = "greek_lowercase_analyzer"),
             otherFields = {
                     @InnerField(index = true, type = FieldType.Keyword, suffix = "keyword",  normalizer = "lowercase_normalizer"),
                     @InnerField(index = true, type = FieldType.Text, suffix = "ngram", analyzer = "ngram_analyzer", searchAnalyzer = "greek_lowercase_analyzer")
             })
     protected String lastName;
 
-    @MultiField(mainField = @Field(index = true, type = FieldType.Text, name = "lastName"),
+    @MultiField(mainField = @Field(index = true, type = FieldType.Text, name = "email"),
             otherFields = {
                     @InnerField(index = true, type = FieldType.Keyword, suffix = "keyword",  normalizer = "lowercase_normalizer"),
                     @InnerField(index = true, type = FieldType.Text, suffix = "ngram", analyzer = "ngram_analyzer",searchAnalyzer = "greek_lowercase_analyzer")
@@ -50,15 +50,15 @@ public class UserDocument extends AbstractDocument {
     @Field(type = FieldType.Keyword, name = "status")
     protected String status;
 
-    @Field(type = FieldType.Boolean, name = "isEnabled")
+    @Field(type = FieldType.Boolean, name = "is_enabled")
     protected Boolean isEnabled;
 
-    @Field(type = FieldType.Boolean, name = "isVerified")
+    @Field(type = FieldType.Boolean, name = "is_verified")
     protected Boolean isVerified;
 
-    @Field(type = FieldType.Keyword, name = "rolesNames")
+    @Field(type = FieldType.Keyword, name = "roles_names")
     protected List<String> rolesNames;
 
-    @Field(type = FieldType.Integer, name = "roleIds")
+    @Field(type = FieldType.Integer, name = "role_ids")
     protected List<Integer> roleIds;
 }

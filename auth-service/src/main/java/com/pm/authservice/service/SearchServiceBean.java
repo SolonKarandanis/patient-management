@@ -121,10 +121,6 @@ public class SearchServiceBean  implements SearchService{
         return PageRequest.of(pageNo, size, sort);
     }
 
-    protected void logIfElasticSearchIsEnabled(){
-        log.debug("isElasticSearchEnabled: {}", elasticSearchEnable);
-    }
-
     protected void checkRequestParamsValidity(String status, String searchMethod) throws AuthException {
         boolean isPermittedItemStatusValue = FtsUtil.getPermittedSearchUsersStatusValues().stream()
                 .anyMatch(s -> s.equals(status));
@@ -144,8 +140,7 @@ public class SearchServiceBean  implements SearchService{
     @Override
     public SearchResults<UserDTO> advancedSearchUsers(UsersSearchRequestDTO request, UserEntity loggedUser)
             throws ResourceAccessException, AuthException {
-        log.debug("in SearchServiceBean ----> advancedSearchUsers");
-        logIfElasticSearchIsEnabled();
+        log.info("in SearchServiceBean ----> advancedSearchUsers ----> elasticSearchEnable: {}",elasticSearchEnable);
         String status = request.getStatus();
         String searchMethod = request.getSearchMethod();
         checkRequestParamsValidity(status, searchMethod);
@@ -186,8 +181,7 @@ public class SearchServiceBean  implements SearchService{
     @Override
     public List<UserDTO> findUsersForExport(UsersSearchRequestDTO request, UserEntity user)
             throws ResourceAccessException, AuthException {
-        log.debug("in SearchServiceBean ----> findUsersForExport");
-        logIfElasticSearchIsEnabled();
+        log.info("in SearchServiceBean ----> findUsersForExport ----> elasticSearchEnable: {}",elasticSearchEnable);
         String status = request.getStatus();
         String searchMethod = request.getSearchMethod();
         checkRequestParamsValidity(status, searchMethod);
@@ -202,7 +196,7 @@ public class SearchServiceBean  implements SearchService{
         List<SearchCriterion> criteria = setUserCriteria(request, operation);
         DocumentSearchRequest ftsRequest = getFindUsersRequestBuilder(status).criteria(criteria).build();
         try {
-            log.debug("[FTS findUsersForExport]  ftsRequest: {}", ftsRequest);
+            log.info("[FTS findUsersForExport]  ftsRequest: {}", ftsRequest);
             List<UserDocumentSearchResultsDTO> ftsResult = userFullTextSearchService.findUsers(ftsRequest);
             return convertFromFtsResultList(ftsResult);
         } catch (ResourceAccessException exc) {
@@ -236,8 +230,7 @@ public class SearchServiceBean  implements SearchService{
 
     @Override
     public Long countUsers(UsersSearchRequestDTO request, UserEntity loggedUser) throws ResourceAccessException, AuthException {
-        log.debug("in SearchServiceBean ----> countItems");
-        logIfElasticSearchIsEnabled();
+        log.info("in SearchServiceBean ----> countItems ----> elasticSearchEnable: {}",elasticSearchEnable);
         String status = request.getStatus();
         String searchMethod = request.getSearchMethod();
         checkRequestParamsValidity(status, searchMethod);
@@ -254,7 +247,7 @@ public class SearchServiceBean  implements SearchService{
         List<SearchCriterion> criteria = setUserCriteria(request, operation);
         DocumentSearchRequest ftsRequest = requestBuilder.criteria(criteria).build();
         try {
-            log.debug(" [CCM FTS COUNT ITEMS]  ftsRequest: {}", ftsRequest);
+            log.info(" [CCM FTS COUNT ITEMS]  ftsRequest: {}", ftsRequest);
             return userFullTextSearchService.countUsers(ftsRequest);
         } catch (ResourceAccessException exc) {
             throw new ResourceAccessException("error.fts.connection.failure");
@@ -265,8 +258,7 @@ public class SearchServiceBean  implements SearchService{
     public SearchResults<UserDTO> quickSearchUsers(String quickSearchValueParam, UserEntity loggedUser,
                                                                         Integer page, Integer size, String sortField, String sortOrder)
             throws ResourceAccessException {
-        log.debug("in SearchServiceBean ----> quickSearchUsers");
-        logIfElasticSearchIsEnabled();
+        log.info("in SearchServiceBean ----> quickSearchUsers ----> elasticSearchEnable: {}",elasticSearchEnable);
         if (!elasticSearchEnable){
             PageRequest pageRequest = toPageRequest(page,size,sortField,sortOrder);
             Page<UserEntity> results = userService.quickSearchUsers(quickSearchValueParam,pageRequest,loggedUser);
@@ -303,10 +295,10 @@ public class SearchServiceBean  implements SearchService{
     protected SearchResults<UserDTO> searchUsersOrThrow(DocumentSearchRequest ftsRequest)
             throws ResourceAccessException{
         try {
-            log.debug(" [FTS SEARCH]  ftsRequest: {}", ftsRequest);
+            log.info(" [FTS SEARCH]  ftsRequest: {}", ftsRequest);
             UserSearchResponseDTO ftsResponse = userFullTextSearchService.searchUsers(ftsRequest);
             int count = ftsResponse.getTotalElements().intValue();
-            log.debug(" [FTS SEARCH]  results count: {}", count);
+            log.info(" [FTS SEARCH]  results count: {}", count);
             return new SearchResults<>(count, convertFromFtsResultList(ftsResponse.getContent()));
         } catch (ResourceAccessException exc) {
             throw new ResourceAccessException("error.fts.connection.failure");
@@ -327,15 +319,15 @@ public class SearchServiceBean  implements SearchService{
     }
 
     protected void logSearchCriterion(String field,String value){
-        log.debug(" [USER SEARCH] - {}: {}", field, value);
+        log.info(" [USER SEARCH] - {}: {}", field, value);
     }
 
     protected void logSearchCriterion(String field,Integer value){
-        log.debug(" [USER SEARCH] - {}: {}", field, value);
+        log.info(" [USER SEARCH] - {}: {}", field, value);
     }
 
     protected void logSearchCriterion(String field,Boolean value){
-        log.debug(" [USER SEARCH] - {}: {}", field, value);
+        log.info(" [USER SEARCH] - {}: {}", field, value);
     }
 
     protected void addTextCriterion(SearchCriterion.FTSOperation operation, List<SearchCriterion> criteria, String field,

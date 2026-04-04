@@ -31,14 +31,20 @@ public class AdminController {
 
     @PostMapping("/indexing")
     public ResponseEntity<Void> triggerAdHocIndexing(){
+        log.info("AdminController --> triggerAdHocIndexing --> elasticSearchEnable: {}",elasticSearchEnable);
         if(!elasticSearchEnable){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.ok(null);
+        Boolean result =administrationService.triggerAdHocIndexing();
+        if(result){
+            return ResponseEntity.ok(null);
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
     @DeleteMapping("/indexing/user")
     public ResponseEntity<Void> deleteUserIndex(){
+        log.info("AdminController --> deleteUserIndex --> elasticSearchEnable: {}",elasticSearchEnable);
         if(!elasticSearchEnable){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }

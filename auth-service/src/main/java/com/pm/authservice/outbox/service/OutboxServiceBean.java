@@ -10,6 +10,7 @@ import com.pm.authservice.dto.UserDocumentDTO;
 import com.pm.authservice.service.GenericService;
 import com.pm.authservice.user.model.RoleEntity;
 import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.util.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,7 +69,13 @@ public class OutboxServiceBean implements OutboxService {
     }
 
     @Override
-    public void indexUsersByCreatingUserEvents(List<UserDocumentDTO> documents) {
-
+    public void indexUsersByCreatingUserEvents(List<UserDocumentDTO> documents) throws JsonProcessingException {
+        List<OutboxEvent> events = new ArrayList<>();
+        for(UserDocumentDTO document : documents){
+            String payload = objectMapper.writeValueAsString(document);
+            OutboxEvent event = convertToOutboxEvent(document.getId(), AppConstants.OUTBOX_USER_UPDATED,payload);
+            events.add(event);
+        }
+        outboxEventRepository.saveAll(events);
     }
 }

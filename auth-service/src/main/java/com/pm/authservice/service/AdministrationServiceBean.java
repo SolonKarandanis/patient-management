@@ -1,5 +1,6 @@
 package com.pm.authservice.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pm.authservice.dto.UserDocumentDTO;
 import com.pm.authservice.outbox.service.OutboxService;
 import com.pm.authservice.service.fts.UserFullTextSearchService;
@@ -11,12 +12,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class AdministrationServiceBean implements AdministrationService{
     private static final int USER_UPDATE_BATCH = 50;
     private static final Logger log = LoggerFactory.getLogger(AdministrationServiceBean.class);
@@ -27,7 +31,7 @@ public class AdministrationServiceBean implements AdministrationService{
     private final OutboxService outboxService;
 
     @Value("${search.elasticSearch.indexing.method:elastic.search.indexing.outbox}")
-    private Boolean elasticSearchIndexingMethod;
+    private String elasticSearchIndexingMethod;
 
     public AdministrationServiceBean(
             UserFullTextSearchService userFullTextSearchService,
@@ -40,14 +44,14 @@ public class AdministrationServiceBean implements AdministrationService{
         this.outboxService = outboxService;
     }
 
-
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public Boolean triggerAdHocIndexing() {
-        log.debug("AdministrationServiceBean --> triggerAdHocIndexing");
+        log.info("AdministrationServiceBean --> triggerAdHocIndexing");
         MinMaxUserIdDTO dto = userService.getMinAndMaxUserId();
         Integer minUserId = dto.minId();
         Integer maxUserId = dto.maxId();
-        log.debug("AdministrationServiceBean --> triggerAdHocIndexing --> IdRange=[{}-{}]",minUserId,maxUserId);
+        log.info("AdministrationServiceBean --> triggerAdHocIndexing --> IdRange=[{}-{}]",minUserId,maxUserId);
         if(minUserId != null && maxUserId != null){
             for (int i = minUserId; i <= maxUserId; i += USER_UPDATE_BATCH){
                 int j = Math.min(i + USER_UPDATE_BATCH - 1, maxUserId);
@@ -65,7 +69,7 @@ public class AdministrationServiceBean implements AdministrationService{
         return true;
     }
 
-    protected void handleReindexing(List<UserEntity> users) throws ResourceAccessException {
+    protected void handleReindexing(List<UserEntity> users) throws ResourceAccessException, JsonProcessingException {
         List<UserDocumentDTO> documentDto = genericService.convertToDocumentDtoList(users);
         if(AppConstants.ELASTIC_SEARCH_INDEXING_METHOD_HTTP.equals(elasticSearchIndexingMethod)){
             userFullTextSearchService.indexUsers(documentDto);
@@ -77,7 +81,7 @@ public class AdministrationServiceBean implements AdministrationService{
 
     @Override
     public Boolean deleteUserIndex() {
-        log.debug("AdministrationServiceBean --> deleteUserIndex");
+        log.info("AdministrationServiceBean --> deleteUserIndex");
         return userFullTextSearchService.deleteUserIndex();
     }
 }

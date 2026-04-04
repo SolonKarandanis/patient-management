@@ -69,10 +69,10 @@ public class UserController {
     @Translate(path = "list[*].status", targetProperty = "statusLabel")
     public ResponseEntity<SearchResults<UserDTO>> findAllUsers(@RequestBody @Valid UsersSearchRequestDTO searchObj,
                                                                Authentication authentication) throws AuthException {
-        log.debug("[NEW SEARCH] -- UserController, method findAllUsers");
+        log.info("[NEW SEARCH] -- UserController, method findAllUsers");
         UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
         UserEntity user = usersService.findByPublicId(dto.getPublicId());
-        log.debug("In UserController with user: {}", user.getUsername());
+        log.info("In UserController with user: {}", user.getUsername());
         SearchResults<UserDTO>results= searchService.advancedSearchUsers(searchObj,user);
         return ResponseEntity.ok().body(results);
     }
@@ -83,10 +83,10 @@ public class UserController {
             @RequestParam String value,@RequestParam Integer page,
             @RequestParam Integer size, @RequestParam(required = false) String sortField,
             @RequestParam(required = false) String sortOrder, Authentication authentication) throws AuthException {
-        log.debug("[NEW SEARCH] -- UserController, method findAllUsers");
+        log.info("[NEW SEARCH] -- UserController, method findAllUsers");
         UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
         UserEntity user = usersService.findByPublicId(dto.getPublicId());
-        log.debug("In UserController with user: {}", user.getUsername());
+        log.info("In UserController with user: {}", user.getUsername());
         SearchResults<UserDTO>results=searchService.quickSearchUsers(value, user, page, size, sortField, sortOrder);
         return ResponseEntity.ok().body(results);
     }

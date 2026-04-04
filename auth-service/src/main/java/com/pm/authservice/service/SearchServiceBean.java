@@ -286,9 +286,9 @@ public class SearchServiceBean  implements SearchService{
         //value is 'search.type.or'
         SearchCriterion.FTSOperation operation = SearchCriterion.FTSOperation.OR;
         addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_USERNAME, quickSearchValueParam, SearchCriterion.SearchType.WILDCARD);
-        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_FIRST_NAME, quickSearchValueParam);
-        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_LAST_NAME, quickSearchValueParam);
-        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_EMAIL, quickSearchValueParam);
+        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_FIRST_NAME + FtsUtil.ES_FIELD_TYPE_NGRAM, quickSearchValueParam, SearchCriterion.SearchType.MATCH);
+        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_LAST_NAME + FtsUtil.ES_FIELD_TYPE_NGRAM, quickSearchValueParam, SearchCriterion.SearchType.MATCH);
+        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_EMAIL + FtsUtil.ES_FIELD_TYPE_NGRAM, quickSearchValueParam, SearchCriterion.SearchType.MATCH);
         return DocumentSearchRequest.builder().type(DocumentSearchRequest.Type.QUICK).paging(paging).criteria(criteria).status(DocumentSearchRequest.Status.ALL);
     }
 
@@ -313,8 +313,14 @@ public class SearchServiceBean  implements SearchService{
         String roleName = request.getRoleName();
         addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_USERNAME, username, SearchCriterion.SearchType.WILDCARD);
         addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_ROLE_NAMES, roleName);
-        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_FIRST_NAME, name, SearchCriterion.SearchType.MATCH_PREFIX);
-        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_EMAIL, email, SearchCriterion.SearchType.MATCH_PREFIX);
+        
+        // Search both first and last name with OR condition so that if a user types "John", 
+        // it matches users where John is either their first or their last name.
+        // We use the .ngram sub-field with MATCH to allow substring matching (e.g. "tra" matching "Stratos").
+        addTextCriterion(SearchCriterion.FTSOperation.OR, criteria, FtsUtil.ES_USER_FIELD_FIRST_NAME + FtsUtil.ES_FIELD_TYPE_NGRAM, name, SearchCriterion.SearchType.MATCH);
+        addTextCriterion(SearchCriterion.FTSOperation.OR, criteria, FtsUtil.ES_USER_FIELD_LAST_NAME + FtsUtil.ES_FIELD_TYPE_NGRAM, name, SearchCriterion.SearchType.MATCH);
+        
+        addTextCriterion(operation, criteria, FtsUtil.ES_USER_FIELD_EMAIL + FtsUtil.ES_FIELD_TYPE_NGRAM, email, SearchCriterion.SearchType.MATCH);
         return criteria;
     }
 

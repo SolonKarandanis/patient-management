@@ -9,3 +9,10 @@ export const UserRolesEnum = {
 } as const satisfies Record<string, string>;
 
 export type UserRoles = (typeof UserRolesEnum)[keyof typeof UserRolesEnum];
+
+export const SearchTypesEnum={
+  SEARCH_TYPE_AND:"search.type.and",
+  SEARCH_TYPE_OR:"search.type.or"
+}
+
+export type SearchTypes = (typeof SearchTypesEnum)[keyof typeof SearchTypesEnum];

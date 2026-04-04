@@ -50,6 +50,7 @@ export class SearchService extends GenericService{
    */
   public toUserSearchRequest(form: FieldTree<UserSearchFormModel, string | number>):UserSearchRequest{
     return {
+      searchMethod: form.searchMethod().value(),
       email:form.email().value(),
       name:form.name().value(),
       status: form.status().value(),
@@ -84,6 +85,7 @@ export class SearchService extends GenericService{
   public toI18nResourceSearchRequest(form:  FieldTree<I18nResourceSearchFormModel, string | number>):I18nResourceSearchRequest{
     const {language,term, module, rows, first, sortField, sortOrder} = form;
     return {
+      searchMethod: form.searchMethod().value(),
       languageId:language().value()!,
       term:term().value(),
       moduleId:module().value()!,

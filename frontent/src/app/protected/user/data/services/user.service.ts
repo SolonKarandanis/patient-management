@@ -18,6 +18,7 @@ import {SearchTableColumn} from '@models/search.model';
 import {UserAccountStatusEnum} from '@models/user.model';
 import {SelectItem} from 'primeng/api';
 import {FieldTree, form} from '@angular/forms/signals';
+import {SearchTypes, SearchTypesEnum} from '@models/constants';
 
 @Injectable({
   providedIn: 'root'
@@ -200,6 +201,7 @@ export class UserService extends GenericService{
 
 
   private searchUserModel = signal<UserSearchFormModel>({
+    searchMethod:SearchTypesEnum.SEARCH_TYPE_AND,
     email:'',
     username:'',
     name:'',

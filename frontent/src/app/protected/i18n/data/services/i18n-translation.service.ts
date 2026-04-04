@@ -6,6 +6,7 @@ import { I18nResourceSearchFormModel} from '../../forms';
 import {GenericService} from '@core/services/generic.service';
 
 import {FieldTree, form} from '@angular/forms/signals';
+import {SearchTypesEnum} from '@models/constants';
 
 
 @Injectable({
@@ -43,6 +44,7 @@ export class I18nTranslationService extends GenericService{
   }
 
   private searchI18nModel = signal<I18nResourceSearchFormModel>({
+    searchMethod:SearchTypesEnum.SEARCH_TYPE_AND,
     language:null,
     module:null,
     term:'',

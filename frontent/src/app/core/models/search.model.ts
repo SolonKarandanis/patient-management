@@ -1,4 +1,5 @@
 import {UserAccountStatus} from '@models/user.model';
+import {SearchTypes} from '@models/constants';
 
 export type SearchResult<T>={
   list:T[],
@@ -100,6 +101,7 @@ export interface Paging {
 }
 
 export interface SearchRequest {
+  searchMethod:SearchTypes;
   paging: Paging;
 }
 

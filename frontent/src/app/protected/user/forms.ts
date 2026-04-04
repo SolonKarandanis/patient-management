@@ -4,10 +4,12 @@ import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SortDirection} from '@models/search.model';
 import {customError, disabled, email, minLength, required, schema, validate} from '@angular/forms/signals';
 import {Signal} from '@angular/core';
+import {SearchTypes} from '@models/constants';
 
 
 
 export interface UserSearchFormModel{
+  searchMethod:SearchTypes;
   email: string;
   username:string;
   name:string;

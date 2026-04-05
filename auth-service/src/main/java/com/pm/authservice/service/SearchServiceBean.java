@@ -324,15 +324,7 @@ public class SearchServiceBean  implements SearchService{
         return criteria;
     }
 
-    protected void logSearchCriterion(String field,String value){
-        log.info(" [USER SEARCH] - {}: {}", field, value);
-    }
-
-    protected void logSearchCriterion(String field,Integer value){
-        log.info(" [USER SEARCH] - {}: {}", field, value);
-    }
-
-    protected void logSearchCriterion(String field,Boolean value){
+    protected void logSearchCriterion(String field,Object value){
         log.info(" [USER SEARCH] - {}: {}", field, value);
     }
 

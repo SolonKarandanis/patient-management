@@ -9,8 +9,6 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.expression.spel.support.StandardTypeLocator;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
-import org.springframework.security.authentication.AuthenticationTrustResolver;
-import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -19,8 +17,6 @@ import java.util.function.Supplier;
 public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurityExpressionHandler {
 
     protected WebApplicationContext webAppContext;
-
-    protected AuthenticationTrustResolver trustResolver = new AuthenticationTrustResolverImpl();
 
 
     public CustomMethodSecurityExpressionHandler(
@@ -31,21 +27,18 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
     }
 
     @Override
-    protected MethodSecurityExpressionOperations createSecurityExpressionRoot(Authentication authentication, MethodInvocation invocation) {
+    protected MethodSecurityExpressionOperations createSecurityExpressionRoot(@NonNull Authentication authentication, @Nullable MethodInvocation invocation) {
         CustomMethodSecurityExpressionRoot root = getCustomMethodSecurityExpressionRoot(authentication);
         root.setPermissionEvaluator(getPermissionEvaluator());
-        root.setTrustResolver(this.trustResolver);
-        root.setRoleHierarchy(getRoleHierarchy());
         return root;
     }
 
     protected CustomMethodSecurityExpressionRoot getCustomMethodSecurityExpressionRoot(Authentication authentication) {
-        CustomMethodSecurityExpressionRoot root = new CustomMethodSecurityExpressionRoot(authentication, webAppContext);
-        return root;
+        return new CustomMethodSecurityExpressionRoot(authentication, webAppContext);
     }
 
     @Override
-    public StandardEvaluationContext createEvaluationContextInternal(final Authentication auth, final MethodInvocation mi) {
+    public StandardEvaluationContext createEvaluationContextInternal(@NonNull final Authentication auth, @Nullable final MethodInvocation mi) {
         StandardEvaluationContext standardEvaluationContext = super.createEvaluationContextInternal(auth, mi);
         ((StandardTypeLocator) standardEvaluationContext.getTypeLocator()).registerImport("com.pm.authservice.service");
         return standardEvaluationContext;
@@ -53,20 +46,15 @@ public class CustomMethodSecurityExpressionHandler extends DefaultMethodSecurity
 
 
     @Override
-    public EvaluationContext createEvaluationContext(@NonNull Supplier<? extends @Nullable Authentication>authentication, @NonNull MethodInvocation mi) {
-        MethodSecurityExpressionOperations root = createSecurityExpressionRoot(authentication.get(), mi);
+    public EvaluationContext createEvaluationContext(@NonNull Supplier<? extends @Nullable Authentication> authentication, @Nullable MethodInvocation mi) {
+        Authentication auth = authentication.get();
+        if (auth == null) {
+            throw new IllegalArgumentException("Authentication must not be null");
+        }
+        MethodSecurityExpressionOperations root = createSecurityExpressionRoot(auth, mi);
         MethodBasedEvaluationContext ctx = new MethodBasedEvaluationContext(root, mi.getMethod(), mi.getArguments(), getParameterNameDiscoverer());
         ctx.setBeanResolver(getBeanResolver());
         return ctx;
     }
 
-    private MethodSecurityExpressionOperations createSecurityExpressionRoot(Supplier<Authentication> authentication, MethodInvocation invocation) {
-        CustomMethodSecurityExpressionRoot root = getCustomMethodSecurityExpressionRoot(authentication.get());
-        root.setTarget(invocation.getThis());
-        root.setPermissionEvaluator(getPermissionEvaluator());
-        root.setTrustResolver(this.trustResolver);
-        root.setRoleHierarchy(getRoleHierarchy());
-        root.setDefaultRolePrefix("");
-        return root;
-    }
 }

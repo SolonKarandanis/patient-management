@@ -247,7 +247,7 @@ public class SearchServiceBean  implements SearchService{
         List<SearchCriterion> criteria = setUserCriteria(request, operation);
         DocumentSearchRequest ftsRequest = requestBuilder.criteria(criteria).build();
         try {
-            log.info(" [CCM FTS COUNT ITEMS]  ftsRequest: {}", ftsRequest);
+            log.info(" [FTS COUNT ITEMS]  ftsRequest: {}", ftsRequest);
             return userFullTextSearchService.countUsers(ftsRequest);
         } catch (ResourceAccessException exc) {
             throw new ResourceAccessException("error.fts.connection.failure");

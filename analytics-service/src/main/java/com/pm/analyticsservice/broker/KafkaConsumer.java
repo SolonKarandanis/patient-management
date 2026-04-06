@@ -14,8 +14,6 @@ import user.events.UserEvent;
 public class KafkaConsumer {
     private static final Logger log = LoggerFactory.getLogger(KafkaConsumer.class);
 
-    private static final String ERROR_DESERIALIZING_EVENT = "Error deserializing event {}";
-
     private final EventService eventService;
 
     public KafkaConsumer(EventService eventService) {
@@ -24,46 +22,34 @@ public class KafkaConsumer {
 
 
     @KafkaListener(topics="patient-events", groupId = "analytics-service")
-    public void consumeEvent(byte[] event) {
-        try {
-            PatientEvent patientEvent = PatientEvent.parseFrom(event);
-            // ... perform any business related to analytics here
+    public void consumeEvent(byte[] event) throws InvalidProtocolBufferException {
+        PatientEvent patientEvent = PatientEvent.parseFrom(event);
+        // ... perform any business related to analytics here
 
-            log.info("Received Patient Event: [PatientId={},PatientName={},PatientEmail={}]",
-                    patientEvent.getPatientId(),
-                    patientEvent.getName(),
-                    patientEvent.getEmail());
-            eventService.savePatientEvent(patientEvent);
-        } catch (InvalidProtocolBufferException e) {
-            log.error(ERROR_DESERIALIZING_EVENT, e.getMessage());
-        }
+        log.info("Received Patient Event: [PatientId={},PatientName={},PatientEmail={}]",
+                patientEvent.getPatientId(),
+                patientEvent.getName(),
+                patientEvent.getEmail());
+        eventService.savePatientEvent(patientEvent);
     }
 
     @KafkaListener(topics="user-events", groupId = "analytics-service")
-    public void consumeUserEvent(byte[] event){
-        try {
-            UserEvent userEvent = UserEvent.parseFrom(event);
-            log.info("Received User Event: [User Id={},Username={},UserEmail={}]",
-                    userEvent.getUserId(),
-                    userEvent.getUsername(),
-                    userEvent.getEmail());
-            eventService.saveUserEvent(userEvent);
-        } catch (InvalidProtocolBufferException e) {
-            log.error(ERROR_DESERIALIZING_EVENT, e.getMessage());
-        }
+    public void consumeUserEvent(byte[] event) throws InvalidProtocolBufferException {
+        UserEvent userEvent = UserEvent.parseFrom(event);
+        log.info("Received User Event: [User Id={},Username={},UserEmail={}]",
+                userEvent.getUserId(),
+                userEvent.getUsername(),
+                userEvent.getEmail());
+        eventService.saveUserEvent(userEvent);
     }
 
     @KafkaListener(topics="payment-events", groupId = "analytics-service")
-    public void consumePaymentEvent(byte[] event){
-        try {
-            PaymentEvent paymentEvent = PaymentEvent.parseFrom(event);
-            log.info("Received Payment Event: [Payment Id={}, Patient Id={}, Amount={}]",
-                    paymentEvent.getId(),
-                    paymentEvent.getPatientId(),
-                    paymentEvent.getAmount());
-            eventService.savePaymentEvent(paymentEvent);
-        } catch (InvalidProtocolBufferException e) {
-            log.error(ERROR_DESERIALIZING_EVENT, e.getMessage());
-        }
+    public void consumePaymentEvent(byte[] event) throws InvalidProtocolBufferException {
+        PaymentEvent paymentEvent = PaymentEvent.parseFrom(event);
+        log.info("Received Payment Event: [Payment Id={}, Patient Id={}, Amount={}]",
+                paymentEvent.getId(),
+                paymentEvent.getPatientId(),
+                paymentEvent.getAmount());
+        eventService.savePaymentEvent(paymentEvent);
     }
 }

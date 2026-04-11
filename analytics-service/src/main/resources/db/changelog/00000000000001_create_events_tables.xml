@@ -15,7 +15,7 @@
                 event_type String,
                 event_timestamp DateTime DEFAULT now()
             ) ENGINE = MergeTree()
-            ORDER BY (event_timestamp, id);
+            ORDER BY (event_type, patientId, toDate(event_timestamp), event_timestamp);
         </sql>
     </changeSet>
 
@@ -30,7 +30,7 @@
                 createdDate DateTime,
                 event_timestamp DateTime DEFAULT now()
             ) ENGINE = MergeTree()
-            ORDER BY (event_timestamp, id);
+            ORDER BY (state, patientId, toDate(event_timestamp), event_timestamp);
         </sql>
     </changeSet>
 
@@ -45,7 +45,7 @@
                 event_type String,
                 event_timestamp DateTime DEFAULT now()
             ) ENGINE = MergeTree()
-            ORDER BY (event_timestamp, id);
+            ORDER BY (event_type, userId, toDate(event_timestamp), event_timestamp);
         </sql>
     </changeSet>
 
@@ -60,7 +60,7 @@
                 message String,
                 event_timestamp DateTime DEFAULT now()
             ) ENGINE = MergeTree()
-            ORDER BY (event_timestamp, id);
+            ORDER BY (eventType, toDate(event_timestamp), event_timestamp);
         </sql>
     </changeSet>
 

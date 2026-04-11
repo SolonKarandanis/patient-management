@@ -9,7 +9,7 @@
         <sql>
             CREATE MATERIALIZED VIEW IF NOT EXISTS analyticsservice.patient_events_daily_summary
             ENGINE = SummingMergeTree()
-            ORDER BY (event_date, event_type)
+            ORDER BY (event_type, event_date)
             POPULATE
             AS SELECT
                 toDate(event_timestamp) AS event_date,
@@ -25,7 +25,7 @@
         <sql>
             CREATE MATERIALIZED VIEW IF NOT EXISTS analyticsservice.user_events_daily_summary
             ENGINE = SummingMergeTree()
-            ORDER BY (event_date, event_type)
+            ORDER BY (event_type, event_date)
             POPULATE
             AS SELECT
                 toDate(event_timestamp) AS event_date,
@@ -41,7 +41,7 @@
         <sql>
             CREATE MATERIALIZED VIEW IF NOT EXISTS analyticsservice.payment_events_daily_summary
             ENGINE = SummingMergeTree()
-            ORDER BY (event_date, state)
+            ORDER BY (state, event_date)
             POPULATE
             AS SELECT
                 toDate(event_timestamp) AS event_date,

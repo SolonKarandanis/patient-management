@@ -8,7 +8,6 @@ import com.pm.authservice.outbox.model.OutboxEvent;
 import com.pm.authservice.outbox.repository.OutboxEventRepository;
 import com.pm.authservice.dto.UserDocumentDTO;
 import com.pm.authservice.service.GenericService;
-import com.pm.authservice.user.model.RoleEntity;
 import com.pm.authservice.user.model.UserEntity;
 import com.pm.authservice.util.AppConstants;
 import org.slf4j.Logger;

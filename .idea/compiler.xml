@@ -47,7 +47,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.44/lombok-1.18.44.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
           <entry name="$MAVEN_REPOSITORY$/com/querydsl/querydsl-apt/5.1.0/querydsl-apt-5.1.0-jakarta.jar" />
           <entry name="$MAVEN_REPOSITORY$/com/querydsl/querydsl-codegen/5.1.0/querydsl-codegen-5.1.0.jar" />
           <entry name="$MAVEN_REPOSITORY$/com/querydsl/querydsl-core/5.1.0/querydsl-core-5.1.0.jar" />

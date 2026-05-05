@@ -8,7 +8,6 @@
         <option value="$PROJECT_DIR$/billing-service/pom.xml" />
         <option value="$PROJECT_DIR$/analytics-service/pom.xml" />
         <option value="$PROJECT_DIR$/api-gateway/pom.xml" />
-        <option value="$PROJECT_DIR$/auth-service/pom.xml" />
         <option value="$PROJECT_DIR$/integration-tests/pom.xml" />
         <option value="$PROJECT_DIR$/camel-integration/pom.xml" />
         <option value="$PROJECT_DIR$/creaditcard-service/pom.xml" />
@@ -23,6 +22,7 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/api-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/auth-service/pom.xml" />
       </set>
     </option>
   </component>

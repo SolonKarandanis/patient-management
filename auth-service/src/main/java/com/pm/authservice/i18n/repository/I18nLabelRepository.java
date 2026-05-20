@@ -16,20 +16,20 @@ import java.util.List;
 public interface I18nLabelRepository extends JpaRepository<I18nLabel, Integer> {
 
     @Query(name =I18nLabel.GET_I18N_LABELS)
-    List<I18nLabel> getI18nLabels();
+    List<I18nLabel> findI18nLabels();
 
     @Query(name =I18nLabel.GET_I18N_LABELS_BY_MODULE_ID)
-    List<I18nLabel> getI18nLabelsByModuleId(@Param("moduleId") Integer moduleId);
+    List<I18nLabel> findI18nLabelsByModuleId(@Param("moduleId") Integer moduleId);
 
     @Query(name =I18nLabel.GET_I18N_LABEL_RESOURCE_KEYS)
-    List<String> getI18nLabelResourceKeys();
+    List<String> findI18nLabelResourceKeys();
 
     @Modifying
     @Query(name =I18nLabel.DELETE_I18N_LABEL_BY_ID)
     int deleteI18nLabelById(@Param("labelId") Integer labelId);
 
     @Query(name = I18nLabel.GET_COUNT_OF_I18N_LABELS_WITH_NO_TRANSLATIONS_BY_MODULE_ID)
-    Integer getCountOfI18nLabelsWithNoTranslationsByModuleId(@Param("moduleId") Integer moduleId);
+    Integer findCountOfI18nLabelsWithNoTranslationsByModuleId(@Param("moduleId") Integer moduleId);
 
     @Modifying
     @Query(name =I18nLabel.DELETE_I18N_LABELS_WITH_NO_TRANSLATIONS_BY_MODULE_ID)
@@ -56,5 +56,5 @@ public interface I18nLabelRepository extends JpaRepository<I18nLabel, Integer> {
     @Query("SELECT lab.id, lab.resourceKey, mod.moduleName, trl.languageId, trl.textValue "
             + "FROM I18nLabel lab JOIN lab.i18nModule mod LEFT JOIN I18nTranslation trl ON trl.i18nLabelId = lab.id "
             + "WHERE lab.id IN :ids ORDER BY lab.id ASC")
-    List<Object[]> getResourceDataWithPaginationByLabelIds(@Param("ids") List<Long> ids);
+    List<Object[]> findResourceDataWithPaginationByLabelIds(@Param("ids") List<Long> ids);
 }

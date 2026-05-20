@@ -133,7 +133,7 @@ public class UserServiceBean implements UserService{
     public List<String> getUserPermissions(String publicId) throws NotFoundException {
         UserEntity user= userRepository.findByPublicId(UUID.fromString(publicId))
                             .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
-        return userRepository.getUserPermissions(user.getId());
+        return userRepository.findUserPermissions(user.getId());
     }
 
     @Override
@@ -144,12 +144,12 @@ public class UserServiceBean implements UserService{
 
     @Override
     public List<UserEntity> findUsersToBeIndexedByIdRange(Integer minId, Integer maxId) {
-        return userRepository.getUsersByIdRange(minId,maxId);
+        return userRepository.findUsersByIdRange(minId,maxId);
     }
 
     @Override
     public MinMaxUserIdDTO getMinAndMaxUserId() {
-        MinMaxUserId result =userRepository.getMinAndMaxUserId();
+        MinMaxUserId result =userRepository.findMinAndMaxUserId();
         return new MinMaxUserIdDTO(result.getMinId(),result.getMaxId());
     }
 

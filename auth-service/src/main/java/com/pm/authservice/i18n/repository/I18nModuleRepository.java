@@ -14,10 +14,10 @@ import java.util.List;
 public interface I18nModuleRepository extends JpaRepository<I18nModule, Integer> {
 
     @Query(name = I18nModule.GET_I18N_MODULES)
-    List<I18nModule> getI18nModules();
+    List<I18nModule> findI18nModules();
 
     @Query(name = I18nModule.GET_ACTIVE_I18N_MODULES)
-    List<I18nModule> getActiveI18nModules();
+    List<I18nModule> findActiveI18nModules();
 
     @Modifying
     @Query(name = I18nModule.LOCK_UPDATE_MODULE_BY_ID)

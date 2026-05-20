@@ -15,17 +15,17 @@ import java.util.Map;
 public interface I18nTranslationRepository extends JpaRepository<I18nTranslation, Integer> {
 
     @Query(name = I18nTranslation.GET_TRANSLATION_RECORDS_BY_MODULE_NAME_AND_LANG_ISO_CODE)
-    List<Object[]> getTranslationRecordsByModuleNameAndLangIsoCode(@Param("moduleName") String moduleName, @Param("langIso") String langIso);
+    List<Object[]> findTranslationRecordsByModuleNameAndLangIsoCode(@Param("moduleName") String moduleName, @Param("langIso") String langIso);
 
     @Query(name = I18nTranslation.GET_TRANSLATION_RECORDS_BY_MODULE_ID_AND_LANG_ID_AND_NO_USER_MODIFIED)
-    List<I18nTranslation> getTranslationRecordsByModuleIdAndLangIdAndNoUserModified(@Param("moduleId") Integer moduleId,
-                                                                                           @Param("langId") Integer langId);
+    List<I18nTranslation> findTranslationRecordsByModuleIdAndLangIdAndNoUserModified(@Param("moduleId") Integer moduleId,
+                                                                                     @Param("langId") Integer langId);
 
     @Query(name = I18nTranslation.GET_LABEL_KEYS_HAVING_USER_MODIFIED_TRANSLATION_BY_MODULE_ID_AND_LANG_ID)
-    List<String> getLabelKeysHavingUserModifiedTranslationByModuleIdAndLangId(@Param("moduleId") Integer moduleId, @Param("langId") Integer langId);
+    List<String> findLabelKeysHavingUserModifiedTranslationByModuleIdAndLangId(@Param("moduleId") Integer moduleId, @Param("langId") Integer langId);
 
-    default Map<String, String> getTranslationsByModuleAndLangIsoCode(String moduleName, String langIso) {
-        List<Object[]> obRecords = getTranslationRecordsByModuleNameAndLangIsoCode(moduleName, langIso);
+    default Map<String, String> findTranslationsByModuleAndLangIsoCode(String moduleName, String langIso) {
+        List<Object[]> obRecords = findTranslationRecordsByModuleNameAndLangIsoCode(moduleName, langIso);
         Map<String, String> outputAsMap = new LinkedHashMap<>();
         obRecords.forEach(ob -> {
             outputAsMap.put((String) ob[1], (String) ob[3]);
@@ -42,6 +42,6 @@ public interface I18nTranslationRepository extends JpaRepository<I18nTranslation
     int deleteI18nTranslationByIds(@Param("translationIds") List<Integer> translationIds);
 
     @Query(name = I18nTranslation.GET_TRANSLATIONS_BY_RECORDS_BY_RESOURCE_IDS)
-    List<I18nTranslation> getTranslationsByResourceIds(@Param("ids") List<Integer> ids);
+    List<I18nTranslation> findTranslationsByResourceIds(@Param("ids") List<Integer> ids);
 
 }

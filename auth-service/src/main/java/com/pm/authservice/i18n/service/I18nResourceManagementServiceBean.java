@@ -41,7 +41,7 @@ public class I18nResourceManagementServiceBean implements I18nResourceManagement
             return new SearchResults<>(0, Collections.emptyList());
         }
 
-        List<Object[]> results = i18nLabelRepository.getResourceDataWithPaginationByLabelIds(resultsIds.getContent());
+        List<Object[]> results = i18nLabelRepository.findResourceDataWithPaginationByLabelIds(resultsIds.getContent());
         List<I18nResourceManagementResponseDTO> respDto = convertToResponseDTOList(results);
         long totalElems = resultsIds.getTotalElements();
 

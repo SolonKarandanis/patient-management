@@ -36,16 +36,16 @@ public interface UserRepository extends JpaRepository<UserEntity,Integer> ,
     @Query("SELECT u FROM UserEntity u ")
     List<UserEntity> findUsersWithRoles(Specification<UserEntity> spec);
 
-    default List<String> getUserPermissions(Integer userId) {
+    default List<String> findUserPermissions(Integer userId) {
         List<String> permissions = new ArrayList<>();
 
-        List<Object> results = getUserRoleIdsByUserIdNativeQuery(userId);
+        List<Object> results = findUserRoleIdsByUserIdNativeQuery(userId);
         List<Integer> roleIds = new ArrayList<>();
         for (Object row : results) {
             roleIds.add(((Number) row).intValue());
         }
 
-        List<Object> operationResults = getOperationKeysByRoleIdsAsObjectsNativeQuery(roleIds);
+        List<Object> operationResults = findOperationKeysByRoleIdsAsObjectsNativeQuery(roleIds);
         for (Object row : operationResults) {
             permissions.add((String) row);
         }
@@ -54,21 +54,21 @@ public interface UserRepository extends JpaRepository<UserEntity,Integer> ,
     }
 
     @Query(nativeQuery = true, name = UserEntity.FIND_USER_ROLE_IDS_BY_USER_ID_NATIVE_QUERY)
-    List<Object> getUserRoleIdsByUserIdNativeQuery(Integer userId);
+    List<Object> findUserRoleIdsByUserIdNativeQuery(Integer userId);
 
     @Query(nativeQuery = true, name = UserEntity.FIND_OPERATION_KEY_BY_ROLE_IDS_AS_OBJECTS_NATIVE_QUERY)
-    List<Object> getOperationKeysByRoleIdsAsObjectsNativeQuery(List<Integer> roleIds);
+    List<Object> findOperationKeysByRoleIdsAsObjectsNativeQuery(List<Integer> roleIds);
 
 
 
     @Query("SELECT MIN(u.id) AS minId, MAX(u.id) AS maxId FROM UserEntity u")
-    MinMaxUserId getMinAndMaxUserId();
+    MinMaxUserId findMinAndMaxUserId();
 
     @Query("SELECT user FROM UserEntity user " +
             "LEFT JOIN FETCH user.roles r "+
             "WHERE user.id >= :minId " +
             "AND user.id <= :maxId " +
             "ORDER BY user.id ASC")
-    List<UserEntity> getUsersByIdRange(@Param("minId") Integer minId, @Param("maxId") Integer maxId);
+    List<UserEntity> findUsersByIdRange(@Param("minId") Integer minId, @Param("maxId") Integer maxId);
 
 }

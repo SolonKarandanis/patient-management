@@ -63,7 +63,7 @@ public class I18nServiceBean implements I18nService{
     @Override
     @Transactional(readOnly = true,propagation = Propagation.SUPPORTS)
     public List<String> getModuleNames() {
-        return i18nModuleRepository.getI18nModules().stream()
+        return i18nModuleRepository.findI18nModules().stream()
                 .map(I18nModule::getModuleName)
                 .toList();
     }
@@ -79,7 +79,7 @@ public class I18nServiceBean implements I18nService{
     @Override
     @Transactional(readOnly = true,propagation = Propagation.SUPPORTS)
     public List<I18nModule> getActiveModules() {
-        return i18nModuleRepository.getActiveI18nModules();
+        return i18nModuleRepository.findActiveI18nModules();
     }
 
     @Override
@@ -93,7 +93,7 @@ public class I18nServiceBean implements I18nService{
     @Override
     @Transactional(readOnly = true,propagation = Propagation.SUPPORTS)
     public List<Language> getLanguages() {
-        return languageRepository.getLanguages();
+        return languageRepository.findLanguages();
     }
 
     @Override
@@ -102,7 +102,7 @@ public class I18nServiceBean implements I18nService{
     public Map<String, String> getTranslationsByModuleAndLangIsoCode(String moduleName, String langIso) {
         log.info(" ------>I18nServiceBean------> getTranslationsByModuleAndLangIsoCode[moduleName: {}, langIso: {}] ", moduleName, langIso);
         if (moduleName != null && langIso != null) {
-            return i18nTranslationRepository.getTranslationsByModuleAndLangIsoCode(moduleName, langIso);
+            return i18nTranslationRepository.findTranslationsByModuleAndLangIsoCode(moduleName, langIso);
         } else {
             return Map.of();
         }
@@ -126,13 +126,13 @@ public class I18nServiceBean implements I18nService{
     @Override
     @Transactional(readOnly = true,propagation = Propagation.SUPPORTS)
     public List<I18nTranslation> getTranslationRecordsByModuleIdAndLangIdAndNoUserModified(Integer moduleId, Integer langId) {
-        return i18nTranslationRepository.getTranslationRecordsByModuleIdAndLangIdAndNoUserModified(moduleId, langId);
+        return i18nTranslationRepository.findTranslationRecordsByModuleIdAndLangIdAndNoUserModified(moduleId, langId);
     }
 
     @Override
     @Transactional(readOnly = true,propagation = Propagation.SUPPORTS)
     public List<String> getLabelKeysHavingUserModifiedTranslationByModuleIdAndLangId(Integer moduleId, Integer langId) {
-        return i18nTranslationRepository.getLabelKeysHavingUserModifiedTranslationByModuleIdAndLangId(moduleId, langId);
+        return i18nTranslationRepository.findLabelKeysHavingUserModifiedTranslationByModuleIdAndLangId(moduleId, langId);
     }
 
     @Override
@@ -147,7 +147,7 @@ public class I18nServiceBean implements I18nService{
                 i18nLabelsInserted.addAll(importI18nLabels(moduleId, labelResKeys));
             }
             boolean isGetLabels = insertionsList.stream().anyMatch(i18nTrn -> i18nTrn.getI18nLabelId() == null);
-            List<I18nLabel> i18nLabels = isGetLabels ? i18nLabelRepository.getI18nLabelsByModuleId(moduleId) : new ArrayList<>();
+            List<I18nLabel> i18nLabels = isGetLabels ? i18nLabelRepository.findI18nLabelsByModuleId(moduleId) : new ArrayList<>();
             Map<String, I18nLabel> i18nLabelsMap = i18nLabels.stream().collect(Collectors.toMap(I18nLabel::getResourceKey, Function.identity()));
             i18nLabelsInserted.forEach(i18nLabel -> i18nLabelsMap.putIfAbsent(i18nLabel.getResourceKey(), i18nLabel));
             // Step-1.2: Insert translations
@@ -195,7 +195,7 @@ public class I18nServiceBean implements I18nService{
         List<Integer> resourceIds = updateRequest.stream()
                 .map(UpdateTranslationDTO::getResourceId)
                 .toList();
-        List<I18nTranslation> translations = i18nTranslationRepository.getTranslationsByResourceIds(resourceIds);
+        List<I18nTranslation> translations = i18nTranslationRepository.findTranslationsByResourceIds(resourceIds);
         selfService.editLabels(updateRequest,translations);
         Map<String, List<String>> modulesLanguagesMap = translations.stream()
                 .collect(Collectors.groupingBy(tran->tran.getI18nLabel().getI18nModule().getModuleName(),
@@ -231,7 +231,7 @@ public class I18nServiceBean implements I18nService{
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public List<I18nLabel> importI18nLabels(Integer moduleId, List<String> labelResKeys) {
-        List<I18nLabel> i18nLabels = i18nLabelRepository.getI18nLabelsByModuleId(moduleId);
+        List<I18nLabel> i18nLabels = i18nLabelRepository.findI18nLabelsByModuleId(moduleId);
         Map<String, I18nLabel> i18nLabelsDbMap = i18nLabels.stream().collect(Collectors.toMap(I18nLabel::getResourceKey, Function.identity()));
         List<I18nLabel> i18nLabelsToInsert = labelResKeys.stream().filter(resourceKey -> !i18nLabelsDbMap.containsKey(resourceKey)).map(resourceKey -> {
             I18nLabel i18nLabel = new I18nLabel();
@@ -247,7 +247,7 @@ public class I18nServiceBean implements I18nService{
     @Transactional(propagation = Propagation.REQUIRED)
     public int deleteI18nLabelsWithNoTranslationsByModuleId(Integer moduleId) {
         int iLabelsDeleted = 0;
-        if (i18nLabelRepository.getCountOfI18nLabelsWithNoTranslationsByModuleId(moduleId) > 0) {
+        if (i18nLabelRepository.findCountOfI18nLabelsWithNoTranslationsByModuleId(moduleId) > 0) {
             iLabelsDeleted = i18nLabelRepository.deleteI18nLabelsWithNoTranslationsByModuleId(moduleId);
         }
         return iLabelsDeleted;

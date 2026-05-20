@@ -11,5 +11,5 @@ import java.util.List;
 public interface LanguageRepository extends JpaRepository<Language, Integer> {
 
     @Query(name = Language.GET_LANGUAGES)
-    List<Language> getLanguages();
+    List<Language> findLanguages();
 }

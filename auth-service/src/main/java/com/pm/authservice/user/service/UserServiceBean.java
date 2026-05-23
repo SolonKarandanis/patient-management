@@ -2,8 +2,8 @@ package com.pm.authservice.user.service;
 
 import com.pm.authservice.service.GenericService;
 import com.pm.authservice.user.dto.ChangePasswordDTO;
-import com.pm.authservice.dto.Paging;
 import com.pm.authservice.user.dto.RoleDTO;
+import com.pm.authservice.dto.Paging;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.domain.model.AccountStatus;
@@ -15,6 +15,7 @@ import com.pm.authservice.user.event.*;
 import com.pm.authservice.outbox.service.OutboxService;
 import com.pm.authservice.infrastructure.persistence.entity.QUserJpaEntity;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
+import com.pm.authservice.user.repository.RoleRepository;
 import com.pm.authservice.user.repository.UserRepository;
 import com.pm.authservice.user.repository.projections.MinMaxUserId;
 import com.pm.authservice.util.AppConstants;
@@ -46,7 +47,7 @@ public class UserServiceBean implements UserService{
     private static final Logger log = LoggerFactory.getLogger(UserServiceBean.class);
 
     private final UserRepository userRepository;
-    private final RoleService roleService;
+    private final RoleRepository roleRepository;
     private final VerificationTokenService verificationTokenService;
     private final PasswordEncoder passwordEncoder;
     private final GenericService genericService;
@@ -54,13 +55,13 @@ public class UserServiceBean implements UserService{
 
     public UserServiceBean(
             UserRepository userRepository,
-            RoleService roleService,
+            RoleRepository roleRepository,
             VerificationTokenService verificationTokenService,
             PasswordEncoder passwordEncoder, GenericService genericService,
             OutboxService outboxService
     ){
         this.userRepository = userRepository;
-        this.roleService = roleService;
+        this.roleRepository = roleRepository;
         this.verificationTokenService = verificationTokenService;
         this.passwordEncoder = passwordEncoder;
         this.genericService = genericService;
@@ -79,7 +80,9 @@ public class UserServiceBean implements UserService{
         dto.setPublicId(user.getDomainId().toString());
         dto.setStatus(user.getStatus() != null ? user.getStatus().getValue() : null);
         if(withRoles){
-            dto.setRoles(roleService.convertToDtoList(user.getRoles()));
+            dto.setRoles(user.getRoles().stream()
+                    .map(r -> new RoleDTO(r.getId(), r.getName()))
+                    .toList());
         }
         return dto;
     }
@@ -101,7 +104,7 @@ public class UserServiceBean implements UserService{
         user.setStatus(AccountStatus.fromValue(dto.getStatus()));
         if(!CollectionUtils.isEmpty(dto.getRoles())){
             List<Integer> roleIds= dto.getRoles().stream().map(RoleDTO::getId).toList();
-            Set<RoleJpaEntity> roles = new HashSet<>(roleService.findByIds(roleIds));
+            Set<RoleJpaEntity> roles = new HashSet<>(roleRepository.findByIds(roleIds));
             user.setRoles(roles);
         }
         return user;
@@ -260,7 +263,7 @@ public class UserServiceBean implements UserService{
             builder.and(user.status.eq(AccountStatus.fromValue(status)));
         }
         if(StringUtils.hasLength(roleName)){
-            RoleJpaEntity role = roleService.findByName(roleName);
+            RoleJpaEntity role = roleRepository.findByName(roleName);
             if(role != null){
                 builder.and(user.roles.contains(role));
             }
@@ -291,7 +294,7 @@ public class UserServiceBean implements UserService{
             builder.or(user.status.eq(AccountStatus.fromValue(status)));
         }
         if(StringUtils.hasLength(roleName)){
-            RoleJpaEntity role = roleService.findByName(roleName);
+            RoleJpaEntity role = roleRepository.findByName(roleName);
             if(role != null){
                 builder.or(user.roles.contains(role));
             }
@@ -340,7 +343,7 @@ public class UserServiceBean implements UserService{
         user.setCreatedDate(today);
         UUID uuid = UUID.randomUUID();
         user.setDomainId(uuid);
-        RoleJpaEntity role = roleService.findByName(dto.getRole());
+        RoleJpaEntity role = roleRepository.findByName(dto.getRole());
         user.setRoles(Set.of(role));
         user = userRepository.save(user);
         outboxService.createUserEvent(user, AppConstants.OUTBOX_USER_CREATED);
@@ -358,7 +361,7 @@ public class UserServiceBean implements UserService{
         user.setEmail(dto.getEmail());
         LocalDate today = LocalDate.now();
         user.setLastModifiedDate(today);
-        RoleJpaEntity role = roleService.findByName(dto.getRole());
+        RoleJpaEntity role = roleRepository.findByName(dto.getRole());
         user.removeRoles();
         user.addRole(role);
         genericService.getPublisher().publishEvent(new UserUpdateEvent(user));

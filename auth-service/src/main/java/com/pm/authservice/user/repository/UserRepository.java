@@ -59,6 +59,41 @@ public interface UserRepository extends JpaRepository<UserJpaEntity, Integer>,
     @Query(nativeQuery = true, name = UserJpaEntity.FIND_OPERATION_KEY_BY_ROLE_IDS_AS_OBJECTS_NATIVE_QUERY)
     List<Object> findOperationKeysByRoleIdsAsObjectsNativeQuery(List<Integer> roleIds);
 
+    @Query(nativeQuery = true, value = """
+            SELECT EXISTS (
+                SELECT 1
+                FROM users u
+                INNER JOIN user_roles ur ON u.id = ur.user_id
+                INNER JOIN roles r ON ur.role_id = r.id
+                WHERE u.domain_id = :domainId
+                AND r.name = :roleName
+            )
+            """)
+    boolean existsByDomainIdAndRoleName(@Param("domainId") UUID domainId, @Param("roleName") String roleName);
+
+    @Query(nativeQuery = true, value = """
+            SELECT EXISTS (
+                SELECT 1
+                FROM users u
+                INNER JOIN user_roles ur ON u.id = ur.user_id
+                INNER JOIN role_operations ro ON ur.role_id = ro.role_id
+                INNER JOIN operations o ON ro.operation_id = o.id
+                WHERE u.domain_id = :domainId
+                AND o.name = :operationName
+            )
+            """)
+    boolean existsByDomainIdAndOperationName(@Param("domainId") UUID domainId, @Param("operationName") String operationName);
+
+    @Query(nativeQuery = true, value = """
+            SELECT o.name
+            FROM users u
+            INNER JOIN user_roles ur ON u.id = ur.user_id
+            INNER JOIN role_operations ro ON ur.role_id = ro.role_id
+            INNER JOIN operations o ON ro.operation_id = o.id
+            WHERE u.domain_id = :domainId
+            """)
+    List<String> findPermissionsByDomainId(@Param("domainId") UUID domainId);
+
     @Query("SELECT MIN(u.id) AS minId, MAX(u.id) AS maxId FROM UserJpaEntity u")
     MinMaxUserId findMinAndMaxUserId();
 

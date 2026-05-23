@@ -12,11 +12,13 @@ import com.pm.authservice.domain.model.event.UserDeleted;
 import com.pm.authservice.domain.model.event.UserPasswordChanged;
 import com.pm.authservice.domain.model.event.UserRegistered;
 import com.pm.authservice.domain.model.event.UserUpdated;
+import com.pm.authservice.domain.model.UserSearchCriteria;
 import com.pm.authservice.domain.port.in.ActivateUserUseCase;
 import com.pm.authservice.domain.port.in.ChangePasswordUseCase;
 import com.pm.authservice.domain.port.in.DeactivateUserUseCase;
 import com.pm.authservice.domain.port.in.DeleteUserUseCase;
 import com.pm.authservice.domain.port.in.RegisterUserUseCase;
+import com.pm.authservice.domain.port.in.SearchUsersUseCase;
 import com.pm.authservice.domain.port.in.UpdateUserUseCase;
 import com.pm.authservice.domain.port.out.DomainEventPublisher;
 import com.pm.authservice.domain.port.out.PasswordHasher;
@@ -57,6 +59,9 @@ class UserDomainServiceTest {
             @Override public void delete(UUID id) {}
             @Override public boolean hasRole(UUID id, String role) { return false; }
             @Override public boolean hasPermission(UUID id, String op) { return false; }
+            @Override public List<String> findPermissions(UUID id) { return List.of(); }
+            @Override public List<User> search(UserSearchCriteria c, boolean inc) { return List.of(); }
+            @Override public long count(UserSearchCriteria c, boolean inc) { return 0L; }
         };
 
         rolePort = new RolePort() {
@@ -135,6 +140,9 @@ class UserDomainServiceTest {
             @Override public void delete(UUID id) {}
             @Override public boolean hasRole(UUID id, String role) { return false; }
             @Override public boolean hasPermission(UUID id, String op) { return false; }
+            @Override public List<String> findPermissions(UUID id) { return List.of(); }
+            @Override public List<User> search(UserSearchCriteria c, boolean inc) { return List.of(); }
+            @Override public long count(UserSearchCriteria c, boolean inc) { return 0L; }
         };
         service = new UserDomainService(userPort, rolePort, eventPublisher, passwordHasher);
 
@@ -159,6 +167,9 @@ class UserDomainServiceTest {
             @Override public void delete(UUID id) {}
             @Override public boolean hasRole(UUID id, String role) { return false; }
             @Override public boolean hasPermission(UUID id, String op) { return false; }
+            @Override public List<String> findPermissions(UUID id) { return List.of(); }
+            @Override public List<User> search(UserSearchCriteria c, boolean inc) { return List.of(); }
+            @Override public long count(UserSearchCriteria c, boolean inc) { return 0L; }
         };
         service = new UserDomainService(userPort, rolePort, eventPublisher, passwordHasher);
 
@@ -327,6 +338,72 @@ class UserDomainServiceTest {
             @Override public void delete(UUID id) {}
             @Override public boolean hasRole(UUID id, String role) { return false; }
             @Override public boolean hasPermission(UUID id, String op) { return false; }
+            @Override public List<String> findPermissions(UUID id) { return List.of(); }
+            @Override public List<User> search(UserSearchCriteria c, boolean inc) { return List.of(); }
+            @Override public long count(UserSearchCriteria c, boolean inc) { return 0L; }
         };
+    }
+
+    // ---- search ----
+
+    @Test
+    void search_returnsResultsForNonAdmin() {
+        User found = User.builder()
+                .domainId(EXISTING_ID).username(EXISTING_USERNAME).email(EXISTING_EMAIL).build();
+
+        userPort = new UserPort() {
+            @Override public User save(User u) { return u; }
+            @Override public Optional<User> findByDomainId(UUID id) { return Optional.empty(); }
+            @Override public Optional<User> findByEmail(String email) { return Optional.empty(); }
+            @Override public Optional<User> findByUsername(String username) { return Optional.empty(); }
+            @Override public void delete(UUID id) {}
+            @Override public boolean hasRole(UUID id, String role) { return false; }
+            @Override public boolean hasPermission(UUID id, String op) { return false; }
+            @Override public List<String> findPermissions(UUID id) { return List.of(); }
+            @Override public List<User> search(UserSearchCriteria c, boolean includeDeleted) {
+                assertFalse(includeDeleted);
+                return List.of(found);
+            }
+            @Override public long count(UserSearchCriteria c, boolean includeDeleted) { return 1L; }
+        };
+        service = new UserDomainService(userPort, rolePort, eventPublisher, passwordHasher);
+
+        var query = new SearchUsersUseCase.Query(
+                "", "", "", "account.active", "", "search.type.and",
+                0, 10, "id", "ASC", UUID.randomUUID());
+
+        SearchUsersUseCase.Result result = service.search(query);
+
+        assertEquals(1, result.users().size());
+        assertEquals(1L, result.totalCount());
+        assertEquals(EXISTING_USERNAME, result.users().get(0).getUsername());
+    }
+
+    @Test
+    void search_includesDeletedForAdmin() {
+        userPort = new UserPort() {
+            @Override public User save(User u) { return u; }
+            @Override public Optional<User> findByDomainId(UUID id) { return Optional.empty(); }
+            @Override public Optional<User> findByEmail(String email) { return Optional.empty(); }
+            @Override public Optional<User> findByUsername(String username) { return Optional.empty(); }
+            @Override public void delete(UUID id) {}
+            @Override public boolean hasRole(UUID id, String role) { return true; }
+            @Override public boolean hasPermission(UUID id, String op) { return false; }
+            @Override public List<String> findPermissions(UUID id) { return List.of(); }
+            @Override public List<User> search(UserSearchCriteria c, boolean includeDeleted) {
+                assertTrue(includeDeleted);
+                return List.of();
+            }
+            @Override public long count(UserSearchCriteria c, boolean includeDeleted) { return 0L; }
+        };
+        service = new UserDomainService(userPort, rolePort, eventPublisher, passwordHasher);
+
+        var query = new SearchUsersUseCase.Query(
+                "", "", "", "all", "", "search.type.and",
+                0, 10, null, null, UUID.randomUUID());
+
+        SearchUsersUseCase.Result result = service.search(query);
+        assertEquals(0, result.users().size());
+        assertEquals(0L, result.totalCount());
     }
 }

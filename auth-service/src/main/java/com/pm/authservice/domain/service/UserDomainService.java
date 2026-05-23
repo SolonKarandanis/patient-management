@@ -4,8 +4,10 @@ import com.pm.authservice.domain.annotation.DomainService;
 import com.pm.authservice.domain.exception.BusinessRuleException;
 import com.pm.authservice.domain.exception.UserNotFoundException;
 import com.pm.authservice.domain.model.AccountStatus;
+import com.pm.authservice.domain.model.AuthorityConstants;
 import com.pm.authservice.domain.model.Role;
 import com.pm.authservice.domain.model.User;
+import com.pm.authservice.domain.model.UserSearchCriteria;
 import com.pm.authservice.domain.model.event.UserActivated;
 import com.pm.authservice.domain.model.event.UserDeactivated;
 import com.pm.authservice.domain.model.event.UserDeleted;
@@ -17,6 +19,7 @@ import com.pm.authservice.domain.port.in.ChangePasswordUseCase;
 import com.pm.authservice.domain.port.in.DeactivateUserUseCase;
 import com.pm.authservice.domain.port.in.DeleteUserUseCase;
 import com.pm.authservice.domain.port.in.RegisterUserUseCase;
+import com.pm.authservice.domain.port.in.SearchUsersUseCase;
 import com.pm.authservice.domain.port.in.UpdateUserUseCase;
 import com.pm.authservice.domain.port.out.DomainEventPublisher;
 import com.pm.authservice.domain.port.out.PasswordHasher;
@@ -24,12 +27,14 @@ import com.pm.authservice.domain.port.out.RolePort;
 import com.pm.authservice.domain.port.out.UserPort;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 @DomainService
 public class UserDomainService implements RegisterUserUseCase, UpdateUserUseCase,
-        DeleteUserUseCase, ActivateUserUseCase, DeactivateUserUseCase, ChangePasswordUseCase {
+        DeleteUserUseCase, ActivateUserUseCase, DeactivateUserUseCase, ChangePasswordUseCase,
+        SearchUsersUseCase {
 
     private final UserPort userPort;
     private final RolePort rolePort;
@@ -156,6 +161,18 @@ public class UserDomainService implements RegisterUserUseCase, UpdateUserUseCase
         User saved = userPort.save(user);
         eventPublisher.publish(new UserPasswordChanged(saved.getDomainId()));
         return saved;
+    }
+
+    @Override
+    public SearchUsersUseCase.Result search(SearchUsersUseCase.Query query) {
+        boolean isAdmin = userPort.hasRole(query.requestingUserDomainId(), AuthorityConstants.ROLE_SYSTEM_ADMIN);
+        UserSearchCriteria criteria = new UserSearchCriteria(
+                query.email(), query.username(), query.name(), query.status(), query.roleName(),
+                query.searchMethod(), query.page(), query.size(), query.sortColumn(), query.sortDirection()
+        );
+        List<User> users = userPort.search(criteria, isAdmin);
+        long totalCount = userPort.count(criteria, isAdmin);
+        return new SearchUsersUseCase.Result(users, totalCount);
     }
 
     private void validatePassword(String password, String confirmPassword) {

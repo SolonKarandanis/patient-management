@@ -9,6 +9,7 @@ import com.pm.authservice.user.dto.*;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.service.SearchService;
 import com.pm.authservice.user.service.UserLifecycleService;
+import com.pm.authservice.user.service.UserQueryService;
 import com.pm.authservice.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,6 +45,8 @@ public class UserControllerTest {
     protected UserLifecycleService lifecycleService;
     @Mock
     protected SearchService searchService;
+    @Mock
+    protected UserQueryService userQueryService;
 
     protected Authentication authentication;
     protected MockHttpServletResponse response;
@@ -117,8 +120,7 @@ public class UserControllerTest {
     @DisplayName("View User")
     @Test
     void testViewUser(){
-        when(userService.findByPublicId(TestConstants.TEST_USER_PUBLIC_ID)).thenReturn(user);
-        when(userService.convertToDTO(user,true)).thenReturn(userDto);
+        when(userQueryService.viewUser(TestConstants.TEST_USER_PUBLIC_ID)).thenReturn(userDto);
 
         ResponseEntity<UserDTO> resp = controller.viewUser(TestConstants.TEST_USER_PUBLIC_ID);
         assertNotNull(resp);
@@ -126,15 +128,13 @@ public class UserControllerTest {
         assertEquals(resp.getBody(), userDto);
         assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.OK));
 
-        verify(userService, times(1)).findByPublicId(TestConstants.TEST_USER_PUBLIC_ID);
-        verify(userService, times(1)).convertToDTO(user,true);
+        verify(userQueryService, times(1)).viewUser(TestConstants.TEST_USER_PUBLIC_ID);
     }
 
     @DisplayName("Get user by token")
     @Test
     void testGetUserByToken(){
-        when(userService.findByPublicId(detailsDTO.getPublicId())).thenReturn(user);
-        when(userService.convertToDTO(user,true)).thenReturn(userDto);
+        when(userQueryService.viewUser(detailsDTO.getPublicId())).thenReturn(userDto);
 
         ResponseEntity<UserDTO> resp = controller.getUserByToken(authentication);
         assertNotNull(resp);
@@ -142,8 +142,7 @@ public class UserControllerTest {
         assertEquals(resp.getBody(), userDto);
         assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.OK));
 
-        verify(userService, times(1)).findByPublicId(TestConstants.TEST_USER_PUBLIC_ID);
-        verify(userService, times(1)).convertToDTO(user,true);
+        verify(userQueryService, times(1)).viewUser(TestConstants.TEST_USER_PUBLIC_ID);
     }
 
     @DisplayName("Update user")

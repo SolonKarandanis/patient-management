@@ -11,6 +11,7 @@ import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.service.UserLifecycleService;
+import com.pm.authservice.user.service.UserQueryService;
 import com.pm.authservice.user.service.UserService;
 import com.pm.authservice.util.AppConstants;
 import com.pm.authservice.util.HttpUtil;
@@ -37,15 +38,18 @@ public class UserController {
     private final UserService usersService;
     private final UserLifecycleService lifecycleService;
     private final SearchService searchService;
+    private final UserQueryService userQueryService;
 
     public UserController(
             UserService usersService,
             UserLifecycleService lifecycleService,
-            SearchService searchService
+            SearchService searchService,
+            UserQueryService userQueryService
     ) {
         this.usersService = usersService;
         this.lifecycleService = lifecycleService;
         this.searchService = searchService;
+        this.userQueryService = userQueryService;
     }
 
 
@@ -99,27 +103,23 @@ public class UserController {
     @GetMapping("/{id}")
     @Translate(path = "status", targetProperty = "statusLabel")
     @Translate(path = "roles[*].name", targetProperty = "nameLabel")
-    public ResponseEntity<UserDTO> viewUser(@PathVariable(name= "id", required=true) String publicId)
-            throws NotFoundException {
-        UserJpaEntity user = usersService.findByPublicId(publicId);
-        log.info("UserController --> viewUser --> username: {}", user.getUsername());
-        return ResponseEntity.ok(usersService.convertToDTO(user,true));
+    public ResponseEntity<UserDTO> viewUser(@PathVariable(name= "id", required=true) String publicId) {
+        log.info("UserController --> viewUser --> publicId: {}", publicId);
+        return ResponseEntity.ok(userQueryService.viewUser(publicId));
     }
 
     @GetMapping("/{id}/permissions")
-    public ResponseEntity<List<String>> getUserPermissions(@PathVariable(name= "id", required=true) String publicId) throws NotFoundException {
-        List<String> permissions = usersService.getUserPermissions(publicId);
-        return ResponseEntity.ok(permissions);
+    public ResponseEntity<List<String>> getUserPermissions(@PathVariable(name= "id", required=true) String publicId) {
+        return ResponseEntity.ok(userQueryService.getUserPermissions(publicId));
     }
 
     @GetMapping(value="/account")
     @Translate(path = "status", targetProperty = "statusLabel")
     @Translate(path = "roles[*].name", targetProperty = "nameLabel")
-    public ResponseEntity<UserDTO> getUserByToken(Authentication authentication) throws NotFoundException{
+    public ResponseEntity<UserDTO> getUserByToken(Authentication authentication) {
         UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
-        UserJpaEntity user = usersService.findByPublicId(dto.getPublicId());
-        log.info("UserController --> getUserByToken --> username: {}", user.getUsername());
-        return ResponseEntity.ok(usersService.convertToDTO(user,true));
+        log.info("UserController --> getUserByToken --> publicId: {}", dto.getPublicId());
+        return ResponseEntity.ok(userQueryService.viewUser(dto.getPublicId()));
     }
 
     @PreAuthorize("isSystemAdmin() || isUserMe(#publicId)")

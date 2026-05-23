@@ -28,7 +28,7 @@ public class KafkaAnalyticsProducer implements Producer<UserEventEntity>{
     public void sendEvent(UserEventEntity object) {
         try {
             UserEvent event = UserEvent.newBuilder()
-                    .setId(object.getPublicId().toString())
+                    .setId(object.getDomainId().toString())
                     .setUserId(object.getUserPublicId().toString())
                     .setUsername(object.getUsername())
                     .setEmail(object.getEmail())

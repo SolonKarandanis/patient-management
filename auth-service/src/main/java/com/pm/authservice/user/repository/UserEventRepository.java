@@ -13,14 +13,14 @@ import java.util.UUID;
 @Repository
 public interface UserEventRepository extends JpaRepository<UserEventEntity,Integer> {
 
-    @Query(name = UserEventEntity.FIND_BY_PUBLIC_ID)
-    Optional<UserEventEntity> findByPublicId(@Param("publicId") UUID publicId);
+    @Query(name = UserEventEntity.FIND_BY_DOMAIN_ID)
+    Optional<UserEventEntity> findByDomainId(@Param("domainId") UUID domainId);
 
     @Query(name = UserEventEntity.FIND_BY_USER_ID)
     List<UserEventEntity> findByUserId(@Param("userId") Integer userId);
 
-    @Query(name = UserEventEntity.FIND_BY_USER_PUBLIC_ID)
-    List<UserEventEntity> findByUserPublicId(@Param("userPublicId") UUID userPublicId);
+    @Query(name = UserEventEntity.FIND_BY_USER_DOMAIN_ID)
+    List<UserEventEntity> findByUserDomainId(@Param("userPublicId") UUID userPublicId);
 
     @Query(name = UserEventEntity.FIND_BY_USERNAME)
     List<UserEventEntity> findByUserName(@Param("username") String username);

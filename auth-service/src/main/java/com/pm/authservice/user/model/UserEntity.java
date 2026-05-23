@@ -23,19 +23,19 @@ import java.util.UUID;
         query = "SELECT u FROM UserEntity u "
                 + "LEFT JOIN FETCH u.roles r "
                 + "WHERE u.email = :email ")
-@NamedQuery(name = UserEntity.FIND_BY_PUBLIC_ID,
+@NamedQuery(name = UserEntity.FIND_BY_DOMAIN_ID,
         query = "SELECT u FROM UserEntity u "
                 + "LEFT JOIN FETCH u.roles r "
                 + "LEFT JOIN FETCH r.roleOperations ro "
                 + "LEFT JOIN FETCH ro.operation operation "
-                + "WHERE u.publicId= :publicId ")
+                + "WHERE u.domainId= :domainId ")
 @NamedQuery(name = UserEntity.FIND_BY_USERNAME,
         query = "SELECT u FROM UserEntity u "
                 + "LEFT JOIN FETCH u.roles r " +
                 " WHERE u.username= :username ")
-@NamedQuery(name = UserEntity.FIND_ID_BY_PUBLIC_ID,
+@NamedQuery(name = UserEntity.FIND_ID_BY_DOMAIN_ID,
         query = "SELECT u.id FROM UserEntity u " +
-                "WHERE u.publicId=:publicId")
+                "WHERE u.domainId=:domainId")
 @NamedNativeQuery(name = UserEntity.FIND_USER_ROLE_IDS_BY_USER_ID_NATIVE_QUERY,
         query="select ur.role_id " +
                 "from user_roles ur " +
@@ -58,10 +58,11 @@ import java.util.UUID;
 @Entity
 @Table(name="users")
 public class UserEntity {
+
     public static final String FIND_BY_EMAIL= "User.findByEmail";
-    public static final String FIND_BY_PUBLIC_ID= "User.findByPublicId";
+    public static final String FIND_BY_DOMAIN_ID= "User.findByDomainId";
     public static final String FIND_BY_USERNAME= "User.findByUsername";
-    public static final String FIND_ID_BY_PUBLIC_ID= "User.findIdByPublicId";
+    public static final String FIND_ID_BY_DOMAIN_ID= "User.findIdByDomainId";
     public static final String FIND_USER_ROLE_IDS_BY_USER_ID_NATIVE_QUERY= "User.getUserRoleIdsByUserIdNativeQuery";
     public static final String FIND_OPERATION_KEY_BY_ROLE_IDS_AS_OBJECTS_NATIVE_QUERY= "User.getOperationKeysByRoleIdsAsObjectsNativeQuery";
 
@@ -83,8 +84,8 @@ public class UserEntity {
     private Integer id;
 
     @NaturalId
-    @Column(name = "public_id",nullable = false, updatable = false, unique = true)
-    private UUID publicId;
+    @Column(name = "domain_id",nullable = false, updatable = false, unique = true)
+    private UUID domainId;
 
     @Column(name = "username")
     private String username;

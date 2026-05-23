@@ -18,4 +18,6 @@
     <include file="/db/changelog/00000000000011_add_sort_key_and_is_enabled_fields_to_languages.xml" relativeToChangelogFile="false" />
     <include file="/db/changelog/00000000000012_add_manage_resource_bundles_operation.xml" relativeToChangelogFile="false" />
     <include file="/db/changelog/00000000000013_outbox.xml" relativeToChangelogFile="false" />
+    <include file="/db/changelog/00000000000014_rename_public_id_to_domain_id_users.xml" relativeToChangelogFile="false" />
+    <include file="/db/changelog/00000000000015_rename_public_id_to_domain_id_user_event.xml" relativeToChangelogFile="false" />
 </databaseChangeLog>

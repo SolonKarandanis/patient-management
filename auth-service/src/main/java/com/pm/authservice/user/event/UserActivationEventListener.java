@@ -26,7 +26,7 @@ public class UserActivationEventListener extends BaseEventListener implements Ap
         StringBuilder sb =new StringBuilder();
         sb.append("User with username '").append(user.getUsername()).append("' has been activated successfully");
         NotificationEvent notificationEvent = NotificationEvent.newBuilder()
-                .addUserIds(user.getPublicId().toString())
+                .addUserIds(user.getDomainId().toString())
                 .setTitle("User Activation Completed")
                 .setMessage(sb.toString())
                 .setEventType(EventConstants.USER_ACTIVATED_NOTIFICATION)

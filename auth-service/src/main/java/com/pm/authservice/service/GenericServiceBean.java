@@ -73,7 +73,7 @@ public class GenericServiceBean  implements GenericService{
     public UserDocumentDTO convertToDocumentDto(UserEntity user) {
         UserDocumentDTO dto = new UserDocumentDTO();
         dto.setId(user.getId());
-        dto.setPublicId(user.getPublicId().toString());
+        dto.setPublicId(user.getDomainId().toString());
         dto.setUsername(user.getUsername());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());

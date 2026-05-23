@@ -121,6 +121,10 @@ sourceSets.main.java.srcDirs += [
     "$buildDir/generated/sources/annotationProcessor/java/main"
 ]
 
+tasks.named('compileJava') {
+    dependsOn('generateProto')
+}
+
 tasks.withType(Test).configureEach {
     useJUnitPlatform()
 }

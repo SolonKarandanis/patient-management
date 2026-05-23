@@ -26,7 +26,7 @@ public class UserDeletionEventListener extends BaseEventListener implements Appl
         StringBuilder sb =new StringBuilder();
         sb.append("User with username '").append(user.getUsername()).append("' has been deleted successfully");
         NotificationEvent notificationEvent = NotificationEvent.newBuilder()
-                .addUserIds(user.getPublicId().toString())
+                .addUserIds(user.getDomainId().toString())
                 .setTitle("User Deletion Completed")
                 .setMessage(sb.toString())
                 .setEventType(EventConstants.USER_DELETED_NOTIFICATION)

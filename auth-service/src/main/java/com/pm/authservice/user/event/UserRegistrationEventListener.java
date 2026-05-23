@@ -41,7 +41,7 @@ public class UserRegistrationEventListener extends BaseEventListener implements 
         StringBuilder sb =new StringBuilder();
         sb.append("User with username '").append(user.getUsername()).append("' has been registered successfully");
         NotificationEvent notificationEvent = NotificationEvent.newBuilder()
-                .addUserIds(user.getPublicId().toString())
+                .addUserIds(user.getDomainId().toString())
                 .setTitle("User Registration Completed")
                 .setMessage(sb.toString())
                 .setEventType(EventConstants.USER_CREATED_NOTIFICATION)

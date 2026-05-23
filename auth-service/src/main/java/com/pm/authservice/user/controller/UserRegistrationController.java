@@ -4,7 +4,7 @@ import com.pm.authservice.config.Translate;
 import com.pm.authservice.user.dto.CreateUserDTO;
 import com.pm.authservice.user.dto.UserDTO;
 import com.pm.authservice.exception.BusinessException;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -33,7 +33,7 @@ public class UserRegistrationController {
     public ResponseEntity<UserDTO> registerUser(@RequestBody @Valid CreateUserDTO user, final HttpServletRequest request)
             throws BusinessException {
         log.info("UserRegistrationController->registerUser");
-        UserEntity userSaved=usersService.registerUser(user, applicationUrl(request));
+        UserJpaEntity userSaved=usersService.registerUser(user, applicationUrl(request));
         return ResponseEntity.ok(usersService.convertToDTO(userSaved,true));
     }
 

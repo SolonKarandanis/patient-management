@@ -9,7 +9,7 @@ import com.pm.authservice.user.dto.ChangePasswordDTO;
 import com.pm.authservice.dto.SearchResults;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.service.UserService;
 import com.pm.authservice.util.AppConstants;
 import com.pm.authservice.util.HttpUtil;
@@ -51,7 +51,7 @@ public class UserController {
             HttpServletResponse response,
             Authentication authentication) throws Exception{
         UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
-        UserEntity user = usersService.findByPublicId(dto.getPublicId());
+        UserJpaEntity user = usersService.findByPublicId(dto.getPublicId());
         Long resultsCount = searchService.countUsers(searchObj,user);
         log.info("UserController --> exportUsersToCsv --> results: {}", resultsCount);
         if (resultsCount >= AppConstants.MAX_RESULTS_CSV_EXPORT) {
@@ -71,7 +71,7 @@ public class UserController {
                                                                Authentication authentication) throws AuthException {
         log.info("[NEW SEARCH] -- UserController, method findAllUsers");
         UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
-        UserEntity user = usersService.findByPublicId(dto.getPublicId());
+        UserJpaEntity user = usersService.findByPublicId(dto.getPublicId());
         log.info("In UserController with user: {}", user.getUsername());
         SearchResults<UserDTO>results= searchService.advancedSearchUsers(searchObj,user);
         return ResponseEntity.ok().body(results);
@@ -85,7 +85,7 @@ public class UserController {
             @RequestParam(required = false) String sortOrder, Authentication authentication) throws AuthException {
         log.info("[NEW SEARCH] -- UserController, method findAllUsers");
         UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
-        UserEntity user = usersService.findByPublicId(dto.getPublicId());
+        UserJpaEntity user = usersService.findByPublicId(dto.getPublicId());
         log.info("In UserController with user: {}", user.getUsername());
         SearchResults<UserDTO>results=searchService.quickSearchUsers(value, user, page, size, sortField, sortOrder);
         return ResponseEntity.ok().body(results);
@@ -97,7 +97,7 @@ public class UserController {
     @Translate(path = "roles[*].name", targetProperty = "nameLabel")
     public ResponseEntity<UserDTO> viewUser(@PathVariable(name= "id", required=true) String publicId)
             throws NotFoundException {
-        UserEntity user = usersService.findByPublicId(publicId);
+        UserJpaEntity user = usersService.findByPublicId(publicId);
         log.info("UserController --> viewUser --> username: {}", user.getUsername());
         return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
@@ -113,7 +113,7 @@ public class UserController {
     @Translate(path = "roles[*].name", targetProperty = "nameLabel")
     public ResponseEntity<UserDTO> getUserByToken(Authentication authentication) throws NotFoundException{
         UserDetailsDTO dto = (UserDetailsDTO)authentication.getPrincipal();
-        UserEntity user = usersService.findByPublicId(dto.getPublicId());
+        UserJpaEntity user = usersService.findByPublicId(dto.getPublicId());
         log.info("UserController --> getUserByToken --> username: {}", user.getUsername());
         return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
@@ -125,7 +125,7 @@ public class UserController {
             @PathVariable(name = "id", required=true) String publicId,
             @RequestBody @Valid UpdateUserDTO user)throws NotFoundException{
         log.info("UserController->updateUser");
-        UserEntity userToBeUpdated=usersService.updateUser(publicId,user);
+        UserJpaEntity userToBeUpdated=usersService.updateUser(publicId,user);
         return ResponseEntity.ok(usersService.convertToDTO(userToBeUpdated,true));
     }
 
@@ -146,7 +146,7 @@ public class UserController {
             @RequestBody @Valid ChangePasswordDTO request)
             throws NotFoundException, BusinessException{
         log.info("UserController->changeUserPassword->publicId: {}" , publicId);
-        UserEntity user = usersService.findByPublicId(publicId);
+        UserJpaEntity user = usersService.findByPublicId(publicId);
         user= usersService.changePassword(user, request);
         return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
@@ -158,7 +158,7 @@ public class UserController {
             @PathVariable(name= "id", required=true) String publicId )
             throws NotFoundException, BusinessException{
         log.info("UserController->activateUser->publicId: {}" , publicId);
-        UserEntity user = usersService.findByPublicId(publicId);
+        UserJpaEntity user = usersService.findByPublicId(publicId);
         user = usersService.activateUser(user);
         return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }
@@ -170,7 +170,7 @@ public class UserController {
             @PathVariable(name= "id", required=true) String publicId )
             throws NotFoundException, BusinessException{
         log.info("UserController->deactivateUser->publicId: {}" , publicId);
-        UserEntity user = usersService.findByPublicId(publicId);
+        UserJpaEntity user = usersService.findByPublicId(publicId);
         user = usersService.deactivateUser(user);
         return ResponseEntity.ok(usersService.convertToDTO(user,true));
     }

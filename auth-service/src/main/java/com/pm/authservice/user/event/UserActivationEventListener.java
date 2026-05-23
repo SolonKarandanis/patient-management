@@ -2,7 +2,7 @@ package com.pm.authservice.user.event;
 
 import com.pm.authservice.event.BaseEventListener;
 import com.pm.authservice.event.EventConstants;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.model.UserEventEntity;
 import com.pm.authservice.user.model.UserStatus;
 import notification.events.NotificationEvent;
@@ -18,7 +18,7 @@ public class UserActivationEventListener extends BaseEventListener implements Ap
     @Override
     public void onApplicationEvent(UserActivationEvent event) {
         // 1. Get the newly registered user
-        UserEntity user = event.getUser();
+        UserJpaEntity user = event.getUser();
         //5 Save UserEventEntity and send Kafka event for analytics
         UserEventEntity eventEntity= createUserEvent(user, UserStatus.USER_ACTIVATED);
         saveAndPublishEvents(eventEntity);

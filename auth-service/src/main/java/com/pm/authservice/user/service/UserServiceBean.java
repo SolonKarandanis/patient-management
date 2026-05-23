@@ -6,15 +6,15 @@ import com.pm.authservice.dto.Paging;
 import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
-import com.pm.authservice.user.model.AccountStatus;
-import com.pm.authservice.user.model.RoleEntity;
+import com.pm.authservice.domain.model.AccountStatus;
+import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
 import com.pm.authservice.model.VerificationTokenEntity;
 import com.pm.authservice.service.VerificationTokenService;
 import com.pm.authservice.user.dto.*;
 import com.pm.authservice.user.event.*;
 import com.pm.authservice.outbox.service.OutboxService;
-import com.pm.authservice.user.model.QUserEntity;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.QUserJpaEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.repository.UserRepository;
 import com.pm.authservice.user.repository.projections.MinMaxUserId;
 import com.pm.authservice.util.AppConstants;
@@ -70,14 +70,14 @@ public class UserServiceBean implements UserService{
 
     @Transactional(propagation = Propagation.SUPPORTS)
     @Override
-    public UserDTO convertToDTO(UserEntity user, Boolean withRoles) {
+    public UserDTO convertToDTO(UserJpaEntity user, Boolean withRoles) {
         UserDTO dto = new UserDTO();
         dto.setUsername(user.getUsername());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());
         dto.setPublicId(user.getDomainId().toString());
-        dto.setStatus(AccountStatus.fromValue(user.getStatus()));
+        dto.setStatus(user.getStatus() != null ? user.getStatus().getValue() : null);
         if(withRoles){
             dto.setRoles(roleService.convertToDtoList(user.getRoles()));
         }
@@ -86,8 +86,8 @@ public class UserServiceBean implements UserService{
 
     @Transactional(propagation = Propagation.SUPPORTS)
     @Override
-    public UserEntity convertToEntity(UserDTO dto) {
-        UserEntity user = new UserEntity();
+    public UserJpaEntity convertToEntity(UserDTO dto) {
+        UserJpaEntity user = new UserJpaEntity();
         user.setUsername(dto.getUsername());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
@@ -101,14 +101,14 @@ public class UserServiceBean implements UserService{
         user.setStatus(AccountStatus.fromValue(dto.getStatus()));
         if(!CollectionUtils.isEmpty(dto.getRoles())){
             List<Integer> roleIds= dto.getRoles().stream().map(RoleDTO::getId).toList();
-            Set<RoleEntity> roles = new HashSet<>(roleService.findByIds(roleIds));
+            Set<RoleJpaEntity> roles = new HashSet<>(roleService.findByIds(roleIds));
             user.setRoles(roles);
         }
         return user;
     }
 
     @Override
-    public List<UserDTO> convertToDTOList(List<UserEntity> userList, Boolean withRoles) {
+    public List<UserDTO> convertToDTOList(List<UserJpaEntity> userList, Boolean withRoles) {
         if(CollectionUtils.isEmpty(userList)){
             return Collections.emptyList();
         }
@@ -118,32 +118,32 @@ public class UserServiceBean implements UserService{
     }
 
     @Override
-    public UserEntity findById(Integer id) throws NotFoundException {
+    public UserJpaEntity findById(Integer id) throws NotFoundException {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
     }
 
     @Override
-    public UserEntity findByPublicId(String publicId) throws NotFoundException {
+    public UserJpaEntity findByPublicId(String publicId) throws NotFoundException {
         return userRepository.findByDomainId(UUID.fromString(publicId))
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
     }
 
     @Override
     public List<String> getUserPermissions(String publicId) throws NotFoundException {
-        UserEntity user= userRepository.findByDomainId(UUID.fromString(publicId))
+        UserJpaEntity user= userRepository.findByDomainId(UUID.fromString(publicId))
                             .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
         return userRepository.findUserPermissions(user.getId());
     }
 
     @Override
-    public UserEntity findByEmail(String email) throws NotFoundException {
+    public UserJpaEntity findByEmail(String email) throws NotFoundException {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
     }
 
     @Override
-    public List<UserEntity> findUsersToBeIndexedByIdRange(Integer minId, Integer maxId) {
+    public List<UserJpaEntity> findUsersToBeIndexedByIdRange(Integer minId, Integer maxId) {
         return userRepository.findUsersByIdRange(minId,maxId);
     }
 
@@ -154,14 +154,14 @@ public class UserServiceBean implements UserService{
     }
 
     @Override
-    public Page<UserEntity> searchUsers(UsersSearchRequestDTO searchObj,UserEntity loggedUser) {
+    public Page<UserJpaEntity> searchUsers(UsersSearchRequestDTO searchObj,UserJpaEntity loggedUser) {
         PageRequest pageRequest = toPageRequest(searchObj.getPaging());
         Predicate predicate = getSearchPredicate(searchObj,loggedUser);
         return userRepository.findAll(predicate,pageRequest);
     }
 
     @Override
-    public Page<UserEntity> quickSearchUsers(String quickSearchValueParam, PageRequest pageRequest, UserEntity loggedUser) {
+    public Page<UserJpaEntity> quickSearchUsers(String quickSearchValueParam, PageRequest pageRequest, UserJpaEntity loggedUser) {
         PageRequest transformedPageRequest = transformPageSorting(pageRequest);
         Predicate searchPredicate = getUserQuickSearchPredicate(quickSearchValueParam, loggedUser);
         return userRepository.findAll(searchPredicate,transformedPageRequest);
@@ -191,8 +191,8 @@ public class UserServiceBean implements UserService{
         return Set.of("id", "publicId", "username", "firstName", "lastName", "status", "email", "isEnabled", "isVerified", "createdDate");
     }
 
-    protected Predicate getUserQuickSearchPredicate(String quickSearchValueParam, UserEntity loggedUser) {
-        QUserEntity user = QUserEntity.userEntity;
+    protected Predicate getUserQuickSearchPredicate(String quickSearchValueParam, UserJpaEntity loggedUser) {
+        QUserJpaEntity user = QUserJpaEntity.userJpaEntity;
         BooleanBuilder builder = new BooleanBuilder();
         builder.and(user.status.eq(AccountStatus.valueOf(AppConstants.STATUS_ACTIVE)));
         builder.or(user.username.eq(quickSearchValueParam))
@@ -203,25 +203,25 @@ public class UserServiceBean implements UserService{
     }
 
     @Override
-    public Long countUsers(UsersSearchRequestDTO searchObj, UserEntity loggedUser) {
+    public Long countUsers(UsersSearchRequestDTO searchObj, UserJpaEntity loggedUser) {
         Predicate predicate = getSearchPredicate(searchObj,loggedUser);
         return userRepository.count(predicate);
     }
 
     @Override
-    public List<UserDTO> findAllUsersForExport(UsersSearchRequestDTO searchObj, UserEntity loggedUser) {
+    public List<UserDTO> findAllUsersForExport(UsersSearchRequestDTO searchObj, UserJpaEntity loggedUser) {
         Predicate predicate = getSearchPredicate(searchObj,loggedUser);
-        List<UserEntity> users=StreamSupport.stream(userRepository.findAll(predicate).spliterator(), false).toList();
+        List<UserJpaEntity> users=StreamSupport.stream(userRepository.findAll(predicate).spliterator(), false).toList();
         List<UserDTO> results=new ArrayList<>();
-        for(UserEntity user: users){
+        for(UserJpaEntity user: users){
             UserDTO dto = convertToDTO(user,true);
             results.add(dto);
         }
         return results;
     }
 
-    protected Predicate getSearchPredicate(UsersSearchRequestDTO searchObj,UserEntity loggedUser){
-        QUserEntity user = QUserEntity.userEntity;
+    protected Predicate getSearchPredicate(UsersSearchRequestDTO searchObj,UserJpaEntity loggedUser){
+        QUserJpaEntity user = QUserJpaEntity.userJpaEntity;
         BooleanBuilder builder = new BooleanBuilder();
         String searchMethod = searchObj.getSearchMethod();
         boolean isAdmin = UserUtil.hasRole(loggedUser, AuthorityConstants.ROLE_SYSTEM_ADMIN);
@@ -240,7 +240,7 @@ public class UserServiceBean implements UserService{
     protected BooleanBuilder setSearchMethodAndCriteria(
             UsersSearchRequestDTO searchObj,
             BooleanBuilder builder,
-            QUserEntity user){
+            QUserJpaEntity user){
         String email =searchObj.getEmail();
         String username = searchObj.getUsername();
         String name= searchObj.getName();
@@ -260,7 +260,7 @@ public class UserServiceBean implements UserService{
             builder.and(user.status.eq(AccountStatus.fromValue(status)));
         }
         if(StringUtils.hasLength(roleName)){
-            RoleEntity role = roleService.findByName(roleName);
+            RoleJpaEntity role = roleService.findByName(roleName);
             if(role != null){
                 builder.and(user.roles.contains(role));
             }
@@ -271,7 +271,7 @@ public class UserServiceBean implements UserService{
     protected BooleanBuilder setSearchMethodOrCriteria(
             UsersSearchRequestDTO searchObj,
             BooleanBuilder builder,
-            QUserEntity user){
+            QUserJpaEntity user){
         String email =searchObj.getEmail();
         String username = searchObj.getUsername();
         String name= searchObj.getName();
@@ -291,7 +291,7 @@ public class UserServiceBean implements UserService{
             builder.or(user.status.eq(AccountStatus.fromValue(status)));
         }
         if(StringUtils.hasLength(roleName)){
-            RoleEntity role = roleService.findByName(roleName);
+            RoleJpaEntity role = roleService.findByName(roleName);
             if(role != null){
                 builder.or(user.roles.contains(role));
             }
@@ -308,14 +308,14 @@ public class UserServiceBean implements UserService{
     }
 
     protected void validateUsernameExistence(String username)throws BusinessException{
-        Optional<UserEntity> userNameMaybe  = userRepository.findByUsername(username);
+        Optional<UserJpaEntity> userNameMaybe  = userRepository.findByUsername(username);
         if(userNameMaybe.isPresent()){
             throw new BusinessException("error.username.exists");
         }
     }
 
     protected void validateEmailExistence(String email)throws BusinessException{
-        Optional<UserEntity> emailMaybe  = userRepository.findByEmail(email);
+        Optional<UserJpaEntity> emailMaybe  = userRepository.findByEmail(email);
         if(emailMaybe.isPresent()){
             throw new BusinessException("error.email.exists");
         }
@@ -323,11 +323,11 @@ public class UserServiceBean implements UserService{
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public UserEntity registerUser(CreateUserDTO dto, String applicationUrl) throws BusinessException {
+    public UserJpaEntity registerUser(CreateUserDTO dto, String applicationUrl) throws BusinessException {
         validateUsernameExistence(dto.getUsername());
         validateEmailExistence(dto.getEmail());
         validatePasswordChange(dto.getPassword(), dto.getConfirmPassword(), true);
-        UserEntity user = new UserEntity();
+        UserJpaEntity user = new UserJpaEntity();
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setUsername(dto.getUsername());
         user.setFirstName(dto.getFirstName());
@@ -340,7 +340,7 @@ public class UserServiceBean implements UserService{
         user.setCreatedDate(today);
         UUID uuid = UUID.randomUUID();
         user.setDomainId(uuid);
-        RoleEntity role = roleService.findByName(dto.getRole());
+        RoleJpaEntity role = roleService.findByName(dto.getRole());
         user.setRoles(Set.of(role));
         user = userRepository.save(user);
         outboxService.createUserEvent(user, AppConstants.OUTBOX_USER_CREATED);
@@ -350,15 +350,15 @@ public class UserServiceBean implements UserService{
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public UserEntity updateUser(String publicId, UpdateUserDTO dto) throws NotFoundException {
-        UserEntity user = findByPublicId(publicId);
+    public UserJpaEntity updateUser(String publicId, UpdateUserDTO dto) throws NotFoundException {
+        UserJpaEntity user = findByPublicId(publicId);
         user.setUsername(dto.getUsername());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
         LocalDate today = LocalDate.now();
         user.setLastModifiedDate(today);
-        RoleEntity role = roleService.findByName(dto.getRole());
+        RoleJpaEntity role = roleService.findByName(dto.getRole());
         user.removeRoles();
         user.addRole(role);
         genericService.getPublisher().publishEvent(new UserUpdateEvent(user));
@@ -369,7 +369,7 @@ public class UserServiceBean implements UserService{
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public UserEntity activateUser(UserEntity user) throws BusinessException {
+    public UserJpaEntity activateUser(UserJpaEntity user) throws BusinessException {
         user.activate();
         user = userRepository.save(user);
         outboxService.createUserEvent(user, AppConstants.OUTBOX_USER_ACTIVATED);
@@ -379,7 +379,7 @@ public class UserServiceBean implements UserService{
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public UserEntity deactivateUser(UserEntity user) throws BusinessException {
+    public UserJpaEntity deactivateUser(UserJpaEntity user) throws BusinessException {
         user.deactivate();
         user = userRepository.save(user);
         outboxService.createUserEvent(user, AppConstants.OUTBOX_USER_DEACTIVATED);
@@ -390,7 +390,7 @@ public class UserServiceBean implements UserService{
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void deleteUser(String publicId) throws NotFoundException {
-        Optional<UserEntity> usrOpt  =userRepository.findByDomainId(UUID.fromString(publicId));
+        Optional<UserJpaEntity> usrOpt  =userRepository.findByDomainId(UUID.fromString(publicId));
         usrOpt.ifPresent(usr->{
             userRepository.delete(usr);
             outboxService.createUserEvent(usr, AppConstants.OUTBOX_USER_DELETED);
@@ -403,7 +403,7 @@ public class UserServiceBean implements UserService{
         VerificationTokenEntity verificationToken = verificationTokenService.findByToken(token);
         Boolean verificationResult = verificationTokenService.validateToken(verificationToken);
         if(verificationResult){
-            UserEntity user = verificationToken.getUser();
+            UserJpaEntity user = verificationToken.getUser();
             user.setIsVerified(Boolean.TRUE);
             user = userRepository.save(user);
             outboxService.createUserEvent(user, AppConstants.OUTBOX_USER_VERIFIED);
@@ -429,7 +429,7 @@ public class UserServiceBean implements UserService{
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public UserEntity changePassword(UserEntity user, ChangePasswordDTO dto)throws BusinessException {
+    public UserJpaEntity changePassword(UserJpaEntity user, ChangePasswordDTO dto)throws BusinessException {
         validatePasswordChange(dto.getPassword(), dto.getConfirmPassword(), true);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         LocalDate today = LocalDate.now();

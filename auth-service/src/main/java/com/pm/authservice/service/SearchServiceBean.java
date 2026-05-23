@@ -6,8 +6,8 @@ import com.pm.authservice.service.fts.FtsUtil;
 import com.pm.authservice.service.fts.UserFullTextSearchService;
 import com.pm.authservice.user.dto.UserDTO;
 import com.pm.authservice.user.dto.UsersSearchRequestDTO;
-import com.pm.authservice.user.model.RoleEntity;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.service.RoleService;
 import com.pm.authservice.user.service.UserService;
 import com.pm.authservice.util.AppConstants;
@@ -138,14 +138,14 @@ public class SearchServiceBean  implements SearchService{
     }
 
     @Override
-    public SearchResults<UserDTO> advancedSearchUsers(UsersSearchRequestDTO request, UserEntity loggedUser)
+    public SearchResults<UserDTO> advancedSearchUsers(UsersSearchRequestDTO request, UserJpaEntity loggedUser)
             throws ResourceAccessException, AuthException {
         log.info("in SearchServiceBean ----> advancedSearchUsers ----> elasticSearchEnable: {}",elasticSearchEnable);
         String status = request.getStatus();
         String searchMethod = request.getSearchMethod();
         checkRequestParamsValidity(status, searchMethod);
         if (!elasticSearchEnable){
-            Page<UserEntity> results = userService.searchUsers(request,loggedUser);
+            Page<UserJpaEntity> results = userService.searchUsers(request,loggedUser);
             List<UserDTO> dtos=userService.convertToDTOList(results.getContent(),false);
             return new SearchResults<>(Math.toIntExact(results.getTotalElements()), dtos);
         }
@@ -179,7 +179,7 @@ public class SearchServiceBean  implements SearchService{
     }
 
     @Override
-    public List<UserDTO> findUsersForExport(UsersSearchRequestDTO request, UserEntity user)
+    public List<UserDTO> findUsersForExport(UsersSearchRequestDTO request, UserJpaEntity user)
             throws ResourceAccessException, AuthException {
         log.info("in SearchServiceBean ----> findUsersForExport ----> elasticSearchEnable: {}",elasticSearchEnable);
         String status = request.getStatus();
@@ -221,7 +221,7 @@ public class SearchServiceBean  implements SearchService{
         dto.setEmail(ftsResultDto.getEmail());
         dto.setPublicId(ftsResultDto.getPublicId());
         dto.setStatus(ftsResultDto.getStatus());
-        Set<RoleEntity> roles = new HashSet<>(roleService.findByIds(ftsResultDto.getRoleIds()));
+        Set<RoleJpaEntity> roles = new HashSet<>(roleService.findByIds(ftsResultDto.getRoleIds()));
         if(!CollectionUtils.isEmpty(roles)){
             dto.setRoles(roleService.convertToDtoList(roles));
         }
@@ -229,7 +229,7 @@ public class SearchServiceBean  implements SearchService{
     }
 
     @Override
-    public Long countUsers(UsersSearchRequestDTO request, UserEntity loggedUser) throws ResourceAccessException, AuthException {
+    public Long countUsers(UsersSearchRequestDTO request, UserJpaEntity loggedUser) throws ResourceAccessException, AuthException {
         log.info("in SearchServiceBean ----> countItems ----> elasticSearchEnable: {}",elasticSearchEnable);
         String status = request.getStatus();
         String searchMethod = request.getSearchMethod();
@@ -255,13 +255,13 @@ public class SearchServiceBean  implements SearchService{
     }
 
     @Override
-    public SearchResults<UserDTO> quickSearchUsers(String quickSearchValueParam, UserEntity loggedUser,
+    public SearchResults<UserDTO> quickSearchUsers(String quickSearchValueParam, UserJpaEntity loggedUser,
                                                                         Integer page, Integer size, String sortField, String sortOrder)
             throws ResourceAccessException {
         log.info("in SearchServiceBean ----> quickSearchUsers ----> elasticSearchEnable: {}",elasticSearchEnable);
         if (!elasticSearchEnable){
             PageRequest pageRequest = toPageRequest(page,size,sortField,sortOrder);
-            Page<UserEntity> results = userService.quickSearchUsers(quickSearchValueParam,pageRequest,loggedUser);
+            Page<UserJpaEntity> results = userService.quickSearchUsers(quickSearchValueParam,pageRequest,loggedUser);
             List<UserDTO> dtos=userService.convertToDTOList(results.getContent(),false);
             return new SearchResults<>(Math.toIntExact(results.getTotalElements()), dtos);
         }

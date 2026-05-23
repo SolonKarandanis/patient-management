@@ -2,7 +2,7 @@ package com.pm.authservice.service;
 
 
 import com.pm.authservice.exception.BusinessException;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.model.VerificationTokenEntity;
 import com.pm.authservice.repository.VerificationTokenRepository;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class VerificationTokenServiceBean implements VerificationTokenService{
 
     @Transactional
     @Override
-    public void saveUserVerificationToken(UserEntity theUser, String token) {
+    public void saveUserVerificationToken(UserJpaEntity theUser, String token) {
         var verificationToken = new VerificationTokenEntity(token, theUser);
         verificationTokenRepository.save(verificationToken);
     }

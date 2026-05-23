@@ -1,7 +1,7 @@
 package com.pm.authservice.service;
 
 import com.pm.authservice.dto.UserDocumentDTO;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 
@@ -20,6 +20,6 @@ public interface GenericService {
                                             Set<String> allowedSortingFields);
     String getDefaultSortingProperty();
 
-    UserDocumentDTO convertToDocumentDto(UserEntity user);
-    List<UserDocumentDTO>convertToDocumentDtoList(List<UserEntity> userList);
+    UserDocumentDTO convertToDocumentDto(UserJpaEntity user);
+    List<UserDocumentDTO>convertToDocumentDtoList(List<UserJpaEntity> userList);
 }

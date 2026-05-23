@@ -1,7 +1,7 @@
 package com.pm.authservice.config.authorisation;
 
 import com.pm.authservice.auth.dto.UserDetailsDTO;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.service.SecurityService;
 import com.pm.authservice.user.service.UserService;
 import com.pm.authservice.util.UserUtil;
@@ -32,7 +32,7 @@ public class CustomMethodSecurityExpressionRoot
     @Setter
     private Object target;
 
-    protected UserEntity currentUser;
+    protected UserJpaEntity currentUser;
 
     @Autowired
     protected SecurityService securityService;

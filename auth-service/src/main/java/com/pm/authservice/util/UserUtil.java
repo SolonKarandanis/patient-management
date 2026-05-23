@@ -1,8 +1,8 @@
 package com.pm.authservice.util;
 
-import com.pm.authservice.user.model.RoleEntity;
-import com.pm.authservice.user.model.RoleOperationEntity;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
+import com.pm.authservice.infrastructure.persistence.entity.RoleOperationJpaEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
@@ -19,11 +19,11 @@ public class UserUtil {
      * @param role
      * @return true / false
      */
-    public static boolean hasRole(UserEntity user, String role){
+    public static boolean hasRole(UserJpaEntity user, String role){
         boolean result = false;
         if(Objects.nonNull(user)){
-            Set<RoleEntity> userRoles = user.getRoles();
-            RoleEntity found=userRoles.stream()
+            Set<RoleJpaEntity> userRoles = user.getRoles();
+            RoleJpaEntity found=userRoles.stream()
                     .filter(ur -> role.equals(ur.getName()))
                     .findFirst()
                     .orElse(null);
@@ -40,10 +40,10 @@ public class UserUtil {
      * @param currentUser
      * @return
      */
-    public static List<String> getUserOperations(UserEntity currentUser){
+    public static List<String> getUserOperations(UserJpaEntity currentUser){
         List<String> userOperations = new ArrayList<>();
-        for (RoleEntity role : currentUser.getRoles()) {
-            for (RoleOperationEntity roleOperation : role.getRoleOperations()) {
+        for (RoleJpaEntity role : currentUser.getRoles()) {
+            for (RoleOperationJpaEntity roleOperation : role.getRoleOperations()) {
                 userOperations.add(roleOperation.getOperation().getName());
             }
         }
@@ -57,7 +57,7 @@ public class UserUtil {
      * @param operation
      * @return
      */
-    public static boolean hasOperation(UserEntity user, String operation) {
+    public static boolean hasOperation(UserJpaEntity user, String operation) {
         List<String> userOperations = getUserOperations(user);
         return userOperations.contains(operation);
     }
@@ -71,15 +71,15 @@ public class UserUtil {
      * @param commaRoles
      * @return
      */
-    public static boolean hasAnyRole(UserEntity user, String commaRoles){
+    public static boolean hasAnyRole(UserJpaEntity user, String commaRoles){
         boolean result = false;
         if(Objects.nonNull(user) && StringUtils.hasLength(commaRoles)){
             result = true; // no roles means success
         }
         else if(Objects.nonNull(user)){
             String[] roles = commaRoles.split(",");
-            Set<RoleEntity> userRoles = user.getRoles();
-            for (RoleEntity r : userRoles) {
+            Set<RoleJpaEntity> userRoles = user.getRoles();
+            for (RoleJpaEntity r : userRoles) {
                 for (String role : roles) {
                     if (role.equalsIgnoreCase(r.getId().toString())) {
                         result = true;
@@ -94,10 +94,10 @@ public class UserUtil {
         return result;
     }
 
-    public static boolean hasAllRoles(UserEntity user, String commaRoles){
+    public static boolean hasAllRoles(UserJpaEntity user, String commaRoles){
         Collection<String> testRoles = Arrays.asList(commaRoles.split(","));
         Collection<String> userRoles = new HashSet<String>();
-        for (RoleEntity role : user.getRoles()) {
+        for (RoleJpaEntity role : user.getRoles()) {
             userRoles.add(role.getName());
         }
         return userRoles.containsAll(testRoles);

@@ -1,8 +1,8 @@
 package com.pm.authservice.service;
 
 import com.pm.authservice.dto.UserDocumentDTO;
-import com.pm.authservice.user.model.RoleEntity;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
@@ -70,7 +70,7 @@ public class GenericServiceBean  implements GenericService{
     }
 
     @Override
-    public UserDocumentDTO convertToDocumentDto(UserEntity user) {
+    public UserDocumentDTO convertToDocumentDto(UserJpaEntity user) {
         UserDocumentDTO dto = new UserDocumentDTO();
         dto.setId(user.getId());
         dto.setPublicId(user.getDomainId().toString());
@@ -84,12 +84,12 @@ public class GenericServiceBean  implements GenericService{
 
         if (user.getRoles() != null) {
             List<String> roleNames = user.getRoles().stream()
-                    .map(RoleEntity::getName)
+                    .map(RoleJpaEntity::getName)
                     .collect(Collectors.toList());
             dto.setRolesNames(roleNames);
 
             List<Integer> roleIds = user.getRoles().stream()
-                    .map(RoleEntity::getId)
+                    .map(RoleJpaEntity::getId)
                     .collect(Collectors.toList());
             dto.setRoleIds(roleIds);
         }
@@ -97,7 +97,7 @@ public class GenericServiceBean  implements GenericService{
     }
 
     @Override
-    public List<UserDocumentDTO> convertToDocumentDtoList(List<UserEntity> userList) {
+    public List<UserDocumentDTO> convertToDocumentDtoList(List<UserJpaEntity> userList) {
         if(CollectionUtils.isEmpty(userList)){
             return Collections.emptyList();
         }

@@ -8,7 +8,7 @@ import com.pm.authservice.outbox.model.OutboxEvent;
 import com.pm.authservice.outbox.repository.OutboxEventRepository;
 import com.pm.authservice.dto.UserDocumentDTO;
 import com.pm.authservice.service.GenericService;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.util.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ public class OutboxServiceBean implements OutboxService {
     protected OutboxEvent convertToOutboxEvent(Integer userId,String type,String payload){
         return OutboxEvent.builder()
                 .id(UUID.randomUUID())
-                .aggregateType(UserEntity.class.getCanonicalName())
+                .aggregateType(UserJpaEntity.class.getCanonicalName())
                 .aggregateId(userId.toString())
                 .type(type)
                 .payload(payload)
@@ -51,7 +51,7 @@ public class OutboxServiceBean implements OutboxService {
     }
 
     @Override
-    public void createUserEvent(UserEntity user, String type) {
+    public void createUserEvent(UserJpaEntity user, String type) {
         try {
             if (user.getId() == null) {
                log.warn("Cannot create Outbox Event for User because ID is null (Entity not yet flushed?)");

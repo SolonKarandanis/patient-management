@@ -1,6 +1,6 @@
 package com.pm.authservice.user.repository;
 
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.repository.projections.MinMaxUserId;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -17,24 +17,24 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity,Integer> ,
-        JpaSpecificationExecutor<UserEntity>, QuerydslPredicateExecutor<UserEntity> {
+public interface UserRepository extends JpaRepository<UserJpaEntity, Integer>,
+        JpaSpecificationExecutor<UserJpaEntity>, QuerydslPredicateExecutor<UserJpaEntity> {
 
-    @Query(name = UserEntity.FIND_BY_EMAIL)
-    Optional<UserEntity> findByEmail(String email);
+    @Query(name = UserJpaEntity.FIND_BY_EMAIL)
+    Optional<UserJpaEntity> findByEmail(String email);
 
-    @Query(name = UserEntity.FIND_BY_DOMAIN_ID)
-    Optional<UserEntity> findByDomainId(@Param("domainId") UUID domainId);
+    @Query(name = UserJpaEntity.FIND_BY_DOMAIN_ID)
+    Optional<UserJpaEntity> findByDomainId(@Param("domainId") UUID domainId);
 
-    @Query(name = UserEntity.FIND_ID_BY_DOMAIN_ID)
+    @Query(name = UserJpaEntity.FIND_ID_BY_DOMAIN_ID)
     Optional<Integer> findIdByDomainId(@Param("domainId") UUID domainId);
 
-    @Query(name = UserEntity.FIND_BY_USERNAME)
-    Optional<UserEntity> findByUsername(String username);
+    @Query(name = UserJpaEntity.FIND_BY_USERNAME)
+    Optional<UserJpaEntity> findByUsername(String username);
 
-    @EntityGraph(value =  UserEntity.GRAPH_USERS_ROLES,type = EntityGraph.EntityGraphType.FETCH)
-    @Query("SELECT u FROM UserEntity u ")
-    List<UserEntity> findUsersWithRoles(Specification<UserEntity> spec);
+    @EntityGraph(value = UserJpaEntity.GRAPH_USERS_ROLES, type = EntityGraph.EntityGraphType.FETCH)
+    @Query("SELECT u FROM UserJpaEntity u ")
+    List<UserJpaEntity> findUsersWithRoles(Specification<UserJpaEntity> spec);
 
     default List<String> findUserPermissions(Integer userId) {
         List<String> permissions = new ArrayList<>();
@@ -53,22 +53,20 @@ public interface UserRepository extends JpaRepository<UserEntity,Integer> ,
         return permissions;
     }
 
-    @Query(nativeQuery = true, name = UserEntity.FIND_USER_ROLE_IDS_BY_USER_ID_NATIVE_QUERY)
+    @Query(nativeQuery = true, name = UserJpaEntity.FIND_USER_ROLE_IDS_BY_USER_ID_NATIVE_QUERY)
     List<Object> findUserRoleIdsByUserIdNativeQuery(Integer userId);
 
-    @Query(nativeQuery = true, name = UserEntity.FIND_OPERATION_KEY_BY_ROLE_IDS_AS_OBJECTS_NATIVE_QUERY)
+    @Query(nativeQuery = true, name = UserJpaEntity.FIND_OPERATION_KEY_BY_ROLE_IDS_AS_OBJECTS_NATIVE_QUERY)
     List<Object> findOperationKeysByRoleIdsAsObjectsNativeQuery(List<Integer> roleIds);
 
-
-
-    @Query("SELECT MIN(u.id) AS minId, MAX(u.id) AS maxId FROM UserEntity u")
+    @Query("SELECT MIN(u.id) AS minId, MAX(u.id) AS maxId FROM UserJpaEntity u")
     MinMaxUserId findMinAndMaxUserId();
 
-    @Query("SELECT user FROM UserEntity user " +
-            "LEFT JOIN FETCH user.roles r "+
+    @Query("SELECT user FROM UserJpaEntity user " +
+            "LEFT JOIN FETCH user.roles r " +
             "WHERE user.id >= :minId " +
             "AND user.id <= :maxId " +
             "ORDER BY user.id ASC")
-    List<UserEntity> findUsersByIdRange(@Param("minId") Integer minId, @Param("maxId") Integer maxId);
+    List<UserJpaEntity> findUsersByIdRange(@Param("minId") Integer minId, @Param("maxId") Integer maxId);
 
 }

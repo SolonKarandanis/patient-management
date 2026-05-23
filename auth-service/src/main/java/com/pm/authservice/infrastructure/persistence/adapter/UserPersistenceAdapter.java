@@ -55,6 +55,12 @@ public class UserPersistenceAdapter implements UserPort {
     }
 
     @Override
+    @Transactional
+    public void delete(UUID domainId) {
+        userRepository.findByDomainId(domainId).ifPresent(userRepository::delete);
+    }
+
+    @Override
     public Optional<User> findByDomainId(UUID domainId) {
         return userRepository.findByDomainId(domainId)
                 .map(userMapper::toDomain);

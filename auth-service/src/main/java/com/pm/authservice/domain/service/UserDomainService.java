@@ -2,11 +2,22 @@ package com.pm.authservice.domain.service;
 
 import com.pm.authservice.domain.annotation.DomainService;
 import com.pm.authservice.domain.exception.BusinessRuleException;
+import com.pm.authservice.domain.exception.UserNotFoundException;
 import com.pm.authservice.domain.model.AccountStatus;
 import com.pm.authservice.domain.model.Role;
 import com.pm.authservice.domain.model.User;
+import com.pm.authservice.domain.model.event.UserActivated;
+import com.pm.authservice.domain.model.event.UserDeactivated;
+import com.pm.authservice.domain.model.event.UserDeleted;
+import com.pm.authservice.domain.model.event.UserPasswordChanged;
 import com.pm.authservice.domain.model.event.UserRegistered;
+import com.pm.authservice.domain.model.event.UserUpdated;
+import com.pm.authservice.domain.port.in.ActivateUserUseCase;
+import com.pm.authservice.domain.port.in.ChangePasswordUseCase;
+import com.pm.authservice.domain.port.in.DeactivateUserUseCase;
+import com.pm.authservice.domain.port.in.DeleteUserUseCase;
 import com.pm.authservice.domain.port.in.RegisterUserUseCase;
+import com.pm.authservice.domain.port.in.UpdateUserUseCase;
 import com.pm.authservice.domain.port.out.DomainEventPublisher;
 import com.pm.authservice.domain.port.out.PasswordHasher;
 import com.pm.authservice.domain.port.out.RolePort;
@@ -17,7 +28,8 @@ import java.util.Set;
 import java.util.UUID;
 
 @DomainService
-public class UserDomainService implements RegisterUserUseCase {
+public class UserDomainService implements RegisterUserUseCase, UpdateUserUseCase,
+        DeleteUserUseCase, ActivateUserUseCase, DeactivateUserUseCase, ChangePasswordUseCase {
 
     private final UserPort userPort;
     private final RolePort rolePort;
@@ -35,7 +47,7 @@ public class UserDomainService implements RegisterUserUseCase {
     }
 
     @Override
-    public User register(Command command) {
+    public User register(RegisterUserUseCase.Command command) {
         validatePassword(command.password(), command.confirmPassword());
 
         if (userPort.findByUsername(command.username()).isPresent()) {
@@ -73,6 +85,76 @@ public class UserDomainService implements RegisterUserUseCase {
                 command.applicationUrl()
         ));
 
+        return saved;
+    }
+
+    @Override
+    public User update(UUID domainId, UpdateUserUseCase.Command command) {
+        User user = userPort.findByDomainId(domainId)
+                .orElseThrow(() -> new UserNotFoundException("error.user.not.found"));
+
+        if (!user.getUsername().equals(command.username()) &&
+                userPort.findByUsername(command.username()).isPresent()) {
+            throw new BusinessRuleException("error.username.exists");
+        }
+        if (!user.getEmail().equals(command.email()) &&
+                userPort.findByEmail(command.email()).isPresent()) {
+            throw new BusinessRuleException("error.email.exists");
+        }
+
+        Role role = rolePort.findByName(command.roleName())
+                .orElseThrow(() -> new BusinessRuleException("error.role.not.found"));
+
+        user.setUsername(command.username());
+        user.setEmail(command.email());
+        user.setFirstName(command.firstName());
+        user.setLastName(command.lastName());
+        user.setLastModifiedDate(LocalDate.now());
+        user.setRoles(Set.of(role));
+
+        User saved = userPort.save(user);
+        eventPublisher.publish(new UserUpdated(saved.getDomainId()));
+        return saved;
+    }
+
+    @Override
+    public void delete(UUID domainId) {
+        User user = userPort.findByDomainId(domainId)
+                .orElseThrow(() -> new UserNotFoundException("error.user.not.found"));
+        String username = user.getUsername();
+        userPort.delete(domainId);
+        eventPublisher.publish(new UserDeleted(domainId, username));
+    }
+
+    @Override
+    public User activate(UUID domainId) {
+        User user = userPort.findByDomainId(domainId)
+                .orElseThrow(() -> new UserNotFoundException("error.user.not.found"));
+        user.activate();
+        User saved = userPort.save(user);
+        eventPublisher.publish(new UserActivated(saved.getDomainId()));
+        return saved;
+    }
+
+    @Override
+    public User deactivate(UUID domainId) {
+        User user = userPort.findByDomainId(domainId)
+                .orElseThrow(() -> new UserNotFoundException("error.user.not.found"));
+        user.deactivate();
+        User saved = userPort.save(user);
+        eventPublisher.publish(new UserDeactivated(saved.getDomainId()));
+        return saved;
+    }
+
+    @Override
+    public User changePassword(UUID domainId, ChangePasswordUseCase.Command command) {
+        validatePassword(command.password(), command.confirmPassword());
+        User user = userPort.findByDomainId(domainId)
+                .orElseThrow(() -> new UserNotFoundException("error.user.not.found"));
+        user.setPassword(passwordHasher.hash(command.password()));
+        user.setLastModifiedDate(LocalDate.now());
+        User saved = userPort.save(user);
+        eventPublisher.publish(new UserPasswordChanged(saved.getDomainId()));
         return saved;
     }
 

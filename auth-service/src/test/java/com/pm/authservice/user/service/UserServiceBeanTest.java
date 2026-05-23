@@ -3,10 +3,11 @@ package com.pm.authservice.user.service;
 import com.pm.authservice.service.GenericService;
 import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.exception.NotFoundException;
+import com.pm.authservice.outbox.service.OutboxService;
 import com.pm.authservice.service.VerificationTokenService;
 import com.pm.authservice.user.dto.UserDTO;
 import com.pm.authservice.auth.dto.UserDetailsDTO;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -51,8 +52,11 @@ public class UserServiceBeanTest {
     @Mock
     protected ApplicationEventPublisher publisher;
 
+    @Mock
+    protected OutboxService outboxService;
+
     protected final Integer userId = 1;
-    protected UserEntity user;
+    protected UserJpaEntity user;
     protected UserDTO userDto;
     protected UserDetailsDTO detailsDTO;
     protected List<UserDTO> dtos;
@@ -94,24 +98,24 @@ public class UserServiceBeanTest {
         userDto.setPublicId(null);
         userDto.setRoles(new ArrayList<>());
 
-        UserEntity userEntity = service.convertToEntity(userDto);
+        UserJpaEntity userEntity = service.convertToEntity(userDto);
         assertNotNull(userEntity);
         assertTrue(userEntity.getRoles().isEmpty());
-        assertNull(userEntity.getPublicId());
+        assertNull(userEntity.getDomainId());
     }
 
     @DisplayName("Convert to Entity with roles and with publicId")
     @Test
     void testConvertToEntity02(){
-        when(userRepository.findIdByPublicId(UUID.fromString(userDto.getPublicId()))).thenReturn(Optional.of(userId));
+        when(userRepository.findIdByDomainId(UUID.fromString(userDto.getPublicId()))).thenReturn(Optional.of(userId));
         when(roleService.findByIds(List.of(1))).thenReturn(List.of(TestUtil.createTestRole()));
 
-        UserEntity userEntity = service.convertToEntity(userDto);
+        UserJpaEntity userEntity = service.convertToEntity(userDto);
         assertNotNull(userEntity);
-        assertNotNull(userEntity.getPublicId());
+        assertNotNull(userEntity.getDomainId());
         assertEquals(userEntity.getRoles().size(),roleDtos.size());
 
-        verify(userRepository,times(1)).findIdByPublicId(UUID.fromString(userDto.getPublicId()));
+        verify(userRepository,times(1)).findIdByDomainId(UUID.fromString(userDto.getPublicId()));
         verify(roleService,times(1)).findByIds(List.of(1));
     }
 
@@ -137,7 +141,7 @@ public class UserServiceBeanTest {
     void testFindById(){
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        UserEntity userEntity = service.findById(userId);
+        UserJpaEntity userEntity = service.findById(userId);
         assertNotNull(userEntity);
 
         verify(userRepository,times(1)).findById(userId);
@@ -157,25 +161,25 @@ public class UserServiceBeanTest {
     @DisplayName("Find a user by public id")
     @Test
     void testFindByPublicId(){
-        when(userRepository.findByPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID))).thenReturn(Optional.of(user));
+        when(userRepository.findByDomainId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID))).thenReturn(Optional.of(user));
 
-        UserEntity userEntity = service.findByPublicId(TestConstants.TEST_USER_PUBLIC_ID);
+        UserJpaEntity userEntity = service.findByPublicId(TestConstants.TEST_USER_PUBLIC_ID);
         assertNotNull(userEntity);
 
-        verify(userRepository,times(1)).findByPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
+        verify(userRepository,times(1)).findByDomainId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
     }
 
     @DisplayName("Find a user by public id (Not Found) ")
     @Test
     void testFindByPublicId02(){
-        when(userRepository.findByPublicId(UUID.fromString(userDto.getPublicId()))).thenReturn(Optional.empty());
+        when(userRepository.findByDomainId(UUID.fromString(userDto.getPublicId()))).thenReturn(Optional.empty());
 
         NotFoundException exception =assertThrows(NotFoundException.class,()->{
             service.findByPublicId(TestConstants.TEST_USER_PUBLIC_ID);
         });
         assertEquals("error.user.not.found",exception.getLocalizedMessage());
 
-        verify(userRepository,times(1)).findByPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
+        verify(userRepository,times(1)).findByDomainId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
     }
 
     @DisplayName("Find a user by email")
@@ -183,7 +187,7 @@ public class UserServiceBeanTest {
     void testFindByEmail(){
         when(userRepository.findByEmail(TestConstants.TEST_USER_EMAIL)).thenReturn(Optional.of(user));
 
-        UserEntity userEntity = service.findByEmail(TestConstants.TEST_USER_EMAIL);
+        UserJpaEntity userEntity = service.findByEmail(TestConstants.TEST_USER_EMAIL);
         assertNotNull(userEntity);
 
         verify(userRepository,times(1)).findByEmail(TestConstants.TEST_USER_EMAIL);
@@ -205,12 +209,12 @@ public class UserServiceBeanTest {
     @DisplayName("Delete a user")
     @Test
     void testDeleteUser(){
-        when(userRepository.findByPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID))).thenReturn(Optional.of(user));
+        when(userRepository.findByDomainId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID))).thenReturn(Optional.of(user));
         when(genericService.getPublisher()).thenReturn(publisher);
 
         service.deleteUser(TestConstants.TEST_USER_PUBLIC_ID);
 
-        verify(userRepository,times(1)).findByPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
+        verify(userRepository,times(1)).findByDomainId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
         verify(userRepository,times(1)).delete(user);
         verify(genericService, times(1)).getPublisher();
         verify(publisher, times(1)).publishEvent(any());

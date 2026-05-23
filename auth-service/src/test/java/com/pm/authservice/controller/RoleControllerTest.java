@@ -2,7 +2,7 @@ package com.pm.authservice.controller;
 
 import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.user.controller.RoleController;
-import com.pm.authservice.user.model.RoleEntity;
+import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
 import com.pm.authservice.user.service.RoleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +31,7 @@ public class RoleControllerTest {
     @Mock
     protected RoleService roleService;
 
-    protected RoleEntity role;
+    protected RoleJpaEntity role;
 
     protected RoleDTO roleDto;
 
@@ -44,7 +44,7 @@ public class RoleControllerTest {
     @DisplayName("Fetch all roles")
     @Test
     void testFindAllRoles(){
-        List<RoleEntity> roles = List.of(role);
+        List<RoleJpaEntity> roles = List.of(role);
         List<RoleDTO> roleDTOS = List.of(roleDto);
         when(roleService.findAll()).thenReturn(roles);
         when(roleService.convertToDtoList(new HashSet<>(roles))).thenReturn(roleDTOS);

@@ -5,13 +5,23 @@ import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.jupiter.api.Test;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.spi.Bean;
+import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class DomainServiceExtensionTest {
 
     @DomainService
     static class ToyDomainService {
+        public String ping() {
+            return "pong";
+        }
+    }
+
+    static class PlainService {
         public String ping() {
             return "pong";
         }
@@ -32,21 +42,18 @@ class DomainServiceExtensionTest {
     }
 
     @Test
-    void plainClassWithoutDomainServiceIsNotResolvable() {
-        class NotADomainService {
-            public String ping() {
-                return "pong";
-            }
-        }
-
+    void plainClassWithoutDomainServiceIsNotGivenApplicationScope() {
         try (WeldContainer container = new Weld()
                 .disableDiscovery()
                 .addExtension(new DomainServiceExtension())
+                .addBeanClass(PlainService.class)
                 .initialize()) {
 
-            boolean resolvable = container.select(NotADomainService.class).isResolvable();
-            assertNotNull(container); // container started cleanly
-            assertEquals(false, resolvable);
+            Set<Bean<?>> beans = container.getBeanManager().getBeans(PlainService.class);
+            boolean anyAppScoped = beans.stream()
+                    .anyMatch(b -> ApplicationScoped.class.equals(b.getScope()));
+            assertFalse(anyAppScoped,
+                    "Extension must not add @ApplicationScoped to classes without @DomainService");
         }
     }
 }

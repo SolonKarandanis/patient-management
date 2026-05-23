@@ -1,30 +1,39 @@
 package com.pm.authservice.user.event;
 
+import com.pm.authservice.domain.model.event.UserUpdated;
 import com.pm.authservice.event.BaseEventListener;
 import com.pm.authservice.event.EventConstants;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.model.UserEventEntity;
 import com.pm.authservice.user.model.UserStatus;
+import com.pm.authservice.user.service.UserService;
 import notification.events.NotificationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserUpdateEventListener extends BaseEventListener implements ApplicationListener<UserUpdateEvent> {
+public class UserUpdateEventListener extends BaseEventListener {
+
     private static final Logger log = LoggerFactory.getLogger(UserUpdateEventListener.class);
 
-    @Override
-    public void onApplicationEvent(UserUpdateEvent event) {
-        // 1. Get the newly registered user
-        UserJpaEntity user = event.getUser();
-        //5 Save UserEventEntity and send Kafka event for analytics
-        UserEventEntity eventEntity= createUserEvent(user, UserStatus.USER_UPDATED);
+    private final UserService userService;
+
+    public UserUpdateEventListener(UserService userService) {
+        this.userService = userService;
+    }
+
+    @EventListener
+    public void onUserUpdated(UserUpdated event) {
+        UserJpaEntity user = userService.findByPublicId(event.domainId().toString());
+
+        UserEventEntity eventEntity = createUserEvent(user, UserStatus.USER_UPDATED);
         saveAndPublishEvents(eventEntity);
-        //6 Send Kafka event for notification
-        StringBuilder sb =new StringBuilder();
-        sb.append("User with username '").append(user.getUsername()).append("' has been updated successfully");
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("User with username '").append(user.getUsername())
+          .append("' has been updated successfully");
         NotificationEvent notificationEvent = NotificationEvent.newBuilder()
                 .addUserIds(user.getDomainId().toString())
                 .setTitle("User Update Completed")
@@ -32,7 +41,7 @@ public class UserUpdateEventListener extends BaseEventListener implements Applic
                 .setEventType(EventConstants.USER_UPDATED_NOTIFICATION)
                 .build();
         notificationsProducer.sendEvent(notificationEvent);
-        //7 Send Kafka event for email
-        log.info("UserUpdateEventListener -> onApplicationEvent -> ");
+
+        log.info("UserUpdateEventListener->onUserUpdated");
     }
 }

@@ -10,6 +10,7 @@ public interface UserPort {
     Optional<User> findByDomainId(UUID domainId);
     Optional<User> findByEmail(String email);
     Optional<User> findByUsername(String username);
+    void delete(UUID domainId);
     boolean hasRole(UUID domainId, String roleName);
     boolean hasPermission(UUID domainId, String operationName);
 }

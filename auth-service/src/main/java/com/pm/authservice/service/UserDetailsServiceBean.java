@@ -1,9 +1,9 @@
 package com.pm.authservice.service;
 
-import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.auth.dto.UserDetailsDTO;
-import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
-import com.pm.authservice.user.repository.UserRepository;
+import com.pm.authservice.domain.model.User;
+import com.pm.authservice.domain.port.out.UserPort;
+import com.pm.authservice.user.dto.RoleDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,34 +17,37 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserDetailsServiceBean implements UserDetailsService {
 
     private static final Logger log = LoggerFactory.getLogger(UserDetailsServiceBean.class);
-    private static final String USER_NOT_FOUND="error.user.not.found";
+    private static final String USER_NOT_FOUND = "error.user.not.found";
 
-    private final UserRepository userRepository;
+    private final UserPort userPort;
 
-    public UserDetailsServiceBean(
-            UserRepository userRepository
-    ) {
-        this.userRepository = userRepository;
+    public UserDetailsServiceBean(UserPort userPort) {
+        this.userPort = userPort;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email)
-                .map(this::createSpringSecurityUser)
+        return userPort.findByEmail(email)
+                .map(this::toUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND));
     }
 
-    private UserDetails createSpringSecurityUser(UserJpaEntity user){
-        UserDetailsDTO dto = new UserDetailsDTO(user.getDomainId().toString(),user.getUsername(),user.getPassword(),user.getEmail());
-        dto.setId(user.getId());
+    private UserDetails toUserDetails(User user) {
+        UserDetailsDTO dto = new UserDetailsDTO(
+                user.getDomainId().toString(),
+                user.getUsername(),
+                user.getPassword(),
+                user.getEmail()
+        );
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setIsEnabled(user.getIsEnabled());
         dto.setStatus(user.getStatus());
-        dto.setRoleEntities(user.getRoles()
-                .stream()
-                .map(role-> new RoleDTO(role.getId(), role.getName()))
-                .toList());
+        if (user.getRoles() != null) {
+            dto.setRoleEntities(user.getRoles().stream()
+                    .map(r -> new RoleDTO(r.getId(), r.getName()))
+                    .toList());
+        }
         return dto;
     }
 }

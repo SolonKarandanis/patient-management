@@ -2,8 +2,8 @@ package com.pm.authservice.config.authorisation;
 
 import com.pm.authservice.auth.dto.UserDetailsDTO;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
-import com.pm.authservice.service.SecurityService;
 import com.pm.authservice.user.service.UserService;
+import com.pm.authservice.util.AuthorityConstants;
 import com.pm.authservice.util.UserUtil;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -33,9 +33,6 @@ public class CustomMethodSecurityExpressionRoot
     private Object target;
 
     protected UserJpaEntity currentUser;
-
-    @Autowired
-    protected SecurityService securityService;
 
     @Autowired
     protected UserService usersService;
@@ -114,7 +111,7 @@ public class CustomMethodSecurityExpressionRoot
 
 
     public boolean isSystemAdmin() {
-        return securityService.isSystemAdmin(this.currentUser);
+        return UserUtil.hasRole(this.currentUser, AuthorityConstants.ROLE_SYSTEM_ADMIN);
     }
 
     public boolean isUserMe(String userId){

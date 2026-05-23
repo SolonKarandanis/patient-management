@@ -2,8 +2,8 @@ package com.pm.authservice.controller;
 
 import com.pm.authservice.auth.controller.AuthController;
 import com.pm.authservice.auth.dto.UserDetailsDTO;
-import com.pm.authservice.auth.service.AuthService;
 import com.pm.authservice.auth.service.JwtService;
+import com.pm.authservice.domain.port.in.AuthenticateUserUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ public class AuthControllerMvcTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    protected AuthService authService;
+    protected AuthenticateUserUseCase authenticateUserUseCase;
 
     @MockitoBean
     protected JwtService jwtService;

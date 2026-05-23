@@ -1,5 +1,7 @@
 package com.pm.authservice.exception;
 
+import com.pm.authservice.domain.exception.BusinessRuleException;
+import com.pm.authservice.domain.exception.UserNotFoundException;
 import com.pm.authservice.util.AppConstants;
 import com.pm.authservice.util.StringUtils;
 import jakarta.validation.ConstraintViolationException;
@@ -95,6 +97,19 @@ public class GlobalExceptionHandler {
         } else {
             return getInternalServerErrorResponse(e, request);
         }
+    }
+
+    @ExceptionHandler(value = {BusinessRuleException.class})
+    public ResponseEntity<Object> handleBusinessRuleException(final BusinessRuleException e, final WebRequest request) {
+        log.debug(" HANDLER: handleBusinessRuleException [message: {}]", e.getMessage());
+        return ResponseEntity.badRequest().body(serializeErrorMessageToJson(
+                getTranslatedErrorMessage(e.getMessage(), null, request)));
+    }
+
+    @ExceptionHandler(value = {UserNotFoundException.class})
+    public ResponseEntity<Object> handleDomainUserNotFoundException(final UserNotFoundException e) {
+        log.debug(" HANDLER: handleDomainUserNotFoundException");
+        return ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)

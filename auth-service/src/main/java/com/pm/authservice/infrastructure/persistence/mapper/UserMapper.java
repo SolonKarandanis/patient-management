@@ -4,8 +4,11 @@ import com.pm.authservice.domain.model.Role;
 import com.pm.authservice.domain.model.User;
 import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
+import com.pm.authservice.user.dto.RoleDTO;
+import com.pm.authservice.user.dto.UserDTO;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -46,6 +49,25 @@ public class UserMapper {
         entity.setIsVerified(domain.getIsVerified());
         entity.setCreatedDate(domain.getCreatedDate());
         entity.setLastModifiedDate(domain.getLastModifiedDate());
+    }
+
+    public UserDTO toDTO(User domain) {
+        if (domain == null) return null;
+        UserDTO dto = new UserDTO();
+        dto.setPublicId(domain.getDomainId().toString());
+        dto.setUsername(domain.getUsername());
+        dto.setFirstName(domain.getFirstName());
+        dto.setLastName(domain.getLastName());
+        dto.setEmail(domain.getEmail());
+        dto.setStatus(domain.getStatus() != null ? domain.getStatus().getValue() : null);
+        dto.setIsEnabled(domain.getIsEnabled());
+        if (domain.getRoles() != null) {
+            List<RoleDTO> roles = domain.getRoles().stream()
+                    .map(r -> new RoleDTO(r.getId(), r.getName()))
+                    .toList();
+            dto.setRoles(roles);
+        }
+        return dto;
     }
 
     public Role roleToDomain(RoleJpaEntity entity) {

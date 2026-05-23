@@ -38,9 +38,10 @@ import java.util.UUID;
         query = "SELECT u.id FROM UserJpaEntity u "
                 + "WHERE u.domainId=:domainId")
 @NamedNativeQuery(name = UserJpaEntity.FIND_USER_ROLE_IDS_BY_USER_ID_NATIVE_QUERY,
-        query = "select ur.role_id "
-                + "from user_roles ur "
-                + "where ur.user_id= :userId",
+        query = """ 
+                select ur.role_id \
+                from user_roles ur \
+                where ur.user_id= :userId""",
         resultSetMapping = "role_id")
 @NamedNativeQuery(name = UserJpaEntity.FIND_OPERATION_KEY_BY_ROLE_IDS_AS_OBJECTS_NATIVE_QUERY,
         query = """

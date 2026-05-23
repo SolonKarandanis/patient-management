@@ -3,6 +3,7 @@ package com.pm.authservice.infrastructure.persistence.adapter;
 import com.pm.authservice.domain.model.Role;
 import com.pm.authservice.domain.port.out.RolePort;
 import com.pm.authservice.user.repository.RoleRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ public class RolePersistenceAdapter implements RolePort {
         this.roleRepository = roleRepository;
     }
 
+    @Cacheable("roles")
     @Override
     public List<Role> findAll() {
         return roleRepository.findAll().stream()

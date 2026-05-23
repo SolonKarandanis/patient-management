@@ -8,6 +8,8 @@ import com.pm.authservice.service.VerificationTokenService;
 import com.pm.authservice.user.dto.UserDTO;
 import com.pm.authservice.auth.dto.UserDetailsDTO;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
+import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
+import com.pm.authservice.user.repository.RoleRepository;
 import com.pm.authservice.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +40,7 @@ public class UserServiceBeanTest {
     protected UserRepository userRepository;
 
     @Mock
-    protected RoleService roleService;
+    protected RoleRepository roleRepository;
 
     @Mock
     protected VerificationTokenService verificationTokenService;
@@ -82,14 +84,10 @@ public class UserServiceBeanTest {
     @DisplayName("Convert to DTO with roles")
     @Test
     void testConvertToDTO02(){
-        when(roleService.convertToDtoList(user.getRoles())).thenReturn(roleDtos);
-
         UserDTO userDto =service.convertToDTO(user,true);
         assertNotNull(userDto);
         assertNotNull(userDto.getRoles());
-        assertEquals(userDto.getRoles().size(),roleDtos.size());
-
-        verify(roleService,times(1)).convertToDtoList(user.getRoles());
+        assertEquals(userDto.getRoles().size(), user.getRoles().size());
     }
 
     @DisplayName("Convert to Entity without roles and without publicId")
@@ -108,7 +106,7 @@ public class UserServiceBeanTest {
     @Test
     void testConvertToEntity02(){
         when(userRepository.findIdByDomainId(UUID.fromString(userDto.getPublicId()))).thenReturn(Optional.of(userId));
-        when(roleService.findByIds(List.of(1))).thenReturn(List.of(TestUtil.createTestRole()));
+        when(roleRepository.findByIds(List.of(1))).thenReturn(List.of(TestUtil.createTestRole()));
 
         UserJpaEntity userEntity = service.convertToEntity(userDto);
         assertNotNull(userEntity);
@@ -116,7 +114,7 @@ public class UserServiceBeanTest {
         assertEquals(userEntity.getRoles().size(),roleDtos.size());
 
         verify(userRepository,times(1)).findIdByDomainId(UUID.fromString(userDto.getPublicId()));
-        verify(roleService,times(1)).findByIds(List.of(1));
+        verify(roleRepository,times(1)).findByIds(List.of(1));
     }
 
     @DisplayName("Convert to DTO list with empty array")

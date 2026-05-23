@@ -8,7 +8,8 @@ import com.pm.authservice.user.dto.UserDTO;
 import com.pm.authservice.user.dto.UsersSearchRequestDTO;
 import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
-import com.pm.authservice.user.service.RoleService;
+import com.pm.authservice.user.dto.RoleDTO;
+import com.pm.authservice.user.repository.RoleRepository;
 import com.pm.authservice.user.service.UserService;
 import com.pm.authservice.util.AppConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -31,17 +32,17 @@ import java.util.*;
 public class SearchServiceBean  implements SearchService{
 
     private final UserService userService;
-    private final RoleService roleService;
+    private final RoleRepository roleRepository;
     private final UserFullTextSearchService userFullTextSearchService;
 
     @Value("${search.elasticSearch.enable:false}")
     private Boolean elasticSearchEnable;
 
     public SearchServiceBean(UserService userService,
-                             RoleService roleService,
+                             RoleRepository roleRepository,
                              UserFullTextSearchService userFullTextSearchService) {
         this.userService = userService;
-        this.roleService = roleService;
+        this.roleRepository = roleRepository;
         this.userFullTextSearchService = userFullTextSearchService;
     }
 
@@ -221,9 +222,9 @@ public class SearchServiceBean  implements SearchService{
         dto.setEmail(ftsResultDto.getEmail());
         dto.setPublicId(ftsResultDto.getPublicId());
         dto.setStatus(ftsResultDto.getStatus());
-        Set<RoleJpaEntity> roles = new HashSet<>(roleService.findByIds(ftsResultDto.getRoleIds()));
+        Set<RoleJpaEntity> roles = new HashSet<>(roleRepository.findByIds(ftsResultDto.getRoleIds()));
         if(!CollectionUtils.isEmpty(roles)){
-            dto.setRoles(roleService.convertToDtoList(roles));
+            dto.setRoles(roles.stream().map(r -> new RoleDTO(r.getId(), r.getName())).toList());
         }
         return dto;
     }

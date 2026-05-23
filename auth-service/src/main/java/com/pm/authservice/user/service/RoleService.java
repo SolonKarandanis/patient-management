@@ -1,21 +1,21 @@
 package com.pm.authservice.user.service;
 
 import com.pm.authservice.user.dto.RoleDTO;
-import com.pm.authservice.user.model.RoleEntity;
+import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
 
 import java.util.List;
 import java.util.Set;
 
 public interface RoleService {
-    RoleDTO convertToDto(RoleEntity role);
+    RoleDTO convertToDto(RoleJpaEntity role);
 
-    RoleEntity convertToEntity(RoleDTO roleDTO);
+    RoleJpaEntity convertToEntity(RoleDTO roleDTO);
 
-    List<RoleDTO> convertToDtoList(Set<RoleEntity> roles);
+    List<RoleDTO> convertToDtoList(Set<RoleJpaEntity> roles);
 
-    List<RoleEntity> findAll();
+    List<RoleJpaEntity> findAll();
 
-    List<RoleEntity> findByIds(List<Integer> ids);
+    List<RoleJpaEntity> findByIds(List<Integer> ids);
 
-    RoleEntity findByName(String name);
+    RoleJpaEntity findByName(String name);
 }

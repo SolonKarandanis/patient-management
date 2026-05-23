@@ -5,7 +5,7 @@ import com.pm.authservice.dto.UserDocumentDTO;
 import com.pm.authservice.outbox.service.OutboxService;
 import com.pm.authservice.service.fts.UserFullTextSearchService;
 import com.pm.authservice.user.dto.MinMaxUserIdDTO;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.service.UserService;
 import com.pm.authservice.util.AppConstants;
 import org.slf4j.Logger;
@@ -56,7 +56,7 @@ public class AdministrationServiceBean implements AdministrationService{
             for (int i = minUserId; i <= maxUserId; i += USER_UPDATE_BATCH){
                 int j = Math.min(i + USER_UPDATE_BATCH - 1, maxUserId);
                 log.info(" CASE-Processing: minId={}, maxId={} ", i, j);
-                List<UserEntity> users = userService.findUsersToBeIndexedByIdRange(i,j);
+                List<UserJpaEntity> users = userService.findUsersToBeIndexedByIdRange(i,j);
                 if(!CollectionUtils.isEmpty(users)){
                     try{
                         handleReindexing(users);
@@ -69,7 +69,7 @@ public class AdministrationServiceBean implements AdministrationService{
         return true;
     }
 
-    protected void handleReindexing(List<UserEntity> users) throws ResourceAccessException, JsonProcessingException {
+    protected void handleReindexing(List<UserJpaEntity> users) throws ResourceAccessException, JsonProcessingException {
         List<UserDocumentDTO> documentDto = genericService.convertToDocumentDtoList(users);
         if(AppConstants.ELASTIC_SEARCH_INDEXING_METHOD_HTTP.equals(elasticSearchIndexingMethod)){
             userFullTextSearchService.indexUsers(documentDto);

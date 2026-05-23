@@ -1,6 +1,6 @@
 package com.pm.authservice.model;
 
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,7 +38,7 @@ public class VerificationTokenEntity {
 
     @OneToOne
     @JoinColumn(name = "user_id",insertable=false, updatable=false)
-    private UserEntity user;
+    private UserJpaEntity user;
 
     @Column(name = "token")
     private String token;
@@ -60,7 +60,7 @@ public class VerificationTokenEntity {
 
     }
 
-    public VerificationTokenEntity(String token, UserEntity user) {
+    public VerificationTokenEntity(String token, UserJpaEntity user) {
         super();
         this.token = token;
         this.user = user;

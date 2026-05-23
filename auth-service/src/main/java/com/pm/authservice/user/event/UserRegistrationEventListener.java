@@ -2,7 +2,7 @@ package com.pm.authservice.user.event;
 
 import com.pm.authservice.event.BaseEventListener;
 import com.pm.authservice.event.EventConstants;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.model.UserEventEntity;
 import com.pm.authservice.service.VerificationTokenService;
 import com.pm.authservice.user.model.UserStatus;
@@ -27,7 +27,7 @@ public class UserRegistrationEventListener extends BaseEventListener implements 
     @Override
     public void onApplicationEvent(UserRegistrationEvent event) {
         // 1. Get the newly registered user
-        UserEntity user = event.getUser();
+        UserJpaEntity user = event.getUser();
         //2. Create a verification token for the user
         String verificationToken = UUID.randomUUID().toString();
         //3. Save the verification token for the user

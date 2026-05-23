@@ -3,7 +3,7 @@ package com.pm.authservice.event;
 
 import com.pm.authservice.broker.KafkaAnalyticsProducer;
 import com.pm.authservice.broker.KafkaNotificationsProducer;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.model.UserEventEntity;
 import com.pm.authservice.user.model.UserStatus;
 import com.pm.authservice.user.service.UserEventService;
@@ -20,7 +20,7 @@ public class BaseEventListener {
     @Autowired
     protected KafkaNotificationsProducer notificationsProducer;
 
-    protected UserEventEntity createUserEvent(UserEntity user, UserStatus status){
+    protected UserEventEntity createUserEvent(UserJpaEntity user, UserStatus status){
         return new UserEventEntity(user.getId(),user.getDomainId(), status,user.getUsername(),user.getEmail());
     }
 

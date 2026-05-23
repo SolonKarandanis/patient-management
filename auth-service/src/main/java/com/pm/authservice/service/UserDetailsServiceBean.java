@@ -2,7 +2,7 @@ package com.pm.authservice.service;
 
 import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.auth.dto.UserDetailsDTO;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class UserDetailsServiceBean implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND));
     }
 
-    private UserDetails createSpringSecurityUser(UserEntity user){
+    private UserDetails createSpringSecurityUser(UserJpaEntity user){
         UserDetailsDTO dto = new UserDetailsDTO(user.getDomainId().toString(),user.getUsername(),user.getPassword(),user.getEmail());
         dto.setId(user.getId());
         dto.setFirstName(user.getFirstName());

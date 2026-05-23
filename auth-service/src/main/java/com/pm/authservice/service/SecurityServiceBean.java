@@ -1,7 +1,7 @@
 package com.pm.authservice.service;
 
 import com.pm.authservice.auth.service.AuthService;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.util.AuthorityConstants;
 import com.pm.authservice.util.UserUtil;
 import com.pm.authservice.user.service.UserService;
@@ -25,7 +25,7 @@ public class SecurityServiceBean implements SecurityService {
 
 
     @Override
-    public boolean isSystemAdmin(UserEntity user) {
+    public boolean isSystemAdmin(UserJpaEntity user) {
         return UserUtil.hasRole(user, AuthorityConstants.ROLE_SYSTEM_ADMIN);
     }
 }

@@ -2,7 +2,7 @@ package com.pm.authservice.config.authentication;
 
 import com.pm.authservice.config.authorisation.CustomAuthProvider;
 import com.pm.authservice.config.authorisation.NoAuthenticationRequestMatcher;
-import com.pm.authservice.user.model.RoleEntity;
+import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
 import com.pm.authservice.user.repository.RoleRepository;
 import com.pm.authservice.util.SecurityConstants;
 import jakarta.servlet.ServletException;
@@ -44,7 +44,7 @@ public class BaseSecurityConfig {
 
     protected String[] getRoleNames()  {
         List<String> roleNames = roleRepository.findAll().stream()
-                .map(RoleEntity::getName)
+                .map(RoleJpaEntity::getName)
                 .toList();
         int len = roleNames.size();
         String[] roleNamesArr = new String[len];

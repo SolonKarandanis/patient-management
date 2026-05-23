@@ -5,7 +5,7 @@ import com.pm.authservice.config.Email;
 import com.pm.authservice.config.UserEmail;
 import com.pm.authservice.dto.serializer.CustomRoleDeserializer;
 import com.pm.authservice.user.dto.RoleDTO;
-import com.pm.authservice.user.model.AccountStatus;
+import com.pm.authservice.domain.model.AccountStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;

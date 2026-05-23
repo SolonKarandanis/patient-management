@@ -2,7 +2,7 @@ package com.pm.authservice.user.service;
 
 import com.pm.authservice.service.GenericService;
 import com.pm.authservice.user.dto.RoleDTO;
-import com.pm.authservice.user.model.RoleEntity;
+import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
 import com.pm.authservice.user.repository.RoleRepository;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class RoleServiceBean  implements RoleService {
     }
 
     @Override
-    public RoleDTO convertToDto(RoleEntity role) {
+    public RoleDTO convertToDto(RoleJpaEntity role) {
         RoleDTO dto = new RoleDTO();
         dto.setId(role.getId());
         dto.setName(role.getName());
@@ -35,18 +35,18 @@ public class RoleServiceBean  implements RoleService {
     }
 
     @Override
-    public RoleEntity convertToEntity(RoleDTO roleDTO) {
-        RoleEntity role = new RoleEntity();
+    public RoleJpaEntity convertToEntity(RoleDTO roleDTO) {
+        RoleJpaEntity role = new RoleJpaEntity();
         role.setId(roleDTO.getId());
         role.setName(roleDTO.getName());
         return role;
     }
 
     @Override
-    public List<RoleDTO> convertToDtoList(Set<RoleEntity> roles) {
+    public List<RoleDTO> convertToDtoList(Set<RoleJpaEntity> roles) {
         List<RoleDTO> roleDTOS = new ArrayList<>();
         if(!CollectionUtils.isEmpty(roles)){
-            for (RoleEntity role : roles) {
+            for (RoleJpaEntity role : roles) {
                 roleDTOS.add(convertToDto(role));
             }
         }
@@ -55,17 +55,17 @@ public class RoleServiceBean  implements RoleService {
 
     @Cacheable("roles")
     @Override
-    public List<RoleEntity> findAll() {
+    public List<RoleJpaEntity> findAll() {
         return roleRepository.findAll();
     }
 
     @Override
-    public List<RoleEntity> findByIds(List<Integer> ids) {
+    public List<RoleJpaEntity> findByIds(List<Integer> ids) {
         return roleRepository.findByIds(ids);
     }
 
     @Override
-    public RoleEntity findByName(String name) {
+    public RoleJpaEntity findByName(String name) {
         return roleRepository.findByName(name);
     }
 }

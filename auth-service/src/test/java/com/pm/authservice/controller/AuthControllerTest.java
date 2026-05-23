@@ -3,10 +3,12 @@ package com.pm.authservice.controller;
 import com.pm.authservice.auth.controller.AuthController;
 import com.pm.authservice.auth.dto.JwtDTO;
 import com.pm.authservice.auth.dto.LoginRequestDTO;
-import com.pm.authservice.auth.dto.UserDetailsDTO;
+import com.pm.authservice.domain.model.AccountStatus;
+import com.pm.authservice.domain.model.User;
+import com.pm.authservice.domain.port.in.AuthenticateUserUseCase;
 import com.pm.authservice.exception.AuthException;
-import com.pm.authservice.auth.service.AuthService;
 import com.pm.authservice.auth.service.JwtService;
+import com.pm.authservice.auth.dto.UserDetailsDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,20 +23,22 @@ import util.TestConstants;
 import util.TestUtil;
 
 import java.util.Date;
+import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @DisplayName("AuthControllerTest")
 @ExtendWith(MockitoExtension.class)
 public class AuthControllerTest {
 
-
     @InjectMocks
     protected AuthController controller;
 
     @Mock
-    protected AuthService authService;
+    protected AuthenticateUserUseCase authenticateUserUseCase;
 
     @Mock
     protected JwtService jwtService;
@@ -42,13 +46,25 @@ public class AuthControllerTest {
     @Mock
     protected Authentication authentication;
 
-    protected UserDetailsDTO userDto;
+    protected UserDetailsDTO userDetailsDTO;
+    protected User domainUser;
 
     protected final Integer userId = 1;
 
     @BeforeEach
-    public void setup(){
-        userDto = TestUtil.createTestUserDetailsDTO(userId);
+    public void setup() {
+        userDetailsDTO = TestUtil.createTestUserDetailsDTO(userId);
+        domainUser = User.builder()
+                .domainId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID))
+                .username("admin1")
+                .email(TestConstants.TEST_USER_EMAIL)
+                .firstName("Robert")
+                .lastName("Smith")
+                .password("hashed")
+                .status(AccountStatus.ACTIVE)
+                .isEnabled(true)
+                .roles(Set.of())
+                .build();
     }
 
     @DisplayName("Successful Login")
@@ -57,10 +73,11 @@ public class AuthControllerTest {
         LoginRequestDTO credentials = new LoginRequestDTO();
         credentials.setEmail(TestConstants.TEST_USER_EMAIL);
         credentials.setPassword("123");
-        JwtDTO jwt = new JwtDTO(TestConstants.TEST_TOKEN,new Date());
+        JwtDTO jwt = new JwtDTO(TestConstants.TEST_TOKEN, new Date());
 
-        when(authService.authenticate(credentials)).thenReturn(userDto);
-        when(jwtService.generateToken(userDto)).thenReturn(jwt);
+        when(authenticateUserUseCase.authenticate(credentials.getEmail(), credentials.getPassword()))
+                .thenReturn(domainUser);
+        when(jwtService.generateToken(any(UserDetailsDTO.class))).thenReturn(jwt);
 
         ResponseEntity<JwtDTO> resp = controller.authenticate(credentials);
         assertNotNull(resp);
@@ -68,7 +85,7 @@ public class AuthControllerTest {
         assertEquals(resp.getBody(), jwt);
         assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.OK));
 
-        verify(authService,times(1)).authenticate(credentials);
-        verify(jwtService,times(1)).generateToken(userDto);
+        verify(authenticateUserUseCase, times(1)).authenticate(credentials.getEmail(), credentials.getPassword());
+        verify(jwtService, times(1)).generateToken(any(UserDetailsDTO.class));
     }
 }

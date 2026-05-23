@@ -4,7 +4,6 @@ import com.pm.authservice.service.GenericService;
 import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.outbox.service.OutboxService;
-import com.pm.authservice.service.VerificationTokenService;
 import com.pm.authservice.user.dto.UserDTO;
 import com.pm.authservice.auth.dto.UserDetailsDTO;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
@@ -41,9 +40,6 @@ public class UserServiceBeanTest {
 
     @Mock
     protected RoleRepository roleRepository;
-
-    @Mock
-    protected VerificationTokenService verificationTokenService;
 
     @Mock
     protected PasswordEncoder passwordEncoder;

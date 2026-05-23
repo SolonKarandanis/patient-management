@@ -29,7 +29,6 @@ public interface UserService {
     UserJpaEntity updateUser(String publicId, UpdateUserDTO dto) throws NotFoundException;
     UserJpaEntity activateUser(UserJpaEntity user) throws BusinessException;
     UserJpaEntity deactivateUser(UserJpaEntity user) throws BusinessException;
-    void verifyEmail(String token) throws BusinessException;
     void validatePasswordChange(String newPassword, String confirmPassword, boolean isPasswordRequired)
             throws BusinessException;
     UserJpaEntity changePassword(UserJpaEntity user, ChangePasswordDTO dto) throws BusinessException;;

@@ -3,10 +3,10 @@ package util;
 import com.pm.authservice.auth.dto.UserDetailsDTO;
 import com.pm.authservice.dto.Paging;
 import com.pm.authservice.user.dto.RoleDTO;
-import com.pm.authservice.user.model.AccountStatus;
-import com.pm.authservice.user.model.RoleEntity;
+import com.pm.authservice.domain.model.AccountStatus;
+import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
 import com.pm.authservice.user.dto.*;
-import com.pm.authservice.user.model.UserEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.util.AuthorityConstants;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,15 +19,15 @@ import java.util.UUID;
 
 public class TestUtil {
 
-    public static RoleEntity createTestRole(){
-        RoleEntity role = new RoleEntity();
+    public static RoleJpaEntity createTestRole(){
+        RoleJpaEntity role = new RoleJpaEntity();
         role.setId(1);
         role.setName(AuthorityConstants.ROLE_SYSTEM_ADMIN);
         return role;
     }
 
-    public static UserEntity createTestUser(final Integer userId){
-        UserEntity user = new UserEntity();
+    public static UserJpaEntity createTestUser(final Integer userId){
+        UserJpaEntity user = new UserJpaEntity();
         user.setId(userId);
         user.setFirstName("Robert");
         user.setLastName("Smith");
@@ -36,7 +36,7 @@ public class TestUtil {
         user.setStatus(AccountStatus.ACTIVE);
         user.setEmail(TestConstants.TEST_USER_EMAIL);
         user.setRoles(Set.of(createTestRole()));
-        user.setPublicId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
+        user.setDomainId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
         return user;
     }
 
@@ -52,7 +52,7 @@ public class TestUtil {
         userDto.setFirstName("Robert");
         userDto.setLastName("Smith");
         userDto.setUsername("admin1");
-        userDto.setStatus(AccountStatus.fromValue(AccountStatus.ACTIVE));
+        userDto.setStatus(AccountStatus.ACTIVE.getValue());
         userDto.setEmail(TestConstants.TEST_USER_EMAIL);
         userDto.setPublicId(TestConstants.TEST_USER_PUBLIC_ID);
         userDto.setRoles(List.of(createTestRoleDTO()));

@@ -1,30 +1,39 @@
 package com.pm.authservice.user.event;
 
+import com.pm.authservice.domain.model.event.UserDeactivated;
 import com.pm.authservice.event.BaseEventListener;
 import com.pm.authservice.event.EventConstants;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.model.UserEventEntity;
 import com.pm.authservice.user.model.UserStatus;
+import com.pm.authservice.user.service.UserService;
 import notification.events.NotificationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserDeactivationEventListener extends BaseEventListener implements ApplicationListener<UserDeactivationEvent> {
+public class UserDeactivationEventListener extends BaseEventListener {
+
     private static final Logger log = LoggerFactory.getLogger(UserDeactivationEventListener.class);
 
-    @Override
-    public void onApplicationEvent(UserDeactivationEvent event) {
-        // 1. Get the newly registered user
-        UserJpaEntity user = event.getUser();
-        //5 Save UserEventEntity and send Kafka event for analytics
-        UserEventEntity eventEntity= createUserEvent(user, UserStatus.USER_DEACTIVATED);
+    private final UserService userService;
+
+    public UserDeactivationEventListener(UserService userService) {
+        this.userService = userService;
+    }
+
+    @EventListener
+    public void onUserDeactivated(UserDeactivated event) {
+        UserJpaEntity user = userService.findByPublicId(event.domainId().toString());
+
+        UserEventEntity eventEntity = createUserEvent(user, UserStatus.USER_DEACTIVATED);
         saveAndPublishEvents(eventEntity);
-        //6 Send Kafka event for notification
-        StringBuilder sb =new StringBuilder();
-        sb.append("User with username '").append(user.getUsername()).append("' has been deactivated successfully");
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("User with username '").append(user.getUsername())
+          .append("' has been deactivated successfully");
         NotificationEvent notificationEvent = NotificationEvent.newBuilder()
                 .addUserIds(user.getDomainId().toString())
                 .setTitle("User Deactivation Completed")
@@ -32,7 +41,7 @@ public class UserDeactivationEventListener extends BaseEventListener implements 
                 .setEventType(EventConstants.USER_DEACTIVATED_NOTIFICATION)
                 .build();
         notificationsProducer.sendEvent(notificationEvent);
-        //7 Send Kafka event for email
-        log.info("UserDeactivationEventListener -> onApplicationEvent -> ");
+
+        log.info("UserDeactivationEventListener->onUserDeactivated");
     }
 }

@@ -10,6 +10,7 @@ import com.pm.authservice.dto.SearchResults;
 import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
+import com.pm.authservice.user.service.UserLifecycleService;
 import com.pm.authservice.user.service.UserService;
 import com.pm.authservice.util.AppConstants;
 import com.pm.authservice.util.HttpUtil;
@@ -34,13 +35,16 @@ public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final UserService usersService;
+    private final UserLifecycleService lifecycleService;
     private final SearchService searchService;
 
     public UserController(
             UserService usersService,
+            UserLifecycleService lifecycleService,
             SearchService searchService
     ) {
         this.usersService = usersService;
+        this.lifecycleService = lifecycleService;
         this.searchService = searchService;
     }
 
@@ -123,18 +127,17 @@ public class UserController {
     @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable(name = "id", required=true) String publicId,
-            @RequestBody @Valid UpdateUserDTO user)throws NotFoundException{
+            @RequestBody @Valid UpdateUserDTO user) throws NotFoundException {
         log.info("UserController->updateUser");
-        UserJpaEntity userToBeUpdated=usersService.updateUser(publicId,user);
-        return ResponseEntity.ok(usersService.convertToDTO(userToBeUpdated,true));
+        return ResponseEntity.ok(lifecycleService.updateUser(publicId, user));
     }
 
     @PreAuthorize("isSystemAdmin()")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable(name= "id") String publicId)
-            throws NotFoundException{
-        log.info("UserController->deleteUser->publicId: {}" , publicId);
-        usersService.deleteUser(publicId);
+            throws NotFoundException {
+        log.info("UserController->deleteUser->publicId: {}", publicId);
+        lifecycleService.deleteUser(publicId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -144,35 +147,29 @@ public class UserController {
     public ResponseEntity<UserDTO> changeUserPassword(
             @PathVariable(name= "id", required=true) String publicId,
             @RequestBody @Valid ChangePasswordDTO request)
-            throws NotFoundException, BusinessException{
-        log.info("UserController->changeUserPassword->publicId: {}" , publicId);
-        UserJpaEntity user = usersService.findByPublicId(publicId);
-        user= usersService.changePassword(user, request);
-        return ResponseEntity.ok(usersService.convertToDTO(user,true));
+            throws NotFoundException, BusinessException {
+        log.info("UserController->changeUserPassword->publicId: {}", publicId);
+        return ResponseEntity.ok(lifecycleService.changePassword(publicId, request));
     }
 
     @PreAuthorize("isSystemAdmin()")
     @PutMapping("/{id}/activate")
     @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> activateUser(
-            @PathVariable(name= "id", required=true) String publicId )
-            throws NotFoundException, BusinessException{
-        log.info("UserController->activateUser->publicId: {}" , publicId);
-        UserJpaEntity user = usersService.findByPublicId(publicId);
-        user = usersService.activateUser(user);
-        return ResponseEntity.ok(usersService.convertToDTO(user,true));
+            @PathVariable(name= "id", required=true) String publicId)
+            throws NotFoundException, BusinessException {
+        log.info("UserController->activateUser->publicId: {}", publicId);
+        return ResponseEntity.ok(lifecycleService.activateUser(publicId));
     }
 
     @PreAuthorize("isSystemAdmin()")
     @PutMapping("/{id}/deactivate")
     @Translate(path = "status", targetProperty = "statusLabel")
     public ResponseEntity<UserDTO> deactivateUser(
-            @PathVariable(name= "id", required=true) String publicId )
-            throws NotFoundException, BusinessException{
-        log.info("UserController->deactivateUser->publicId: {}" , publicId);
-        UserJpaEntity user = usersService.findByPublicId(publicId);
-        user = usersService.deactivateUser(user);
-        return ResponseEntity.ok(usersService.convertToDTO(user,true));
+            @PathVariable(name= "id", required=true) String publicId)
+            throws NotFoundException, BusinessException {
+        log.info("UserController->deactivateUser->publicId: {}", publicId);
+        return ResponseEntity.ok(lifecycleService.deactivateUser(publicId));
     }
 
     @GetMapping("/verifyEmail")

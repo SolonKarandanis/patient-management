@@ -4,8 +4,8 @@ import com.pm.authservice.user.controller.UserRegistrationController;
 import com.pm.authservice.user.dto.CreateUserDTO;
 import com.pm.authservice.user.dto.UserDTO;
 import com.pm.authservice.exception.BusinessException;
-import com.pm.authservice.user.model.UserEntity;
-import com.pm.authservice.user.service.UserService;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
+import com.pm.authservice.user.service.UserRegistrationService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,12 +29,12 @@ public class UserRegistrationControllerTest {
     protected UserRegistrationController controller;
 
     @Mock
-    protected UserService userService;
+    protected UserRegistrationService registrationService;
 
     @Mock
     protected HttpServletRequest request;
 
-    protected UserEntity user;
+    protected UserJpaEntity user;
     protected UserDTO userDto;
     protected final Integer userId = 1;
 
@@ -48,17 +48,15 @@ public class UserRegistrationControllerTest {
     @Test
     void testRegisterUser() throws BusinessException {
         CreateUserDTO createUserRequest = TestUtil.createTestCreateUserDTO();
-        when(userService.registerUser(createUserRequest,"http://null:0null")).thenReturn(user);
-        when(userService.convertToDTO(user,true)).thenReturn(userDto);
+        when(registrationService.register(eq(createUserRequest), any())).thenReturn(userDto);
 
-        ResponseEntity<UserDTO> resp = controller.registerUser(createUserRequest,request);
+        ResponseEntity<UserDTO> resp = controller.registerUser(createUserRequest, request);
         assertNotNull(resp);
         assertNotNull(resp.getBody());
         assertEquals(resp.getBody(), userDto);
         assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.OK));
 
-        verify(userService,times(1)).registerUser(createUserRequest,"http://null:0null");
-        verify(userService, times(1)).convertToDTO(user,true);
+        verify(registrationService, times(1)).register(eq(createUserRequest), any());
     }
 
 }

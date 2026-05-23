@@ -9,6 +9,7 @@ public interface UserPort {
     User save(User user);
     Optional<User> findByDomainId(UUID domainId);
     Optional<User> findByEmail(String email);
+    Optional<User> findByUsername(String username);
     boolean hasRole(UUID domainId, String roleName);
     boolean hasPermission(UUID domainId, String operationName);
 }

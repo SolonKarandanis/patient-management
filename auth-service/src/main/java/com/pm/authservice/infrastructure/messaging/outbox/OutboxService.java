@@ -1,4 +1,4 @@
-package com.pm.authservice.outbox.service;
+package com.pm.authservice.infrastructure.messaging.outbox;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pm.authservice.dto.UserDocumentDTO;

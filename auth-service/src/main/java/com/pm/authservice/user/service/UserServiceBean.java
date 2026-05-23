@@ -9,8 +9,7 @@ import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.domain.model.AccountStatus;
 import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
 import com.pm.authservice.user.dto.*;
-import com.pm.authservice.user.event.*;
-import com.pm.authservice.outbox.service.OutboxService;
+import com.pm.authservice.infrastructure.messaging.outbox.OutboxService;
 import com.pm.authservice.infrastructure.persistence.entity.QUserJpaEntity;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.repository.RoleRepository;
@@ -343,7 +342,6 @@ public class UserServiceBean implements UserService{
         user.setRoles(Set.of(role));
         user = userRepository.save(user);
         outboxService.createUserEvent(user, AppConstants.OUTBOX_USER_CREATED);
-        genericService.getPublisher().publishEvent(new UserRegistrationEvent(user, applicationUrl));
         return user;
     }
 
@@ -360,7 +358,6 @@ public class UserServiceBean implements UserService{
         RoleJpaEntity role = roleRepository.findByName(dto.getRole());
         user.removeRoles();
         user.addRole(role);
-        genericService.getPublisher().publishEvent(new UserUpdateEvent(user));
         user = userRepository.save(user);
         outboxService.createUserEvent(user, AppConstants.OUTBOX_USER_UPDATED);
         return user;
@@ -372,7 +369,6 @@ public class UserServiceBean implements UserService{
         user.activate();
         user = userRepository.save(user);
         outboxService.createUserEvent(user, AppConstants.OUTBOX_USER_ACTIVATED);
-        genericService.getPublisher().publishEvent(new UserActivationEvent(user));
         return user;
     }
 
@@ -382,7 +378,6 @@ public class UserServiceBean implements UserService{
         user.deactivate();
         user = userRepository.save(user);
         outboxService.createUserEvent(user, AppConstants.OUTBOX_USER_DEACTIVATED);
-        genericService.getPublisher().publishEvent(new UserDeactivationEvent(user));
         return user;
     }
 
@@ -393,7 +388,6 @@ public class UserServiceBean implements UserService{
         usrOpt.ifPresent(usr->{
             userRepository.delete(usr);
             outboxService.createUserEvent(usr, AppConstants.OUTBOX_USER_DELETED);
-            genericService.getPublisher().publishEvent(new UserDeletionEvent(usr));
         });
     }
 

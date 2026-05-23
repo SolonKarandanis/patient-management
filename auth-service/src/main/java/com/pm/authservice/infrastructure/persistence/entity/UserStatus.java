@@ -1,4 +1,4 @@
-package com.pm.authservice.user.model;
+package com.pm.authservice.infrastructure.persistence.entity;
 
 public enum UserStatus {
     USER_CREATED,

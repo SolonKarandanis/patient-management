@@ -6,7 +6,7 @@ import com.pm.authservice.domain.port.in.DeactivateUserUseCase;
 import com.pm.authservice.domain.port.in.DeleteUserUseCase;
 import com.pm.authservice.domain.port.in.UpdateUserUseCase;
 import com.pm.authservice.exception.NotFoundException;
-import com.pm.authservice.outbox.service.OutboxService;
+import com.pm.authservice.infrastructure.messaging.outbox.OutboxService;
 import com.pm.authservice.user.dto.ChangePasswordDTO;
 import com.pm.authservice.user.dto.UpdateUserDTO;
 import com.pm.authservice.user.dto.UserDTO;

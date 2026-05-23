@@ -1,6 +1,6 @@
 package com.pm.authservice.user.repository;
 
-import com.pm.authservice.user.model.UserEventEntity;
+import com.pm.authservice.infrastructure.persistence.entity.UserEventEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

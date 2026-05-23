@@ -3,7 +3,8 @@ package com.pm.authservice.user.service;
 import com.pm.authservice.service.GenericService;
 import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.exception.NotFoundException;
-import com.pm.authservice.outbox.service.OutboxService;
+import com.pm.authservice.infrastructure.messaging.outbox.OutboxService;
+import com.pm.authservice.util.AppConstants;
 import com.pm.authservice.user.dto.UserDTO;
 import com.pm.authservice.auth.dto.UserDetailsDTO;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
@@ -17,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import util.TestConstants;
 import util.TestUtil;
@@ -46,9 +46,6 @@ public class UserServiceBeanTest {
 
     @Mock
     protected GenericService genericService;
-
-    @Mock
-    protected ApplicationEventPublisher publisher;
 
     @Mock
     protected OutboxService outboxService;
@@ -204,13 +201,11 @@ public class UserServiceBeanTest {
     @Test
     void testDeleteUser(){
         when(userRepository.findByDomainId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID))).thenReturn(Optional.of(user));
-        when(genericService.getPublisher()).thenReturn(publisher);
 
         service.deleteUser(TestConstants.TEST_USER_PUBLIC_ID);
 
         verify(userRepository,times(1)).findByDomainId(UUID.fromString(TestConstants.TEST_USER_PUBLIC_ID));
         verify(userRepository,times(1)).delete(user);
-        verify(genericService, times(1)).getPublisher();
-        verify(publisher, times(1)).publishEvent(any());
+        verify(outboxService,times(1)).createUserEvent(user, AppConstants.OUTBOX_USER_DELETED);
     }
 }

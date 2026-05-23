@@ -1,4 +1,4 @@
-package com.pm.authservice.outbox.model;
+package com.pm.authservice.infrastructure.messaging.outbox;
 
 import jakarta.persistence.*;
 import lombok.*;

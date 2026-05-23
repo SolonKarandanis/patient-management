@@ -1,11 +1,9 @@
-package com.pm.authservice.user.event;
+package com.pm.authservice.infrastructure.messaging.listener;
 
 import com.pm.authservice.domain.model.event.UserPasswordChanged;
-import com.pm.authservice.event.BaseEventListener;
-import com.pm.authservice.event.EventConstants;
+import com.pm.authservice.infrastructure.persistence.entity.UserEventEntity;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
-import com.pm.authservice.user.model.UserEventEntity;
-import com.pm.authservice.user.model.UserStatus;
+import com.pm.authservice.infrastructure.persistence.entity.UserStatus;
 import com.pm.authservice.user.service.UserService;
 import notification.events.NotificationEvent;
 import org.slf4j.Logger;
@@ -31,13 +29,11 @@ public class UserPasswordChangedEventListener extends BaseEventListener {
         UserEventEntity eventEntity = createUserEvent(user, UserStatus.USER_UPDATED);
         saveAndPublishEvents(eventEntity);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("Password for user '").append(user.getUsername())
-          .append("' has been changed successfully");
+        String message = "Password for user '" + user.getUsername() + "' has been changed successfully";
         NotificationEvent notificationEvent = NotificationEvent.newBuilder()
                 .addUserIds(user.getDomainId().toString())
                 .setTitle("Password Change Completed")
-                .setMessage(sb.toString())
+                .setMessage(message)
                 .setEventType(EventConstants.USER_PASSWORD_CHANGED_NOTIFICATION)
                 .build();
         notificationsProducer.sendEvent(notificationEvent);

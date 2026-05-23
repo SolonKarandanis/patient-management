@@ -3,9 +3,7 @@ package com.pm.authservice.user.controller;
 import com.pm.authservice.infrastructure.i18n.config.Translate;
 import com.pm.authservice.user.dto.CreateUserDTO;
 import com.pm.authservice.user.dto.UserDTO;
-import com.pm.authservice.exception.BusinessException;
-import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
-import com.pm.authservice.user.service.UserService;
+import com.pm.authservice.user.service.UserRegistrationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -22,23 +20,22 @@ public class UserRegistrationController {
 
     private static final Logger log = LoggerFactory.getLogger(UserRegistrationController.class);
 
-    private final UserService usersService;
+    private final UserRegistrationService registrationService;
 
-    public UserRegistrationController(UserService usersService) {
-        this.usersService = usersService;
+    public UserRegistrationController(UserRegistrationService registrationService) {
+        this.registrationService = registrationService;
     }
 
     @PostMapping("/users")
     @Translate(path = "status", targetProperty = "statusLabel")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody @Valid CreateUserDTO user, final HttpServletRequest request)
-            throws BusinessException {
+    public ResponseEntity<UserDTO> registerUser(@RequestBody @Valid CreateUserDTO user,
+                                                final HttpServletRequest request) {
         log.info("UserRegistrationController->registerUser");
-        UserJpaEntity userSaved=usersService.registerUser(user, applicationUrl(request));
-        return ResponseEntity.ok(usersService.convertToDTO(userSaved,true));
+        UserDTO saved = registrationService.register(user, applicationUrl(request));
+        return ResponseEntity.ok(saved);
     }
 
-
     protected String applicationUrl(HttpServletRequest request) {
-        return "http://"+request.getServerName()+":"+request.getServerPort()+request.getContextPath();
+        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
 }

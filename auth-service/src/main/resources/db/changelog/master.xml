@@ -20,4 +20,5 @@
     <include file="/db/changelog/00000000000013_outbox.xml" relativeToChangelogFile="false" />
     <include file="/db/changelog/00000000000014_rename_public_id_to_domain_id_users.xml" relativeToChangelogFile="false" />
     <include file="/db/changelog/00000000000015_rename_public_id_to_domain_id_user_event.xml" relativeToChangelogFile="false" />
+    <include file="/db/changelog/00000000000016_verification_token_domain_id.xml" relativeToChangelogFile="false" />
 </databaseChangeLog>

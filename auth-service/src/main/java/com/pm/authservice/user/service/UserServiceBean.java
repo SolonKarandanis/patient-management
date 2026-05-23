@@ -8,8 +8,6 @@ import com.pm.authservice.exception.BusinessException;
 import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.domain.model.AccountStatus;
 import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
-import com.pm.authservice.model.VerificationTokenEntity;
-import com.pm.authservice.service.VerificationTokenService;
 import com.pm.authservice.user.dto.*;
 import com.pm.authservice.user.event.*;
 import com.pm.authservice.outbox.service.OutboxService;
@@ -48,7 +46,6 @@ public class UserServiceBean implements UserService{
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final VerificationTokenService verificationTokenService;
     private final PasswordEncoder passwordEncoder;
     private final GenericService genericService;
     private final OutboxService outboxService;
@@ -56,13 +53,12 @@ public class UserServiceBean implements UserService{
     public UserServiceBean(
             UserRepository userRepository,
             RoleRepository roleRepository,
-            VerificationTokenService verificationTokenService,
-            PasswordEncoder passwordEncoder, GenericService genericService,
+            PasswordEncoder passwordEncoder,
+            GenericService genericService,
             OutboxService outboxService
     ){
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.verificationTokenService = verificationTokenService;
         this.passwordEncoder = passwordEncoder;
         this.genericService = genericService;
         this.outboxService = outboxService;
@@ -399,18 +395,6 @@ public class UserServiceBean implements UserService{
             outboxService.createUserEvent(usr, AppConstants.OUTBOX_USER_DELETED);
             genericService.getPublisher().publishEvent(new UserDeletionEvent(usr));
         });
-    }
-
-    @Override
-    public void verifyEmail(String token) throws BusinessException {
-        VerificationTokenEntity verificationToken = verificationTokenService.findByToken(token);
-        Boolean verificationResult = verificationTokenService.validateToken(verificationToken);
-        if(verificationResult){
-            UserJpaEntity user = verificationToken.getUser();
-            user.setIsVerified(Boolean.TRUE);
-            user = userRepository.save(user);
-            outboxService.createUserEvent(user, AppConstants.OUTBOX_USER_VERIFIED);
-        }
     }
 
     @Override

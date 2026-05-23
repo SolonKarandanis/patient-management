@@ -172,10 +172,4 @@ public class UserController {
         return ResponseEntity.ok(lifecycleService.deactivateUser(publicId));
     }
 
-    @GetMapping("/verifyEmail")
-    public ResponseEntity<Void> verifyEmail(@RequestParam("token") String token)throws BusinessException{
-        usersService.verifyEmail(token);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-
 }

@@ -201,20 +201,6 @@ public class UserControllerTest {
         verify(lifecycleService, times(1)).deactivateUser(TestConstants.TEST_USER_PUBLIC_ID);
     }
 
-    @DisplayName("Verify Email")
-    @Test
-    void testVerifyEmail() throws BusinessException {
-        String token = "test_token";
-        doNothing().when(userService).verifyEmail(token);
-
-        ResponseEntity<Void> resp = controller.verifyEmail(token);
-        assertNotNull(resp);
-        assertNull(resp.getBody());
-        assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.NO_CONTENT));
-
-        verify(userService,times(1)).verifyEmail(token);
-    }
-
     @DisplayName("Change Password")
     @Test
     void testChangePassword() throws BusinessException {

@@ -1,5 +1,7 @@
 package com.pm.authservice.domain.port.in;
 
+import java.util.UUID;
+
 public interface VerifyTokenUseCase {
-    void verify(String token);
+    UUID verify(String token);
 }

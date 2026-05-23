@@ -1,13 +1,14 @@
 package com.pm.authservice.user.event;
 
+import com.pm.authservice.domain.model.VerificationToken;
 import com.pm.authservice.domain.model.event.UserRegistered;
+import com.pm.authservice.domain.port.out.VerificationTokenPort;
 import com.pm.authservice.event.BaseEventListener;
 import com.pm.authservice.event.EventConstants;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.model.UserEventEntity;
 import com.pm.authservice.user.model.UserStatus;
 import com.pm.authservice.user.service.UserService;
-import com.pm.authservice.service.VerificationTokenService;
 import notification.events.NotificationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +22,12 @@ public class UserRegistrationEventListener extends BaseEventListener {
 
     private static final Logger log = LoggerFactory.getLogger(UserRegistrationEventListener.class);
 
-    private final VerificationTokenService tokenService;
+    private final VerificationTokenPort verificationTokenPort;
     private final UserService userService;
 
-    public UserRegistrationEventListener(VerificationTokenService tokenService,
+    public UserRegistrationEventListener(VerificationTokenPort verificationTokenPort,
                                          UserService userService) {
-        this.tokenService = tokenService;
+        this.verificationTokenPort = verificationTokenPort;
         this.userService = userService;
     }
 
@@ -35,7 +36,7 @@ public class UserRegistrationEventListener extends BaseEventListener {
         UserJpaEntity user = userService.findByPublicId(event.domainId().toString());
 
         String verificationToken = UUID.randomUUID().toString();
-        tokenService.saveUserVerificationToken(user, verificationToken);
+        verificationTokenPort.save(VerificationToken.create(verificationToken, user.getDomainId()));
 
         String url = event.applicationUrl() + "/register/verifyEmail?token=" + verificationToken;
 

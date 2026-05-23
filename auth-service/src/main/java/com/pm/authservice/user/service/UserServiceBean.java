@@ -76,7 +76,7 @@ public class UserServiceBean implements UserService{
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setEmail(user.getEmail());
-        dto.setPublicId(user.getPublicId().toString());
+        dto.setPublicId(user.getDomainId().toString());
         dto.setStatus(AccountStatus.fromValue(user.getStatus()));
         if(withRoles){
             dto.setRoles(roleService.convertToDtoList(user.getRoles()));
@@ -94,8 +94,8 @@ public class UserServiceBean implements UserService{
         user.setEmail(dto.getEmail());
         String publicId=dto.getPublicId();
         if(StringUtils.hasLength(publicId)){
-            user.setPublicId(UUID.fromString(publicId));
-            Integer userId=userRepository.findIdByPublicId(UUID.fromString(publicId)).orElse(null);
+            user.setDomainId(UUID.fromString(publicId));
+            Integer userId=userRepository.findIdByDomainId(UUID.fromString(publicId)).orElse(null);
             user.setId(userId);
         }
         user.setStatus(AccountStatus.fromValue(dto.getStatus()));
@@ -125,13 +125,13 @@ public class UserServiceBean implements UserService{
 
     @Override
     public UserEntity findByPublicId(String publicId) throws NotFoundException {
-        return userRepository.findByPublicId(UUID.fromString(publicId))
+        return userRepository.findByDomainId(UUID.fromString(publicId))
                 .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
     }
 
     @Override
     public List<String> getUserPermissions(String publicId) throws NotFoundException {
-        UserEntity user= userRepository.findByPublicId(UUID.fromString(publicId))
+        UserEntity user= userRepository.findByDomainId(UUID.fromString(publicId))
                             .orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
         return userRepository.findUserPermissions(user.getId());
     }
@@ -175,7 +175,7 @@ public class UserServiceBean implements UserService{
     protected Map<String, String> usersSortingFieldsMap() {
         HashMap<String, String> result = new HashMap<>();
         result.put("id", "id");
-        result.put("publicId", "publicId");
+        result.put("publicId", "domainId");
         result.put("username", "username");
         result.put("firstName", "firstName");
         result.put("lastName", "lastName");
@@ -339,7 +339,7 @@ public class UserServiceBean implements UserService{
         user.setLastModifiedDate(today);
         user.setCreatedDate(today);
         UUID uuid = UUID.randomUUID();
-        user.setPublicId(uuid);
+        user.setDomainId(uuid);
         RoleEntity role = roleService.findByName(dto.getRole());
         user.setRoles(Set.of(role));
         user = userRepository.save(user);
@@ -390,7 +390,7 @@ public class UserServiceBean implements UserService{
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void deleteUser(String publicId) throws NotFoundException {
-        Optional<UserEntity> usrOpt  =userRepository.findByPublicId(UUID.fromString(publicId));
+        Optional<UserEntity> usrOpt  =userRepository.findByDomainId(UUID.fromString(publicId));
         usrOpt.ifPresent(usr->{
             userRepository.delete(usr);
             outboxService.createUserEvent(usr, AppConstants.OUTBOX_USER_DELETED);

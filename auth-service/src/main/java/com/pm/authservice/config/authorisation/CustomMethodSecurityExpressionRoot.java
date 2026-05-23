@@ -118,6 +118,6 @@ public class CustomMethodSecurityExpressionRoot
     }
 
     public boolean isUserMe(String userId){
-        return this.currentUser.getPublicId().equals(UUID.fromString(userId));
+        return this.currentUser.getDomainId().equals(UUID.fromString(userId));
     }
 }

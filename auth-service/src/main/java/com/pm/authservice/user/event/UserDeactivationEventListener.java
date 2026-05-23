@@ -26,7 +26,7 @@ public class UserDeactivationEventListener extends BaseEventListener implements 
         StringBuilder sb =new StringBuilder();
         sb.append("User with username '").append(user.getUsername()).append("' has been deactivated successfully");
         NotificationEvent notificationEvent = NotificationEvent.newBuilder()
-                .addUserIds(user.getPublicId().toString())
+                .addUserIds(user.getDomainId().toString())
                 .setTitle("User Deactivation Completed")
                 .setMessage(sb.toString())
                 .setEventType(EventConstants.USER_DEACTIVATED_NOTIFICATION)

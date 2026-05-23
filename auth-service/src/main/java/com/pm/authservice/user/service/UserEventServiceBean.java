@@ -28,7 +28,7 @@ public class UserEventServiceBean implements UserEventService {
 
     @Override
     public UserEventEntity findByPublicId(String publicId) throws NotFoundException {
-        return userEventRepository.findByPublicId(UUID.fromString(publicId))
+        return userEventRepository.findByDomainId(UUID.fromString(publicId))
                 .orElseThrow(() -> new NotFoundException(USER_EVENT_NOT_FOUND));
     }
 
@@ -39,7 +39,7 @@ public class UserEventServiceBean implements UserEventService {
 
     @Override
     public List<UserEventEntity> findByUserPublicId(String publicId) {
-        return userEventRepository.findByUserPublicId(UUID.fromString(publicId));
+        return userEventRepository.findByUserDomainId(UUID.fromString(publicId));
     }
 
     @Override

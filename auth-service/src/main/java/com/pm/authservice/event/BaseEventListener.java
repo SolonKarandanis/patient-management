@@ -21,7 +21,7 @@ public class BaseEventListener {
     protected KafkaNotificationsProducer notificationsProducer;
 
     protected UserEventEntity createUserEvent(UserEntity user, UserStatus status){
-        return new UserEventEntity(user.getId(),user.getPublicId(), status,user.getUsername(),user.getEmail());
+        return new UserEventEntity(user.getId(),user.getDomainId(), status,user.getUsername(),user.getEmail());
     }
 
     protected void saveAndPublishEvents(UserEventEntity eventEntity){

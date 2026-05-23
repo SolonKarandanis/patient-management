@@ -35,7 +35,7 @@ public class UserDetailsServiceBean implements UserDetailsService {
     }
 
     private UserDetails createSpringSecurityUser(UserEntity user){
-        UserDetailsDTO dto = new UserDetailsDTO(user.getPublicId().toString(),user.getUsername(),user.getPassword(),user.getEmail());
+        UserDetailsDTO dto = new UserDetailsDTO(user.getDomainId().toString(),user.getUsername(),user.getPassword(),user.getEmail());
         dto.setId(user.getId());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());

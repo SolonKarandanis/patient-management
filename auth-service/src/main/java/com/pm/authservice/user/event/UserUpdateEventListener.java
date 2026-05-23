@@ -26,7 +26,7 @@ public class UserUpdateEventListener extends BaseEventListener implements Applic
         StringBuilder sb =new StringBuilder();
         sb.append("User with username '").append(user.getUsername()).append("' has been updated successfully");
         NotificationEvent notificationEvent = NotificationEvent.newBuilder()
-                .addUserIds(user.getPublicId().toString())
+                .addUserIds(user.getDomainId().toString())
                 .setTitle("User Update Completed")
                 .setMessage(sb.toString())
                 .setEventType(EventConstants.USER_UPDATED_NOTIFICATION)

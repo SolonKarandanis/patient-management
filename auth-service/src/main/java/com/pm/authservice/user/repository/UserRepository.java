@@ -23,11 +23,11 @@ public interface UserRepository extends JpaRepository<UserEntity,Integer> ,
     @Query(name = UserEntity.FIND_BY_EMAIL)
     Optional<UserEntity> findByEmail(String email);
 
-    @Query(name = UserEntity.FIND_BY_PUBLIC_ID)
-    Optional<UserEntity> findByPublicId(@Param("publicId") UUID publicId);
+    @Query(name = UserEntity.FIND_BY_DOMAIN_ID)
+    Optional<UserEntity> findByDomainId(@Param("domainId") UUID domainId);
 
-    @Query(name = UserEntity.FIND_ID_BY_PUBLIC_ID)
-    Optional<Integer> findIdByPublicId(@Param("publicId") UUID publicId);
+    @Query(name = UserEntity.FIND_ID_BY_DOMAIN_ID)
+    Optional<Integer> findIdByDomainId(@Param("domainId") UUID domainId);
 
     @Query(name = UserEntity.FIND_BY_USERNAME)
     Optional<UserEntity> findByUsername(String username);

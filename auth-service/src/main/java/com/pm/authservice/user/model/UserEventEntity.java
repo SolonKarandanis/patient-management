@@ -14,13 +14,13 @@ import java.util.UUID;
 
 @Getter
 @Setter
-@NamedQuery(name = UserEventEntity.FIND_BY_PUBLIC_ID,
+@NamedQuery(name = UserEventEntity.FIND_BY_DOMAIN_ID,
         query = "SELECT ue FROM UserEventEntity ue " +
-                "WHERE ue.publicId= :publicId ")
+                "WHERE ue.domainId= :domainId ")
 @NamedQuery(name = UserEventEntity.FIND_BY_USER_ID,
         query = "SELECT ue FROM UserEventEntity ue " +
                 "WHERE ue.userId= :userId ")
-@NamedQuery(name = UserEventEntity.FIND_BY_USER_PUBLIC_ID,
+@NamedQuery(name = UserEventEntity.FIND_BY_USER_DOMAIN_ID,
         query = "SELECT ue FROM UserEventEntity ue " +
                 "WHERE ue.userPublicId= :userPublicId ")
 @NamedQuery(name = UserEventEntity.FIND_BY_USERNAME,
@@ -35,9 +35,9 @@ import java.util.UUID;
 @Table(name = "user_event")
 public class UserEventEntity {
 
-    public static final String FIND_BY_PUBLIC_ID= "UserEvent.findByPublicId";
+    public static final String FIND_BY_DOMAIN_ID= "UserEvent.findByDomainId";
     public static final String FIND_BY_USER_ID= "UserEvent.findByUserId";
-    public static final String FIND_BY_USER_PUBLIC_ID= "UserEvent.findByUserPublicId";
+    public static final String FIND_BY_USER_DOMAIN_ID= "UserEvent.findByUserDomainId";
     public static final String FIND_BY_USERNAME= "UserEvent.findByUsername";
     public static final String FIND_BY_EMAIL= "UserEvent.findByEmail";
 
@@ -57,8 +57,8 @@ public class UserEventEntity {
     private Integer id;
 
     @NaturalId
-    @Column(name = "public_id",nullable = false, updatable = false, unique = true)
-    private UUID publicId;
+    @Column(name = "domain_id",nullable = false, updatable = false, unique = true)
+    private UUID domainId;
 
     @Column(name = "user_id")
     private Integer userId;
@@ -90,6 +90,6 @@ public class UserEventEntity {
         this.username = username;
         this.email = email;
         this.eventCreated = LocalDate.now();
-        this.publicId = UUID.randomUUID();
+        this.domainId = UUID.randomUUID();
     }
 }

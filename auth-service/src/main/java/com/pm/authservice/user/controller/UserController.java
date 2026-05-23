@@ -1,7 +1,7 @@
 package com.pm.authservice.user.controller;
 
 import com.pm.authservice.auth.dto.UserDetailsDTO;
-import com.pm.authservice.config.Translate;
+import com.pm.authservice.infrastructure.i18n.config.Translate;
 import com.pm.authservice.exception.AuthException;
 import com.pm.authservice.service.SearchService;
 import com.pm.authservice.user.dto.*;

@@ -1,4 +1,4 @@
-package com.pm.authservice.config;
+package com.pm.authservice.infrastructure.i18n.config;
 
 import java.lang.annotation.*;
 
@@ -11,13 +11,10 @@ public @interface Translate {
 
     String targetProperty() default "";
 
-    //Do it as inner class since we will never use this in practice
-    //Repeatable Annotations require to have a container class
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @Documented
-    public @interface Translations {
+    @interface Translations {
         Translate[] value();
     }
 }
-

@@ -1,6 +1,6 @@
 package com.pm.authservice.user.controller;
 
-import com.pm.authservice.config.Translate;
+import com.pm.authservice.infrastructure.i18n.config.Translate;
 import com.pm.authservice.user.dto.RoleDTO;
 import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
 import com.pm.authservice.user.service.RoleService;

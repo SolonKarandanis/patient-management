@@ -1,4 +1,4 @@
-package com.pm.authservice.config.i18n;
+package com.pm.authservice.infrastructure.i18n.config;
 
 import com.pm.authservice.i18n.service.I18nService;
 import com.pm.authservice.util.CollectionUtil;
@@ -20,14 +20,12 @@ import java.util.*;
 @Slf4j
 public class I18nDbResourceBundleMessageSource extends ResourceBundleMessageSource {
 
-    /** Set this as cacheMilis in order to prevent internal caching. */
     protected static final long NO_CACHE_MILIS = 1L;
 
     @Autowired
     @Lazy
     private I18nService i18nService;
 
-    /** Prevent setting cacheMillis explicitly. */
     private boolean isCacheMillisInit = false;
 
     public I18nDbResourceBundleMessageSource() {
@@ -35,22 +33,15 @@ public class I18nDbResourceBundleMessageSource extends ResourceBundleMessageSour
         isCacheMillisInit = true;
     }
 
-    /**
-     * Overrides <code>ResourceBundleMessageSource.doGetBundle()</code> so as to extract the properties list from DB.
-     */
     @Override
     protected ResourceBundle doGetBundle(final String basename, final Locale locale) throws MissingResourceException {
-        ResourceBundle outputAsResBundle = null;
-
         Map<String, String> propsMap = i18nService.getTranslationsByModuleAndLangIsoCode(basename, locale.getLanguage());
         byte[] contentPropsBytes = CollectionUtil.convertMapToPropertiesBytes(propsMap);
-
         try {
-            outputAsResBundle = new PropertyResourceBundle(new InputStreamReader(new ByteArrayInputStream(contentPropsBytes), String.valueOf(getDefaultCharset())));
+            return new PropertyResourceBundle(new InputStreamReader(new ByteArrayInputStream(contentPropsBytes), String.valueOf(getDefaultCharset())));
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-        return outputAsResBundle;
     }
 
     protected Charset getDefaultCharset() {

@@ -1,4 +1,4 @@
-package com.pm.authservice.user.model;
+package com.pm.authservice.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -15,55 +15,42 @@ import java.util.UUID;
 @Getter
 @Setter
 @NamedQuery(name = UserEventEntity.FIND_BY_DOMAIN_ID,
-        query = "SELECT ue FROM UserEventEntity ue " +
-                "WHERE ue.domainId= :domainId ")
+        query = "SELECT ue FROM UserEventEntity ue WHERE ue.domainId = :domainId")
 @NamedQuery(name = UserEventEntity.FIND_BY_USER_ID,
-        query = "SELECT ue FROM UserEventEntity ue " +
-                "WHERE ue.userId= :userId ")
+        query = "SELECT ue FROM UserEventEntity ue WHERE ue.userId = :userId")
 @NamedQuery(name = UserEventEntity.FIND_BY_USER_DOMAIN_ID,
-        query = "SELECT ue FROM UserEventEntity ue " +
-                "WHERE ue.userPublicId= :userPublicId ")
+        query = "SELECT ue FROM UserEventEntity ue WHERE ue.userPublicId = :userPublicId")
 @NamedQuery(name = UserEventEntity.FIND_BY_USERNAME,
-        query = "SELECT ue FROM UserEventEntity ue " +
-                "WHERE ue.username= :username ")
+        query = "SELECT ue FROM UserEventEntity ue WHERE ue.username = :username")
 @NamedQuery(name = UserEventEntity.FIND_BY_EMAIL,
-        query = "SELECT ue FROM UserEventEntity ue " +
-                "WHERE ue.email= :email ")
+        query = "SELECT ue FROM UserEventEntity ue WHERE ue.email = :email")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "user_event")
 public class UserEventEntity {
 
-    public static final String FIND_BY_DOMAIN_ID= "UserEvent.findByDomainId";
-    public static final String FIND_BY_USER_ID= "UserEvent.findByUserId";
-    public static final String FIND_BY_USER_DOMAIN_ID= "UserEvent.findByUserDomainId";
-    public static final String FIND_BY_USERNAME= "UserEvent.findByUsername";
-    public static final String FIND_BY_EMAIL= "UserEvent.findByEmail";
+    public static final String FIND_BY_DOMAIN_ID = "UserEvent.findByDomainId";
+    public static final String FIND_BY_USER_ID = "UserEvent.findByUserId";
+    public static final String FIND_BY_USER_DOMAIN_ID = "UserEvent.findByUserDomainId";
+    public static final String FIND_BY_USERNAME = "UserEvent.findByUsername";
+    public static final String FIND_BY_EMAIL = "UserEvent.findByEmail";
 
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "userEventGenerator"
-    )
-    @SequenceGenerator(
-            name = "userEventGenerator",
-            sequenceName = "user_event_seq",
-            allocationSize = 1,
-            initialValue = 1
-    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userEventGenerator")
+    @SequenceGenerator(name = "userEventGenerator", sequenceName = "user_event_seq", allocationSize = 1, initialValue = 1)
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
 
     @NaturalId
-    @Column(name = "domain_id",nullable = false, updatable = false, unique = true)
+    @Column(name = "domain_id", nullable = false, updatable = false, unique = true)
     private UUID domainId;
 
     @Column(name = "user_id")
     private Integer userId;
 
-    @Column(name = "user_public_id",nullable = false, updatable = false, unique = true)
+    @Column(name = "user_public_id", nullable = false, updatable = false, unique = true)
     private UUID userPublicId;
 
     @Column(name = "status")
@@ -83,7 +70,7 @@ public class UserEventEntity {
     @NotNull
     private LocalDate eventCreated;
 
-    public UserEventEntity(Integer userId,UUID userPublicId, UserStatus status, String username,String email) {
+    public UserEventEntity(Integer userId, UUID userPublicId, UserStatus status, String username, String email) {
         this.userId = userId;
         this.userPublicId = userPublicId;
         this.status = status;

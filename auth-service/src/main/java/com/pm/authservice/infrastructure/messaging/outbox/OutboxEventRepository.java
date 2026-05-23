@@ -1,6 +1,5 @@
-package com.pm.authservice.outbox.repository;
+package com.pm.authservice.infrastructure.messaging.outbox;
 
-import com.pm.authservice.outbox.model.OutboxEvent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

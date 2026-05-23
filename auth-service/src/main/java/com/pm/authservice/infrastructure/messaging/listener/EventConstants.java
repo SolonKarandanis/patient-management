@@ -1,7 +1,6 @@
-package com.pm.authservice.event;
+package com.pm.authservice.infrastructure.messaging.listener;
 
 public class EventConstants {
-
     public static String USER_CREATED_NOTIFICATION = "USER_CREATED_NOTIFICATION";
     public static String USER_UPDATED_NOTIFICATION = "USER_UPDATED_NOTIFICATION";
     public static String USER_ACTIVATED_NOTIFICATION = "USER_ACTIVATED_NOTIFICATION";
@@ -10,6 +9,5 @@ public class EventConstants {
     public static String USER_PASSWORD_CHANGED_NOTIFICATION = "USER_PASSWORD_CHANGED_NOTIFICATION";
     public static String USER_PASSWORD_RESET_NOTIFICATION = "USER_PASSWORD_RESET_NOTIFICATION";
     public static String USER_PASSWORD_EXPIRED_NOTIFICATION = "USER_PASSWORD_EXPIRED_NOTIFICATION";
-    public static String I18N_RESOURCES_EDITED="I18N_RESOURCES_EDITED";
-
+    public static String I18N_RESOURCES_EDITED = "I18N_RESOURCES_EDITED";
 }

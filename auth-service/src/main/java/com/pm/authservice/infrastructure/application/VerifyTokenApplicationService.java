@@ -2,7 +2,7 @@ package com.pm.authservice.infrastructure.application;
 
 import com.pm.authservice.domain.port.in.VerifyTokenUseCase;
 import com.pm.authservice.exception.NotFoundException;
-import com.pm.authservice.outbox.service.OutboxService;
+import com.pm.authservice.infrastructure.messaging.outbox.OutboxService;
 import com.pm.authservice.user.repository.UserRepository;
 import com.pm.authservice.user.service.VerifyTokenService;
 import com.pm.authservice.util.AppConstants;

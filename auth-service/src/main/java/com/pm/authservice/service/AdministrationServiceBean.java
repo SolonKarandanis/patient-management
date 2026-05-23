@@ -2,7 +2,7 @@ package com.pm.authservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.pm.authservice.dto.UserDocumentDTO;
-import com.pm.authservice.outbox.service.OutboxService;
+import com.pm.authservice.infrastructure.messaging.outbox.OutboxService;
 import com.pm.authservice.service.fts.UserFullTextSearchService;
 import com.pm.authservice.user.dto.MinMaxUserIdDTO;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;

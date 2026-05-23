@@ -1,7 +1,7 @@
 package com.pm.authservice.infrastructure.application;
 
 import com.pm.authservice.domain.port.in.RegisterUserUseCase;
-import com.pm.authservice.outbox.service.OutboxService;
+import com.pm.authservice.infrastructure.messaging.outbox.OutboxService;
 import com.pm.authservice.user.dto.CreateUserDTO;
 import com.pm.authservice.user.dto.UserDTO;
 import com.pm.authservice.user.repository.UserRepository;

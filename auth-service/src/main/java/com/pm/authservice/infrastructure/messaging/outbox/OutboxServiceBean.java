@@ -1,11 +1,9 @@
-package com.pm.authservice.outbox.service;
+package com.pm.authservice.infrastructure.messaging.outbox;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.pm.authservice.outbox.model.OutboxEvent;
-import com.pm.authservice.outbox.repository.OutboxEventRepository;
 import com.pm.authservice.dto.UserDocumentDTO;
 import com.pm.authservice.service.GenericService;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
@@ -39,7 +37,7 @@ public class OutboxServiceBean implements OutboxService {
         this.objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
     }
 
-    protected OutboxEvent convertToOutboxEvent(Integer userId,String type,String payload){
+    protected OutboxEvent convertToOutboxEvent(Integer userId, String type, String payload) {
         return OutboxEvent.builder()
                 .id(UUID.randomUUID())
                 .aggregateType(UserJpaEntity.class.getCanonicalName())
@@ -54,12 +52,12 @@ public class OutboxServiceBean implements OutboxService {
     public void createUserEvent(UserJpaEntity user, String type) {
         try {
             if (user.getId() == null) {
-               log.warn("Cannot create Outbox Event for User because ID is null (Entity not yet flushed?)");
-               return;
+                log.warn("Cannot create Outbox Event for User because ID is null (Entity not yet flushed?)");
+                return;
             }
             UserDocumentDTO dto = genericService.convertToDocumentDto(user);
             String payload = objectMapper.writeValueAsString(dto);
-            OutboxEvent event = convertToOutboxEvent(user.getId(),type,payload);
+            OutboxEvent event = convertToOutboxEvent(user.getId(), type, payload);
             outboxEventRepository.save(event);
             log.debug("Saved OutboxEvent: {} for User: {}", type, user.getId());
         } catch (JsonProcessingException e) {
@@ -70,9 +68,9 @@ public class OutboxServiceBean implements OutboxService {
     @Override
     public void indexUsersByCreatingUserEvents(List<UserDocumentDTO> documents) throws JsonProcessingException {
         List<OutboxEvent> events = new ArrayList<>();
-        for(UserDocumentDTO document : documents){
+        for (UserDocumentDTO document : documents) {
             String payload = objectMapper.writeValueAsString(document);
-            OutboxEvent event = convertToOutboxEvent(document.getId(), AppConstants.OUTBOX_USER_UPDATED,payload);
+            OutboxEvent event = convertToOutboxEvent(document.getId(), AppConstants.OUTBOX_USER_UPDATED, payload);
             events.add(event);
         }
         outboxEventRepository.saveAll(events);

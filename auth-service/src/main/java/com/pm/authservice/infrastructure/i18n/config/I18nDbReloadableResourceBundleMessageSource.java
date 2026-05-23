@@ -1,4 +1,4 @@
-package com.pm.authservice.config.i18n;
+package com.pm.authservice.infrastructure.i18n.config;
 
 import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +17,8 @@ import java.util.Properties;
 @Slf4j
 public class I18nDbReloadableResourceBundleMessageSource extends ReloadableResourceBundleMessageSource {
 
-    /** Set this as cacheMilis in order to prevent internal caching. */
     protected static final long NO_CACHE_MILIS = 1L;
 
-    /** Prevent setting cacheMillis explicitly. */
     private boolean isCacheMillisInit = false;
 
     @Autowired

@@ -17,6 +17,8 @@ ext {
     testcontainersJunitVersion = '1.21.4'
     testcontainersPostgresVersion = '1.21.3'
     restAssuredVersion = '5.5.6'
+    cdiApiVersion = '4.0.1'
+    weldSeVersion = '5.1.2.Final'
 }
 
 java {
@@ -91,6 +93,8 @@ dependencies {
     implementation 'org.springframework:spring-context'
     implementation 'org.apache.httpcomponents.client5:httpclient5'
     testImplementation 'org.springframework.boot:spring-boot-webmvc-test'
+    compileOnly "jakarta.enterprise:jakarta.enterprise.cdi-api:${cdiApiVersion}"
+    testImplementation "org.jboss.weld.se:weld-se-core:${weldSeVersion}"
 }
 
 protobuf {

@@ -4,7 +4,7 @@ import com.pm.authservice.domain.port.out.UserPort;
 import com.pm.authservice.infrastructure.web.exception.NotFoundException;
 import com.pm.authservice.infrastructure.persistence.mapper.UserMapper;
 import com.pm.authservice.infrastructure.web.dto.UserDTO;
-import com.pm.authservice.user.service.UserQueryService;
+import com.pm.authservice.infrastructure.application.UserQueryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

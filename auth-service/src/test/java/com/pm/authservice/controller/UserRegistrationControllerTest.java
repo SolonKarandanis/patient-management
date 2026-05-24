@@ -5,7 +5,7 @@ import com.pm.authservice.infrastructure.web.dto.CreateUserDTO;
 import com.pm.authservice.infrastructure.web.dto.UserDTO;
 import com.pm.authservice.infrastructure.web.exception.BusinessException;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
-import com.pm.authservice.user.service.UserRegistrationService;
+import com.pm.authservice.infrastructure.application.UserRegistrationService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

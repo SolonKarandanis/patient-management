@@ -1,9 +1,9 @@
 package com.pm.authservice.controller;
 
-import com.pm.authservice.user.controller.UserRegistrationController;
-import com.pm.authservice.user.dto.CreateUserDTO;
-import com.pm.authservice.user.dto.UserDTO;
-import com.pm.authservice.exception.BusinessException;
+import com.pm.authservice.infrastructure.web.controller.UserRegistrationController;
+import com.pm.authservice.infrastructure.web.dto.CreateUserDTO;
+import com.pm.authservice.infrastructure.web.dto.UserDTO;
+import com.pm.authservice.infrastructure.web.exception.BusinessException;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.user.service.UserRegistrationService;
 import jakarta.servlet.http.HttpServletRequest;

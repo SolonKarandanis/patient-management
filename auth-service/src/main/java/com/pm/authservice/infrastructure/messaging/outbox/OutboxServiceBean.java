@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.pm.authservice.dto.UserDocumentDTO;
-import com.pm.authservice.service.GenericService;
+import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
+import com.pm.authservice.infrastructure.search.dto.UserDocumentDTO;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
-import com.pm.authservice.util.AppConstants;
+import com.pm.authservice.infrastructure.util.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(propagation = Propagation.MANDATORY)
@@ -26,12 +27,10 @@ public class OutboxServiceBean implements OutboxService {
     private static final Logger log = LoggerFactory.getLogger(OutboxServiceBean.class);
 
     private final OutboxEventRepository outboxEventRepository;
-    private final GenericService genericService;
     private final ObjectMapper objectMapper;
 
-    public OutboxServiceBean(OutboxEventRepository outboxEventRepository, GenericService genericService) {
+    public OutboxServiceBean(OutboxEventRepository outboxEventRepository) {
         this.outboxEventRepository = outboxEventRepository;
-        this.genericService = genericService;
         this.objectMapper = new ObjectMapper();
         this.objectMapper.registerModule(new JavaTimeModule());
         this.objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
@@ -55,7 +54,7 @@ public class OutboxServiceBean implements OutboxService {
                 log.warn("Cannot create Outbox Event for User because ID is null (Entity not yet flushed?)");
                 return;
             }
-            UserDocumentDTO dto = genericService.convertToDocumentDto(user);
+            UserDocumentDTO dto = toDocumentDto(user);
             String payload = objectMapper.writeValueAsString(dto);
             OutboxEvent event = convertToOutboxEvent(user.getId(), type, payload);
             outboxEventRepository.save(event);
@@ -74,5 +73,25 @@ public class OutboxServiceBean implements OutboxService {
             events.add(event);
         }
         outboxEventRepository.saveAll(events);
+    }
+
+    private UserDocumentDTO toDocumentDto(UserJpaEntity user) {
+        UserDocumentDTO dto = new UserDocumentDTO();
+        dto.setId(user.getId());
+        dto.setPublicId(user.getDomainId().toString());
+        dto.setUsername(user.getUsername());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setEmail(user.getEmail());
+        dto.setStatus(user.getStatus() != null ? user.getStatus().getValue() : null);
+        dto.setIsVerified(user.getIsVerified());
+        dto.setIsEnabled(user.getIsEnabled());
+        if (user.getRoles() != null) {
+            List<String> roleNames = user.getRoles().stream().map(RoleJpaEntity::getName).collect(Collectors.toList());
+            dto.setRolesNames(roleNames);
+            List<Integer> roleIds = user.getRoles().stream().map(RoleJpaEntity::getId).collect(Collectors.toList());
+            dto.setRoleIds(roleIds);
+        }
+        return dto;
     }
 }

@@ -6,12 +6,13 @@ import com.pm.authservice.domain.port.out.VerificationTokenPort;
 import com.pm.authservice.infrastructure.persistence.entity.UserEventEntity;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.infrastructure.persistence.entity.UserStatus;
-import com.pm.authservice.user.service.UserService;
+
 import notification.events.NotificationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import com.pm.authservice.infrastructure.persistence.repository.UserJpaRepository;
 
 import java.util.UUID;
 
@@ -21,17 +22,17 @@ public class UserRegistrationEventListener extends BaseEventListener {
     private static final Logger log = LoggerFactory.getLogger(UserRegistrationEventListener.class);
 
     private final VerificationTokenPort verificationTokenPort;
-    private final UserService userService;
+    private final UserJpaRepository userRepository;
 
     public UserRegistrationEventListener(VerificationTokenPort verificationTokenPort,
-                                         UserService userService) {
+                                         UserJpaRepository userRepository) {
         this.verificationTokenPort = verificationTokenPort;
-        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @EventListener
     public void onUserRegistered(UserRegistered event) {
-        UserJpaEntity user = userService.findByPublicId(event.domainId().toString());
+        UserJpaEntity user = userRepository.findByDomainId(event.domainId()).orElseThrow(() -> new RuntimeException("User not found: " + event.domainId()));
 
         String verificationToken = UUID.randomUUID().toString();
         verificationTokenPort.save(VerificationToken.create(verificationToken, user.getDomainId()));

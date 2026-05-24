@@ -1,16 +1,16 @@
 package com.pm.authservice.controller;
 
-import com.pm.authservice.auth.dto.UserDetailsDTO;
-import com.pm.authservice.user.dto.ChangePasswordDTO;
-import com.pm.authservice.dto.SearchResults;
-import com.pm.authservice.exception.BusinessException;
-import com.pm.authservice.user.controller.UserController;
-import com.pm.authservice.user.dto.*;
+import com.pm.authservice.infrastructure.web.dto.UserDetailsDTO;
+import com.pm.authservice.infrastructure.web.dto.ChangePasswordDTO;
+import com.pm.authservice.infrastructure.web.dto.SearchResults;
+import com.pm.authservice.infrastructure.web.exception.BusinessException;
+import com.pm.authservice.infrastructure.web.controller.UserController;
+import com.pm.authservice.infrastructure.web.dto.*;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
-import com.pm.authservice.service.SearchService;
+import com.pm.authservice.infrastructure.search.SearchService;
 import com.pm.authservice.user.service.UserLifecycleService;
 import com.pm.authservice.user.service.UserQueryService;
-import com.pm.authservice.user.service.UserService;
+import com.pm.authservice.infrastructure.persistence.repository.UserJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +26,8 @@ import util.TestConstants;
 import util.TestUtil;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,7 +42,7 @@ public class UserControllerTest {
     protected UserController controller;
 
     @Mock
-    protected UserService userService;
+    protected UserJpaRepository userRepository;
     @Mock
     protected UserLifecycleService lifecycleService;
     @Mock
@@ -70,7 +72,7 @@ public class UserControllerTest {
     @Test
     void testExportUsersToCsv() throws Exception {
         UsersSearchRequestDTO searchObj = TestUtil.generateUsersSearchRequestDTO();
-        when(userService.findByPublicId(detailsDTO.getPublicId())).thenReturn(user);
+        when(userRepository.findByDomainId(UUID.fromString(detailsDTO.getPublicId()))).thenReturn(Optional.of(user));
         when(searchService.countUsers(searchObj, user)).thenReturn(11000L);
 
         BusinessException exception = assertThrows(BusinessException.class,()->{
@@ -78,7 +80,7 @@ public class UserControllerTest {
         });
         assertEquals("error.max.csv.results",exception.getLocalizedMessage());
 
-        verify(userService,times(1)).findByPublicId(detailsDTO.getPublicId());
+        verify(userRepository,times(1)).findByDomainId(UUID.fromString(detailsDTO.getPublicId()));
         verify(searchService,times(1)).countUsers(searchObj, user);
     }
 
@@ -88,13 +90,13 @@ public class UserControllerTest {
         response.setOutputStreamAccessAllowed(true);
         UsersSearchRequestDTO searchObj = TestUtil.generateUsersSearchRequestDTO();
 
-        when(userService.findByPublicId(detailsDTO.getPublicId())).thenReturn(user);
+        when(userRepository.findByDomainId(UUID.fromString(detailsDTO.getPublicId()))).thenReturn(Optional.of(user));
         when(searchService.countUsers(searchObj, user)).thenReturn(500L);
         when(searchService.findUsersForExport(searchObj, user)).thenReturn(dtos);
 
         controller.exportUsersToCsv(searchObj, response, authentication);
 
-        verify(userService,times(1)).findByPublicId(detailsDTO.getPublicId());
+        verify(userRepository,times(1)).findByDomainId(UUID.fromString(detailsDTO.getPublicId()));
         verify(searchService,times(1)).countUsers(searchObj, user);
         verify(searchService,times(1)).findUsersForExport(searchObj, user);
     }
@@ -104,7 +106,7 @@ public class UserControllerTest {
     void testFindAllUsers() throws Exception {
         UsersSearchRequestDTO searchObj = TestUtil.generateUsersSearchRequestDTO();
         SearchResults<UserDTO> searchResults = new SearchResults<>(dtos.size(), dtos);
-        when(userService.findByPublicId(detailsDTO.getPublicId())).thenReturn(user);
+        when(userRepository.findByDomainId(UUID.fromString(detailsDTO.getPublicId()))).thenReturn(Optional.of(user));
         when(searchService.advancedSearchUsers(searchObj, user)).thenReturn(searchResults);
 
         ResponseEntity<SearchResults<UserDTO>> resp = controller.findAllUsers(searchObj, authentication);
@@ -113,7 +115,7 @@ public class UserControllerTest {
         assertEquals(resp.getBody().getList(), dtos);
         assertTrue(resp.getStatusCode().isSameCodeAs(HttpStatus.OK));
 
-        verify(userService,times(1)).findByPublicId(detailsDTO.getPublicId());
+        verify(userRepository,times(1)).findByDomainId(UUID.fromString(detailsDTO.getPublicId()));
         verify(searchService, times(1)).advancedSearchUsers(searchObj, user);
     }
 

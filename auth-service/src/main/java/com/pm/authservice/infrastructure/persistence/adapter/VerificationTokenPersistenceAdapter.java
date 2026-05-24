@@ -3,8 +3,8 @@ package com.pm.authservice.infrastructure.persistence.adapter;
 import com.pm.authservice.domain.model.VerificationToken;
 import com.pm.authservice.domain.port.out.VerificationTokenPort;
 import com.pm.authservice.infrastructure.persistence.entity.VerificationTokenJpaEntity;
-import com.pm.authservice.user.repository.UserRepository;
-import com.pm.authservice.user.repository.VerificationTokenRepository;
+import com.pm.authservice.infrastructure.persistence.repository.UserJpaRepository;
+import com.pm.authservice.infrastructure.persistence.repository.VerificationTokenJpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,11 +14,11 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class VerificationTokenPersistenceAdapter implements VerificationTokenPort {
 
-    private final VerificationTokenRepository verificationTokenRepository;
-    private final UserRepository userRepository;
+    private final VerificationTokenJpaRepository verificationTokenRepository;
+    private final UserJpaRepository userRepository;
 
-    public VerificationTokenPersistenceAdapter(VerificationTokenRepository verificationTokenRepository,
-                                               UserRepository userRepository) {
+    public VerificationTokenPersistenceAdapter(VerificationTokenJpaRepository verificationTokenRepository,
+                                               UserJpaRepository userRepository) {
         this.verificationTokenRepository = verificationTokenRepository;
         this.userRepository = userRepository;
     }

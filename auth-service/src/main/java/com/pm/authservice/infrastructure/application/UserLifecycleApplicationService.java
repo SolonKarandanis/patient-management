@@ -5,15 +5,15 @@ import com.pm.authservice.domain.port.in.ChangePasswordUseCase;
 import com.pm.authservice.domain.port.in.DeactivateUserUseCase;
 import com.pm.authservice.domain.port.in.DeleteUserUseCase;
 import com.pm.authservice.domain.port.in.UpdateUserUseCase;
-import com.pm.authservice.exception.NotFoundException;
 import com.pm.authservice.infrastructure.messaging.outbox.OutboxService;
-import com.pm.authservice.user.dto.ChangePasswordDTO;
-import com.pm.authservice.user.dto.UpdateUserDTO;
-import com.pm.authservice.user.dto.UserDTO;
-import com.pm.authservice.user.repository.UserRepository;
+import com.pm.authservice.infrastructure.persistence.mapper.UserMapper;
+import com.pm.authservice.infrastructure.persistence.repository.UserJpaRepository;
+import com.pm.authservice.infrastructure.util.AppConstants;
+import com.pm.authservice.infrastructure.web.dto.ChangePasswordDTO;
+import com.pm.authservice.infrastructure.web.dto.UpdateUserDTO;
+import com.pm.authservice.infrastructure.web.dto.UserDTO;
+import com.pm.authservice.infrastructure.web.exception.NotFoundException;
 import com.pm.authservice.user.service.UserLifecycleService;
-import com.pm.authservice.user.service.UserService;
-import com.pm.authservice.util.AppConstants;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,18 +30,18 @@ public class UserLifecycleApplicationService implements UserLifecycleService {
     private final ActivateUserUseCase activateUserUseCase;
     private final DeactivateUserUseCase deactivateUserUseCase;
     private final ChangePasswordUseCase changePasswordUseCase;
-    private final UserRepository userRepository;
+    private final UserJpaRepository userRepository;
     private final OutboxService outboxService;
-    private final UserService userService;
+    private final UserMapper userMapper;
 
     public UserLifecycleApplicationService(UpdateUserUseCase updateUserUseCase,
                                            DeleteUserUseCase deleteUserUseCase,
                                            ActivateUserUseCase activateUserUseCase,
                                            DeactivateUserUseCase deactivateUserUseCase,
                                            ChangePasswordUseCase changePasswordUseCase,
-                                           UserRepository userRepository,
+                                           UserJpaRepository userRepository,
                                            OutboxService outboxService,
-                                           UserService userService) {
+                                           UserMapper userMapper) {
         this.updateUserUseCase = updateUserUseCase;
         this.deleteUserUseCase = deleteUserUseCase;
         this.activateUserUseCase = activateUserUseCase;
@@ -49,7 +49,7 @@ public class UserLifecycleApplicationService implements UserLifecycleService {
         this.changePasswordUseCase = changePasswordUseCase;
         this.userRepository = userRepository;
         this.outboxService = outboxService;
-        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class UserLifecycleApplicationService implements UserLifecycleService {
         return userRepository.findByDomainId(domainId)
                 .map(entity -> {
                     outboxService.createUserEvent(entity, AppConstants.OUTBOX_USER_UPDATED);
-                    return userService.convertToDTO(entity, true);
+                    return userMapper.toDTO(userMapper.toDomain(entity));
                 })
                 .orElseThrow(() -> new IllegalStateException("User not found after update: " + publicId));
     }
@@ -92,7 +92,7 @@ public class UserLifecycleApplicationService implements UserLifecycleService {
         return userRepository.findByDomainId(domainId)
                 .map(entity -> {
                     outboxService.createUserEvent(entity, AppConstants.OUTBOX_USER_UPDATED);
-                    return userService.convertToDTO(entity, true);
+                    return userMapper.toDTO(userMapper.toDomain(entity));
                 })
                 .orElseThrow(() -> new IllegalStateException("User not found after password change: " + publicId));
     }
@@ -104,7 +104,7 @@ public class UserLifecycleApplicationService implements UserLifecycleService {
         return userRepository.findByDomainId(domainId)
                 .map(entity -> {
                     outboxService.createUserEvent(entity, AppConstants.OUTBOX_USER_ACTIVATED);
-                    return userService.convertToDTO(entity, true);
+                    return userMapper.toDTO(userMapper.toDomain(entity));
                 })
                 .orElseThrow(() -> new IllegalStateException("User not found after activation: " + publicId));
     }
@@ -116,7 +116,7 @@ public class UserLifecycleApplicationService implements UserLifecycleService {
         return userRepository.findByDomainId(domainId)
                 .map(entity -> {
                     outboxService.createUserEvent(entity, AppConstants.OUTBOX_USER_DEACTIVATED);
-                    return userService.convertToDTO(entity, true);
+                    return userMapper.toDTO(userMapper.toDomain(entity));
                 })
                 .orElseThrow(() -> new IllegalStateException("User not found after deactivation: " + publicId));
     }

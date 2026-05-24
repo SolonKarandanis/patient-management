@@ -4,8 +4,8 @@ import com.pm.authservice.domain.model.Role;
 import com.pm.authservice.domain.model.User;
 import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
-import com.pm.authservice.user.dto.RoleDTO;
-import com.pm.authservice.user.dto.UserDTO;
+import com.pm.authservice.infrastructure.web.dto.RoleDTO;
+import com.pm.authservice.infrastructure.web.dto.UserDTO;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.pm.authservice.user.service;
 
-import com.pm.authservice.user.dto.ChangePasswordDTO;
-import com.pm.authservice.user.dto.UpdateUserDTO;
-import com.pm.authservice.user.dto.UserDTO;
+import com.pm.authservice.infrastructure.web.dto.ChangePasswordDTO;
+import com.pm.authservice.infrastructure.web.dto.UpdateUserDTO;
+import com.pm.authservice.infrastructure.web.dto.UserDTO;
 
 public interface UserLifecycleService {
     UserDTO updateUser(String publicId, UpdateUserDTO dto);

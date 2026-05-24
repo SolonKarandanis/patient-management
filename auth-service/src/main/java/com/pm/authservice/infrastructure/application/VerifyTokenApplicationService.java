@@ -1,11 +1,11 @@
 package com.pm.authservice.infrastructure.application;
 
 import com.pm.authservice.domain.port.in.VerifyTokenUseCase;
-import com.pm.authservice.exception.NotFoundException;
+import com.pm.authservice.infrastructure.web.exception.NotFoundException;
 import com.pm.authservice.infrastructure.messaging.outbox.OutboxService;
-import com.pm.authservice.user.repository.UserRepository;
+import com.pm.authservice.infrastructure.persistence.repository.UserJpaRepository;
 import com.pm.authservice.user.service.VerifyTokenService;
-import com.pm.authservice.util.AppConstants;
+import com.pm.authservice.infrastructure.util.AppConstants;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,11 +16,11 @@ import java.util.UUID;
 public class VerifyTokenApplicationService implements VerifyTokenService {
 
     private final VerifyTokenUseCase verifyTokenUseCase;
-    private final UserRepository userRepository;
+    private final UserJpaRepository userRepository;
     private final OutboxService outboxService;
 
     public VerifyTokenApplicationService(VerifyTokenUseCase verifyTokenUseCase,
-                                         UserRepository userRepository,
+                                         UserJpaRepository userRepository,
                                          OutboxService outboxService) {
         this.verifyTokenUseCase = verifyTokenUseCase;
         this.userRepository = userRepository;

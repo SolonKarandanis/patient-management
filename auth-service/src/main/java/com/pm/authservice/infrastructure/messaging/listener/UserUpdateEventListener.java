@@ -4,27 +4,28 @@ import com.pm.authservice.domain.model.event.UserUpdated;
 import com.pm.authservice.infrastructure.persistence.entity.UserEventEntity;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.infrastructure.persistence.entity.UserStatus;
-import com.pm.authservice.user.service.UserService;
+
 import notification.events.NotificationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import com.pm.authservice.infrastructure.persistence.repository.UserJpaRepository;
 
 @Component
 public class UserUpdateEventListener extends BaseEventListener {
 
     private static final Logger log = LoggerFactory.getLogger(UserUpdateEventListener.class);
 
-    private final UserService userService;
+    private final UserJpaRepository userRepository;
 
-    public UserUpdateEventListener(UserService userService) {
-        this.userService = userService;
+    public UserUpdateEventListener(UserJpaRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @EventListener
     public void onUserUpdated(UserUpdated event) {
-        UserJpaEntity user = userService.findByPublicId(event.domainId().toString());
+        UserJpaEntity user = userRepository.findByDomainId(event.domainId()).orElseThrow(() -> new RuntimeException("User not found: " + event.domainId()));
 
         UserEventEntity eventEntity = createUserEvent(user, UserStatus.USER_UPDATED);
         saveAndPublishEvents(eventEntity);

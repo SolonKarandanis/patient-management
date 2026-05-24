@@ -1,7 +1,7 @@
 package com.pm.authservice.infrastructure.persistence.entity;
 
 import com.pm.authservice.domain.model.AccountStatus;
-import com.pm.authservice.exception.BusinessException;
+import com.pm.authservice.infrastructure.web.exception.BusinessException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

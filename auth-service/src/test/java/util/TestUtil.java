@@ -1,13 +1,13 @@
 package util;
 
-import com.pm.authservice.auth.dto.UserDetailsDTO;
-import com.pm.authservice.dto.Paging;
-import com.pm.authservice.user.dto.RoleDTO;
+import com.pm.authservice.infrastructure.web.dto.UserDetailsDTO;
+import com.pm.authservice.infrastructure.web.dto.Paging;
+import com.pm.authservice.infrastructure.web.dto.RoleDTO;
 import com.pm.authservice.domain.model.AccountStatus;
 import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
-import com.pm.authservice.user.dto.*;
+import com.pm.authservice.infrastructure.web.dto.*;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
-import com.pm.authservice.util.AuthorityConstants;
+import com.pm.authservice.domain.model.AuthorityConstants;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

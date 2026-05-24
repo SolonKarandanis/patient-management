@@ -2,12 +2,12 @@ package com.pm.authservice.infrastructure.application;
 
 import com.pm.authservice.domain.port.in.RegisterUserUseCase;
 import com.pm.authservice.infrastructure.messaging.outbox.OutboxService;
-import com.pm.authservice.user.dto.CreateUserDTO;
-import com.pm.authservice.user.dto.UserDTO;
-import com.pm.authservice.user.repository.UserRepository;
+import com.pm.authservice.infrastructure.persistence.mapper.UserMapper;
+import com.pm.authservice.infrastructure.persistence.repository.UserJpaRepository;
+import com.pm.authservice.infrastructure.util.AppConstants;
+import com.pm.authservice.infrastructure.web.dto.CreateUserDTO;
+import com.pm.authservice.infrastructure.web.dto.UserDTO;
 import com.pm.authservice.user.service.UserRegistrationService;
-import com.pm.authservice.user.service.UserService;
-import com.pm.authservice.util.AppConstants;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,18 +16,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class RegisterUserApplicationService implements UserRegistrationService {
 
     private final RegisterUserUseCase registerUserUseCase;
-    private final UserRepository userRepository;
+    private final UserJpaRepository userRepository;
     private final OutboxService outboxService;
-    private final UserService userService;
+    private final UserMapper userMapper;
 
     public RegisterUserApplicationService(RegisterUserUseCase registerUserUseCase,
-                                          UserRepository userRepository,
+                                          UserJpaRepository userRepository,
                                           OutboxService outboxService,
-                                          UserService userService) {
+                                          UserMapper userMapper) {
         this.registerUserUseCase = registerUserUseCase;
         this.userRepository = userRepository;
         this.outboxService = outboxService;
-        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class RegisterUserApplicationService implements UserRegistrationService {
         return userRepository.findByDomainId(domainUser.getDomainId())
                 .map(entity -> {
                     outboxService.createUserEvent(entity, AppConstants.OUTBOX_USER_CREATED);
-                    return userService.convertToDTO(entity, true);
+                    return userMapper.toDTO(userMapper.toDomain(entity));
                 })
                 .orElseThrow(() -> new IllegalStateException(
                         "User was saved but could not be found by domainId: " + domainUser.getDomainId()));

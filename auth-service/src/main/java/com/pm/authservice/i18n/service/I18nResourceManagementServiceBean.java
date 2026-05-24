@@ -2,12 +2,12 @@ package com.pm.authservice.i18n.service;
 
 import com.pm.authservice.i18n.dto.I18nResourceManagementRequestDTO;
 import com.pm.authservice.i18n.dto.I18nResourceManagementResponseDTO;
-import com.pm.authservice.dto.SearchResults;
+import com.pm.authservice.infrastructure.web.dto.SearchResults;
 import com.pm.authservice.i18n.repository.I18nLabelRepository;
-import com.pm.authservice.service.GenericService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,13 +19,21 @@ import java.util.*;
 public class I18nResourceManagementServiceBean implements I18nResourceManagementService{
 
     private final I18nLabelRepository i18nLabelRepository;
-    private final GenericService genericService;
 
-    public I18nResourceManagementServiceBean(I18nLabelRepository i18nLabelRepository, GenericService genericService) {
+    public I18nResourceManagementServiceBean(I18nLabelRepository i18nLabelRepository) {
         this.i18nLabelRepository = i18nLabelRepository;
-        this.genericService = genericService;
     }
 
+    private PageRequest normalizePageRequestSort(PageRequest pageRequest) {
+        if (pageRequest == null) return null;
+        List<Sort.Order> fixedOrders = pageRequest.getSort().get()
+            .map(order -> order.withProperty("id"))
+            .toList();
+        if (fixedOrders.isEmpty()) {
+            return pageRequest;
+        }
+        return pageRequest.withSort(Sort.by(fixedOrders));
+    }
 
     @Override
     public SearchResults<I18nResourceManagementResponseDTO> searchI18nResources(
@@ -33,7 +41,7 @@ public class I18nResourceManagementServiceBean implements I18nResourceManagement
         Integer langId = searchRequest.getLanguageId() == null || searchRequest.getLanguageId().isEmpty() ? null : Integer.parseInt(searchRequest.getLanguageId());
         Integer modId = searchRequest.getModuleId() == null || searchRequest.getModuleId().isEmpty() ? null : Integer.parseInt(searchRequest.getModuleId());
 
-        pageRequest = genericService.transformPageSorting(pageRequest, Collections.emptyMap(), Collections.emptySet());
+        pageRequest = normalizePageRequestSort(pageRequest);
 
         Page<Long> resultsIds = i18nLabelRepository.searchI18nResourcesDistinctLabelIds(langId, modId, searchRequest.getTerm(), pageRequest);
 

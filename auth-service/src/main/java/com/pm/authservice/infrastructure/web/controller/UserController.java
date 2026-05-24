@@ -1,6 +1,6 @@
 package com.pm.authservice.infrastructure.web.controller;
 
-import com.pm.authservice.infrastructure.i18n.config.Translate;
+import com.pm.authservice.infrastructure.config.i18n.Translate;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.infrastructure.persistence.repository.UserJpaRepository;
 import com.pm.authservice.infrastructure.search.SearchService;

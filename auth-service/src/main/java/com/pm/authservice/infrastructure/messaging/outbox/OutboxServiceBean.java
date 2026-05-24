@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
 import com.pm.authservice.infrastructure.search.dto.UserDocumentDTO;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
+import com.pm.authservice.infrastructure.persistence.repository.OutboxEventRepository;
 import com.pm.authservice.infrastructure.util.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

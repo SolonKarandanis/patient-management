@@ -2,9 +2,9 @@ package com.pm.authservice.infrastructure.config.application;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.pm.authservice.infrastructure.i18n.config.ChangeableLocaleResolver;
-import com.pm.authservice.infrastructure.i18n.config.I18nDbReloadableResourceBundleMessageSource;
-import com.pm.authservice.infrastructure.i18n.config.I18nDbResourceBundleMessageSource;
+import com.pm.authservice.infrastructure.config.i18n.ChangeableLocaleResolver;
+import com.pm.authservice.infrastructure.config.i18n.I18nDbReloadableResourceBundleMessageSource;
+import com.pm.authservice.infrastructure.config.i18n.I18nDbResourceBundleMessageSource;
 import com.pm.authservice.infrastructure.util.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

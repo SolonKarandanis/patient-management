@@ -19,6 +19,7 @@ ext {
     restAssuredVersion = '5.5.6'
     cdiApiVersion = '4.0.1'
     weldSeVersion = '5.1.2.Final'
+    archunitVersion = '1.4.1'
 }
 
 java {
@@ -95,6 +96,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-webmvc-test'
     compileOnly "jakarta.enterprise:jakarta.enterprise.cdi-api:${cdiApiVersion}"
     testImplementation "org.jboss.weld.se:weld-se-core:${weldSeVersion}"
+    testImplementation "com.tngtech.archunit:archunit-junit5:${archunitVersion}"
 }
 
 protobuf {

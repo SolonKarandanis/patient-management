@@ -1,6 +1,6 @@
 package com.pm.authservice.infrastructure.web.controller;
 
-import com.pm.authservice.infrastructure.i18n.config.Translate;
+import com.pm.authservice.infrastructure.config.i18n.Translate;
 import com.pm.authservice.infrastructure.web.dto.RoleDTO;
 import com.pm.authservice.infrastructure.application.RoleQueryService;
 import org.springframework.http.ResponseEntity;

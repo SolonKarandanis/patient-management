@@ -9,9 +9,9 @@ import com.pm.authservice.infrastructure.persistence.entity.QUserJpaEntity;
 import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.infrastructure.persistence.mapper.UserMapper;
-import com.pm.authservice.user.repository.RoleRepository;
-import com.pm.authservice.user.repository.UserRepository;
-import com.pm.authservice.util.AppConstants;
+import com.pm.authservice.infrastructure.persistence.repository.RoleJpaRepository;
+import com.pm.authservice.infrastructure.persistence.repository.UserJpaRepository;
+import com.pm.authservice.infrastructure.util.AppConstants;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.PageRequest;
@@ -31,12 +31,12 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class UserPersistenceAdapter implements UserPort {
 
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final UserJpaRepository userRepository;
+    private final RoleJpaRepository roleRepository;
     private final UserMapper userMapper;
 
-    public UserPersistenceAdapter(UserRepository userRepository,
-                                  RoleRepository roleRepository,
+    public UserPersistenceAdapter(UserJpaRepository userRepository,
+                                  RoleJpaRepository roleRepository,
                                   UserMapper userMapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;

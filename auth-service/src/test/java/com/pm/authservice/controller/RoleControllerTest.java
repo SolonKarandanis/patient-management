@@ -1,7 +1,7 @@
 package com.pm.authservice.controller;
 
-import com.pm.authservice.user.dto.RoleDTO;
-import com.pm.authservice.user.controller.RoleController;
+import com.pm.authservice.infrastructure.web.dto.RoleDTO;
+import com.pm.authservice.infrastructure.web.controller.RoleController;
 import com.pm.authservice.user.service.RoleQueryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,7 +1,7 @@
 package com.pm.authservice.infrastructure.application;
 
 import com.pm.authservice.domain.port.out.RolePort;
-import com.pm.authservice.user.dto.RoleDTO;
+import com.pm.authservice.infrastructure.web.dto.RoleDTO;
 import com.pm.authservice.user.service.RoleQueryService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

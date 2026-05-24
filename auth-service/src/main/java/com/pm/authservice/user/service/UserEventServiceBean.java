@@ -1,8 +1,8 @@
 package com.pm.authservice.user.service;
 
-import com.pm.authservice.exception.NotFoundException;
+import com.pm.authservice.infrastructure.web.exception.NotFoundException;
 import com.pm.authservice.infrastructure.persistence.entity.UserEventEntity;
-import com.pm.authservice.user.repository.UserEventRepository;
+import com.pm.authservice.infrastructure.persistence.repository.UserEventRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

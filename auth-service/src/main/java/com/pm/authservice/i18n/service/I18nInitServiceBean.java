@@ -2,13 +2,13 @@ package com.pm.authservice.i18n.service;
 
 
 import com.pm.authservice.i18n.dto.I18nTranslationImportDTO;
-import com.pm.authservice.exception.BusinessException;
+import com.pm.authservice.infrastructure.web.exception.BusinessException;
 import com.pm.authservice.i18n.model.I18nLabel;
 import com.pm.authservice.i18n.model.I18nModule;
 import com.pm.authservice.i18n.model.I18nTranslation;
 import com.pm.authservice.i18n.model.Language;
-import com.pm.authservice.util.AppResourceUtil;
-import com.pm.authservice.util.CollectionUtil;
+import com.pm.authservice.infrastructure.util.AppResourceUtil;
+import com.pm.authservice.infrastructure.util.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;

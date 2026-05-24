@@ -1,6 +1,6 @@
 package com.pm.authservice.infrastructure.i18n.config;
 
-import com.pm.authservice.util.AppConstants;
+import com.pm.authservice.infrastructure.util.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;

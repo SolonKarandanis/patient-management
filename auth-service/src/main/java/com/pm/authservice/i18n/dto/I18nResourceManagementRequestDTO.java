@@ -1,6 +1,6 @@
 package com.pm.authservice.i18n.dto;
 
-import com.pm.authservice.dto.SearchRequestDTO;
+import com.pm.authservice.infrastructure.web.dto.SearchRequestDTO;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,6 +1,6 @@
 package com.pm.authservice.user.service;
 
-import com.pm.authservice.user.dto.RoleDTO;
+import com.pm.authservice.infrastructure.web.dto.RoleDTO;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package com.pm.authservice.i18n.service;
 
 import com.pm.authservice.i18n.dto.UpdateTranslationDTO;
-import com.pm.authservice.exception.BusinessException;
+import com.pm.authservice.infrastructure.web.exception.BusinessException;
 import com.pm.authservice.i18n.model.I18nLabel;
 import com.pm.authservice.i18n.model.I18nModule;
 import com.pm.authservice.i18n.model.I18nTranslation;

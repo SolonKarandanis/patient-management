@@ -1,14 +1,14 @@
 package com.pm.authservice.controller;
 
-import com.pm.authservice.auth.controller.AuthController;
-import com.pm.authservice.auth.dto.JwtDTO;
-import com.pm.authservice.auth.dto.LoginRequestDTO;
+import com.pm.authservice.infrastructure.web.controller.AuthController;
+import com.pm.authservice.infrastructure.web.dto.JwtDTO;
+import com.pm.authservice.infrastructure.web.dto.LoginRequestDTO;
 import com.pm.authservice.domain.model.AccountStatus;
 import com.pm.authservice.domain.model.User;
 import com.pm.authservice.domain.port.in.AuthenticateUserUseCase;
-import com.pm.authservice.exception.AuthException;
-import com.pm.authservice.auth.service.JwtService;
-import com.pm.authservice.auth.dto.UserDetailsDTO;
+import com.pm.authservice.infrastructure.web.exception.AuthException;
+import com.pm.authservice.infrastructure.security.JwtService;
+import com.pm.authservice.infrastructure.web.dto.UserDetailsDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -5,7 +5,7 @@ import com.pm.authservice.infrastructure.messaging.broker.KafkaNotificationsProd
 import com.pm.authservice.infrastructure.persistence.entity.UserEventEntity;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.infrastructure.persistence.entity.UserStatus;
-import com.pm.authservice.user.service.UserEventService;
+import com.pm.authservice.infrastructure.application.UserEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class BaseEventListener {

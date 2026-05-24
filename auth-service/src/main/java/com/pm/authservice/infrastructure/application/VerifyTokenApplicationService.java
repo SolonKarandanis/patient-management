@@ -4,7 +4,7 @@ import com.pm.authservice.domain.port.in.VerifyTokenUseCase;
 import com.pm.authservice.infrastructure.web.exception.NotFoundException;
 import com.pm.authservice.infrastructure.messaging.outbox.OutboxService;
 import com.pm.authservice.infrastructure.persistence.repository.UserJpaRepository;
-import com.pm.authservice.user.service.VerifyTokenService;
+import com.pm.authservice.infrastructure.application.VerifyTokenService;
 import com.pm.authservice.infrastructure.util.AppConstants;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

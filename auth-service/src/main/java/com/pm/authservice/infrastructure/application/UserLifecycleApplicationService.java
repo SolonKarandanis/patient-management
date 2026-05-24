@@ -13,7 +13,7 @@ import com.pm.authservice.infrastructure.web.dto.ChangePasswordDTO;
 import com.pm.authservice.infrastructure.web.dto.UpdateUserDTO;
 import com.pm.authservice.infrastructure.web.dto.UserDTO;
 import com.pm.authservice.infrastructure.web.exception.NotFoundException;
-import com.pm.authservice.user.service.UserLifecycleService;
+import com.pm.authservice.infrastructure.application.UserLifecycleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

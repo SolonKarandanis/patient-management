@@ -7,7 +7,7 @@ import com.pm.authservice.infrastructure.persistence.repository.UserJpaRepositor
 import com.pm.authservice.infrastructure.util.AppConstants;
 import com.pm.authservice.infrastructure.web.dto.CreateUserDTO;
 import com.pm.authservice.infrastructure.web.dto.UserDTO;
-import com.pm.authservice.user.service.UserRegistrationService;
+import com.pm.authservice.infrastructure.application.UserRegistrationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

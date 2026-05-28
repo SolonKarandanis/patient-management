@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
-@ConditionalOnExpression("${hazelcast.session.management.enabled}==false")
+@ConditionalOnExpression("${hazelcast.session.management.enabled}==false and '${auth.mode}'=='jwt'")
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfiguration extends BaseSecurityConfig{

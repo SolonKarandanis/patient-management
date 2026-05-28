@@ -19,6 +19,7 @@ public class ServiceConfigProperties {
     public static Boolean MANAGE_I18N_RESOURCES_FUNCTIONALITY_ENABLED = getBooleanProperty("i18n.resources.DB.enabled", false);
     public static Boolean CLUSTER_ENABLED = getBooleanProperty("cluster.enabled", false);
     public static Boolean WEBSOCKETS_ENABLED = getBooleanProperty("websockets.enabled", false);
+    public static String AUTH_MODE = getStringProperty("auth.mode", "jwt");
 
 
     protected static Properties initProps(String propertyName) {
@@ -72,6 +73,14 @@ public class ServiceConfigProperties {
             return def;
         }
         return Boolean.parseBoolean(strProp);
+    }
+
+    protected static String getStringProperty(String key, String def) {
+        String strProp = APPLICATION_PROPS.getProperty(key);
+        if (!StringUtils.hasLength(strProp)) {
+            return def;
+        }
+        return strProp;
     }
 
     protected static String getLettersHostName() {

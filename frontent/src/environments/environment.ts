@@ -6,4 +6,6 @@ export const environment = {
   appVersion: 'v8.0.27',
   USERDATA_KEY: 'authf649fc9a5f55',
   isMockEnabled: true,
+  keycloakIssuer: 'http://localhost:8090/realms/patient-management',
+  keycloakClientId: 'angular-frontend',
 }

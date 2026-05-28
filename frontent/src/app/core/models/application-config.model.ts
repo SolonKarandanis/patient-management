@@ -1,6 +1,7 @@
 export interface ApplicationConfig {
   MANAGE_I18N_RESOURCES_FUNCTIONALITY_ENABLED: boolean;
-  WEBSOCKETS_ENABLED:boolean;
+  WEBSOCKETS_ENABLED: boolean;
+  AUTH_MODE: string;
 }
 
 

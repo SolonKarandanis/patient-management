@@ -12,6 +12,7 @@ export class CommonEntitiesService extends GenericService{
   public rolesAsSelectItems = this.commonEntitiesStore.getRolesAsSelectItems;
   public isManagementOfI18nResourcesEnabled = this.commonEntitiesStore.isManagementOfI18nResourcesEnabled;
   public isWebSocketsEnabled = this.commonEntitiesStore.isWebSocketsEnabled;
+  public authMode = this.commonEntitiesStore.authMode;
 
   /**
    * Initialize All Common Entities

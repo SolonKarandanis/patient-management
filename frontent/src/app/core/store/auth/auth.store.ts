@@ -188,6 +188,12 @@ export const AuthStore = signalStore(
           })
         )
       ),
+      loadUserAndPermissions: rxMethod<void>(
+        pipe(
+          tap(() => state.setLoadingState()),
+          switchMap(() => _loadUserAndPermissions())
+        )
+      ),
       getUserPermissions: rxMethod<string>(
         pipe(
           tap(() => {

@@ -45,6 +45,10 @@ export const CommonEntitiesStore = signalStore(
         return false;
       }
       return config.WEBSOCKETS_ENABLED;
+    }),
+    authMode: computed(()=>{
+      const config = appConfig();
+      return (config?.AUTH_MODE as 'jwt' | 'oauth2') ?? 'jwt';
     })
   })),
   withMethods((state)=>{

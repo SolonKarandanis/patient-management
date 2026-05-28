@@ -1,8 +1,11 @@
 import {
   ApplicationConfig,
   importProvidersFrom,
+  provideAppInitializer,
   provideZonelessChangeDetection
 } from '@angular/core';
+import { provideOAuthClient } from 'angular-oauth2-oidc';
+import { appInitializer } from '@core/initializers/app-initializer';
 import { provideRouter } from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
 import {ConfirmationService, MessageService} from 'primeng/api';
@@ -81,5 +84,7 @@ export const appConfig: ApplicationConfig = {
     ),
     importProvidersFrom(TranslateModule.forRoot(provideTranslation())),
     importProvidersFrom(NgxPermissionsModule.forRoot()),
+    provideOAuthClient(),
+    provideAppInitializer(appInitializer),
   ]
 };

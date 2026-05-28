@@ -6,6 +6,8 @@ import {Router} from '@angular/router';
 import {User} from '@models/user.model';
 import {SubmitCredentialsDTO} from '@models/auth.model';
 import {UserRoles} from '@models/constants';
+import {AuthModeService} from '@core/services/auth-mode.service';
+import {OAuthConfigService} from '@core/services/oauth-config.service';
 
 type AuthStore = InstanceType<typeof AuthStore>;
 
@@ -24,6 +26,8 @@ export class AuthService extends GenericService{
   constructor(
     private readonly authStore:AuthStore,
     private readonly router:Router,
+    private readonly authModeService:AuthModeService,
+    private readonly oauthConfigService:OAuthConfigService,
   ){
     super()
     this.isLoading = this.authStore.loading;
@@ -45,7 +49,15 @@ export class AuthService extends GenericService{
   }
 
   public initAuth(): void {
-    this.authStore.initAuth();
+    if (this.authModeService.isOAuth2()) {
+      if (this.oauthConfigService.isAuthenticated()) {
+        this.authStore.loadUserAndPermissions();
+      } else {
+        this.authStore.logout();
+      }
+    } else {
+      this.authStore.initAuth();
+    }
   }
 
   private navigateToHome():void{
@@ -62,12 +74,20 @@ export class AuthService extends GenericService{
 
   // public methods
   public login(credentials:SubmitCredentialsDTO):void{
-    this.authStore.login(credentials);
+    if (this.authModeService.isOAuth2()) {
+      this.oauthConfigService.login();
+    } else {
+      this.authStore.login(credentials);
+    }
   }
 
   public logout() {
     this.authStore.logout();
-    this.navigateToLogin();
+    if (this.authModeService.isOAuth2()) {
+      this.oauthConfigService.logout();
+    } else {
+      this.navigateToLogin();
+    }
   }
 
   public hasAnyAuthority(authorities: string[] | string):Signal<boolean>{
@@ -79,10 +99,10 @@ export class AuthService extends GenericService{
    * @returns  if the user is loggedin
    */
   public isAuthenticated():boolean{
-    if(this.isLoggedIn() && !this.authStore.isJwtExpired()){
-      return true;
+    if (this.authModeService.isOAuth2()) {
+      return this.oauthConfigService.isAuthenticated() && this.authStore.isLoggedIn();
     }
-    return false;
+    return this.authStore.isLoggedIn() && !this.authStore.isJwtExpired();
   }
 
 

@@ -42,7 +42,11 @@ export class AuthService extends GenericService{
       const status = this.status();
       if(!loggedIn && status === 'loaded'){
         untracked(()=>{
-          this.navigateToLogin();
+          if (this.authModeService.isOAuth2()) {
+            this.oauthConfigService.login();
+          } else {
+            this.navigateToLogin();
+          }
         });
       }
     });

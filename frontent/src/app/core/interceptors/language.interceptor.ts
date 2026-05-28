@@ -9,6 +9,9 @@ export class LanguageInterceptor implements HttpInterceptor{
   constructor(private readonly languageService: LanguageService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    if (req.url.startsWith('http')) {
+      return next.handle(req);
+    }
     const newReq = req.clone({
       setHeaders: {
         ['Lang-ISO']: this.languageService.selectedLanguageIso,

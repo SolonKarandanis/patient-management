@@ -1,18 +1,22 @@
 import { inject, Injectable } from '@angular/core';
 import { AuthConfig, OAuthService } from 'angular-oauth2-oidc';
-import { environment } from '../../../environments/environment';
+import {KEYCLOAK_CLIENT_ID, KEYCLOAK_ISSUER, IS_PRODUCTION} from '@core/token';
 
 @Injectable({ providedIn: 'root' })
 export class OAuthConfigService {
   private readonly oauthService = inject(OAuthService);
+  private readonly keycloakUrl = inject(KEYCLOAK_ISSUER);
+  private readonly keycloakClientId = inject(KEYCLOAK_CLIENT_ID);
+  private readonly isProd = inject(IS_PRODUCTION);
 
   private readonly authConfig: AuthConfig = {
-    issuer: environment.keycloakIssuer,
+    issuer: this.keycloakUrl,
     redirectUri: window.location.origin,
-    clientId: environment.keycloakClientId,
+    postLogoutRedirectUri: window.location.origin,
+    clientId: this.keycloakClientId,
     responseType: 'code',
     scope: 'openid profile email',
-    showDebugInformation: !environment.production,
+    showDebugInformation: !this.isProd,
     clearHashAfterLogin: true,
   };
 

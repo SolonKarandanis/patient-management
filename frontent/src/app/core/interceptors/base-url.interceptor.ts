@@ -8,7 +8,7 @@ export class BaseUrlInterceptor implements HttpInterceptor{
   constructor(@Inject(API_BASE_URL) private readonly baseUrl: string) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (req.url.includes('/assets/i18n')) {
+    if (req.url.includes('/assets/i18n') || req.url.startsWith('http')) {
       return next.handle(req);
     }
     const apiReq = req.clone({ url: `${this.baseUrl}/${req.url}` });

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
@@ -44,9 +45,16 @@ public class CustomMethodSecurityExpressionRoot
     ){
         super(authentication);
         SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, Objects.requireNonNull(webAppContext.getServletContext()));
-        UserDetailsDTO userDTO = (UserDetailsDTO) getAuthentication().getPrincipal();
-        this.currentUser = this.userRepository.findByDomainId(java.util.UUID.fromString(userDTO.getPublicId()))
-                .orElseThrow(() -> new RuntimeException("User not found: " + userDTO.getPublicId()));
+        Object principal = getAuthentication().getPrincipal();
+        if (principal instanceof Jwt jwt) {
+            String email = jwt.getClaimAsString("email");
+            this.currentUser = this.userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found: " + email));
+        } else {
+            UserDetailsDTO userDTO = (UserDetailsDTO) principal;
+            this.currentUser = this.userRepository.findByDomainId(UUID.fromString(userDTO.getPublicId()))
+                    .orElseThrow(() -> new RuntimeException("User not found: " + userDTO.getPublicId()));
+        }
     }
 
 

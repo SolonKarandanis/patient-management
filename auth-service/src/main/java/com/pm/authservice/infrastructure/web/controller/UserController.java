@@ -27,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -60,13 +61,22 @@ public class UserController {
                 .orElseThrow(() -> new NotFoundException("error.user.not.found"));
     }
 
+    private UserJpaEntity resolveCurrentUser(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof Jwt jwt) {
+            String email = jwt.getClaimAsString("email");
+            return userRepository.findByEmail(email)
+                    .orElseThrow(() -> new NotFoundException("error.user.not.found"));
+        }
+        UserDetailsDTO dto = (UserDetailsDTO) authentication.getPrincipal();
+        return findUserByPublicId(dto.getPublicId());
+    }
+
     @PostMapping("/export/csv")
     public void exportUsersToCsv(
             @RequestBody @Valid UsersSearchRequestDTO searchObj,
             HttpServletResponse response,
             Authentication authentication) throws Exception {
-        UserDetailsDTO dto = (UserDetailsDTO) authentication.getPrincipal();
-        UserJpaEntity user = findUserByPublicId(dto.getPublicId());
+        UserJpaEntity user = resolveCurrentUser(authentication);
         Long resultsCount = searchService.countUsers(searchObj, user);
         log.info("UserController --> exportUsersToCsv --> results: {}", resultsCount);
         if (resultsCount >= AppConstants.MAX_RESULTS_CSV_EXPORT) {
@@ -85,8 +95,7 @@ public class UserController {
     public ResponseEntity<SearchResults<UserDTO>> findAllUsers(@RequestBody @Valid UsersSearchRequestDTO searchObj,
                                                                Authentication authentication) throws AuthException {
         log.info("[NEW SEARCH] -- UserController, method findAllUsers");
-        UserDetailsDTO dto = (UserDetailsDTO) authentication.getPrincipal();
-        UserJpaEntity user = findUserByPublicId(dto.getPublicId());
+        UserJpaEntity user = resolveCurrentUser(authentication);
         log.info("In UserController with user: {}", user.getUsername());
         SearchResults<UserDTO> results = searchService.advancedSearchUsers(searchObj, user);
         return ResponseEntity.ok().body(results);
@@ -99,8 +108,7 @@ public class UserController {
             @RequestParam Integer size, @RequestParam(required = false) String sortField,
             @RequestParam(required = false) String sortOrder, Authentication authentication) throws AuthException {
         log.info("[NEW SEARCH] -- UserController, method findAllUsers");
-        UserDetailsDTO dto = (UserDetailsDTO) authentication.getPrincipal();
-        UserJpaEntity user = findUserByPublicId(dto.getPublicId());
+        UserJpaEntity user = resolveCurrentUser(authentication);
         log.info("In UserController with user: {}", user.getUsername());
         SearchResults<UserDTO> results = searchService.quickSearchUsers(value, user, page, size, sortField, sortOrder);
         return ResponseEntity.ok().body(results);
@@ -123,9 +131,9 @@ public class UserController {
     @Translate(path = "status", targetProperty = "statusLabel")
     @Translate(path = "roles[*].name", targetProperty = "nameLabel")
     public ResponseEntity<UserDTO> getUserByToken(Authentication authentication) {
-        UserDetailsDTO dto = (UserDetailsDTO) authentication.getPrincipal();
-        log.info("UserController --> getUserByToken --> publicId: {}", dto.getPublicId());
-        return ResponseEntity.ok(userQueryService.viewUser(dto.getPublicId()));
+        UserJpaEntity user = resolveCurrentUser(authentication);
+        log.info("UserController --> getUserByToken --> publicId: {}", user.getDomainId());
+        return ResponseEntity.ok(userQueryService.viewUser(user.getDomainId().toString()));
     }
 
     @PreAuthorize("isSystemAdmin() || isUserMe(#publicId)")

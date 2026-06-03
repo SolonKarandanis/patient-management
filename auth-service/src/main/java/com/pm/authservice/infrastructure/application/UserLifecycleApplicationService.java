@@ -116,7 +116,7 @@ public class UserLifecycleApplicationService implements UserLifecycleService {
         return userRepository.findByDomainId(domainId)
                 .map(entity -> {
                     outboxService.createUserEvent(entity, AppConstants.OUTBOX_USER_DEACTIVATED);
-                    return userMapper.toDTO(userMapper.toDomain(entity));
+                    return userMapper.toDTO(userMapper. toDomain(entity));
                 })
                 .orElseThrow(() -> new IllegalStateException("User not found after deactivation: " + publicId));
     }

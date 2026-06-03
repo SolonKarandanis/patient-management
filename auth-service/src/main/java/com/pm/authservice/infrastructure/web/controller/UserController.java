@@ -68,6 +68,7 @@ public class UserController {
                     .orElseThrow(() -> new NotFoundException("error.user.not.found"));
         }
         UserDetailsDTO dto = (UserDetailsDTO) authentication.getPrincipal();
+        assert dto != null;
         return findUserByPublicId(dto.getPublicId());
     }
 

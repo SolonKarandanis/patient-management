@@ -1,6 +1,7 @@
 package com.pm.authservice.infrastructure.application;
 
 import com.pm.authservice.domain.port.out.UserPort;
+import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.infrastructure.web.exception.NotFoundException;
 import com.pm.authservice.infrastructure.persistence.mapper.UserMapper;
 import com.pm.authservice.infrastructure.web.dto.UserDTO;

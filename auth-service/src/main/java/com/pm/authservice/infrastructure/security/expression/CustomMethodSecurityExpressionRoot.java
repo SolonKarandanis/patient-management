@@ -114,13 +114,13 @@ public class CustomMethodSecurityExpressionRoot
         boolean check = false;
         String username = this.currentUser.getUsername();
         LOG.info("AUTHORIZE: hasPermission({}, {})",username, operationName);
-        check = UserUtil.hasOperation(this.currentUser, operationName);
+        check= userRepository.existsByDomainIdAndOperationName(this.currentUser.getDomainId(), operationName);
         return check;
     }
 
 
     public boolean isSystemAdmin() {
-        return UserUtil.hasRole(this.currentUser, AuthorityConstants.ROLE_SYSTEM_ADMIN);
+        return userRepository.existsByDomainIdAndRoleName(this.currentUser.getDomainId(), AuthorityConstants.ROLE_SYSTEM_ADMIN);
     }
 
     public boolean isUserMe(String userId){

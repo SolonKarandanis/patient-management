@@ -48,3 +48,8 @@ spring:
               filters:
                 - RewritePath=/analytics/(?<segment>.*), /analytics-service/$\{segment}
 
+            - id: ai-service-route
+              uri: http://localhost:4012
+              predicates:
+                - Path=/ai/**
+

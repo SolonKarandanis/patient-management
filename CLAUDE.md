@@ -3,6 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 A `GEMINI.md` at the repo root has an additional overview; read it for a complementary summary if needed.
+An `AUTH.md` at the repo root documents the full OAuth2/Keycloak login flow end-to-end (backend filter chain, JWT validation, frontend bootstrap, token refresh, logout). Read it before touching auth code.
 
 ## Repository layout
 
@@ -10,7 +11,7 @@ This is a polyrepo-in-a-monorepo: each backend service is an **independent build
 
 Backend (Java 25, Spring Boot 4.0.x):
 - `gateway` — Spring Cloud Gateway (WebFlux), routes `/auth`, `/i18n`, `/api/patients`, `/analytics`, etc. to internal services
-- `auth-service` — auth/JWT, Hazelcast-clustered Spring Session, `i18n` sub-module, outbox pattern. **Builds with both Maven AND Gradle** (Gradle is canonical — see below)
+- `auth-service` — auth (dual-mode: `auth.mode=jwt` custom JWT or `auth.mode=oauth2` Keycloak), Hazelcast-clustered Spring Session (disabled in oauth2 mode), `i18n` sub-module, outbox pattern. Implemented as **hexagonal architecture** (`domain/` ports + models, `infrastructure/` adapters). **Builds with both Maven AND Gradle** (Gradle is canonical — see below)
 - `patient-service`, `medical-records-service`, `billing-service`, `payment-service`, `analytics-service`, `notification-service`, `fts-service`, `stream-processor`, `camel-integration` — each Maven-built Spring Boot service
 - `integration-tests` — standalone REST-Assured cross-service tests (separate Maven module, Java 21)
 
@@ -18,7 +19,7 @@ Frontend (Angular 21):
 - `frontent/` — **note the misspelling**; this is the actual directory name. Uses NgRx Signals, PrimeNG, TailwindCSS, D3, STOMP-over-SockJS, ngx-permissions, ngx-translate. Cypress for e2e.
 
 Infrastructure & tooling:
-- `infrasturcture/` — **also misspelled**; `docker-compose.yml` for Kafka, Zookeeper, Kafka Connect (Debezium), Elasticsearch, Kibana, ClickHouse, ActiveMQ Artemis, Prometheus, Grafana. Postgres is **not** in compose — services expect Postgres at `192.168.1.6:5432` (see `application.properties`).
+- `infrasturcture/` — **also misspelled**; `docker-compose.yml` for Kafka, Zookeeper, Kafka Connect (Debezium), Elasticsearch, Kibana, ClickHouse, ActiveMQ Artemis, Prometheus, Grafana. Postgres is **not** in compose — services expect Postgres at `192.168.1.6:5432` (see `application.properties`). Keycloak is also **not** in compose — run it separately at `localhost:8090` (realm: `patient-management`, client: `angular-frontend`).
 - `api-requests/`, `grpc-requests/` — sample REST and gRPC client requests (per-service folders)
 
 ## Common commands
@@ -82,6 +83,7 @@ cd integration-tests && ./mvnw test    # requires services already running
 | medical-records-service | 4009 | | — | — |
 | notification-service | 4010 | | `/notification-service` | — |
 | stream-processor | 4011 | | — | — |
+| Keycloak | 8090 | | `/realms/patient-management` | — (external, not in compose) |
 
 Frontend dev server proxies to gateway at 4004. CORS in gateway is configured for `http://localhost:4200`.
 
@@ -93,7 +95,13 @@ Frontend dev server proxies to gateway at 4004. CORS in gateway is configured fo
 
 **Real-time to frontend:** ActiveMQ Artemis with STOMP-over-WebSocket (SockJS fallback). Services publish to JMS; the frontend subscribes via `@stomp/stompjs`. Look for `broker/` and `config/broker/` packages.
 
-**Auth & sessions:** auth-service issues JWTs, but also runs a Hazelcast cluster (`hazelcast.cluster.members=127.0.0.1:5701,127.0.0.1:5702`) for Spring Session replication — running a single instance is fine for dev, but session-state code must remain serializable. JWT keys and the AES encryption key live in `application.properties` (development-only).
+**Auth & sessions:** auth-service supports two modes controlled by `auth.mode` in `application.properties`:
+- `auth.mode=jwt` — auth-service issues custom JWTs (HMAC-signed); Hazelcast cluster (`hazelcast.cluster.members=127.0.0.1:5701,127.0.0.1:5702`) replicates Spring Session. Session-state code must remain serializable. JWT/AES keys live in `application.properties` (dev-only).
+- `auth.mode=oauth2` — Keycloak at `localhost:8090` issues RS256 JWTs; `OAuth2SecurityConfiguration` validates them via JWKS; Hazelcast session management is **disabled** (`hazelcast.session.management.enabled=false`). Roles are extracted from `realm_access.roles` claim. The active user is resolved from the Keycloak `email` claim against the local DB.
+
+`GET /public/config` (no auth) exposes the active mode so the frontend can choose its auth path. See `AUTH.md` for the full flow.
+
+Security configs: `WebSecurityConfiguration` (jwt mode), `OAuth2SecurityConfiguration` (oauth2 mode), `WebSecurityClusterConfiguration` (jwt + Hazelcast cluster). Method-level authorization uses custom SpEL via `CustomMethodSecurityExpressionRoot` (`isSystemAdmin()`, `isUserMe()`, `hasPermission()`).
 
 **i18n:** auth-service has a full DB-backed i18n sub-module (`com.pm.authservice.i18n`) with its own controller/service/repository tree, plus property-file fallbacks (`application_errors_en.properties`, `application_ui_labels_*.properties`). `i18n.resources.DB.enabled=true` toggles DB lookups. The frontend consumes via `ngx-translate` against `/i18n/**` through the gateway.
 
@@ -109,3 +117,5 @@ Frontend dev server proxies to gateway at 4004. CORS in gateway is configured fo
 - **Don't bypass the outbox** for state changes that other services care about — emitting Kafka events directly defeats the consistency guarantee the whole architecture is built on.
 - **Folder names `frontent` and `infrasturcture` are intentional** (or at least entrenched). Don't "fix" them as part of an unrelated change.
 - **Frontend state:** uses NgRx Signals (`@ngrx/signals`), not classic NgRx store. Look for `*Store` classes under `core/store/` and feature folders.
+- **Auth mode switching:** changing `auth.mode` also requires toggling `hazelcast.session.management.enabled` and (in oauth2 mode) having Keycloak running with the `patient-management` realm and `angular-frontend` client configured. The frontend reads the mode from `/auth/public/config` on startup.
+- **auth-service is hexagonal:** domain logic lives under `domain/` (ports, models, annotations), all adapters under `infrastructure/` (web, persistence, security, messaging, etc.). Keep domain classes free of Spring/JPA annotations.

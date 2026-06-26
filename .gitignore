@@ -4,3 +4,21 @@
 *.iws
 *.iml
 *.ipr
+
+### Maven ###
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### Spring Boot ###
+*.jar
+*.war
+*.ear
+spring-shell.log
+
+### Logs ###
+*.log
+logs/
+
+### OS ###
+.DS_Store
+Thumbs.db

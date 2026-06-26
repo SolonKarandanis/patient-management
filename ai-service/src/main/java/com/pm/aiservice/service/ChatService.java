@@ -1,64 +1,47 @@
 package com.pm.aiservice.service;
 
-import com.anthropic.client.AnthropicClient;
-import com.anthropic.models.messages.*;
+import com.pm.aiservice.domain.model.ChatMessage;
+import com.pm.aiservice.domain.model.Role;
+import com.pm.aiservice.domain.port.LlmPort;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ChatService {
 
-    private final AnthropicClient anthropicClient;
+    private final LlmPort llmPort;
 
-    @Value("${anthropic.model}")
-    private String model;
-
-    @Value("${anthropic.max-tokens}")
-    private long maxTokens;
-
-    // In-memory conversation history keyed by session ID
-    private final ConcurrentHashMap<String, List<MessageParam>> sessions = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, List<ChatMessage>> sessions = new ConcurrentHashMap<>();
 
     public String chat(String sessionId, String userMessage) {
-        List<MessageParam> history = sessions.computeIfAbsent(sessionId, id -> new ArrayList<>());
+        List<ChatMessage> history = sessions.computeIfAbsent(sessionId, id -> new ArrayList<>());
+        history.add(new ChatMessage(Role.USER, userMessage));
 
-        history.add(MessageParam.builder()
-                .role(MessageParam.Role.USER)
-                .content(userMessage)
-                .build());
+        String reply = llmPort.chat(history);
 
-        Message response = anthropicClient.messages().create(
-                MessageCreateParams.builder()
-                        .model(model)
-                        .maxTokens(maxTokens)
-                        .messages(history)
-                        .build()
-        );
+        history.add(new ChatMessage(Role.ASSISTANT, reply));
+        return reply;
+    }
 
-        String assistantText = response.content().stream()
-                .flatMap(block -> block.text().stream())
-                .map(TextBlock::text)
-                .collect(Collectors.joining());
+    public Flux<String> streamChat(String sessionId, String userMessage) {
+        List<ChatMessage> history = sessions.computeIfAbsent(sessionId, id -> new ArrayList<>());
+        history.add(new ChatMessage(Role.USER, userMessage));
 
-        history.add(MessageParam.builder()
-                .role(MessageParam.Role.ASSISTANT)
-                .content(assistantText)
-                .build());
-
-        return assistantText;
+        StringBuilder fullReply = new StringBuilder();
+        return llmPort.streamChat(history)
+                .doOnNext(fullReply::append)
+                .doOnComplete(() -> history.add(new ChatMessage(Role.ASSISTANT, fullReply.toString())));
     }
 
     public int getSessionTurnCount(String sessionId) {
-        List<MessageParam> history = sessions.get(sessionId);
+        List<ChatMessage> history = sessions.get(sessionId);
         if (history == null) return 0;
-        // Each turn is one user + one assistant message
         return history.size() / 2;
     }
 

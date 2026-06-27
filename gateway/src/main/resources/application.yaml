@@ -52,4 +52,6 @@ spring:
               uri: http://localhost:4012
               predicates:
                 - Path=/ai/**
+              filters:
+                - RewritePath=/ai/(?<segment>.*), /ai-service/$\{segment}
 

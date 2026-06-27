@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 @RestController
-@RequestMapping("/ai/chat")
+@RequestMapping("/chat")
 @RequiredArgsConstructor
 public class ChatController {
 

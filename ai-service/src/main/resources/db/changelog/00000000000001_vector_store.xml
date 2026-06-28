@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="00000000000001-vector-extension" author="solonk" runOnChange="false">
+        <sql>CREATE EXTENSION IF NOT EXISTS vector</sql>
+    </changeSet>
+
+    <changeSet id="00000000000001-vector-store" author="solonk">
+        <createTable tableName="vector_store">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="content" type="text"/>
+            <column name="metadata" type="jsonb"/>
+            <column name="embedding" type="vector(1536)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="00000000000001-vector-store-index" author="solonk">
+        <sql>
+            CREATE INDEX IF NOT EXISTS vector_store_embedding_idx
+            ON vector_store USING hnsw (embedding vector_cosine_ops)
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

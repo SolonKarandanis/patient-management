@@ -241,6 +241,17 @@ services:
   #     clickhouse-server:
   #       condition: service_healthy
 
+  postgres:
+    image: pgvector/pgvector:pg18
+    container_name: postgres_pgvector
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
 
 volumes:
   esdata01:
@@ -248,6 +259,8 @@ volumes:
   clickhouse_data:
     driver: local
   keycloak_data:
+    driver: local
+  postgres_data:
     driver: local
 
 networks:

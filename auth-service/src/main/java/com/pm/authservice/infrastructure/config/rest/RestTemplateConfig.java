@@ -1,38 +1,39 @@
 package com.pm.authservice.infrastructure.config.rest;
 
 import com.pm.authservice.infrastructure.config.rest.interceptor.LoggingInterceptor;
+import com.pm.authservice.infrastructure.web.exception.NotFoundException;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.client.RestClient;
 
 @Configuration
 public class RestTemplateConfig {
 
     @Bean
-    RestTemplate restTemplate(HttpComponentsClientHttpRequestFactory clientHttpRequestFactory) {
-        RestTemplate restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(clientHttpRequestFactory));
-        restTemplate.setErrorHandler(new RestTemplateResponseErrorHandler());
-        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-        if(CollectionUtils.isEmpty(interceptors)) {
-            interceptors = new ArrayList<>();
-        }
-        interceptors.add(new LoggingInterceptor());
-        restTemplate.setInterceptors(interceptors);
-        return restTemplate;
+    RestClient restClient(HttpComponentsClientHttpRequestFactory clientHttpRequestFactory) {
+        return RestClient.builder()
+                .requestFactory(new BufferingClientHttpRequestFactory(clientHttpRequestFactory))
+                .requestInterceptor(new LoggingInterceptor())
+                .defaultStatusHandler(
+                        HttpStatusCode::is4xxClientError,
+                        (req, res) -> {
+                            if (res.getStatusCode() == HttpStatus.NOT_FOUND) {
+                                throw new NotFoundException("endpoint.not.found");
+                            }
+                        })
+                .defaultStatusHandler(HttpStatusCode::is5xxServerError, (req, res) -> {})
+                .build();
     }
 
     @Bean
     HttpComponentsClientHttpRequestFactory clientHttpRequestFactory(CloseableHttpClient httpClient) {
-        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory= new HttpComponentsClientHttpRequestFactory();
-        clientHttpRequestFactory.setHttpClient(httpClient);
-        return clientHttpRequestFactory;
+        HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
+        factory.setHttpClient(httpClient);
+        return factory;
     }
 }

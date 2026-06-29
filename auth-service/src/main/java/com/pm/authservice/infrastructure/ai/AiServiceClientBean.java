@@ -5,15 +5,13 @@ import com.pm.authservice.infrastructure.web.dto.ChatResponseDTO;
 import com.pm.authservice.infrastructure.web.dto.ChatServiceRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 @Service
 @Slf4j
-public class AiServiceClientBean implements AiServiceClient{
+public class AiServiceClientBean implements AiServiceClient {
 
     @Value("${ai.service.protocol}")
     private String protocol;
@@ -27,28 +25,36 @@ public class AiServiceClientBean implements AiServiceClient{
     @Value("${ai.service.context}")
     private String context;
 
-    private final RestTemplate restTemplate;
+    private final RestClient restClient;
 
-    public AiServiceClientBean(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public AiServiceClientBean(RestClient restClient) {
+        this.restClient = restClient;
     }
 
     @Override
     public ChatResponseDTO chat(ChatServiceRequestDTO request) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<ChatServiceRequestDTO> entity = new HttpEntity<>(request, headers);
-        return restTemplate.postForObject(endpoint() + "/chat", entity, ChatResponseDTO.class);
+        return restClient.post()
+                .uri(endpoint() + "/chat")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(request)
+                .retrieve()
+                .body(ChatResponseDTO.class);
     }
 
     @Override
     public ChatHistoryResponseDTO getHistory(String sessionId) {
-        return restTemplate.getForObject(endpoint() + "/chat/" + sessionId + "/history", ChatHistoryResponseDTO.class);
+        return restClient.get()
+                .uri(endpoint() + "/chat/{sessionId}/history", sessionId)
+                .retrieve()
+                .body(ChatHistoryResponseDTO.class);
     }
 
     @Override
     public void clearSession(String sessionId) {
-        restTemplate.delete(endpoint() + "/chat/" + sessionId);
+        restClient.delete()
+                .uri(endpoint() + "/chat/{sessionId}", sessionId)
+                .retrieve()
+                .toBodilessEntity();
     }
 
     private String endpoint() {

@@ -2,12 +2,13 @@ package com.pm.authservice.infrastructure.search;
 
 import com.pm.authservice.infrastructure.search.dto.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 
 import java.util.List;
 
@@ -29,72 +30,83 @@ public class UserFullTextSearchClientBean implements UserFullTextSearchClient {
     @Value("${fts.web.context}")
     private String ftsContext;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestClient restClient;
 
-    protected String getEndpoint() {
-        return (new StringBuilder()).append(ftsProtocol).append("://").append(ftsHost).append(":").append(ftsPort)
-                .append("/").append(ftsContext).toString();
+    public UserFullTextSearchClientBean(RestClient restClient) {
+        this.restClient = restClient;
     }
 
-    protected HttpHeaders getDefaultHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        return headers;
+    protected String getEndpoint() {
+        return ftsProtocol + "://" + ftsHost + ":" + ftsPort + "/" + ftsContext;
     }
 
     @Override
     public UserSearchResponseDTO searchUsers(DocumentSearchRequest payload) throws ResourceAccessException {
-        HttpHeaders headers = getDefaultHeaders();
-        HttpEntity<DocumentSearchRequest> request = new HttpEntity<>(payload, headers);
-        return restTemplate.postForObject(getEndpoint() + "/users/search", request, UserSearchResponseDTO.class);
+        return restClient.post()
+                .uri(getEndpoint() + "/users/search")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(payload)
+                .retrieve()
+                .body(UserSearchResponseDTO.class);
     }
 
     @Override
     public Long countUsers(DocumentSearchRequest payload) throws ResourceAccessException {
-        HttpHeaders headers = getDefaultHeaders();
-        HttpEntity<DocumentSearchRequest> request = new HttpEntity<>(payload, headers);
-        return restTemplate.postForObject(getEndpoint() + "/users/search/count", request, Long.class);
+        return restClient.post()
+                .uri(getEndpoint() + "/users/search/count")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(payload)
+                .retrieve()
+                .body(Long.class);
     }
 
     @Override
     public List<UserDocumentSearchResultsDTO> findUsers(DocumentSearchRequest payload) throws ResourceAccessException {
-        HttpHeaders headers = getDefaultHeaders();
-        HttpEntity<DocumentSearchRequest> request = new HttpEntity<>(payload, headers);
-        UserDocumentSearchResultsDTO[] result = restTemplate.postForObject(getEndpoint() + "/items/search/export", request, UserDocumentSearchResultsDTO[].class);
-        if(result != null && result.length >0){
-            return List.of(result);
-        }
-        return List.of();
+        UserDocumentSearchResultsDTO[] result = restClient.post()
+                .uri(getEndpoint() + "/items/search/export")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(payload)
+                .retrieve()
+                .body(UserDocumentSearchResultsDTO[].class);
+        return result != null && result.length > 0 ? List.of(result) : List.of();
     }
 
     @Override
     public Boolean indexUsers(List<UserDocumentDTO> documents) throws ResourceAccessException {
-        HttpHeaders headers = getDefaultHeaders();
-        HttpEntity<List<UserDocumentDTO>> request = new HttpEntity<>(documents, headers);
-        ResponseEntity<Void> response = restTemplate.exchange(getEndpoint() + "/users", HttpMethod.POST, request,
-                Void.class);
+        ResponseEntity<Void> response = restClient.post()
+                .uri(getEndpoint() + "/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(documents)
+                .retrieve()
+                .toBodilessEntity();
         logResponse(response);
         return response.getStatusCode().is2xxSuccessful();
     }
 
     @Override
     public Boolean deleteUsersByIds(List<Integer> itemIds) throws ResourceAccessException {
-        HttpEntity<DeleteDocumentsRequest> request = new HttpEntity<>(new DeleteDocumentsRequest(itemIds), getDefaultHeaders());
-        ResponseEntity<Void> response = restTemplate.exchange(getEndpoint() + "/users/byIds", HttpMethod.DELETE, request, Void.class);
+        // DELETE with a request body requires method(HttpMethod.DELETE) — delete() has no body()
+        ResponseEntity<Void> response = restClient.method(HttpMethod.DELETE)
+                .uri(getEndpoint() + "/users/byIds")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new DeleteDocumentsRequest(itemIds))
+                .retrieve()
+                .toBodilessEntity();
         logResponse(response);
         return response.getStatusCode().is2xxSuccessful();
     }
 
     @Override
     public Boolean deleteUserIndex() throws ResourceAccessException {
-        HttpEntity<Integer> request = new HttpEntity<>(getDefaultHeaders());
-        ResponseEntity<Void> response = restTemplate.exchange(getEndpoint() + "/users", HttpMethod.DELETE, request, Void.class);
+        ResponseEntity<Void> response = restClient.delete()
+                .uri(getEndpoint() + "/users")
+                .retrieve()
+                .toBodilessEntity();
         logResponse(response);
         return response.getStatusCode().is2xxSuccessful();
     }
 
-    protected void logResponse(ResponseEntity<Void> response){
+    protected void logResponse(ResponseEntity<Void> response) {
         log.debug(RESPONSE_STATUS, response.getStatusCode());
     }
 }

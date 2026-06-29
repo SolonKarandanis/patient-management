@@ -11,9 +11,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-@Service("userFullTextSearchService")
+@Service("userFullTextSearchClient")
 @Slf4j
-public class UserFullTextSearchServiceBean implements UserFullTextSearchService{
+public class UserFullTextSearchClientBean implements UserFullTextSearchClient {
 
     protected static final String RESPONSE_STATUS = "Response Status from ccm-fts: {}";
 

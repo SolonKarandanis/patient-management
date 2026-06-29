@@ -12,6 +12,7 @@ This is a polyrepo-in-a-monorepo: each backend service is an **independent build
 Backend (Java 25, Spring Boot 4.0.x):
 - `gateway` — Spring Cloud Gateway (WebFlux), routes `/auth`, `/i18n`, `/api/patients`, `/analytics`, etc. to internal services
 - `auth-service` — auth (dual-mode: `auth.mode=jwt` custom JWT or `auth.mode=oauth2` Keycloak), Hazelcast-clustered Spring Session (disabled in oauth2 mode), `i18n` sub-module, outbox pattern. Implemented as **hexagonal architecture** (`domain/` ports + models, `infrastructure/` adapters). **Builds with both Maven AND Gradle** (Gradle is canonical — see below)
+- `ai-service` — Spring AI 2.0.0, Spring Boot 4 / WebFlux (reactive). Multi-provider LLM support (Anthropic, OpenAI, Gemini) selected via `ai.provider` property. JDBC-backed chat memory (`spring_ai_chat_memory` table) with a sliding window of 50 messages. pgvector RAG store. Hexagonal architecture: `domain/` (model + `LlmPort` port), `infrastructure/` (provider adapters + JDBC memory repo). Uses its own Postgres at `192.168.1.6:**5433**/aiservice` (port 5433, not 5432 — separate PG18 instance for pgvector). Maven-built. **Not exposed through the gateway** — auth-service calls it directly via `AiServiceClient` (RestTemplate).
 - `patient-service`, `medical-records-service`, `billing-service`, `payment-service`, `analytics-service`, `notification-service`, `fts-service`, `stream-processor`, `camel-integration` — each Maven-built Spring Boot service
 - `integration-tests` — standalone REST-Assured cross-service tests (separate Maven module, Java 21)
 
@@ -83,6 +84,7 @@ cd integration-tests && ./mvnw test    # requires services already running
 | medical-records-service | 4009 | | — | — |
 | notification-service | 4010 | | `/notification-service` | — |
 | stream-processor | 4011 | | — | — |
+| ai-service | 4012 | | `/ai-service` | — (internal; auth-service calls it directly) |
 | Keycloak | 8090 | | `/realms/patient-management` | — (external, not in compose) |
 
 Frontend dev server proxies to gateway at 4004. CORS in gateway is configured for `http://localhost:4200`.
@@ -105,6 +107,8 @@ Security configs: `WebSecurityConfiguration` (jwt mode), `OAuth2SecurityConfigur
 
 **i18n:** auth-service has a full DB-backed i18n sub-module (`com.pm.authservice.i18n`) with its own controller/service/repository tree, plus property-file fallbacks (`application_errors_en.properties`, `application_ui_labels_*.properties`). `i18n.resources.DB.enabled=true` toggles DB lookups. The frontend consumes via `ngx-translate` against `/i18n/**` through the gateway.
 
+**AI / LLM layer (ai-service):** `ChatService` holds the conversation loop — it appends the user turn to `ChatMemory`, calls `LlmPort.chat()` (or `.streamChat()` for SSE), then appends the assistant reply. `MessageWindowChatMemory` keeps the last 50 messages per session using `JdbcChatMemoryRepository` against the `spring_ai_chat_memory` table. `ArticleController` is a separate, stateless blog-post generator that uses Spring AI's `ChatClient` directly (no session memory). The RAG vector store (pgvector, HNSW, cosine, 1536-dim) uses OpenAI `text-embedding-3-small` for embeddings regardless of which chat provider is active.
+
 **Database migrations:** Liquibase per-service under `src/main/resources/db/changelog/master.xml`. Each service owns its own Postgres database (`authservice`, `patientservice`, etc.).
 
 **Query layer:** QueryDSL with APT-generated `Q*` types. Maven services declare `querydsl-apt:jakarta`; the Gradle build wires it via `annotationProcessor`. Generated sources land in `target/generated-sources/annotations` (Maven) or `build/generated/sources/annotationProcessor` (Gradle).
@@ -112,10 +116,13 @@ Security configs: `WebSecurityConfiguration` (jwt mode), `OAuth2SecurityConfigur
 ## Things to know before editing
 
 - **Two builds in auth-service:** if you change dependencies, update **both** `pom.xml` and `build.gradle` to keep parity (or confirm with the user which is authoritative for the task — Gradle currently wins on test source-set layout).
-- **Postgres is external:** services hardcode `jdbc:postgresql://192.168.1.6:5432/...` in `application.properties`. Override via env or Spring profile rather than committing changes.
+- **Postgres is external:** most services hardcode `jdbc:postgresql://192.168.1.6:5432/...`. **Exception: ai-service uses port 5433** (`192.168.1.6:5433/aiservice`) — a separate PG18 instance needed for pgvector. Override via env or Spring profile rather than committing changes.
 - **Test profiles are opt-in:** a green `./mvnw install` does not mean tests ran. Always pass `-Punit-tests` (or the Gradle equivalent) when verifying changes.
 - **Don't bypass the outbox** for state changes that other services care about — emitting Kafka events directly defeats the consistency guarantee the whole architecture is built on.
 - **Folder names `frontent` and `infrasturcture` are intentional** (or at least entrenched). Don't "fix" them as part of an unrelated change.
 - **Frontend state:** uses NgRx Signals (`@ngrx/signals`), not classic NgRx store. Look for `*Store` classes under `core/store/` and feature folders.
 - **Auth mode switching:** changing `auth.mode` also requires toggling `hazelcast.session.management.enabled` and (in oauth2 mode) having Keycloak running with the `patient-management` realm and `angular-frontend` client configured. The frontend reads the mode from `/auth/public/config` on startup.
 - **auth-service is hexagonal:** domain logic lives under `domain/` (ports, models, annotations), all adapters under `infrastructure/` (web, persistence, security, messaging, etc.). Keep domain classes free of Spring/JPA annotations.
+- **ai-service is also hexagonal:** `LlmPort` in `domain/port/` is the sole seam between `ChatService` and the LLM backends. Adapters (`AnthropicAdapter`, `OpenAiAdapter`, `GeminiAdapter`) are activated by `@ConditionalOnProperty(name="ai.provider", havingValue="...")`. Swap provider by changing `ai.provider` in `application.properties` — no code changes needed.
+- **ai-service API keys via env:** `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY` must be set as env vars; they are never committed. Only Anthropic is active by default (`ai.provider=anthropic`); OpenAI is used for embeddings regardless of the chat provider.
+- **ai-service RAG schema:** pgvector table must pre-exist (`spring.ai.vectorstore.pgvector.initialize-schema=false`). The Liquibase changelog `00000000000001_vector_store.xml` creates it; run migrations before first start. The `spring_ai_chat_memory` table is created by `00000000000002_chat_memory.xml`.

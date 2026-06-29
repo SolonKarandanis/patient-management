@@ -6,7 +6,7 @@ import com.pm.authservice.infrastructure.persistence.entity.RoleJpaEntity;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.infrastructure.persistence.repository.UserJpaRepository;
 import com.pm.authservice.infrastructure.persistence.repository.projections.MinMaxUserId;
-import com.pm.authservice.infrastructure.search.UserFullTextSearchService;
+import com.pm.authservice.infrastructure.search.UserFullTextSearchClient;
 import com.pm.authservice.infrastructure.search.dto.UserDocumentDTO;
 import com.pm.authservice.infrastructure.util.AppConstants;
 import com.pm.authservice.infrastructure.web.dto.MinMaxUserIdDTO;
@@ -29,7 +29,7 @@ public class AdministrationServiceBean implements AdministrationService {
     private static final int USER_UPDATE_BATCH = 50;
     private static final Logger log = LoggerFactory.getLogger(AdministrationServiceBean.class);
 
-    private final UserFullTextSearchService userFullTextSearchService;
+    private final UserFullTextSearchClient userFullTextSearchService;
     private final UserJpaRepository userRepository;
     private final OutboxService outboxService;
 
@@ -37,7 +37,7 @@ public class AdministrationServiceBean implements AdministrationService {
     private String elasticSearchIndexingMethod;
 
     public AdministrationServiceBean(
-            UserFullTextSearchService userFullTextSearchService,
+            UserFullTextSearchClient userFullTextSearchService,
             UserJpaRepository userRepository,
             OutboxService outboxService) {
         this.userFullTextSearchService = userFullTextSearchService;

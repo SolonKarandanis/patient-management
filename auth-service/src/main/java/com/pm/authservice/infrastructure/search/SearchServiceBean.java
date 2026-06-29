@@ -40,14 +40,14 @@ public class SearchServiceBean implements SearchService {
 
     private final UserJpaRepository userRepository;
     private final RoleJpaRepository roleRepository;
-    private final UserFullTextSearchService userFullTextSearchService;
+    private final UserFullTextSearchClient userFullTextSearchService;
 
     @Value("${search.elasticSearch.enable:false}")
     private Boolean elasticSearchEnable;
 
     public SearchServiceBean(UserJpaRepository userRepository,
                              RoleJpaRepository roleRepository,
-                             UserFullTextSearchService userFullTextSearchService) {
+                             UserFullTextSearchClient userFullTextSearchService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userFullTextSearchService = userFullTextSearchService;

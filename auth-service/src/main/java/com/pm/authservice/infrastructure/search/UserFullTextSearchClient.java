@@ -8,7 +8,7 @@ import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
 
-public interface UserFullTextSearchService {
+public interface UserFullTextSearchClient {
 
     UserSearchResponseDTO searchUsers(DocumentSearchRequest payload) throws ResourceAccessException;
 

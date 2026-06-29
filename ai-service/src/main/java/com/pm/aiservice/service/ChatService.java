@@ -67,6 +67,13 @@ public class ChatService {
         return !chatMemory.get(sessionId).isEmpty();
     }
 
+    public List<ChatMessage> getConversationHistory(String sessionId) {
+        return chatMemory.get(sessionId).stream()
+                .map(this::toDomainMessage)
+                .filter(msg -> msg != null && msg.getRole() != Role.SYSTEM)
+                .collect(Collectors.toList());
+    }
+
     private List<ChatMessage> getHistory(String sessionId) {
         return chatMemory.get(sessionId).stream()
                 .map(this::toDomainMessage)

@@ -12,3 +12,13 @@ export interface ChatResponse {
   response: string;
   turnCount: number;
 }
+
+export interface ChatHistoryMessage {
+  role: string;
+  content: string;
+}
+
+export interface ChatHistory {
+  sessionId: string;
+  messages: ChatHistoryMessage[];
+}

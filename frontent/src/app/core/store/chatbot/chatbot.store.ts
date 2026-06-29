@@ -5,6 +5,7 @@ import { pipe, switchMap, tap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
 import { ChatbotState, initialChatbotState } from './chatbot.state';
 import { ChatRepository } from '@core/repositories/chat.repository';
+import { ChatMessage } from '@models/chat.model';
 
 export const ChatbotStore = signalStore(
   { providedIn: 'root' },
@@ -21,12 +22,27 @@ export const ChatbotStore = signalStore(
     },
     clearSession() {
       state.chatRepo.clearSession().subscribe();
-      patchState(state, {
-        messages: [],
-        sessionId: crypto.randomUUID(),
-        error: null,
-      });
+      patchState(state, { messages: [], error: null });
     },
+    loadHistory: rxMethod<void>(
+      pipe(
+        tap(() => patchState(state, { isLoading: true, error: null })),
+        switchMap(() =>
+          state.chatRepo.getHistory().pipe(
+            tapResponse({
+              next: (history) => {
+                const messages: ChatMessage[] = history.messages.map((m) => ({
+                  role: m.role.toLowerCase() as 'user' | 'assistant',
+                  content: m.content,
+                }));
+                patchState(state, { messages, isLoading: false });
+              },
+              error: () => patchState(state, { isLoading: false }),
+            })
+          )
+        )
+      )
+    ),
     sendMessage: rxMethod<string>(
       pipe(
         tap((text) => {

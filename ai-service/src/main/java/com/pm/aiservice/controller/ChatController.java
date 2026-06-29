@@ -1,5 +1,6 @@
 package com.pm.aiservice.controller;
 
+import com.pm.aiservice.dto.ChatHistoryResponse;
 import com.pm.aiservice.dto.ChatRequest;
 import com.pm.aiservice.dto.ChatResponse;
 import com.pm.aiservice.service.ChatService;
@@ -34,6 +35,15 @@ public class ChatController {
     @PostMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> streamChat(@Valid @RequestBody ChatRequest request) {
         return chatService.streamChat(request.getSessionId(), request.getMessage());
+    }
+
+    @GetMapping("/{sessionId}/history")
+    public Mono<ResponseEntity<ChatHistoryResponse>> getHistory(@PathVariable String sessionId) {
+        return Mono.fromCallable(() -> ResponseEntity.ok(ChatHistoryResponse.builder()
+                .sessionId(sessionId)
+                .messages(chatService.getConversationHistory(sessionId))
+                .build())
+        ).subscribeOn(Schedulers.boundedElastic());
     }
 
     @DeleteMapping("/{sessionId}")

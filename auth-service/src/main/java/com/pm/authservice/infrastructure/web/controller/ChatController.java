@@ -3,6 +3,7 @@ package com.pm.authservice.infrastructure.web.controller;
 import com.pm.authservice.infrastructure.ai.AiServiceClient;
 import com.pm.authservice.infrastructure.persistence.entity.UserJpaEntity;
 import com.pm.authservice.infrastructure.persistence.repository.UserJpaRepository;
+import com.pm.authservice.infrastructure.web.dto.ChatHistoryResponseDTO;
 import com.pm.authservice.infrastructure.web.dto.ChatRequestDTO;
 import com.pm.authservice.infrastructure.web.dto.ChatResponseDTO;
 import com.pm.authservice.infrastructure.web.dto.ChatServiceRequestDTO;
@@ -26,6 +27,12 @@ public class ChatController {
 
     private final AiServiceClient aiServiceClient;
     private final UserJpaRepository userRepository;
+
+    @GetMapping("/history")
+    public ResponseEntity<ChatHistoryResponseDTO> getHistory(Authentication authentication) {
+        UserJpaEntity user = resolveCurrentUser(authentication);
+        return ResponseEntity.ok(aiServiceClient.getHistory(user.getId().toString()));
+    }
 
     @PostMapping
     public ResponseEntity<ChatResponseDTO> chat(@Valid @RequestBody ChatRequestDTO request, Authentication authentication) {

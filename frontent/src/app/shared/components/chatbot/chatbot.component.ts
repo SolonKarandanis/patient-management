@@ -38,6 +38,13 @@ export class ChatbotComponent implements AfterViewChecked {
     this.scrollToBottom();
   }
 
+  openPanel(): void {
+    this.store.togglePanel();
+    if (this.store.messages().length === 0) {
+      this.store.loadHistory(undefined);
+    }
+  }
+
   send(): void {
     const text = this.inputText().trim();
     if (!text || this.store.isLoading()) return;

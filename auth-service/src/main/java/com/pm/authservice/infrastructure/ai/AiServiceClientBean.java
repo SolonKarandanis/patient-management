@@ -1,5 +1,6 @@
 package com.pm.authservice.infrastructure.ai;
 
+import com.pm.authservice.infrastructure.web.dto.ChatHistoryResponseDTO;
 import com.pm.authservice.infrastructure.web.dto.ChatResponseDTO;
 import com.pm.authservice.infrastructure.web.dto.ChatServiceRequestDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,11 @@ public class AiServiceClientBean implements AiServiceClient{
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<ChatServiceRequestDTO> entity = new HttpEntity<>(request, headers);
         return restTemplate.postForObject(endpoint() + "/chat", entity, ChatResponseDTO.class);
+    }
+
+    @Override
+    public ChatHistoryResponseDTO getHistory(String sessionId) {
+        return restTemplate.getForObject(endpoint() + "/chat/" + sessionId + "/history", ChatHistoryResponseDTO.class);
     }
 
     @Override

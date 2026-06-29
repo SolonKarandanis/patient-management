@@ -3,14 +3,12 @@ package com.pm.aiservice.config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -28,27 +26,15 @@ public class KnowledgeSeeder implements ApplicationRunner {
 
     private final VectorStore vectorStore;
     private final JdbcTemplate jdbcTemplate;
-    private final String openAiApiKey;
 
-    public KnowledgeSeeder(VectorStore vectorStore,
-                           JdbcTemplate jdbcTemplate,
-                           @Value("${spring.ai.openai.api-key:}") String openAiApiKey) {
+    public KnowledgeSeeder(VectorStore vectorStore, JdbcTemplate jdbcTemplate) {
         this.vectorStore = vectorStore;
         this.jdbcTemplate = jdbcTemplate;
-        this.openAiApiKey = openAiApiKey;
     }
 
     @Override
     public void run(ApplicationArguments args) {
         log.info("KnowledgeSeeder starting...");
-
-        if (!StringUtils.hasText(openAiApiKey)) {
-            log.error("=======================================================");
-            log.error("OPENAI_API_KEY is not set — knowledge seeding SKIPPED.");
-            log.error("Set the OPENAI_API_KEY environment variable and restart.");
-            log.error("=======================================================");
-            return;
-        }
 
         try {
             seedKnowledge();

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <!-- Switch embedding provider from OpenAI (1536 dims) to Google text-embedding-004 (768 dims).
+         Old vectors are incompatible — drop and recreate table, reset seed log to force re-ingest. -->
+    <changeSet id="00000000000004-vector-store-768" author="solonk">
+        <sql>DROP INDEX IF EXISTS vector_store_embedding_idx</sql>
+        <sql>DROP TABLE IF EXISTS vector_store</sql>
+        <sql>
+            CREATE TABLE vector_store (
+                id       uuid PRIMARY KEY,
+                content  text,
+                metadata jsonb,
+                embedding vector(768)
+            )
+        </sql>
+        <sql>
+            CREATE INDEX vector_store_embedding_idx
+            ON vector_store USING hnsw (embedding vector_cosine_ops)
+        </sql>
+        <sql>DELETE FROM knowledge_seed_log</sql>
+    </changeSet>
+
+</databaseChangeLog>

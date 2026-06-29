@@ -8,5 +8,6 @@
     <include file="/db/changelog/00000000000001_vector_store.xml"/>
     <include file="/db/changelog/00000000000002_chat_memory.xml"/>
     <include file="/db/changelog/00000000000003_knowledge_seed_log.xml"/>
+    <include file="/db/changelog/00000000000004_vector_store_768.xml"/>
 
 </databaseChangeLog>

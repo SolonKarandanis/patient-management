@@ -10,5 +10,6 @@ export enum ApiRepositories {
   I18N="i18n",
   COMMON="common",
   PUBLIC="public",
-  ANALYTICS="analytics"
+  ANALYTICS="analytics",
+  CHAT="chat"
 }

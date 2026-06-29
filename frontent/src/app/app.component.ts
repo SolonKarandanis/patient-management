@@ -26,10 +26,11 @@ import { CommonEntitiesService } from '@core/services/common-entities.service';
 import { NotificationService } from '@core/services/notification.service';
 import { AuthService } from '@core/services/auth.service';
 import { Subscription } from 'rxjs';
+import { ChatbotComponent } from '@components/chatbot/chatbot.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastModule, LoaderComponent],
+  imports: [RouterOutlet, ToastModule, LoaderComponent, ChatbotComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
@@ -48,7 +49,7 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   private readonly elementRef = inject(ElementRef);
   private routerEventsSubscription!: Subscription;
 
-  private isLoggedIn = this.authService.isLoggedIn;
+  protected isLoggedIn = this.authService.isLoggedIn;
   private isWebsocketsEnabled = this.commonEntitiesService.isWebSocketsEnabled;
 
   constructor() {

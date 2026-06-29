@@ -1,0 +1,90 @@
+<!-- Floating trigger button -->
+<button
+  pButton
+  type="button"
+  icon="pi pi-comment"
+  class="chatbot-fab"
+  [rounded]="true"
+  (click)="store.togglePanel()"
+  aria-label="Open support chat"
+></button>
+
+<!-- Chat drawer -->
+<p-drawer
+  [visible]="store.isOpen()"
+  (onHide)="store.closePanel()"
+  position="right"
+  [style]="{ width: '380px' }"
+>
+  <ng-template pTemplate="header">
+    <div class="chatbot-header">
+      <span class="chatbot-title">
+        <i class="pi pi-comments"></i> Support Assistant
+      </span>
+      <button
+        pButton
+        type="button"
+        icon="pi pi-trash"
+        [text]="true"
+        [rounded]="true"
+        severity="secondary"
+        pTooltip="Clear conversation"
+        (click)="store.clearSession()"
+      ></button>
+    </div>
+  </ng-template>
+
+  <!-- Message list -->
+  <div class="chatbot-messages" #messageContainer>
+    @if (store.messages().length === 0) {
+      <div class="chatbot-empty">
+        <i class="pi pi-comments chatbot-empty-icon"></i>
+        <p>Hi! How can I help you today?</p>
+      </div>
+    }
+
+    @for (msg of store.messages(); track $index) {
+      <div class="chatbot-message" [class.chatbot-message--user]="msg.role === 'user'" [class.chatbot-message--assistant]="msg.role === 'assistant'">
+        <div class="chatbot-bubble">{{ msg.content }}</div>
+      </div>
+    }
+
+    @if (store.isLoading()) {
+      <div class="chatbot-message chatbot-message--assistant">
+        <div class="chatbot-bubble chatbot-bubble--loading">
+          <p-progressSpinner [style]="{ width: '20px', height: '20px' }" strokeWidth="4" />
+        </div>
+      </div>
+    }
+
+    @if (store.error()) {
+      <div class="chatbot-error">{{ store.error() }}</div>
+    }
+  </div>
+
+  <!-- Input area -->
+  <ng-template pTemplate="footer">
+    <div class="chatbot-input-area">
+      <input
+        pInputText
+        type="text"
+        placeholder="Type a message…"
+        [ngModel]="inputText()"
+        (ngModelChange)="inputText.set($event)"
+        (keydown)="onKeydown($event)"
+        [disabled]="store.isLoading()"
+        class="chatbot-input"
+        autocomplete="off"
+      />
+      <button
+        pButton
+        type="button"
+        icon="pi pi-send"
+        [rounded]="true"
+        [disabled]="!inputText().trim() || store.isLoading()"
+        (click)="send()"
+        aria-label="Send"
+      ></button>
+    </div>
+  </ng-template>
+</p-drawer>

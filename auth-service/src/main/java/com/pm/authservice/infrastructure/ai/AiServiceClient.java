@@ -1,11 +1,11 @@
 package com.pm.authservice.infrastructure.ai;
 
-import com.pm.authservice.infrastructure.web.dto.ChatRequestDTO;
 import com.pm.authservice.infrastructure.web.dto.ChatResponseDTO;
+import com.pm.authservice.infrastructure.web.dto.ChatServiceRequestDTO;
 
 public interface AiServiceClient {
 
-    ChatResponseDTO chat(ChatRequestDTO request);
+    ChatResponseDTO chat(ChatServiceRequestDTO request);
 
     void clearSession(String sessionId);
 

@@ -1,7 +1,7 @@
 package com.pm.authservice.infrastructure.ai;
 
-import com.pm.authservice.infrastructure.web.dto.ChatRequestDTO;
 import com.pm.authservice.infrastructure.web.dto.ChatResponseDTO;
+import com.pm.authservice.infrastructure.web.dto.ChatServiceRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -33,10 +33,10 @@ public class AiServiceClientBean implements AiServiceClient{
     }
 
     @Override
-    public ChatResponseDTO chat(ChatRequestDTO request) {
+    public ChatResponseDTO chat(ChatServiceRequestDTO request) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<ChatRequestDTO> entity = new HttpEntity<>(request, headers);
+        HttpEntity<ChatServiceRequestDTO> entity = new HttpEntity<>(request, headers);
         return restTemplate.postForObject(endpoint() + "/chat", entity, ChatResponseDTO.class);
     }
 

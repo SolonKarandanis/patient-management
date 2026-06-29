@@ -23,7 +23,17 @@ public class ChatService {
     private final LlmPort llmPort;
     private final ChatMemory chatMemory;
 
+    private static final String SYSTEM_PROMPT = """
+            You are a support assistant for the Patient Management System.
+            Help users navigate the application, understand its features, and answer questions about managing patients, \
+            billing, analytics, notifications, and user accounts.
+            Be concise and helpful. If you don't know something, say so — do not invent features.
+            """;
+
     public String chat(String sessionId, String userMessage) {
+        if (!sessionExists(sessionId)) {
+            chatMemory.add(sessionId, List.of(new SystemMessage(SYSTEM_PROMPT)));
+        }
         chatMemory.add(sessionId, List.of(new UserMessage(userMessage)));
 
         List<ChatMessage> history = getHistory(sessionId);

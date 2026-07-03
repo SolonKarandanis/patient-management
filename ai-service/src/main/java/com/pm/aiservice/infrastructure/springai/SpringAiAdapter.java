@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 public class SpringAiAdapter implements LlmPort {
 
     private final ChatClient chatClient;
-    private final ObjectProvider<ToolCallbackProvider> mcpToolsProvider;
+    private final ObjectProvider<ToolCallbackProvider> toolCallbackProviders;
 
     @Autowired
-    public SpringAiAdapter(ChatModel chatModel, ObjectProvider<ToolCallbackProvider> mcpToolsProvider) {
+    public SpringAiAdapter(ChatModel chatModel, ObjectProvider<ToolCallbackProvider> toolCallbackProviders) {
         this.chatClient = ChatClient.builder(chatModel).build();
-        this.mcpToolsProvider = mcpToolsProvider;
+        this.toolCallbackProviders = toolCallbackProviders;
     }
 
     @Override
@@ -36,9 +36,10 @@ public class SpringAiAdapter implements LlmPort {
         ChatClient.ChatClientRequestSpec spec = chatClient.prompt()
                 .messages(toSpringAiMessages(history));
 
-        ToolCallbackProvider mcpTools = mcpToolsProvider.getIfAvailable();
-        if (mcpTools != null) {
-            spec = spec.tools(mcpTools);
+        // Dynamically add all local @Tool beans and all remote MCP connection tools
+        List<ToolCallbackProvider> providers = toolCallbackProviders.orderedStream().toList();
+        for (ToolCallbackProvider provider : providers) {
+            spec = spec.tools(provider);
         }
 
         return spec.call().content();
@@ -49,9 +50,10 @@ public class SpringAiAdapter implements LlmPort {
         ChatClient.ChatClientRequestSpec spec = chatClient.prompt()
                 .messages(toSpringAiMessages(history));
 
-        ToolCallbackProvider mcpTools = mcpToolsProvider.getIfAvailable();
-        if (mcpTools != null) {
-            spec = spec.tools(mcpTools);
+        // Dynamically add all local @Tool beans and all remote MCP connection tools
+        List<ToolCallbackProvider> providers = toolCallbackProviders.orderedStream().toList();
+        for (ToolCallbackProvider provider : providers) {
+            spec = spec.tools(provider);
         }
 
         return spec.stream().content();

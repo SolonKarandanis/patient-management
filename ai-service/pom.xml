@@ -77,6 +77,12 @@
             <artifactId>spring-ai-starter-mcp-client</artifactId>
         </dependency>
 
+        <!-- Spring AI MCP Server Starter -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-mcp-server</artifactId>
+        </dependency>
+
         <!-- Spring AI OpenAI Chat Starter -->
         <dependency>
             <groupId>org.springframework.ai</groupId>

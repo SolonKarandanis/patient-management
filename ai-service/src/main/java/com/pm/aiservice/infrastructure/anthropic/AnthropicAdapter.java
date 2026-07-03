@@ -2,17 +2,23 @@ package com.pm.aiservice.infrastructure.anthropic;
 
 import com.anthropic.client.AnthropicClient;
 import com.anthropic.client.okhttp.AnthropicOkHttpClient;
-import com.anthropic.core.http.StreamResponse;
-import com.anthropic.models.messages.*;
 import com.pm.aiservice.domain.model.ChatMessage;
-import com.pm.aiservice.domain.model.Role;
 import com.pm.aiservice.domain.port.LlmPort;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.ai.anthropic.AnthropicChatModel;
+import org.springframework.ai.anthropic.AnthropicChatOptions;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.messages.AssistantMessage;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.SystemMessage;
+import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
-import reactor.core.scheduler.Schedulers;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,65 +36,57 @@ public class AnthropicAdapter implements LlmPort {
     @Value("${anthropic.max-tokens}")
     private long maxTokens;
 
-    private AnthropicClient client;
+    @Autowired
+    private ObjectProvider<ToolCallbackProvider> mcpToolsProvider;
+
+    private ChatClient chatClient;
 
     @PostConstruct
     void init() {
-        client = AnthropicOkHttpClient.builder().apiKey(apiKey).build();
+        AnthropicClient client = AnthropicOkHttpClient.builder().apiKey(apiKey).build();
+        AnthropicChatModel chatModel = AnthropicChatModel.builder()
+                .anthropicClient(client)
+                .options(AnthropicChatOptions.builder()
+                        .model(model)
+                        .maxTokens((int) maxTokens)
+                        .build())
+                .build();
+        this.chatClient = ChatClient.builder(chatModel).build();
     }
 
     @Override
     public String chat(List<ChatMessage> history) {
-        Message response = client.messages().create(buildParams(history));
-        return response.content().stream()
-                .flatMap(block -> block.text().stream())
-                .map(TextBlock::text)
-                .collect(Collectors.joining());
+        ChatClient.ChatClientRequestSpec spec = chatClient.prompt()
+                .messages(toSpringAiMessages(history));
+
+        ToolCallbackProvider mcpTools = mcpToolsProvider.getIfAvailable();
+        if (mcpTools != null) {
+            spec = spec.tools(mcpTools);
+        }
+
+        return spec.call().content();
     }
 
     @Override
     public Flux<String> streamChat(List<ChatMessage> history) {
-        return Flux.using(
-                () -> client.messages().createStreaming(buildParams(history)),
-                stream -> Flux.fromStream(stream.stream())
-                        .mapNotNull(event -> event.contentBlockDelta()
-                                .map(RawContentBlockDeltaEvent::delta)
-                                .flatMap(RawContentBlockDelta::text)
-                                .map(TextDelta::text)
-                                .filter(t -> !t.isEmpty())
-                                .orElse(null)),
-                StreamResponse::close
-        ).subscribeOn(Schedulers.boundedElastic());
+        ChatClient.ChatClientRequestSpec spec = chatClient.prompt()
+                .messages(toSpringAiMessages(history));
+
+        ToolCallbackProvider mcpTools = mcpToolsProvider.getIfAvailable();
+        if (mcpTools != null) {
+            spec = spec.tools(mcpTools);
+        }
+
+        return spec.stream().content();
     }
 
-    private MessageCreateParams buildParams(List<ChatMessage> history) {
-        List<MessageParam> params = history.stream()
-                .filter(msg -> msg.getRole() != Role.SYSTEM)
-                .map(msg -> MessageParam.builder()
-                        .role(toSdkRole(msg.getRole()))
-                        .content(msg.getContent())
-                        .build())
+    private List<Message> toSpringAiMessages(List<ChatMessage> history) {
+        return history.stream()
+                .map(msg -> switch (msg.getRole()) {
+                    case USER -> new UserMessage(msg.getContent());
+                    case ASSISTANT -> new AssistantMessage(msg.getContent());
+                    case SYSTEM -> new SystemMessage(msg.getContent());
+                })
                 .collect(Collectors.toList());
-
-        MessageCreateParams.Builder builder = MessageCreateParams.builder()
-                .model(model)
-                .maxTokens(maxTokens)
-                .messages(params);
-
-        history.stream()
-                .filter(msg -> msg.getRole() == Role.SYSTEM)
-                .map(ChatMessage::getContent)
-                .findFirst()
-                .ifPresent(builder::system);
-
-        return builder.build();
-    }
-
-    private MessageParam.Role toSdkRole(Role role) {
-        return switch (role) {
-            case USER -> MessageParam.Role.USER;
-            case ASSISTANT -> MessageParam.Role.ASSISTANT;
-            case SYSTEM -> throw new IllegalStateException("SYSTEM messages are filtered before this point");
-        };
     }
 }

@@ -83,6 +83,12 @@
             <artifactId>spring-ai-starter-mcp-server</artifactId>
         </dependency>
 
+        <!-- Spring AI Vector Store Advisor (provides QuestionAnswerAdvisor for RAG) -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-vector-store-advisor</artifactId>
+        </dependency>
+
         <!-- Spring AI OpenAI Chat Starter -->
         <dependency>
             <groupId>org.springframework.ai</groupId>

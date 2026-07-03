@@ -1,21 +1,17 @@
-package com.pm.aiservice.infrastructure.gemini;
+package com.pm.aiservice.infrastructure.springai;
 
-import com.google.genai.Client;
 import com.pm.aiservice.domain.model.ChatMessage;
 import com.pm.aiservice.domain.port.LlmPort;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.google.genai.GoogleGenAiChatModel;
-import org.springframework.ai.google.genai.GoogleGenAiChatOptions;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -23,34 +19,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-@ConditionalOnProperty(name = "ai.provider", havingValue = "gemini")
-public class GeminiAdapter implements LlmPort {
+@Primary
+public class SpringAiAdapter implements LlmPort {
 
-    @Value("${gemini.api-key}")
-    private String apiKey;
-
-    @Value("${gemini.model}")
-    private String model;
-
-    @Value("${gemini.max-tokens}")
-    private int maxTokens;
+    private final ChatClient chatClient;
+    private final ObjectProvider<ToolCallbackProvider> mcpToolsProvider;
 
     @Autowired
-    private ObjectProvider<ToolCallbackProvider> mcpToolsProvider;
-
-    private ChatClient chatClient;
-
-    @PostConstruct
-    void init() {
-        Client client = Client.builder().apiKey(apiKey).build();
-        GoogleGenAiChatModel chatModel = GoogleGenAiChatModel.builder()
-                .genAiClient(client)
-                .options(GoogleGenAiChatOptions.builder()
-                        .model(model)
-                        .maxOutputTokens(maxTokens)
-                        .build())
-                .build();
+    public SpringAiAdapter(ChatModel chatModel, ObjectProvider<ToolCallbackProvider> mcpToolsProvider) {
         this.chatClient = ChatClient.builder(chatModel).build();
+        this.mcpToolsProvider = mcpToolsProvider;
     }
 
     @Override

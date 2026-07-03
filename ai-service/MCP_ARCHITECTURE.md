@@ -1,12 +1,12 @@
 # Model Context Protocol (MCP) & Spring AI Architecture
 
-This document describes the dynamic, composable Model Context Protocol (MCP) client-server architecture implemented inside the `ai-service`.
+This document describes the dynamic, composable Model Context Protocol (MCP) client-server architecture and Aspect-Oriented Advisor pipeline implemented inside the `ai-service`.
 
 ---
 
 ## 1. Architectural Overview
 
-The `ai-service` acts as an **Agentic Broker** utilizing Spring AI 2.0.0. It acts as an **MCP Client** that orchestrates conversations for the frontend support chatbot and dynamically resolves tools from multiple sources (both local and remote over HTTP/SSE).
+The `ai-service` acts as an **Agentic Broker** utilizing Spring AI 2.0.0. It acts as an **MCP Client** that orchestrates conversations for the frontend support chatbot and dynamically resolves tools and cross-cutting features (Memory, RAG, Logging) using pluggable **Advisors**.
 
 ```
  ┌─────────────────┐       POST /chat
@@ -18,14 +18,22 @@ The `ai-service` acts as an **Agentic Broker** utilizing Spring AI 2.0.0. It act
  │   (MCP Client)   │ ◄──────────── │ (Auth & Gateway RT) │
  └────────┬─────────┘               └─────────────────────┘
           │
-          │ [Auto-discovers and bundles all local and remote tools]
+          │ [Delegates raw message + sessionId]
           ▼
  ┌──────────────────┐
- │  SpringAiAdapter │
+ │   ChatService    │ [No custom RAG or Memory boilerplate]
  └────────┬─────────┘
           │
-          ├───► [Local Tool]: AiServiceMcpTools -> Similarity search in pgvector store
+          ▼
+ ┌──────────────────┐
+ │  SpringAiAdapter │ [Maintains Advisor Interceptor Pipeline]
+ └────────┬─────────┘
           │
+          ├──► [Memory Advisor]: MessageChatMemoryAdvisor -> Auto-reads/saves conversation turns to PostgreSQL DB
+          ├──► [RAG Advisor]: QuestionAnswerAdvisor -> Auto similarity-searches pgvector & augments prompts
+          │
+          ▼  [Tool Invocation Spec]
+          ├──► [Local Tool]: AiServiceMcpTools -> Exposes pgvector guides and session transcripts
           └───► [Remote MCP Tool]: patient-service -> Query patient records over SSE
 ```
 
@@ -43,22 +51,42 @@ To prevent lock-in and support multiple LLM vendors, the active `ChatModel` bean
 
 ---
 
-## 3. Composable Tool Integration (`SpringAiAdapter`)
+## 3. Aspect-Oriented Interceptor Pipeline (Spring AI Advisors)
 
-The `SpringAiAdapter` acts as the provider-agnostic engine implementing the `LlmPort` interface. It does not contain any vendor-specific logic; instead, it delegates entirely to Spring AI's model-agnostic `ChatClient`.
+Instead of manually orchestrating conversation history and retrieving document contexts in the service layer, the `SpringAiAdapter` configures a declarative **Advisor Interceptor Pipeline** inside its `ChatClient` builder.
 
 ```java
-// Injecting all ToolCallbackProvider beans dynamically
-private final ChatClient chatClient;
-private final ObjectProvider<ToolCallbackProvider> toolCallbackProviders;
+this.chatClient = ChatClient.builder(chatModel)
+        .defaultSystem(systemPrompt) // Prepends standard clinical system instructions
+        .defaultAdvisors(
+                // 1. Intercepts calls to load/save chat messages from/to PostgreSQL automatically
+                MessageChatMemoryAdvisor.builder(chatMemory).build(),
+                // 2. Intercepts calls to similarity-search pgvector & inject [CONTEXT] dynamically
+                QuestionAnswerAdvisor.builder(vectorStore)
+                        .searchRequest(SearchRequest.builder().topK(3).build())
+                        .build()
+        )
+        .build();
 ```
 
-When a user triggers a chat request, the adapter streams all available `ToolCallbackProvider` beans in the Spring context (both local `@Tool` beans and active remote MCP connection registries) and attaches them to the request spec:
+### Request Execution & Parameter Binding
+When executing a request, the adapter passes the raw user message and binds the dynamic conversational parameters (like `chat_memory_conversation_id`) in a single fluent thread:
 
 ```java
-List<ToolCallbackProvider> providers = toolCallbackProviders.orderedStream().toList();
-for (ToolCallbackProvider provider : providers) {
-    spec = spec.tools(provider); // Attaches all tools to the LLM
+@Override
+public String chat(String sessionId, String userMessage) {
+    ChatClient.ChatClientRequestSpec spec = chatClient.prompt()
+            .user(userMessage)
+            // Binds request thread to the database conversation ID
+            .advisors(advisor -> advisor.param("chat_memory_conversation_id", sessionId));
+
+    // Stream and attach all registered local and remote MCP tools
+    List<ToolCallbackProvider> providers = toolCallbackProviders.orderedStream().toList();
+    for (ToolCallbackProvider provider : providers) {
+        spec = spec.tools(provider);
+    }
+
+    return spec.call().content();
 }
 ```
 
@@ -135,7 +163,7 @@ Below is the required reference configuration to maintain this clean, collision-
 ai.provider=anthropic
 
 # Auto-configuration exclusions (essential to prevent default bean collisions)
-# Handled in AiServiceApplication class:
+# Handled dynamically/statically in AiServiceApplication class:
 # - OllamaChatAutoConfiguration
 # - AnthropicChatAutoConfiguration
 # - OpenAiChatAutoConfiguration

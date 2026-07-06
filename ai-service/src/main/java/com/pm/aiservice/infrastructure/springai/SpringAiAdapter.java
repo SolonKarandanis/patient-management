@@ -26,7 +26,10 @@ public class SpringAiAdapter implements LlmPort {
     private final ObjectProvider<ToolCallbackProvider> toolCallbackProviders;
 
     @Autowired
-    public SpringAiAdapter(ChatModel chatModel, ChatMemory chatMemory, VectorStore vectorStore, ObjectProvider<ToolCallbackProvider> toolCallbackProviders) {
+    public SpringAiAdapter(ChatModel chatModel,
+                           ChatMemory chatMemory,
+                           VectorStore vectorStore,
+                           ObjectProvider<ToolCallbackProvider> toolCallbackProviders) {
         String systemPrompt = """
                 You are a support assistant for the Patient Management System.
                 Help users navigate the application, understand its features, and answer questions about managing patients, \

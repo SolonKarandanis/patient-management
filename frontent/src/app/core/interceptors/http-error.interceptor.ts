@@ -10,6 +10,38 @@ import { ErrorService } from '@core/services/error.service';
 import {HttpUtil} from '@core/services/http-util.service';
 import {catchError, retry, throwError, timer} from 'rxjs';
 
+interface ProblemDetailBody {
+  detail?: string;
+  errors?: Record<string, string>;
+}
+
+/**
+ * Backend error bodies come in two shapes: a legacy JSON array of translated
+ * message strings, or an RFC 7807 ProblemDetail object (`detail`, and for
+ * validation errors a field -> message `errors` map).
+ */
+function extractErrorMessages(error: HttpErrorResponse): string[] {
+  const body: unknown = error.error;
+
+  if (Array.isArray(body)) {
+    return body;
+  }
+
+  if (body && typeof body === 'object') {
+    const problemDetail = body as ProblemDetailBody;
+
+    if (problemDetail.errors) {
+      return Object.values(problemDetail.errors);
+    }
+
+    if (problemDetail.detail) {
+      return [problemDetail.detail];
+    }
+  }
+
+  return [];
+}
+
 export const httpError: HttpInterceptorFn = (
   request: HttpRequest<unknown>,
   next: HttpHandlerFn
@@ -41,11 +73,11 @@ export const httpError: HttpInterceptorFn = (
     }),
     catchError((error: HttpErrorResponse) => {
       const isMessageException: boolean = httpUtil.isHttpErrorMessageException(error);
-      const errorArray: string[] = error.error;
+      const errorMessages: string[] = extractErrorMessages(error);
 
       if (!isMessageException) {
-        if (errorArray && errorArray.length > 0) {
-          errorArray.forEach((errorMessage: string) => {
+        if (errorMessages.length > 0) {
+          errorMessages.forEach((errorMessage: string) => {
             errorService.showErrorMessage(error, errorMessage);
           });
         } else {

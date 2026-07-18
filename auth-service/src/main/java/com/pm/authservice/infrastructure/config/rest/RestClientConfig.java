@@ -12,7 +12,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 
 @Configuration
-public class RestTemplateConfig {
+public class RestClientConfig {
 
     @Bean
     RestClient restClient(HttpComponentsClientHttpRequestFactory clientHttpRequestFactory) {

@@ -1,12 +1,14 @@
 package com.pm.aiservice.config;
 
+import com.pm.aiservice.common.AiConstants;
+import org.springframework.ai.anthropic.AnthropicCacheOptions;
+import org.springframework.ai.anthropic.AnthropicCacheStrategy;
 import org.springframework.ai.anthropic.AnthropicChatModel;
 import org.springframework.ai.anthropic.AnthropicChatOptions;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.google.genai.GoogleGenAiChatModel;
 import org.springframework.ai.google.genai.GoogleGenAiChatOptions;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
@@ -25,10 +27,10 @@ public class ChatModelRegistrar implements ImportBeanDefinitionRegistrar, Enviro
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        String provider = environment.getProperty("ai.provider", "anthropic").toLowerCase();
+        String provider = environment.getProperty("ai.provider", AiConstants.PROVIDER_ANTHROPIC).toLowerCase();
 
         switch (provider) {
-            case "anthropic" -> {
+            case AiConstants.PROVIDER_ANTHROPIC -> {
                 BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(AnthropicChatModel.class, () -> {
                     String apiKey = environment.getProperty("anthropic.api-key");
                     String model = environment.getProperty("anthropic.model", "claude-sonnet-4-6");
@@ -42,12 +44,15 @@ public class ChatModelRegistrar implements ImportBeanDefinitionRegistrar, Enviro
                             .options(AnthropicChatOptions.builder()
                                     .model(model)
                                     .maxTokens((int) maxTokens)
+                                    .cacheOptions(AnthropicCacheOptions.builder()
+                                            .strategy(AnthropicCacheStrategy.SYSTEM_AND_TOOLS)
+                                            .build())
                                     .build())
                             .build();
                 });
                 registry.registerBeanDefinition("chatModel", builder.getBeanDefinition());
             }
-            case "openai" -> {
+            case AiConstants.PROVIDER_OPENAI -> {
                 BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(OpenAiChatModel.class, () -> {
                     String apiKey = environment.getProperty("openai.api-key");
                     String model = environment.getProperty("openai.model", "gpt-4o");
@@ -66,7 +71,7 @@ public class ChatModelRegistrar implements ImportBeanDefinitionRegistrar, Enviro
                 });
                 registry.registerBeanDefinition("chatModel", builder.getBeanDefinition());
             }
-            case "gemini" -> {
+            case AiConstants.PROVIDER_GEMINI -> {
                 BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(GoogleGenAiChatModel.class, () -> {
                     String apiKey = environment.getProperty("gemini.api-key");
                     String model = environment.getProperty("gemini.model", "gemini-2.0-flash");

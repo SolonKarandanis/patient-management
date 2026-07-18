@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {AnalyticsService} from './data/service/analytics.service';
 import {UsersDailySummaryComponent} from '@components/users-daily-summary/users-daily-summary.component';
 import {PatientsDailySummaryComponent} from '@components/patients-daily-summary/patients-daily-summary.component';
@@ -23,17 +23,12 @@ import {PaymentsDailySummaryComponent} from '@components/payments-daily-summary/
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
   private analyticsService = inject(AnalyticsService);
 
+  // AnalyticsStore's resources load as soon as the store is first injected
+  // (i.e. right here), so no explicit trigger call is needed on init.
   public patientsDailySummary = this.analyticsService.patientsDailySummary;
   public userDailySummary = this.analyticsService.userDailySummary;
   public paymentDailySummary = this.analyticsService.paymentDailySummary;
-
-
-  ngOnInit(): void {
-    this.analyticsService.executeGetPatientsDailySummary();
-    this.analyticsService.executeGetUserDailySummary();
-    this.analyticsService.executeGetPaymentDailySummary();
-  }
 }

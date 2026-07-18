@@ -1,25 +1,35 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import {DailyEventCount, DailyPaymentSummary} from '@models/analytics.model';
-import {ApiRepositories} from '@core/repositories/ApiRepositories';
+import { httpResource, HttpResourceRef } from '@angular/common/http';
+import { DailyEventCount, DailyPaymentSummary } from '@models/analytics.model';
+import { ApiRepositories } from '@core/repositories/ApiRepositories';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AnalyticsRepository {
 
-  constructor(private http: HttpClient) { }
-
-  getPatientDailySummary(): Observable<DailyEventCount[]> {
-    return this.http.get<DailyEventCount[]>(`${ApiRepositories.ANALYTICS}/patients/daily-summary`);
+  /**
+   * Each factory must be called exactly once, synchronously, from an
+   * injection context (a store's `withProps` factory) and the returned
+   * `HttpResourceRef` held as a field. Calling it from inside a `withMethods`
+   * handler would create a new, throwaway resource per invocation instead of
+   * a stable, reactively-updating one.
+   */
+  getPatientDailySummaryResource(): HttpResourceRef<DailyEventCount[] | undefined> {
+    return httpResource<DailyEventCount[]>(() => ({
+      url: `${ApiRepositories.ANALYTICS}/patients/daily-summary`,
+    }));
   }
 
-  getUserDailySummary(): Observable<DailyEventCount[]> {
-    return this.http.get<DailyEventCount[]>(`${ApiRepositories.ANALYTICS}/users/daily-summary`);
+  getUserDailySummaryResource(): HttpResourceRef<DailyEventCount[] | undefined> {
+    return httpResource<DailyEventCount[]>(() => ({
+      url: `${ApiRepositories.ANALYTICS}/users/daily-summary`,
+    }));
   }
 
-  getPaymentDailySummary(): Observable<DailyPaymentSummary[]> {
-    return this.http.get<DailyPaymentSummary[]>(`${ApiRepositories.ANALYTICS}/payments/daily-summary`);
+  getPaymentDailySummaryResource(): HttpResourceRef<DailyPaymentSummary[] | undefined> {
+    return httpResource<DailyPaymentSummary[]>(() => ({
+      url: `${ApiRepositories.ANALYTICS}/payments/daily-summary`,
+    }));
   }
 }

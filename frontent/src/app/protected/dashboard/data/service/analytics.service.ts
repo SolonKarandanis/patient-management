@@ -12,15 +12,20 @@ export class AnalyticsService extends GenericService{
   public userDailySummary = this.analyticsStore.userDailySummary;
   public paymentDailySummary = this.analyticsStore.paymentDailySummary;
 
-  public executeGetPatientsDailySummary():void{
-    this.analyticsStore.getPatientDailySummary();
+  /**
+   * The store's resources load eagerly as soon as `AnalyticsStore` is first
+   * injected, so these are only needed for an explicit manual refresh
+   * (e.g. a refresh button), not for the initial load.
+   */
+  public refreshPatientsDailySummary():void{
+    this.analyticsStore.refreshPatientDailySummary();
   }
 
-  public executeGetUserDailySummary():void{
-    this.analyticsStore.getUserDailySummary();
+  public refreshUserDailySummary():void{
+    this.analyticsStore.refreshUserDailySummary();
   }
 
-  public executeGetPaymentDailySummary():void{
-    this.analyticsStore.getPaymentDailySummary();
+  public refreshPaymentDailySummary():void{
+    this.analyticsStore.refreshPaymentDailySummary();
   }
 }

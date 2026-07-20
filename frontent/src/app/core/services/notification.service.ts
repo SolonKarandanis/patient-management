@@ -1,6 +1,5 @@
 import {effect, inject, Injectable} from '@angular/core';
-import {Client, StompSubscription} from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+import type {Client, StompSubscription} from '@stomp/stompjs';
 import {NotificationEvent} from '@models/notification.model';
 import {UtilService} from '@core/services/util.service';
 import {WS_BASE_URL} from '@core/token';
@@ -10,7 +9,7 @@ import {AuthService} from '@core/services/auth.service';
   providedIn: 'root'
 })
 export class NotificationService {
-  private readonly stompClient: Client;
+  private stompClient: Client | undefined;
   private isConnected = false;
   private userSubscription: StompSubscription | undefined;
   private subscriptions: StompSubscription[] = [];
@@ -22,17 +21,11 @@ export class NotificationService {
   private userId = this.authService.loggedUserId;
 
   constructor() {
-    this.stompClient = new Client({
-      webSocketFactory: () => new SockJS(this.baseUrl),
-      reconnectDelay: 5000,
-      heartbeatIncoming: 20000,
-      heartbeatOutgoing: 20000,
-    });
     this.connect();
 
     effect(() => {
       const userId = this.userId();
-      if (this.isConnected) {
+      if (this.isConnected && this.stompClient) {
         if (userId && !this.userSubscription) {
           this.userSubscription = this.stompClient.subscribe(`/topic/notifications/${userId}`, (message: any) => {
             const notification = JSON.parse(message.body) as NotificationEvent;
@@ -46,11 +39,23 @@ export class NotificationService {
     });
   }
 
-  public connect(): void {
-    if (this.isConnected) {
+  public async connect(): Promise<void> {
+    if (this.isConnected || this.stompClient) {
       return;
     }
 
+    // Loaded on demand so the STOMP/SockJS client isn't part of the initial bundle.
+    const [{Client}, {default: SockJS}] = await Promise.all([
+      import('@stomp/stompjs'),
+      import('sockjs-client'),
+    ]);
+
+    this.stompClient = new Client({
+      webSocketFactory: () => new SockJS(this.baseUrl),
+      reconnectDelay: 5000,
+      heartbeatIncoming: 20000,
+      heartbeatOutgoing: 20000,
+    });
     this.stompClient.onConnect = this.onConnect;
     this.stompClient.onStompError = this.onError;
     this.stompClient.activate();
@@ -61,7 +66,7 @@ export class NotificationService {
     this.subscribeToTopics();
     const userId = this.userId();
     if (userId && !this.userSubscription) {
-      this.userSubscription = this.stompClient.subscribe(`/topic/notifications/${userId}`, (message: any) => {
+      this.userSubscription = this.stompClient!.subscribe(`/topic/notifications/${userId}`, (message: any) => {
         const notification = JSON.parse(message.body) as NotificationEvent;
         this.utilService.handleNotification(notification);
       });
@@ -74,14 +79,14 @@ export class NotificationService {
   };
 
   private subscribeToTopics(): void {
-    this.subscriptions.push(this.stompClient.subscribe(`/topic/notifications`, (message: any) => {
+    this.subscriptions.push(this.stompClient!.subscribe(`/topic/notifications`, (message: any) => {
       let notification = JSON.parse(message.body);
       this.utilService.handleNotification(notification as NotificationEvent);
     }));
   }
 
   public disconnect(callback?: () => void): void {
-    if (this.stompClient !== null) {
+    if (this.stompClient) {
       this.subscriptions.forEach(sub => sub.unsubscribe());
       if (this.userSubscription) {
         this.userSubscription.unsubscribe();
@@ -97,6 +102,8 @@ export class NotificationService {
       } else if (callback) {
         callback();
       }
+    } else if (callback) {
+      callback();
     }
     this.isConnected = false;
   }

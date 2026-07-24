@@ -2,6 +2,7 @@ package com.pm.aiservice.infrastructure.springai;
 
 import com.pm.aiservice.domain.port.LlmPort;
 import com.pm.aiservice.infrastructure.springai.advisor.AvailableToolsLoggingAdvisor;
+import com.pm.aiservice.infrastructure.springai.advisor.TokenCounterAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
@@ -49,7 +50,9 @@ public class SpringAiAdapter implements LlmPort {
                                 .searchRequest(SearchRequest.builder().topK(3).build())
                                 .build(),
                         // 3. Logs which tools are visible to the model and which it calls, per LLM call
-                        new AvailableToolsLoggingAdvisor()
+                        new AvailableToolsLoggingAdvisor(),
+                        // 4. Logs per-call and running-total token usage
+                        new TokenCounterAdvisor()
                 )
                 .build();
         this.toolCallbackProviders = toolCallbackProviders;

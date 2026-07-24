@@ -1,6 +1,7 @@
 package com.pm.aiservice.infrastructure.springai;
 
 import com.pm.aiservice.domain.port.LlmPort;
+import com.pm.aiservice.infrastructure.springai.advisor.AvailableToolsLoggingAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
@@ -46,7 +47,9 @@ public class SpringAiAdapter implements LlmPort {
                         // 2. pgvector-backed similarity search RAG using Builder
                         QuestionAnswerAdvisor.builder(vectorStore)
                                 .searchRequest(SearchRequest.builder().topK(3).build())
-                                .build()
+                                .build(),
+                        // 3. Logs which tools are visible to the model and which it calls, per LLM call
+                        new AvailableToolsLoggingAdvisor()
                 )
                 .build();
         this.toolCallbackProviders = toolCallbackProviders;

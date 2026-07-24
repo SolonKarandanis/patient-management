@@ -89,6 +89,12 @@
             <artifactId>spring-ai-vector-store-advisor</artifactId>
         </dependency>
 
+        <!-- Spring AI Tool Search Advisor (progressive tool disclosure for large tool catalogs) -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-tool-search-advisor</artifactId>
+        </dependency>
+
         <!-- Spring AI OpenAI Chat Starter -->
         <dependency>
             <groupId>org.springframework.ai</groupId>

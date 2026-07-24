@@ -5,10 +5,12 @@ import com.pm.aiservice.infrastructure.springai.advisor.AvailableToolsLoggingAdv
 import com.pm.aiservice.infrastructure.springai.advisor.TokenCounterAdvisor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.toolsearch.ToolSearchToolCallingAdvisor;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.ai.tool.toolsearch.ToolIndex;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.ObjectProvider;
@@ -31,6 +33,7 @@ public class SpringAiAdapter implements LlmPort {
     public SpringAiAdapter(ChatModel chatModel,
                            ChatMemory chatMemory,
                            VectorStore vectorStore,
+                           ToolIndex toolIndex,
                            ObjectProvider<ToolCallbackProvider> toolCallbackProviders) {
         String systemPrompt = """
                 You are a support assistant for the Patient Management System.
@@ -49,9 +52,15 @@ public class SpringAiAdapter implements LlmPort {
                         QuestionAnswerAdvisor.builder(vectorStore)
                                 .searchRequest(SearchRequest.builder().topK(3).build())
                                 .build(),
-                        // 3. Logs which tools are visible to the model and which it calls, per LLM call
+                        // 3. Progressive tool disclosure: indexes tools per session and exposes a
+                        // toolSearchTool instead of sending every tool definition on every call.
+                        // Replaces the ChatClient's auto-registered default ToolCallingAdvisor.
+                        ToolSearchToolCallingAdvisor.builder()
+                                .toolIndex(toolIndex)
+                                .build(),
+                        // 4. Logs which tools are visible to the model and which it calls, per LLM call
                         new AvailableToolsLoggingAdvisor(),
-                        // 4. Logs per-call and running-total token usage
+                        // 5. Logs per-call and running-total token usage
                         new TokenCounterAdvisor()
                 )
                 .build();

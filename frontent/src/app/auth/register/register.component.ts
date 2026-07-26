@@ -16,6 +16,7 @@ import {UserRolesEnum} from '@models/constants';
 import {Select} from 'primeng/select';
 import {Field, FieldTree, submit} from '@angular/forms/signals';
 import {CreateUserFormModel} from '../../protected/user/forms';
+import {SelectItem} from 'primeng/api';
 
 @Component({
   selector: 'app-register',
@@ -235,16 +236,10 @@ export class RegisterComponent{
     this.listenToSuccessfullUserRegistration();
   }
 
-  protected vm = computed(()=>{
-    const loading = this.userService.isDetailLoading();
-    const availableRoles = this.commonEntitiesService.rolesAsSelectItems()
-      .filter(r=>r.value!=UserRolesEnum.ROLE_SYSTEM_ADMIN);
-
-    return {
-      loading,
-      availableRoles
-    }
-  });
+  protected vm = computed(()=> buildRegisterViewModel(
+    this.userService.isDetailLoading(),
+    this.commonEntitiesService.rolesAsSelectItems(),
+  ));
 
   protected registerUser():void{
     if (this.form().invalid()) {
@@ -276,4 +271,9 @@ export class RegisterComponent{
     });
   }
 
+}
+
+function buildRegisterViewModel(loading: boolean, allRoles: SelectItem[]) {
+  const availableRoles = allRoles.filter((r) => r.value != UserRolesEnum.ROLE_SYSTEM_ADMIN);
+  return { loading, availableRoles };
 }

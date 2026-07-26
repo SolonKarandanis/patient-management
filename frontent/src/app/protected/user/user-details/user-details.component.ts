@@ -12,8 +12,8 @@ import {UserRolesEnum} from '@models/constants';
 import {UserPasswordChangeFormComponent} from '../user-password-change-form/user-password-change-form.component';
 import {UtilService} from '@core/services/util.service';
 import {SplitButton} from 'primeng/splitbutton';
-import {MenuItem} from 'primeng/api';
-import {UserAccountStatusEnum} from '@models/user.model';
+import {MenuItem, SelectItem} from 'primeng/api';
+import {User, UserAccountStatusEnum} from '@models/user.model';
 import {ConfirmDialog} from 'primeng/confirmdialog';
 import {FieldTree} from '@angular/forms/signals';
 import {ChangePasswordFormModel, UpdateUserFormModel} from '../forms';
@@ -125,24 +125,14 @@ export class UserDetailsComponent  {
     });
   }
 
-  protected vm = computed(()=>{
-    const user = this.userService.user();
-    let availableRoles = this.commonEntitiesService.rolesAsSelectItems();
-
-    const isAdmin =this.authService.hasRole(UserRolesEnum.ROLE_SYSTEM_ADMIN)();
-    if(!isAdmin){
-      availableRoles=availableRoles.filter(r=>r.value!=UserRolesEnum.ROLE_SYSTEM_ADMIN);
-    }
-    const isEditAllowed =  isAdmin || this.authService.isUserMe(user?.publicId)();
-
-    return {
-      user,
-      loading: this.userService.isDetailLoading(),
-      availableRoles,
-      userRoles: this.userService.rolesAsSelectItems(),
-      isEditAllowed,
-    }
-  });
+  protected vm = computed(()=> buildUserDetailsViewModel(
+    this.userService.user(),
+    this.commonEntitiesService.rolesAsSelectItems(),
+    this.userService.rolesAsSelectItems(),
+    this.authService.hasRole(UserRolesEnum.ROLE_SYSTEM_ADMIN)(),
+    this.authService.isUserMe(this.userService.user()?.publicId)(),
+    this.userService.isDetailLoading(),
+  ));
 
   private initChangePasswordForm():void{
     this.changePasswordForm = this.userService.changePasswordForm;
@@ -272,4 +262,17 @@ export class UserDetailsComponent  {
     ];
   }
 
+}
+
+function buildUserDetailsViewModel(
+  user: User | null,
+  allRoles: SelectItem[],
+  userRoles: SelectItem[],
+  isAdmin: boolean,
+  isCurrentUser: boolean,
+  loading: boolean,
+) {
+  const availableRoles = isAdmin ? allRoles : allRoles.filter((r) => r.value != UserRolesEnum.ROLE_SYSTEM_ADMIN);
+  const isEditAllowed = isAdmin || isCurrentUser;
+  return { user, loading, availableRoles, userRoles, isEditAllowed };
 }

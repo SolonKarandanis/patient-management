@@ -23,33 +23,10 @@ export const CommonEntitiesLookupStore = signalStore(
     roles,
     appConfig
   })=>({
-    getRolesAsSelectItems: computed(()=>{
-      const roleArray = roles();
-      if(roleArray && Array.isArray(roleArray) && roleArray.length > 0){
-        return roleArray.map((role: Role) => {
-          return {label: role.nameLabel, value: role.name} as SelectItem;
-        });
-      }
-      return [];
-    }),
-    isManagementOfI18nResourcesEnabled: computed(()=>{
-      const config=appConfig();
-      if(!config){
-        return false;
-      }
-      return config.MANAGE_I18N_RESOURCES_FUNCTIONALITY_ENABLED;
-    }),
-    isWebSocketsEnabled: computed(()=>{
-      const config=appConfig();
-      if(!config){
-        return false;
-      }
-      return config.WEBSOCKETS_ENABLED;
-    }),
-    authMode: computed(()=>{
-      const config = appConfig();
-      return (config?.AUTH_MODE as 'jwt' | 'oauth2') ?? 'jwt';
-    })
+    getRolesAsSelectItems: computed(()=> rolesToSelectItems(roles())),
+    isManagementOfI18nResourcesEnabled: computed(()=> appConfig()?.MANAGE_I18N_RESOURCES_FUNCTIONALITY_ENABLED ?? false),
+    isWebSocketsEnabled: computed(()=> appConfig()?.WEBSOCKETS_ENABLED ?? false),
+    authMode: computed(()=> (appConfig()?.AUTH_MODE as 'jwt' | 'oauth2') ?? 'jwt')
   })),
   withMethods((state)=>{
     return ({
@@ -165,3 +142,10 @@ export const CommonEntitiesLookupStore = signalStore(
     })
   }),
 );
+
+function rolesToSelectItems(roles: Role[] | undefined): SelectItem[] {
+  if (!roles || roles.length === 0) {
+    return [];
+  }
+  return roles.map((role) => ({ label: role.nameLabel, value: role.name }) as SelectItem);
+}

@@ -25,28 +25,10 @@ export const UserDetailStore = signalStore(
       selectedUser
     },
   )=>({
-    getUsername: computed(()=>{
-      return selectedUser()?.username;
-    }),
-    getUserId: computed(()=>{
-      return selectedUser()?.publicId;
-    }),
-    getUser: computed(()=>{
-      return selectedUser();
-    }),
-    getUserRolesAsSelectItems:computed(()=>{
-      const user = selectedUser();
-      if(!user){
-        return [];
-      }
-      const roles = user.roles;
-      if(roles && Array.isArray(roles) && roles.length > 0){
-        return roles.map((role: Role) => {
-          return {label: role.nameLabel, value: role.name} as SelectItem;
-        });
-      }
-      return [];
-    })
+    getUsername: computed(()=> selectedUser()?.username),
+    getUserId: computed(()=> selectedUser()?.publicId),
+    getUser: computed(()=> selectedUser()),
+    getUserRolesAsSelectItems: computed(()=> rolesToSelectItems(selectedUser()?.roles)),
   })),
   withMethods((state)=>({
     setLoadingState(){
@@ -227,3 +209,10 @@ export const UserDetailStore = signalStore(
     })
   })
 );
+
+function rolesToSelectItems(roles: Role[] | undefined): SelectItem[] {
+  if (!roles || roles.length === 0) {
+    return [];
+  }
+  return roles.map((role) => ({ label: role.nameLabel, value: role.name }) as SelectItem);
+}

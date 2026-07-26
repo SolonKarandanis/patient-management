@@ -24,25 +24,8 @@ export const I18nLookupStore = signalStore(
     languages,
     modules
   }) => ({
-    getLanguagesAsSelectItems: computed(()=>{
-      const langs = languages();
-      if(langs && Array.isArray(langs) && langs.length > 0){
-        return langs.map((lang: Language) => {
-          return {label: lang.label, value: lang.id} as SelectItem;
-        });
-      }
-      return [];
-    }),
-    getModulesAsSelectItems: computed(()=>{
-      const mods = modules();
-      if(mods){
-        return Object.entries(mods).map(([key,value]) =>({
-          label:value,
-          value:key
-        }));
-      }
-      return [];
-    })
+    getLanguagesAsSelectItems: computed(()=> languagesToSelectItems(languages())),
+    getModulesAsSelectItems: computed(()=> modulesToSelectItems(modules())),
   })),
   withMethods((state)=>({
     setLoadingState(){
@@ -111,3 +94,17 @@ export const I18nLookupStore = signalStore(
     });
   })
 );
+
+function languagesToSelectItems(languages: Language[] | undefined): SelectItem[] {
+  if (!languages || languages.length === 0) {
+    return [];
+  }
+  return languages.map((lang) => ({ label: lang.label, value: lang.id }) as SelectItem);
+}
+
+function modulesToSelectItems(modules: Record<number, string> | null) {
+  if (!modules) {
+    return [];
+  }
+  return Object.entries(modules).map(([key, value]) => ({ label: value, value: key }));
+}

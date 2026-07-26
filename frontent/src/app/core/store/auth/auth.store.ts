@@ -32,54 +32,18 @@ export const AuthStore = signalStore(
     getUserId: computed(()=> user()?.publicId),
     getUsername: computed(()=>user()?.username),
     getUser: computed(()=> user()),
-    getRoleIds: computed(()=> {
-      const loggedUser = user();
-      if(loggedUser) {
-        return loggedUser.roles.map((role)=> role.id)
-      }
-      return [];
-
-    }),
-    isJwtExpired: computed(()=>{
-      const  date= expires()
-      if(date){
-        const expDate: Date = new Date(Number(date) * 1000);
-        const nowDate: Date = new Date();
-        return expDate < nowDate;
-      }
-      return true;
-    }),
+    getRoleIds: computed(()=> extractRoleIds(user())),
+    isJwtExpired: computed(()=> isTimestampExpired(expires())),
   })),
   withMethods((state)=>{
     const jwtUtil = state.jwtUtil;
     return ({
-      isUserMe: (userId:string| undefined):Signal<boolean>=> computed(()=>{
-        if(!state.isLoggedIn() || !userId){
-          return false;
-        }
-        const loggedInUserId =state.user()!.publicId;
-        return loggedInUserId ===userId;
-      }),
-      hasRole: (role:UserRoles):Signal<boolean>=> computed(()=>{
-        if(!state.isLoggedIn()){
-          return false;
-        }
-        const roles = state.user()!.roles;
-        const found =roles.find((r)=>r.name === role);
-        return !!found;
-      }),
-      hasAnyAuthority: (authorities: string[] | string): Signal<boolean> => computed(() => {
-        if(!state.isLoggedIn()){
-          return false;
-        }
-        if(!Array.isArray(authorities)) {
-          authorities = [authorities];
-        }
-
-        const operations = state.user()!.operations;
-
-        return operations.some((operation:Operation)=> authorities.includes(operation.name));
-      }),
+      isUserMe: (userId:string| undefined):Signal<boolean>=>
+        computed(()=> isCurrentUser(state.isLoggedIn(), state.user(), userId)),
+      hasRole: (role:UserRoles):Signal<boolean>=>
+        computed(()=> userHasRole(state.isLoggedIn(), state.user(), role)),
+      hasAnyAuthority: (authorities: string[] | string): Signal<boolean> =>
+        computed(()=> userHasAnyAuthority(state.isLoggedIn(), state.user(), authorities)),
       setTokenDetails(authToken:string,expires:string){
         jwtUtil.saveToken(authToken);
         jwtUtil.saveTokenExpiration(expires);
@@ -219,3 +183,38 @@ export const AuthStore = signalStore(
     })
   })
 );
+
+function extractRoleIds(user: User | undefined): number[] {
+  return user ? user.roles.map((role) => role.id) : [];
+}
+
+function isTimestampExpired(expiresAtSeconds: string | undefined): boolean {
+  if (!expiresAtSeconds) {
+    return true;
+  }
+  const expiryDate = new Date(Number(expiresAtSeconds) * 1000);
+  return expiryDate < new Date();
+}
+
+function isCurrentUser(isLoggedIn: boolean, currentUser: User | undefined, userId: string | undefined): boolean {
+  if (!isLoggedIn || !userId || !currentUser) {
+    return false;
+  }
+  return currentUser.publicId === userId;
+}
+
+function userHasRole(isLoggedIn: boolean, user: User | undefined, role: UserRoles): boolean {
+  if (!isLoggedIn || !user) {
+    return false;
+  }
+  const found = user.roles.find((r) => r.name === role);
+  return !!found;
+}
+
+function userHasAnyAuthority(isLoggedIn: boolean, user: User | undefined, authorities: string[] | string): boolean {
+  if (!isLoggedIn || !user) {
+    return false;
+  }
+  const authorityList = Array.isArray(authorities) ? authorities : [authorities];
+  return user.operations.some((operation: Operation) => authorityList.includes(operation.name));
+}

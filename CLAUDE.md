@@ -17,7 +17,7 @@ Backend (Java 25, Spring Boot 4.0.x):
 - `integration-tests` — standalone REST-Assured cross-service tests (separate Maven module, Java 21)
 
 Frontend (Angular 21):
-- `frontent/` — **note the misspelling**; this is the actual directory name. Uses NgRx Signals, PrimeNG, TailwindCSS, D3, STOMP-over-SockJS, ngx-permissions, ngx-translate. Cypress for e2e. See `frontent/AGENTS.md` for Angular/TypeScript coding conventions (standalone components, signals, Signal Forms, `inject()`, accessibility requirements) — read it before making frontend changes.
+- `frontent/` — **note the misspelling**; this is the actual directory name. Uses NgRx Signals, PrimeNG, TailwindCSS, D3, STOMP-over-SockJS, ngx-permissions, ngx-translate. Cypress for e2e. See `frontent/AGENTS.md` for Angular/TypeScript coding conventions (standalone components, signals, Signal Forms, `inject()`, accessibility requirements) — read it before making frontend changes. See also `frontent/docs/architecture-boundaries.md` (Sheriff domain boundaries, layering, data-access-service rules) and `frontent/docs/architecture-state-management.md` (Signal Store granularity, store/service/component access rules) — both include hard "ask the user first" gates (shared-code moves, cross-domain API access) that must be respected, not inferred.
 
 Infrastructure & tooling:
 - `infrasturcture/` — **also misspelled**; `docker-compose.yml` for Kafka, Zookeeper, Kafka Connect (Debezium), Elasticsearch, Kibana, ClickHouse, ActiveMQ Artemis, Prometheus, Grafana. Postgres is **not** in compose — services expect Postgres at `192.168.1.6:5432` (see `application.properties`). Keycloak is also **not** in compose — run it separately at `localhost:8090` (realm: `patient-management`, client: `angular-frontend`).

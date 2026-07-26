@@ -137,7 +137,7 @@ export class UserDetailsComponent  {
 
     return {
       user,
-      loading: this.userService.isLoading(),
+      loading: this.userService.isDetailLoading(),
       availableRoles,
       userRoles: this.userService.rolesAsSelectItems(),
       isEditAllowed,

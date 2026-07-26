@@ -3,23 +3,17 @@ import { patchState, signalStore, withMethods, withProps, withState } from '@ngr
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
 import { tapResponse } from '@ngrx/operators';
-import { ChatbotState, initialChatbotState } from './chatbot.state';
+import { ChatbotDetailState, initialChatbotDetailState } from './chatbot-detail.state';
 import { ChatRepository } from '@core/repositories/chat.repository';
 import { ChatMessage } from '@models/chat.model';
 
-export const ChatbotStore = signalStore(
+export const ChatbotDetailStore = signalStore(
   { providedIn: 'root' },
-  withState<ChatbotState>(initialChatbotState),
+  withState<ChatbotDetailState>(initialChatbotDetailState),
   withProps(() => ({
     chatRepo: inject(ChatRepository),
   })),
   withMethods((state) => ({
-    togglePanel() {
-      patchState(state, { isOpen: !state.isOpen() });
-    },
-    closePanel() {
-      patchState(state, { isOpen: false });
-    },
     clearSession() {
       state.chatRepo.clearSession().subscribe();
       patchState(state, { messages: [], error: null });

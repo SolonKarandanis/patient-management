@@ -236,7 +236,7 @@ export class RegisterComponent{
   }
 
   protected vm = computed(()=>{
-    const loading = this.userService.isLoading();
+    const loading = this.userService.isDetailLoading();
     const availableRoles = this.commonEntitiesService.rolesAsSelectItems()
       .filter(r=>r.value!=UserRolesEnum.ROLE_SYSTEM_ADMIN);
 

@@ -1,6 +1,7 @@
 import {inject, Injectable, signal} from '@angular/core';
 import {GenericService} from '@core/services/generic.service';
-import {UserStore} from '../store/user.store';
+import {UserSearchStore} from '../store/user-search.store';
+import {UserDetailStore} from '../store/user-detail.store';
 import {SearchService} from '@core/services/search.service';
 import {TranslateService} from '@ngx-translate/core';
 import {UtilService} from '@core/services/util.service';
@@ -38,21 +39,23 @@ export class UserService extends GenericService{
     this.changePasswordForm = form(this.changePasswordModel, changePasswordFormSchema(this.isChangePasswordFormDisabled));
   }
 
-  private userStore = inject(UserStore);
+  private userSearchStore = inject(UserSearchStore);
+  private userDetailStore = inject(UserDetailStore);
   private searchService = inject(SearchService);
   private translateService = inject(TranslateService);
   private utilService = inject(UtilService);
 
-  public user = this.userStore.selectedUser;
-  public userId = this.userStore.getUserId;
-  public isLoading = this.userStore.loading;
-  public criteriaCollapsed = this.userStore.criteriaCollapsed;
-  public hasSearched = this.userStore.hasSearched;
-  public tableLoading = this.userStore.tableLoading;
-  public searchResults = this.userStore.searchResults;
-  public totalCount = this.userStore.totalCount;
-  public createdUserId = this.userStore.createdUserId;
-  public rolesAsSelectItems = this.userStore.getUserRolesAsSelectItems;
+  public user = this.userDetailStore.selectedUser;
+  public userId = this.userDetailStore.getUserId;
+  public isSearchLoading = this.userSearchStore.loading;
+  public isDetailLoading = this.userDetailStore.loading;
+  public criteriaCollapsed = this.userSearchStore.criteriaCollapsed;
+  public hasSearched = this.userSearchStore.hasSearched;
+  public tableLoading = this.userSearchStore.tableLoading;
+  public searchResults = this.userSearchStore.searchResults;
+  public totalCount = this.userSearchStore.totalCount;
+  public createdUserId = this.userDetailStore.createdUserId;
+  public rolesAsSelectItems = this.userDetailStore.getUserRolesAsSelectItems;
 
   /**
    * Get the details of a specific user
@@ -60,7 +63,7 @@ export class UserService extends GenericService{
    * @returns nothing
    */
   public executeGetUserById(id:string):void{
-    this.userStore.getUserById(id);
+    this.userDetailStore.getUserById(id);
   }
 
   /**
@@ -70,7 +73,7 @@ export class UserService extends GenericService{
    */
   public executeRegisterUser(form: FieldTree<CreateUserFormModel, string | number>):void{
     const request = this.searchService.toCreateUserRequest(form);
-    this.userStore.registerUser(request);
+    this.userDetailStore.registerUser(request);
   }
 
   /**
@@ -82,7 +85,7 @@ export class UserService extends GenericService{
     const id = this.userId();
     if(id){
       const request = this.searchService.toUpdateUserRequest(form);
-      this.userStore.updateUser({id,request});
+      this.userDetailStore.updateUser({id,request});
     }
   }
 
@@ -95,7 +98,7 @@ export class UserService extends GenericService{
     const id = this.userId();
     if(id){
       const request = this.searchService.toChangePasswordRequest(form);
-      this.userStore.changeUserPassword({id,request});
+      this.userDetailStore.changeUserPassword({id,request});
     }
   }
 
@@ -106,7 +109,7 @@ export class UserService extends GenericService{
   public executeDeleteUser():void{
     const id = this.userId();
     if(id){
-      this.userStore.deleteUser(id);
+      this.userDetailStore.deleteUser(id);
     }
   }
 
@@ -117,7 +120,7 @@ export class UserService extends GenericService{
   public executeActivateUser():void{
     const id = this.userId();
     if(id){
-      this.userStore.activateUser(id);
+      this.userDetailStore.activateUser(id);
     }
   }
 
@@ -128,7 +131,7 @@ export class UserService extends GenericService{
   public executeDeactivateUser():void{
     const id = this.userId();
     if(id){
-      this.userStore.deactivateUser(id);
+      this.userDetailStore.deactivateUser(id);
     }
   }
 
@@ -139,7 +142,7 @@ export class UserService extends GenericService{
    */
   public executeSearchUsers(searchForm: FieldTree<UserSearchFormModel, string | number>):void{
     const request = this.searchService.toUserSearchRequest(searchForm);
-    this.userStore.searchUsers(request);
+    this.userSearchStore.searchUsers(request);
   }
 
   /**
@@ -149,7 +152,7 @@ export class UserService extends GenericService{
    */
   public exportUsersToCsv(searchForm: FieldTree<UserSearchFormModel, string | number>):void{
     const request = this.searchService.toUserSearchRequest(searchForm);
-    this.userStore.exportUsersToCsv(request);
+    this.userSearchStore.exportUsersToCsv(request);
   }
 
   /**
@@ -157,7 +160,7 @@ export class UserService extends GenericService{
    * @returns nothing
    */
   public resetSearchResults():void{
-    this.userStore.resetSearchResults();
+    this.userSearchStore.resetSearchResults();
   }
 
   /**
@@ -165,7 +168,7 @@ export class UserService extends GenericService{
    * @returns nothing
    */
   public resetCreatedUserId():void{
-    this.userStore.setCreatedUserId(null);
+    this.userDetailStore.setCreatedUserId(null);
   }
 
   private updateUserModel = signal<UpdateUserFormModel>({

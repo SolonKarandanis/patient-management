@@ -1,47 +1,36 @@
-import {UserStore} from './user.store';
+import {UserDetailStore} from './user-detail.store';
 import {UserRepository} from '../repositories/user.repository';
 import {UtilService} from '@core/services/util.service';
-import {HttpUtil} from '@core/services/http-util.service';
-import {SearchResult} from '@models/search.model';
 import {TestBed} from '@angular/core/testing';
 import {
   mockChangePasswordRequest,
   mockCreateUserRequest,
   mockUpdateUserRequest,
   mockUser,
-  mockUserSearchRequest
 } from '@testing/mockData';
 import {of} from 'rxjs';
 import {TranslateFakeLoader, TranslateLoader, TranslateModule} from '@ngx-translate/core';
 
-type UserStore = InstanceType<typeof UserStore>;
+type UserDetailStore = InstanceType<typeof UserDetailStore>;
 
 
-describe('UserStore', () =>{
-  let store: UserStore;
+describe('UserDetailStore', () =>{
+  let store: UserDetailStore;
   let userRepoSpy: jasmine.SpyObj<UserRepository>;
   let utilServiceSpy: jasmine.SpyObj<UtilService>;
-  let httpUtilSpy: jasmine.SpyObj<HttpUtil>;
-  let searchResult: SearchResult<any>;
 
   beforeEach(()=>{
     userRepoSpy = jasmine.createSpyObj('UserRepository',[
-      'searchUsers',
       'getUserById',
       'registerUser',
       'updateUser',
       'deleteUser',
       'activateUser',
       'deactivateUser',
-      'exportUsersToCsv',
       'changeUserPassword'
     ]);
     utilServiceSpy = jasmine.createSpyObj('UtilService',[
       'showMessage',
-    ]);
-
-    httpUtilSpy = jasmine.createSpyObj('HttpUtil',[
-      'getFileNameForContentDisposition',
     ]);
 
     TestBed.configureTestingModule({
@@ -59,42 +48,14 @@ describe('UserStore', () =>{
           provide: UtilService,
           useValue: utilServiceSpy,
         },
-        {
-          provide: HttpUtil,
-          useValue: httpUtilSpy,
-        },
       ]
     });
 
-    store = TestBed.inject(UserStore);
-
-    searchResult = {
-      countRows: 1,
-      list: [],
-    };
+    store = TestBed.inject(UserDetailStore);
   });
 
   it('should be created', () => {
     expect(store).toBeTruthy();
-  });
-
-  it('should search users ', () =>{
-    searchResult.list = [mockUser];
-    userRepoSpy.searchUsers.and.returnValue(of(searchResult));
-
-    store.searchUsers(mockUserSearchRequest);
-
-    expect(userRepoSpy.searchUsers).toHaveBeenCalledWith(mockUserSearchRequest);
-    expect(userRepoSpy.searchUsers).toHaveBeenCalledTimes(1);
-  });
-
-  it('should export users to csv ', () =>{
-    userRepoSpy.exportUsersToCsv.and.returnValue(of());
-
-    store.exportUsersToCsv(mockUserSearchRequest);
-
-    expect(userRepoSpy.exportUsersToCsv).toHaveBeenCalledWith(mockUserSearchRequest);
-    expect(userRepoSpy.exportUsersToCsv).toHaveBeenCalledTimes(1);
   });
 
   it('should get user by id ', () =>{
@@ -184,23 +145,11 @@ describe('UserStore', () =>{
     expect(store.getUsername()).toBe(mockUser.username);
   });
 
-  it('should set search results ', () =>{
-    searchResult.list = [mockUser];
-    store.setSearchResults(searchResult.list,searchResult.countRows);
-
-    expect(store.searchResults()).toBe(searchResult.list);
-    expect(store.totalCount()).toBe(searchResult.countRows);
-    expect(store.errorMessage()).toBe(null);
-    expect(store.showError()).toBe(false);
-    expect(store.loading()).toBe(false);
-  });
-
   it('should set selected user ', () =>{
     store.setSelectedUser(mockUser);
 
     expect(store.selectedUser()).toBe(mockUser);
-    expect(store.errorMessage()).toBe(null);
-    expect(store.showError()).toBe(false);
+    expect(store.error()).toBe(null);
     expect(store.loading()).toBe(false);
   });
 
@@ -208,8 +157,7 @@ describe('UserStore', () =>{
     store.setCreatedUserId(mockUser.publicId);
 
     expect(store.createdUserId()).toBe(mockUser.publicId);
-    expect(store.errorMessage()).toBe(null);
-    expect(store.showError()).toBe(false);
+    expect(store.error()).toBe(null);
     expect(store.loading()).toBe(false);
   });
 });

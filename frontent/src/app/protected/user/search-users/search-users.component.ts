@@ -183,7 +183,7 @@ export class SearchUsersComponent implements OnInit {
   protected totalCount = this.userService.totalCount;
   protected criteriaCollapsed = this.userService.criteriaCollapsed;
   protected tableLoading = this.userService.tableLoading;
-  protected loading = this.userService.isLoading;
+  protected loading = this.userService.isSearchLoading;
   protected hasSearched = this.userService.hasSearched;
 
   protected userStatuses: SelectItem[] = [];

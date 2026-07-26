@@ -208,7 +208,7 @@ export class I18nManagementComponent {
   protected totalCount = this.i18nResourceService.totalCount;
   protected criteriaCollapsed = this.i18nResourceService.criteriaCollapsed;
   protected tableLoading = this.i18nResourceService.tableLoading;
-  protected loading = this.i18nResourceService.isLoading;
+  protected loading = this.i18nResourceService.isSearchLoading;
   protected hasSearched = this.i18nResourceService.hasSearched;
   protected languages = this.i18nResourceService.languagesAsSelectItems;
   protected modules = this.i18nResourceService.modulesAsSelectItems;

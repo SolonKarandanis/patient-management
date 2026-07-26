@@ -12,7 +12,7 @@ import { DrawerModule } from 'primeng/drawer';
 import { InputTextModule } from 'primeng/inputtext';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { ChatbotStore } from '@core/store/chatbot/chatbot.store';
+import { ChatbotService } from '@core/services/chatbot.service';
 
 @Component({
   selector: 'app-chatbot',
@@ -31,7 +31,7 @@ import { ChatbotStore } from '@core/store/chatbot/chatbot.store';
 export class ChatbotComponent implements AfterViewChecked {
   @ViewChild('messageContainer') private messageContainer!: ElementRef<HTMLDivElement>;
 
-  protected readonly store = inject(ChatbotStore);
+  protected readonly chatbotService = inject(ChatbotService);
   protected inputText = signal('');
 
   ngAfterViewChecked(): void {
@@ -39,17 +39,17 @@ export class ChatbotComponent implements AfterViewChecked {
   }
 
   openPanel(): void {
-    this.store.togglePanel();
-    if (this.store.messages().length === 0) {
-      this.store.loadHistory(undefined);
+    this.chatbotService.togglePanel();
+    if (this.chatbotService.messages().length === 0) {
+      this.chatbotService.loadHistory();
     }
   }
 
   send(): void {
     const text = this.inputText().trim();
-    if (!text || this.store.isLoading()) return;
+    if (!text || this.chatbotService.isLoading()) return;
     this.inputText.set('');
-    this.store.sendMessage(text);
+    this.chatbotService.sendMessage(text);
   }
 
   onKeydown(event: KeyboardEvent): void {

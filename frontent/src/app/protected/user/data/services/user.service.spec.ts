@@ -1,4 +1,5 @@
-import {UserStore} from '../store/user.store';
+import {UserSearchStore} from '../store/user-search.store';
+import {UserDetailStore} from '../store/user-detail.store';
 import {UserService} from './user.service';
 import {SearchService} from '@core/services/search.service';
 import {TranslateService} from '@ngx-translate/core';
@@ -17,30 +18,42 @@ import {signal} from '@angular/core';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SearchTableColumn} from '@models/search.model';
 
-type UserStore = InstanceType<typeof UserStore>;
+type UserSearchStore = InstanceType<typeof UserSearchStore>;
+type UserDetailStore = InstanceType<typeof UserDetailStore>;
 
 describe('UserService', () =>{
   let service: UserService;
-  let userStoreSpy: jasmine.SpyObj<UserStore>;
+  let userSearchStoreSpy: jasmine.SpyObj<UserSearchStore>;
+  let userDetailStoreSpy: jasmine.SpyObj<UserDetailStore>;
   let searchServiceSpy: jasmine.SpyObj<SearchService>;
   let translateSpy: jasmine.SpyObj<TranslateService>;
   let utilServiceSpy: jasmine.SpyObj<UtilService>;
 
   beforeEach(() => {
-    userStoreSpy = jasmine.createSpyObj('UserStore',[
+    userSearchStoreSpy = jasmine.createSpyObj('UserSearchStore',[
+      'searchUsers',
+      'exportUsersToCsv',
+      'resetSearchResults',
+      'loading',
+      'searchResults',
+      'totalCount',
+      'criteriaCollapsed',
+      'hasSearched',
+      'tableLoading',
+    ]);
+
+    userDetailStoreSpy = jasmine.createSpyObj('UserDetailStore',[
       'getUserById',
       'registerUser',
       'updateUser',
       'deleteUser',
       'activateUser',
       'deactivateUser',
-      'searchUsers',
       'changeUserPassword',
       'getUser',
       'getUserId',
+      'getUserRolesAsSelectItems',
       'loading',
-      'searchResults',
-      'totalCount',
       'createdUserId',
       'setCreatedUserId'
     ]);
@@ -62,8 +75,12 @@ describe('UserService', () =>{
     TestBed.configureTestingModule({
       providers:[
         {
-          provide: UserStore,
-          useValue: userStoreSpy,
+          provide: UserSearchStore,
+          useValue: userSearchStoreSpy,
+        },
+        {
+          provide: UserDetailStore,
+          useValue: userDetailStoreSpy,
         },
         {
           provide: SearchService,
@@ -90,8 +107,8 @@ describe('UserService', () =>{
     const userId: string = '1';
     service.executeGetUserById(userId);
 
-    expect(userStoreSpy.getUserById).toHaveBeenCalledWith(userId);
-    expect(userStoreSpy.getUserById).toHaveBeenCalledTimes(1);
+    expect(userDetailStoreSpy.getUserById).toHaveBeenCalledWith(userId);
+    expect(userDetailStoreSpy.getUserById).toHaveBeenCalledTimes(1);
   });
 
   it('should execute register user ', () =>{
@@ -101,8 +118,8 @@ describe('UserService', () =>{
 
     expect(searchServiceSpy.toCreateUserRequest).toHaveBeenCalledWith(mockCreateUserForm);
     expect(searchServiceSpy.toCreateUserRequest).toHaveBeenCalledTimes(1);
-    expect(userStoreSpy.registerUser).toHaveBeenCalledWith(mockCreateUserRequest);
-    expect(userStoreSpy.registerUser).toHaveBeenCalledTimes(1);
+    expect(userDetailStoreSpy.registerUser).toHaveBeenCalledWith(mockCreateUserRequest);
+    expect(userDetailStoreSpy.registerUser).toHaveBeenCalledTimes(1);
   });
 
   it('should execute update user ', () =>{
@@ -114,8 +131,8 @@ describe('UserService', () =>{
 
     expect(searchServiceSpy.toUpdateUserRequest).toHaveBeenCalledWith(mockUpdateUserForm);
     expect(searchServiceSpy.toUpdateUserRequest).toHaveBeenCalledTimes(1);
-    expect(userStoreSpy.updateUser).toHaveBeenCalledWith({id:userId,request:mockUpdateUserRequest});
-    expect(userStoreSpy.updateUser).toHaveBeenCalledTimes(1);
+    expect(userDetailStoreSpy.updateUser).toHaveBeenCalledWith({id:userId,request:mockUpdateUserRequest});
+    expect(userDetailStoreSpy.updateUser).toHaveBeenCalledTimes(1);
   });
 
   it('should change user password', () => {
@@ -127,8 +144,8 @@ describe('UserService', () =>{
 
     expect(searchServiceSpy.toChangePasswordRequest).toHaveBeenCalledWith(mockChangePasswordForm);
     expect(searchServiceSpy.toChangePasswordRequest).toHaveBeenCalledTimes(1);
-    expect(userStoreSpy.changeUserPassword).toHaveBeenCalledWith({id:userId,request:mockChangePasswordRequest});
-    expect(userStoreSpy.changeUserPassword).toHaveBeenCalledTimes(1);
+    expect(userDetailStoreSpy.changeUserPassword).toHaveBeenCalledWith({id:userId,request:mockChangePasswordRequest});
+    expect(userDetailStoreSpy.changeUserPassword).toHaveBeenCalledTimes(1);
   });
 
   it('should execute delete user ', () =>{
@@ -137,8 +154,8 @@ describe('UserService', () =>{
 
     service.executeDeleteUser();
 
-    expect(userStoreSpy.deleteUser).toHaveBeenCalledWith(userId);
-    expect(userStoreSpy.deleteUser).toHaveBeenCalledTimes(1);
+    expect(userDetailStoreSpy.deleteUser).toHaveBeenCalledWith(userId);
+    expect(userDetailStoreSpy.deleteUser).toHaveBeenCalledTimes(1);
   });
 
   it('should execute activate user ', () =>{
@@ -147,8 +164,8 @@ describe('UserService', () =>{
 
     service.executeActivateUser();
 
-    expect(userStoreSpy.activateUser).toHaveBeenCalledWith(userId);
-    expect(userStoreSpy.activateUser).toHaveBeenCalledTimes(1);
+    expect(userDetailStoreSpy.activateUser).toHaveBeenCalledWith(userId);
+    expect(userDetailStoreSpy.activateUser).toHaveBeenCalledTimes(1);
   });
 
   it('should execute deactivate user ', () =>{
@@ -157,8 +174,8 @@ describe('UserService', () =>{
 
     service.executeDeactivateUser();
 
-    expect(userStoreSpy.deactivateUser).toHaveBeenCalledWith(userId);
-    expect(userStoreSpy.deactivateUser).toHaveBeenCalledTimes(1);
+    expect(userDetailStoreSpy.deactivateUser).toHaveBeenCalledWith(userId);
+    expect(userDetailStoreSpy.deactivateUser).toHaveBeenCalledTimes(1);
   });
 
   it('should execute search users ', () =>{
@@ -168,15 +185,15 @@ describe('UserService', () =>{
 
     expect(searchServiceSpy.toUserSearchRequest).toHaveBeenCalledWith(mockSearchUserForm);
     expect(searchServiceSpy.toUserSearchRequest).toHaveBeenCalledTimes(1);
-    expect(userStoreSpy.searchUsers).toHaveBeenCalledWith(mockUserSearchRequest);
-    expect(userStoreSpy.searchUsers).toHaveBeenCalledTimes(1);
+    expect(userSearchStoreSpy.searchUsers).toHaveBeenCalledWith(mockUserSearchRequest);
+    expect(userSearchStoreSpy.searchUsers).toHaveBeenCalledTimes(1);
   });
 
   it('should reset created user id ', () =>{
     service.resetCreatedUserId();
 
-    expect(userStoreSpy.setCreatedUserId).toHaveBeenCalledWith(null);
-    expect(userStoreSpy.setCreatedUserId).toHaveBeenCalledTimes(1);
+    expect(userDetailStoreSpy.setCreatedUserId).toHaveBeenCalledWith(null);
+    expect(userDetailStoreSpy.setCreatedUserId).toHaveBeenCalledTimes(1);
   });
 
     it('should initialize a search users form', () => {
@@ -201,48 +218,6 @@ describe('UserService', () =>{
       expect(formValues.first).toEqual(0);
       expect(form().valid).toBeTrue();
     });
-
-  it('should initialize an update users form', () => {
-    service.user = signal(mockUser);
-    const form = service.initUpdateUserForm();
-    const formValues = form.value;
-
-    expect(form).toBeTruthy();
-    expect(formValues).toBeTruthy();
-
-    expect(formValues.email).toBeDefined();
-    expect(formValues.email).toBeNull();
-
-    expect(formValues.username).toBeDefined();
-    expect(formValues.username).toBeNull();
-
-    expect(formValues.firstName).toBeDefined();
-    expect(formValues.firstName).toBeNull();
-
-    expect(formValues.lastName).toBeDefined();
-    expect(formValues.lastName).toBeNull();
-
-    expect(formValues.role).toBeDefined();
-    expect(formValues.role).toEqual(RolesConstants.ROLE_NO_ROLE);
-
-    expect(form.valid).toBeTrue();
-  });
-
-  it('should initialize a change password form', () => {
-    const form = service.initChangePasswordForm();
-    const formValues = form.value;
-
-    expect(form).toBeTruthy();
-    expect(formValues).toBeTruthy();
-
-    expect(formValues.password).toBeDefined();
-    expect(formValues.password).toBeNull();
-
-    expect(formValues.confirmPassword).toBeDefined();
-    expect(formValues.confirmPassword).toBeNull();
-
-    expect(form.valid).toBeFalse();
-  });
 
   it('should get Users Search Table Columns', () =>{
     const translationPrefix: string = 'USER.SEARCH-USERS.RESULTS-TABLE.COLS';

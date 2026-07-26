@@ -1,29 +1,29 @@
 import {inject, Injectable} from '@angular/core';
 import {GenericService} from '@core/services/generic.service';
-import {CommonEntitiesStore} from '@core/store/common-entities/common-entities.store';
+import {CommonEntitiesLookupStore} from '@core/store/common-entities/common-entities-lookup.store';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CommonEntitiesService extends GenericService{
-  private commonEntitiesStore = inject(CommonEntitiesStore);
+  private commonEntitiesLookupStore = inject(CommonEntitiesLookupStore);
 
-  public roles = this.commonEntitiesStore.roles;
-  public rolesAsSelectItems = this.commonEntitiesStore.getRolesAsSelectItems;
-  public isManagementOfI18nResourcesEnabled = this.commonEntitiesStore.isManagementOfI18nResourcesEnabled;
-  public isWebSocketsEnabled = this.commonEntitiesStore.isWebSocketsEnabled;
-  public authMode = this.commonEntitiesStore.authMode;
+  public roles = this.commonEntitiesLookupStore.roles;
+  public rolesAsSelectItems = this.commonEntitiesLookupStore.getRolesAsSelectItems;
+  public isManagementOfI18nResourcesEnabled = this.commonEntitiesLookupStore.isManagementOfI18nResourcesEnabled;
+  public isWebSocketsEnabled = this.commonEntitiesLookupStore.isWebSocketsEnabled;
+  public authMode = this.commonEntitiesLookupStore.authMode;
 
   /**
    * Initialize All Common Entities
    * @returns nothing
    */
   public initializeCommonEntities():void{
-    this.commonEntitiesStore.initializeCommonEntities();
+    this.commonEntitiesLookupStore.initializeCommonEntities();
   }
 
   public initializePublicApplicationConfig():void{
-    this.commonEntitiesStore.initializePublicApplicationConfig();
+    this.commonEntitiesLookupStore.initializePublicApplicationConfig();
   }
 
   getBigDecimalScale(): string {

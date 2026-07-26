@@ -14,6 +14,10 @@
   3. **A piece of UI state.**
   4. **Lookup data** (e.g., dropdown values). Bundle these in one store per feature
      named `<Feature>LookupStore`.
+  5. **Read-only aggregate/dashboard state** — derived, non-paginated reporting data
+     with no single edited entity and no dropdown/lookup semantics (e.g. `AnalyticsStore`).
+     Named `<Feature>Store` — no further suffix, since it's neither a paginated list nor
+     a lookup value set.
 
 - Naming MUST make the responsibility explicit (examples use arbitrary entities from
   arbitrary domains; the rule applies to every entity in every domain):
@@ -32,11 +36,27 @@
 
 - Never perform data access directly within a store; delegate it to a data access service instead.
 
+### Exception: core cross-cutting infrastructure stores
+
+- App-wide, singleton infrastructure state that isn't a domain feature at all — e.g.
+  `AuthStore` (the current session) — is exempt from the granularity categories and
+  naming rules above, the same way files inside an `ai` layer are exempt from the
+  smart/dumb access rules below.
+- This exemption is about what the state *is*, not where the file lives: living under
+  `core/store/` is not by itself a qualifying signal. `ChatbotUiStore`/`ChatbotDetailStore`
+  also live under `core/store/` (chat has no `protected/<domain>/` folder of its own) but
+  still follow the normal UI-state/Detail categories above — they're a feature, just one
+  without a dedicated domain folder. The exemption applies only when the state has no
+  natural entity or feature boundary at all — `AuthStore` is the only current example.
+- This exemption is narrow. It is not a way to avoid splitting a store that is actually a
+  domain feature in disguise.
+
 ### Self-check before adding state to a store
 
 - Does the store already hold list state AND a selected/edited record? → split it.
-- Does the store name end in `SearchStore`, `DetailStore` or `LookupStore`? If none of
-  these, justify why.
+- Does the store name end in `SearchStore`, `DetailStore`, `LookupStore`, or — for the
+  read-only aggregate case — plain `<Feature>Store`? If none of these, and it isn't a
+  core infrastructure store per the exception above, justify why.
 - Could a list view and an edit view import this store independently? They should
   import _different_ stores.
 
@@ -58,11 +78,33 @@
 
 ## Structure of Stores
 
-- Use the following features from the NgRx Toolkit:
-  - `withResource`
-  - `withMutations` (if needed)
-  - `withDevtools`
-- Follow `UserStore` as the reference implementation.
+- Give every store's state its own `<name>.state.ts` file exporting the state type and an
+  `initial<Name>State` constant; import both into the store. Omit this file entirely for a
+  store that holds no state of its own beyond call state (e.g. a store whose only job is a
+  single write operation, such as `I18nResourceDetailStore`).
+- Compose stores from these building blocks, in this order:
+  1. `withState<...>(initial...)` — the store's own state (skip if none, see above).
+  2. `withCallState()` — shared feature (`core/store/features/call-state.feature.ts`)
+     adding `loading`, `loaded`, `error`, `status` computed signals. Use on every store that
+     talks to a data access service.
+  3. `withSearchState()` — shared feature (`core/store/features/search-state.feature.ts`)
+     adding `criteriaCollapsed`, `hasSearched`, `tableLoading`. Search/list stores only.
+  4. `withProps(() => ({ ... }))` — inject the repository/data access service and any other
+     services (`UtilService`, `TranslateService`, etc.) the store's methods need.
+  5. `withComputed(...)` (optional) — derived signals over the store's own state.
+  6. `withMethods((state) => ({ ... }))` — synchronous `patchState` setters (e.g.
+     `setLoadingState`, `setSelectedUser`).
+  7. A second `withMethods((state) => { const { repo, ... } = state; return ({ ... }) })` —
+     the async operations, each an `rxMethod` that calls the repository and handles the
+     result with `tapResponse({ next, error })`, delegating to the setters from block 6.
+- Follow `UserSearchStore` / `UserDetailStore` (`protected/user/data/store/`) as the
+  reference implementation for a Search/Detail pair, and `I18nLookupStore`
+  (`protected/i18n/data/store/`) for a Lookup store.
+- Exception: a store that only wraps read-only, non-paginated server data (e.g.
+  `AnalyticsStore`) may use Angular's native `httpResource()` — exposed by the data access
+  service and held via `withProps` — instead of `rxMethod`/`tapResponse`, computing
+  `loading`/`error` from the resource's own signals. Skip `withCallState()` in that case; it
+  would be redundant.
 
 ## Smart and Dumb Components and Stores
 

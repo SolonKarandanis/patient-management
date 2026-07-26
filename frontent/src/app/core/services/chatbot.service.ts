@@ -12,7 +12,7 @@ export class ChatbotService {
 
   public isOpen = this.chatbotUiStore.isOpen;
   public messages = this.chatbotDetailStore.messages;
-  public isLoading = this.chatbotDetailStore.isLoading;
+  public isLoading = this.chatbotDetailStore.loading;
   public error = this.chatbotDetailStore.error;
 
   public togglePanel(): void {

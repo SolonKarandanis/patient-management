@@ -1,7 +1,7 @@
 import {patchState, signalStore, withComputed, withMethods, withProps, withState} from '@ngrx/signals';
 import {setError, setLoaded, setLoading, withCallState} from '@core/store/features/call-state.feature';
 import {computed, inject} from '@angular/core';
-import {CommonEntitiesState, initialCommonEntitiesState} from '@core/store/common-entities/common-entities.state';
+import {CommonEntitiesLookupState, initialCommonEntitiesLookupState} from '@core/store/common-entities/common-entities-lookup.state';
 import {CommonEntitiesRepository} from '@core/repositories/common-entities.repository';
 import {Role} from '@models/user.model';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
@@ -11,9 +11,9 @@ import {SelectItem} from 'primeng/api';
 import {UiService} from '@core/services/ui.service';
 import {ApplicationConfig} from '@models/application-config.model';
 
-export const CommonEntitiesStore = signalStore(
+export const CommonEntitiesLookupStore = signalStore(
   { providedIn: 'root' },
-  withState<CommonEntitiesState>(initialCommonEntitiesState),
+  withState<CommonEntitiesLookupState>(initialCommonEntitiesLookupState),
   withCallState(),
   withProps(()=>({
     commonEntitiesRepo:inject(CommonEntitiesRepository),

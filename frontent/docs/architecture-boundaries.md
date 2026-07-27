@@ -7,7 +7,7 @@ developers are required to adhere to these rules whenever they modify applicatio
 
 ## Reference Implementations
 
-- Model new features after `FlightSearch` and `FlightEdit` in terms of structure and style.
+- Model new features after `SearchUsersComponent` and `UserDetailsComponent` in terms of structure and style.
 
 ## Domain Boundaries
 

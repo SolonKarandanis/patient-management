@@ -1,4 +1,4 @@
-import {computed, Resource} from '@angular/core';
+import {computed, Resource, ResourceStatus} from '@angular/core';
 import {CallStateSignals} from './call-state.feature';
 
 /**
@@ -11,21 +11,23 @@ export function resourceCallState(resource: Resource<unknown>): CallStateSignals
     loading: computed(() => resource.isLoading()),
     loaded: computed(() => resource.status() === 'resolved' || resource.status() === 'local'),
     error: computed(() => resource.error()?.message ?? null),
-    status: computed(() => {
-      switch (resource.status()) {
-        case 'error':
-          return 'error';
-        case 'loading':
-        case 'reloading':
-          return 'loading';
-        case 'resolved':
-        case 'local':
-          return 'loaded';
-        default:
-          return 'pending';
-      }
-    }),
+    status: computed(() => deriveResourceStatus(resource.status())),
   };
+}
+
+function deriveResourceStatus(status: ResourceStatus): 'pending' | 'loading' | 'loaded' | 'error' {
+  switch (status) {
+    case 'error':
+      return 'error';
+    case 'loading':
+    case 'reloading':
+      return 'loading';
+    case 'resolved':
+    case 'local':
+      return 'loaded';
+    default:
+      return 'pending';
+  }
 }
 
 /**

@@ -8,7 +8,7 @@ import { HttpParams } from '@angular/common/http';
 @Injectable({
   providedIn: 'root',
 })
-export class TranslationController extends BaseRepository{
+export class TranslationRepository extends BaseRepository{
   getTranslations(languageIsoCode: string): Observable<any> {
     let params: HttpParams = new HttpParams();
     params = params.append('languageIsoCode', languageIsoCode);

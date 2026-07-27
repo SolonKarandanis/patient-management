@@ -29,16 +29,7 @@ export class FormErrorComponent {
   validationErrors = input<ValidationErrors| null| undefined>();
   validationErrorsTranslationPrefix = input<string|undefined>(undefined);
 
-  errorKeys = computed(() => {
-    const errors = this.validationErrors();
-    if (Array.isArray(errors)) {
-      return errors.map(errObj => errObj.kind).filter(Boolean);
-    }
-    if (errors && typeof errors === 'object') {
-      return Object.keys(errors).filter(key => !key.startsWith('__'));
-    }
-    return [];
-  });
+  errorKeys = computed(() => extractErrorKeys(this.validationErrors()));
 
   getValidationErrorsObject(): ValidationErrors | null {
     const errors = this.validationErrors();
@@ -50,4 +41,14 @@ export class FormErrorComponent {
     return errors ?? null;
   }
 
+}
+
+function extractErrorKeys(errors: ValidationErrors | null | undefined): string[] {
+  if (Array.isArray(errors)) {
+    return errors.map(errObj => errObj.kind).filter(Boolean);
+  }
+  if (errors && typeof errors === 'object') {
+    return Object.keys(errors).filter(key => !key.startsWith('__'));
+  }
+  return [];
 }

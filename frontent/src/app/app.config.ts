@@ -23,7 +23,7 @@ import {BaseUrlInterceptor} from '@core/interceptors/base-url.interceptor';
 import {LanguageInterceptor} from '@core/interceptors/language.interceptor';
 import {httpError} from '@core/interceptors/http-error.interceptor';
 import {authExpired} from '@core/interceptors/auth-expired.interceptor';
-import { TranslationController } from '@core/repositories/translation.controller';
+import { TranslationRepository } from '@core/repositories/translation.repository';
 import { CustomTranslateLoader } from '@core/helpers/translation.loader';
 import { NgxPermissionsModule } from "ngx-permissions";
 import {provideSignalFormsConfig} from '@angular/forms/signals';
@@ -31,8 +31,8 @@ import { NG_STATUS_CLASSES } from '@angular/forms/signals/compat';
 import { PreventDefaultEventPlugin } from '@core/events/prevent-default-events';
 import { EVENT_MANAGER_PLUGINS } from '@angular/platform-browser';
 
-export function createCustomTranslateLoader(translationController: TranslationController): CustomTranslateLoader {
-  return new CustomTranslateLoader(translationController);
+export function createCustomTranslateLoader(translationRepository: TranslationRepository): CustomTranslateLoader {
+  return new CustomTranslateLoader(translationRepository);
 }
 
 
@@ -41,7 +41,7 @@ export const provideTranslation = () => ({
   loader: {
     provide: TranslateLoader,
     useFactory: createCustomTranslateLoader,
-    deps: [TranslationController],
+    deps: [TranslationRepository],
   },
 });
 

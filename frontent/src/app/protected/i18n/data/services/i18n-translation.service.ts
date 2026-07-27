@@ -2,7 +2,7 @@ import {inject, Injectable, signal} from '@angular/core';
 import {I18nLookupStore} from '../store/i18n-lookup.store';
 import {I18nResourceSearchStore} from '../store/i18n-resource-search.store';
 import {I18nResourceDetailStore} from '../store/i18n-resource-detail.store';
-import {SearchService} from '@core/services/search.service';
+import {I18nSearchMapperService} from './i18n-search-mapper.service';
 import {I18nResource, UpdateI18nResource} from '@models/i18n-resource.model';
 import { I18nResourceSearchFormModel} from '../../forms';
 import {GenericService} from '@core/services/generic.service';
@@ -19,7 +19,7 @@ export class I18nTranslationService extends GenericService{
   private i18nLookupStore = inject(I18nLookupStore);
   private i18nResourceSearchStore = inject(I18nResourceSearchStore);
   private i18nResourceDetailStore = inject(I18nResourceDetailStore);
-  private searchService = inject(SearchService);
+  private i18nSearchMapperService = inject(I18nSearchMapperService);
 
   public languagesAsSelectItems = this.i18nLookupStore.getLanguagesAsSelectItems;
   public modulesAsSelectItems = this.i18nLookupStore.getModulesAsSelectItems;
@@ -32,7 +32,7 @@ export class I18nTranslationService extends GenericService{
   public tableLoading = this.i18nResourceSearchStore.tableLoading;
 
   public executeSearchResources(searchForm: FieldTree<I18nResourceSearchFormModel, string | number>):void{
-    const request = this.searchService.toI18nResourceSearchRequest(searchForm);
+    const request = this.i18nSearchMapperService.toI18nResourceSearchRequest(searchForm);
     this.i18nResourceSearchStore.searchResources(request);
   }
 

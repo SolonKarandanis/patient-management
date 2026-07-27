@@ -1,26 +1,19 @@
 import {Injectable} from '@angular/core';
-import {GenericService} from './generic.service';
 import {ChangePasswordRequest, CreateUserRequest, UpdateUserRequest} from '@models/user.model';
 import {
   ChangePasswordFormModel,
   CreateUserFormModel,
   UpdateUserFormModel,
   UserSearchFormModel
-} from '../../protected/user/forms';
-import {I18nResourceSearchRequest, UserSearchRequest} from '@models/search.model';
-import { I18nResourceSearchFormModel} from '../../protected/i18n/forms';
+} from '../..';
+import {UserSearchRequest} from '@models/search.model';
 import {FieldTree} from '@angular/forms/signals';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SearchService extends GenericService{
+export class UserSearchMapperService {
 
-  /**
-   * Convert from FormGroup<UpdateUserForm> to UpdateUserRequest
-   * @param  form form of type UpdateUserForm
-   * @returns A UpdateUserRequest
-   */
   public toUpdateUserRequest(form: FieldTree<UpdateUserFormModel, string | number>):UpdateUserRequest{
     return {
       email: form.email().value(),
@@ -31,11 +24,6 @@ export class SearchService extends GenericService{
     };
   }
 
-  /**
-   * Convert from FormGroup<ChangePasswordForm> to ChangePasswordRequest
-   * @param  form form of type ChangePasswordForm
-   * @returns A ChangePasswordRequest
-   */
   public toChangePasswordRequest(form:FieldTree<ChangePasswordFormModel, string | number>):ChangePasswordRequest{
     return {
       password:form.password().value(),
@@ -43,11 +31,6 @@ export class SearchService extends GenericService{
     };
   }
 
-  /**
-   * Convert from FormGroup<UserSearchForm> to UserSearchRequest
-   * @param  form form of type UserSearchForm
-   * @returns A UserSearchRequest
-   */
   public toUserSearchRequest(form: FieldTree<UserSearchFormModel, string | number>):UserSearchRequest{
     return {
       searchMethod: form.searchMethod().value(),
@@ -65,11 +48,6 @@ export class SearchService extends GenericService{
     };
   }
 
-  /**
-   * Convert from FieldTree<CreateUserFormModel, string | number>
-   * @param  form form of type UserSearchForm
-   * @returns A CreateUserRequest
-   */
   public toCreateUserRequest(form: FieldTree<CreateUserFormModel, string | number>):CreateUserRequest{
     return {
       email: form.email().value(),
@@ -80,21 +58,5 @@ export class SearchService extends GenericService{
       role: form.role().value()!,
       username: form.username().value()
     };
-  }
-
-  public toI18nResourceSearchRequest(form:  FieldTree<I18nResourceSearchFormModel, string | number>):I18nResourceSearchRequest{
-    const {language,term, module, rows, first, sortField, sortOrder} = form;
-    return {
-      searchMethod: form.searchMethod().value(),
-      languageId:language().value()!,
-      term:term().value(),
-      moduleId:module().value()!,
-      paging: {
-        limit: rows().value(),
-        page: first().value(),
-        sortField: sortField().value(),
-        sortDirection:sortOrder().value(),
-      }
-    }
   }
 }

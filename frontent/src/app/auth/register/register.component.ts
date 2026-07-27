@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, computed, effect, inject,} from '@an
 import {SignUpWithComponent} from '../../components/sign-up-with/sign-up-with.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {ReactiveFormsModule} from '@angular/forms';
-import {UserService} from '../../protected/user/data/services/user.service';
+import {UserService, CreateUserFormModel} from '../../protected/user';
 import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {InputText} from 'primeng/inputtext';
@@ -15,7 +15,6 @@ import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {UserRolesEnum} from '@models/constants';
 import {Select} from 'primeng/select';
 import {Field, FieldTree, submit} from '@angular/forms/signals';
-import {CreateUserFormModel} from '../../protected/user/forms';
 import {SelectItem} from 'primeng/api';
 
 @Component({

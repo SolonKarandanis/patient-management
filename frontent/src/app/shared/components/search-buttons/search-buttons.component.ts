@@ -6,7 +6,6 @@ import {ButtonDirective} from 'primeng/button';
 import {Ripple} from 'primeng/ripple';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {MessageService} from 'primeng/api';
-import {SearchService} from '@core/services/search.service';
 import {Tooltip} from 'primeng/tooltip';
 import {FloatLabel} from 'primeng/floatlabel';
 import {InputText} from 'primeng/inputtext';
@@ -103,7 +102,6 @@ import {FieldTree} from '@angular/forms/signals';
 export class SearchButtonsComponent<T> {
 
   private authService= inject(AuthService);
-  private searchService= inject(SearchService);
   private messageService= inject(MessageService);
   private translate= inject(TranslateService);
 

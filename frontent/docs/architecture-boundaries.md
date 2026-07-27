@@ -21,10 +21,6 @@ developers are required to adhere to these rules whenever they modify applicatio
   only selected details. See `sheriff.config.api.ts` for an illustrative configuration.
   Consult the user before choosing this approach.
 
-## Layering
-
-- Apply _relaxed_ layering.
-- Permit only the following import direction: `feature → ui → data → util`.
 
 ## Changing the Sheriff Configuration
 

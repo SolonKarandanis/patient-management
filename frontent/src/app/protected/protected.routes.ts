@@ -22,7 +22,7 @@ export const protectedRoutes: Routes =[
       {
         path: 'users',
         loadChildren: () =>
-          import('./user/user.module').then((m)=>m.UserModule),
+          import('./user').then((m)=>m.UserModule),
       },
       {
         path: 'i18n-resource',

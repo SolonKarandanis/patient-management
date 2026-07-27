@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, computed, effect, inject} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {UserService} from '../data/services/user.service';
+import {UserService} from '../data';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
 import {UserDetailsFormComponent} from '../user-details-form/user-details-form.component';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';

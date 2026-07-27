@@ -2,7 +2,7 @@ import {inject, Injectable, signal} from '@angular/core';
 import {GenericService} from '@core/services/generic.service';
 import {UserSearchStore} from '../store/user-search.store';
 import {UserDetailStore} from '../store/user-detail.store';
-import {SearchService} from '@core/services/search.service';
+import {UserSearchMapperService} from './user-search-mapper.service';
 import {TranslateService} from '@ngx-translate/core';
 import {UtilService} from '@core/services/util.service';
 import {
@@ -13,7 +13,7 @@ import {
   UpdateUserFormModel,
   updateUserFormSchema,
   UserSearchFormModel
-} from '../../forms';
+} from '../..';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SearchTableColumn} from '@models/search.model';
 import {UserAccountStatusEnum} from '@models/user.model';
@@ -41,7 +41,7 @@ export class UserService extends GenericService{
 
   private userSearchStore = inject(UserSearchStore);
   private userDetailStore = inject(UserDetailStore);
-  private searchService = inject(SearchService);
+  private userSearchMapperService = inject(UserSearchMapperService);
   private translateService = inject(TranslateService);
   private utilService = inject(UtilService);
 
@@ -72,7 +72,7 @@ export class UserService extends GenericService{
    * @returns nothing
    */
   public executeRegisterUser(form: FieldTree<CreateUserFormModel, string | number>):void{
-    const request = this.searchService.toCreateUserRequest(form);
+    const request = this.userSearchMapperService.toCreateUserRequest(form);
     this.userDetailStore.registerUser(request);
   }
 
@@ -84,7 +84,7 @@ export class UserService extends GenericService{
   public executeUpdateUser(form: FieldTree<UpdateUserFormModel, string | number>):void{
     const id = this.userId();
     if(id){
-      const request = this.searchService.toUpdateUserRequest(form);
+      const request = this.userSearchMapperService.toUpdateUserRequest(form);
       this.userDetailStore.updateUser({id,request});
     }
   }
@@ -97,7 +97,7 @@ export class UserService extends GenericService{
   public executeChangeUserPassword(form: FieldTree<ChangePasswordFormModel, string | number>):void{
     const id = this.userId();
     if(id){
-      const request = this.searchService.toChangePasswordRequest(form);
+      const request = this.userSearchMapperService.toChangePasswordRequest(form);
       this.userDetailStore.changeUserPassword({id,request});
     }
   }
@@ -141,7 +141,7 @@ export class UserService extends GenericService{
    * @returns nothing
    */
   public executeSearchUsers(searchForm: FieldTree<UserSearchFormModel, string | number>):void{
-    const request = this.searchService.toUserSearchRequest(searchForm);
+    const request = this.userSearchMapperService.toUserSearchRequest(searchForm);
     this.userSearchStore.searchUsers(request);
   }
 
@@ -151,7 +151,7 @@ export class UserService extends GenericService{
    * @returns nothing
    */
   public exportUsersToCsv(searchForm: FieldTree<UserSearchFormModel, string | number>):void{
-    const request = this.searchService.toUserSearchRequest(searchForm);
+    const request = this.userSearchMapperService.toUserSearchRequest(searchForm);
     this.userSearchStore.exportUsersToCsv(request);
   }
 

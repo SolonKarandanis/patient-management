@@ -16,7 +16,7 @@ import {
   UserSearchRequest
 } from '@models/search.model';
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
-import {UserService} from '../data/services/user.service';
+import {UserService} from '../data';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {FieldsetModule} from 'primeng/fieldset';
 import {ResultsTableComponent} from '@components/results-table/results-table.component';

@@ -1,7 +1,7 @@
 import {UserSearchStore} from '../store/user-search.store';
 import {UserDetailStore} from '../store/user-detail.store';
 import {UserService} from './user.service';
-import {SearchService} from '@core/services/search.service';
+import {UserSearchMapperService} from './user-search-mapper.service';
 import {TranslateService} from '@ngx-translate/core';
 import {UtilService} from '@core/services/util.service';
 import {TestBed} from '@angular/core/testing';
@@ -25,7 +25,7 @@ describe('UserService', () =>{
   let service: UserService;
   let userSearchStoreSpy: jasmine.SpyObj<UserSearchStore>;
   let userDetailStoreSpy: jasmine.SpyObj<UserDetailStore>;
-  let searchServiceSpy: jasmine.SpyObj<SearchService>;
+  let searchServiceSpy: jasmine.SpyObj<UserSearchMapperService>;
   let translateSpy: jasmine.SpyObj<TranslateService>;
   let utilServiceSpy: jasmine.SpyObj<UtilService>;
 
@@ -58,7 +58,7 @@ describe('UserService', () =>{
       'setCreatedUserId'
     ]);
 
-    searchServiceSpy= jasmine.createSpyObj('SearchService',[
+    searchServiceSpy= jasmine.createSpyObj('UserSearchMapperService',[
       'toUpdateUserRequest',
       'toUserSearchRequest',
       'toCreateUserRequest',
@@ -83,7 +83,7 @@ describe('UserService', () =>{
           useValue: userDetailStoreSpy,
         },
         {
-          provide: SearchService,
+          provide: UserSearchMapperService,
           useValue: searchServiceSpy,
         },
         {

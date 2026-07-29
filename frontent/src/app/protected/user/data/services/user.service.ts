@@ -16,10 +16,11 @@ import {
 } from '../..';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SearchTableColumn} from '@models/search.model';
-import {UserAccountStatusEnum} from '@models/user.model';
+import {User, UserAccountStatusEnum} from '@models/user.model';
 import {SelectItem} from 'primeng/api';
 import {FieldTree, form} from '@angular/forms/signals';
 import {SearchTypes, SearchTypesEnum} from '@models/constants';
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -58,12 +59,12 @@ export class UserService extends GenericService{
   public rolesAsSelectItems = this.userDetailStore.getUserRolesAsSelectItems;
 
   /**
-   * Get the details of a specific user
+   * Load the details of a specific user
    * @param id the id of the user
-   * @returns nothing
+   * @returns an Observable emitting the loaded user
    */
-  public executeGetUserById(id:string):void{
-    this.userDetailStore.getUserById(id);
+  public loadUserById$(id:string): Observable<User> {
+    return this.userDetailStore.loadUserById(id);
   }
 
   /**

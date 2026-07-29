@@ -58,14 +58,17 @@ describe('UserDetailStore', () =>{
     expect(store).toBeTruthy();
   });
 
-  it('should get user by id ', () =>{
+  it('should load user by id ', (done) =>{
     const userId: string = '1';
     userRepoSpy.getUserById.and.returnValue(of(mockUser));
 
-    store.getUserById(userId);
-
-    expect(userRepoSpy.getUserById).toHaveBeenCalledWith(userId);
-    expect(userRepoSpy.getUserById).toHaveBeenCalledTimes(1);
+    store.loadUserById(userId).subscribe((result) => {
+      expect(result).toBe(mockUser);
+      expect(userRepoSpy.getUserById).toHaveBeenCalledWith(userId);
+      expect(userRepoSpy.getUserById).toHaveBeenCalledTimes(1);
+      expect(store.selectedUser()).toBe(mockUser);
+      done();
+    });
   });
 
   it('should register user ', () =>{

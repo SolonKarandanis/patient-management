@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { provideOAuthClient } from 'angular-oauth2-oidc';
 import { appInitializer } from '@core/initializers/app-initializer';
-import { provideRouter } from '@angular/router';
+import {provideRouter, withComponentInputBinding} from '@angular/router';
 import { providePrimeNG } from 'primeng/config';
 import {ConfirmationService, MessageService} from 'primeng/api';
 import Aura from '@primeng/themes/aura';
@@ -54,7 +54,7 @@ export const appConfig: ApplicationConfig = {
     provideSignalFormsConfig({
       classes:NG_STATUS_CLASSES
     }),
-    provideRouter(routes),
+    provideRouter(routes,withComponentInputBinding()),
     providePrimeNG({
       theme: {
         preset: Aura

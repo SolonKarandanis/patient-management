@@ -17,6 +17,7 @@ import {
 import {signal} from '@angular/core';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SearchTableColumn} from '@models/search.model';
+import {of} from 'rxjs';
 
 type UserSearchStore = InstanceType<typeof UserSearchStore>;
 type UserDetailStore = InstanceType<typeof UserDetailStore>;
@@ -43,7 +44,7 @@ describe('UserService', () =>{
     ]);
 
     userDetailStoreSpy = jasmine.createSpyObj('UserDetailStore',[
-      'getUserById',
+      'loadUserById',
       'registerUser',
       'updateUser',
       'deleteUser',
@@ -103,12 +104,16 @@ describe('UserService', () =>{
     expect(service).toBeTruthy();
   });
 
-  it('should execute get user by Id', () =>{
+  it('should load user by Id', (done) =>{
     const userId: string = '1';
-    service.executeGetUserById(userId);
+    userDetailStoreSpy.loadUserById.and.returnValue(of(mockUser));
 
-    expect(userDetailStoreSpy.getUserById).toHaveBeenCalledWith(userId);
-    expect(userDetailStoreSpy.getUserById).toHaveBeenCalledTimes(1);
+    service.loadUserById$(userId).subscribe((result) => {
+      expect(result).toBe(mockUser);
+      expect(userDetailStoreSpy.loadUserById).toHaveBeenCalledWith(userId);
+      expect(userDetailStoreSpy.loadUserById).toHaveBeenCalledTimes(1);
+      done();
+    });
   });
 
   it('should execute register user ', () =>{

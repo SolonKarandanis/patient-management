@@ -6,7 +6,6 @@ import {RequiredFieldsLabelComponent} from '@components/required-fields-label/re
 import {UserDetailsFormComponent} from '../user-details-form/user-details-form.component';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
-import {injectParams} from '@shared/utils/injectParams';
 import {AuthService} from '@core/services/auth.service';
 import {UserRolesEnum} from '@models/constants';
 import {UserPasswordChangeFormComponent} from '../user-password-change-form/user-password-change-form.component';
@@ -103,8 +102,6 @@ export class UserDetailsComponent  {
 
   constructor() {
     this.form = this.userService.userUpdateForm;
-    const userId = injectParams('id')();
-    this.userService.executeGetUserById(userId as string);
 
     effect(() => {
       const user = this.userService.user();

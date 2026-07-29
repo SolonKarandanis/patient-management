@@ -6,7 +6,7 @@ import {UtilService} from '@core/services/util.service';
 import {ChangePasswordRequest, CreateUserRequest, Role, UpdateUserRequest, User} from '@models/user.model';
 import {setError, setLoaded, setLoading, withCallState} from '@core/store/features/call-state.feature';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
-import {pipe, switchMap, tap} from 'rxjs';
+import {Observable, pipe, switchMap, tap} from 'rxjs';
 import {tapResponse} from '@ngrx/operators';
 import {TranslateService} from '@ngx-translate/core';
 import {SelectItem} from 'primeng/api';
@@ -54,26 +54,20 @@ export const UserDetailStore = signalStore(
   withMethods((state)=>{
     const {userRepo,utilService, translate} = state;
     return ({
-      getUserById: rxMethod<string>(
-        pipe(
-          tap(() => {
-            state.setLoadingState();
-          }),
-          switchMap((id)=>
-            userRepo.getUserById(id).pipe(
-              tapResponse({
-                next:(result)=>{
-                  state.setSelectedUser(result);
-                  state.setLoadedState();
-                },
-                error: (error:string) =>{
-                  state.setErrorState(error);
-                }
-              })
-            )
-          )
-        )
-      ),
+      loadUserById(id: string): Observable<User> {
+        state.setLoadingState();
+        return userRepo.getUserById(id).pipe(
+          tap({
+            next: (result) => {
+              state.setSelectedUser(result);
+              state.setLoadedState();
+            },
+            error: (error: string) => {
+              state.setErrorState(error);
+            }
+          })
+        );
+      },
       registerUser: rxMethod<CreateUserRequest>(
         pipe(
           tap(() => {

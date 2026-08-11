@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 import {NgClass} from '@angular/common';
-import {MenuItem} from 'primeng/api';
 import {TranslatePipe} from '@ngx-translate/core';
+import {NgIcon, provideIcons} from '@ng-icons/core';
+import {lucideMenu, lucideMonitor, lucideX} from '@ng-icons/lucide';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,7 +12,9 @@ import {TranslatePipe} from '@ngx-translate/core';
     NgClass,
     RouterLinkActive,
     TranslatePipe,
+    NgIcon,
   ],
+  providers: [provideIcons({lucideMenu, lucideMonitor, lucideX})],
   template: `
     <nav class="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row
         md:flex-nowrap md:overflow-hidden shadow-xl bg-white flex flex-wrap items-center justify-between relative md:w-64 z-10 py-4 px-6">
@@ -22,7 +25,7 @@ import {TranslatePipe} from '@ngx-translate/core';
             rounded border border-solid border-transparent"
           type="button"
           (click)="toggleCollapseShow('bg-white m-2 py-3 px-6')">
-          <i class="pi pi-bars"></i>
+          <ng-icon name="lucideMenu" />
         </button>
         <!-- Brand -->
         <a [routerLink]="['/']"
@@ -31,9 +34,6 @@ import {TranslatePipe} from '@ngx-translate/core';
           <span class="hidden sm:block"> Notus Angular </span>
         </a>
         <ul class="md:hidden items-center flex flex-wrap list-none">
-          <li class="inline-block relative">
-<!--            <p-splitbutton icon="pi pi-bell" [model]="menuItems" />-->
-          </li>
           <li class="inline-block relative">
 <!--            <app-user-dropdown class="block"></app-user-dropdown>-->
           </li>
@@ -59,7 +59,7 @@ import {TranslatePipe} from '@ngx-translate/core';
                   class="cursor-pointer text-black opacity-50 md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border
                   border-solid border-transparent"
                   (click)="toggleCollapseShow('hidden')">
-                  <i class="pi pi-times"></i>
+                  <ng-icon name="lucideX" />
                 </button>
               </div>
             </div>
@@ -86,9 +86,9 @@ import {TranslatePipe} from '@ngx-translate/core';
                 routerLinkActive
                 #adminDashboard="routerLinkActive"
                 [ngClass]="adminDashboard.isActive ? 'text-red-600 hover:text-red-700' : 'text-blueGray-700 hover:text-blueGray-500'">
-                <i class="pi pi-desktop mr-2 text-sm"
+                <ng-icon name="lucideMonitor" class="mr-2 text-sm"
                   [ngClass]="adminDashboard.isActive ? 'opacity-75' : 'text-blueGray-300'">
-                </i>
+                </ng-icon>
                 {{ 'SIDE.MENU.ADMINISTRATION.dashboard' | translate }}
               </a>
             </li>
@@ -98,9 +98,9 @@ import {TranslatePipe} from '@ngx-translate/core';
                  routerLinkActive
                  #userRoute="routerLinkActive"
                  [ngClass]="userRoute.isActive ? 'text-red-600 hover:text-red-700' : 'text-blueGray-700 hover:text-blueGray-500'">
-                <i class="pi pi-desktop mr-2 text-sm"
+                <ng-icon name="lucideMonitor" class="mr-2 text-sm"
                    [ngClass]="userRoute.isActive ? 'opacity-75' : 'text-blueGray-300'">
-                </i>
+                </ng-icon>
                 {{ 'SIDE.MENU.ADMINISTRATION.users' | translate }}
               </a>
             </li>
@@ -110,9 +110,9 @@ import {TranslatePipe} from '@ngx-translate/core';
                  routerLinkActive
                  #resourceRoute="routerLinkActive"
                  [ngClass]="resourceRoute.isActive ? 'text-red-600 hover:text-red-700' : 'text-blueGray-700 hover:text-blueGray-500'">
-                <i class="pi pi-desktop mr-2 text-sm"
+                <ng-icon name="lucideMonitor" class="mr-2 text-sm"
                    [ngClass]="resourceRoute.isActive ? 'opacity-75' : 'text-blueGray-300'">
-                </i>
+                </ng-icon>
                 {{ 'SIDE.MENU.ADMINISTRATION.i18n-management' | translate }}
               </a>
             </li>
@@ -126,37 +126,6 @@ import {TranslatePipe} from '@ngx-translate/core';
 })
 export class SidebarComponent {
   collapseShow = "hidden";
-
-  menuItems!:MenuItem[];
-
-  constructor() {
-    this.menuItems=[
-      {
-        label: 'Update',
-        icon: 'pi pi-refresh',
-        // command: () => {
-        //   this.messageService.add({ severity: 'success', summary: 'Updated', detail: 'Data Updated', life: 3000 });
-        // },
-      },
-      {
-        label: 'Delete',
-        icon: 'pi pi-times',
-        // command: () => {
-        //   this.messageService.add({ severity: 'warn', summary: 'Delete', detail: 'Data Deleted', life: 3000 });
-        // },
-      },
-      {
-        separator: true,
-      },
-      {
-        label: 'Quit',
-        icon: 'pi pi-power-off',
-        // command: () => {
-        //   window.open('https://angular.io/', '_blank');
-        // },
-      },
-    ];
-  }
 
   protected toggleCollapseShow(classes:string):void {
     this.collapseShow = classes;

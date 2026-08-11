@@ -2,42 +2,45 @@ import {ChangeDetectionStrategy, Component, inject, input, output, signal, Templ
 import {AuthService} from '@core/services/auth.service';
 import {SavedSearch, SearchType} from '@models/search.model';
 import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {ButtonDirective} from 'primeng/button';
-import {Ripple} from 'primeng/ripple';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {MessageService} from 'primeng/api';
-import {Tooltip} from 'primeng/tooltip';
-import {FloatLabel} from 'primeng/floatlabel';
-import {InputText} from 'primeng/inputtext';
+import {ToastService} from '@core/services/toast.service';
 import {NgTemplateOutlet} from '@angular/common';
 import {FieldTree} from '@angular/forms/signals';
+import {HlmButtonImports} from '@components/ui/button';
+import {HlmTooltipImports} from '@components/ui/tooltip';
+import {HlmInputImports} from '@components/ui/input';
+import {HlmSpinnerImports} from '@components/ui/spinner';
+import {NgIcon, provideIcons} from '@ng-icons/core';
+import {lucideRefreshCw, lucideSave, lucideSearch} from '@ng-icons/lucide';
 
 @Component({
   selector: 'app-search-buttons',
   imports: [
-    ButtonDirective,
-    Ripple,
     TranslatePipe,
-    Tooltip,
-    FloatLabel,
-    InputText,
     ReactiveFormsModule,
     FormsModule,
-    NgTemplateOutlet
+    NgTemplateOutlet,
+    HlmButtonImports,
+    HlmTooltipImports,
+    HlmInputImports,
+    HlmSpinnerImports,
+    NgIcon,
   ],
+  providers: [provideIcons({lucideSearch, lucideSave, lucideRefreshCw})],
   template: `
     <div class="grid sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-10 xl:grid-cols-12 gap-4">
       <div class="sm:col-span-1 md:col-span-1 lg:col-span-2">
         <button
             class="w-full"
-            pButton
-            pRipple
+            hlmBtn
             type="button"
-            severity="info"
             (click)="handleSearchClick($event)"
-            [disabled]="isDisabled() || isLoading()"
-            [loading]="isLoading()"
-            icon="pi pi-search">
+            [disabled]="isDisabled() || isLoading()">
+          @if (isLoading()) {
+            <hlm-spinner class="mr-2" />
+          } @else {
+            <ng-icon name="lucideSearch" />
+          }
           {{'GLOBAL.BUTTONS.search' | translate}}
         </button>
       </div>
@@ -45,34 +48,37 @@ import {FieldTree} from '@angular/forms/signals';
         @if (enableSaveSearch()){
           <div class="grid sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-12 gap-4">
             <div class="col-span-2 sm:col-span-1 md:col-span-2 lg:col-span-2 xl:col-span-4">
-              <span class="w-full"
-                    pTooltip="{{'SAVED-SEARCHES.LABELS.enter-title-first' | translate}}"
-                    [tooltipDisabled]="!!saveSearchTitle()">
+              <span
+                class="w-full"
+                [hlmTooltip]="'SAVED-SEARCHES.LABELS.enter-title-first' | translate"
+                [tooltipDisabled]="!!saveSearchTitle()">
                 <button
                   class="w-full"
-                  pButton
-                  pRipple
+                  hlmBtn
+                  variant="secondary"
                   type="button"
-                  severity="success"
                   [disabled]="!saveSearchTitle() || saveSearchLoading()"
-                  [loading]="saveSearchLoading()"
-                  icon="pi pi-save"
                   (click)="handleSaveSearchClick()">
+                  @if (saveSearchLoading()) {
+                    <hlm-spinner class="mr-2" />
+                  } @else {
+                    <ng-icon name="lucideSave" />
+                  }
                   {{'GLOBAL.BUTTONS.save-search' | translate}}
                 </button>
               </span>
             </div>
             <div class="col-span-3 sm:col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-5">
-              <p-float-label variant="on" class="w-full mb-3">
-                <input
-                  id="saveSearchTitle"
-                  pInputText
-                  type="text"
-                  class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                  [(ngModel)]="saveSearchTitle"
-                  autocomplete="saved-searches"/>
-                <label for="saveSearchTitle">{{ 'SAVED-SEARCHES.LABELS.with-title' | translate }}:</label>
-              </p-float-label>
+              <label for="saveSearchTitle" class="block uppercase text-blueGray-600 text-xs font-bold mb-2">
+                {{ 'SAVED-SEARCHES.LABELS.with-title' | translate }}:
+              </label>
+              <input
+                id="saveSearchTitle"
+                hlmInput
+                type="text"
+                class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                [(ngModel)]="saveSearchTitle"
+                autocomplete="saved-searches"/>
             </div>
           </div>
         }
@@ -80,14 +86,16 @@ import {FieldTree} from '@angular/forms/signals';
       <div class="sm:col-span-1 md:col-span-1 lg:col-span-2">
         <button
           class="w-full"
-          pButton
-          pRipple
+          hlmBtn
+          variant="destructive"
           type="button"
-          severity="danger"
           [disabled]="saveSearchLoading()"
-          [loading]="saveSearchLoading()"
-          icon="pi pi-refresh"
           (click)="handleResetClick($event)">
+            @if (saveSearchLoading()) {
+              <hlm-spinner class="mr-2" />
+            } @else {
+              <ng-icon name="lucideRefreshCw" />
+            }
             <ng-container *ngTemplateOutlet="resetBtnTemplate() || defaultResetBtnLabel"></ng-container>
             <ng-template #defaultResetBtnLabel>
               {{ "GLOBAL.BUTTONS.reset" | translate }}
@@ -102,7 +110,7 @@ import {FieldTree} from '@angular/forms/signals';
 export class SearchButtonsComponent<T> {
 
   private authService= inject(AuthService);
-  private messageService= inject(MessageService);
+  private toastService= inject(ToastService);
   private translate= inject(TranslateService);
 
   protected saveSearchTitle = signal('');
@@ -149,10 +157,6 @@ export class SearchButtonsComponent<T> {
 
   private showSuccessMessage():void{
     const detailMsg = `${this.translate.instant('ADVANCED-SEARCH.SAVED-SEARCHES.MESSAGES.detail-success')} ${this.saveSearchTitle}`;
-    this.messageService.add({
-      summary: this.translate.instant('ADVANCED-SEARCH.SAVED-SEARCHES.MESSAGES.summary'),
-      detail:detailMsg,
-      severity:'success'
-    });
+    this.toastService.success(detailMsg, this.translate.instant('ADVANCED-SEARCH.SAVED-SEARCHES.MESSAGES.summary'));
   }
 }

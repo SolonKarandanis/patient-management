@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, inject, input, OnInit, output} from '@angular/core';
-import {Confirmation, ConfirmationService} from 'primeng/api';
+import {ConfirmService} from '@core/services/confirm.service';
 import {TranslateService} from '@ngx-translate/core';
 import {SavedSearch, SearchType} from '@models/search.model';
 
@@ -16,7 +16,7 @@ import {SavedSearch, SearchType} from '@models/search.model';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SavedSearchesComponent implements OnInit{
-  private confirmationService= inject(ConfirmationService);
+  private confirmService= inject(ConfirmService);
   private translate= inject(TranslateService);
 
   protected selectedSavedSearch!: SavedSearch;

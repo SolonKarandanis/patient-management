@@ -1,11 +1,15 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {UserDropdownComponent} from '../user-dropdown/user-dropdown.component';
+import {NgIcon, provideIcons} from '@ng-icons/core';
+import {lucideSearch} from '@ng-icons/lucide';
 
 @Component({
   selector: 'app-header',
   imports: [
-    UserDropdownComponent
+    UserDropdownComponent,
+    NgIcon
   ],
+  providers: [provideIcons({lucideSearch})],
   template: `
     <!-- Navbar -->
     <nav class="relative bg-red-600 md:pt-10 pb-10 pt-10  top-0 left-0 w-full z-10  md:flex-row
@@ -21,7 +25,7 @@ import {UserDropdownComponent} from '../user-dropdown/user-dropdown.component';
             <div class="relative flex w-full flex-wrap items-stretch">
               <span class="z-10 h-full leading-snug font-normal text-center text-blueGray-300
                   absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-                <i class="pi pi-search"></i>
+                <ng-icon name="lucideSearch" />
               </span>
               <input type="text"
                      placeholder="Search here..."

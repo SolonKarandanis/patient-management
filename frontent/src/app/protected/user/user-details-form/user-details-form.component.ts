@@ -1,25 +1,24 @@
 import {ChangeDetectionStrategy, Component, input} from '@angular/core';
 import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
-import {InputText} from 'primeng/inputtext';
 import {TranslatePipe} from '@ngx-translate/core';
-import {NgClass} from '@angular/common';
-import {Select} from 'primeng/select';
-import {SelectItem} from 'primeng/api';
+import {SelectItem} from '@models/select-item.model';
 import {BaseFormComponent} from '@shared/abstract/BaseFormComponent';
 import {Field, FieldTree} from '@angular/forms/signals';
 import {UpdateUserFormModel} from '../forms';
+import {RolesConstants} from '@core/guards/SecurityConstants';
+import {HlmInputImports} from '@components/ui/input';
+import {HlmSelectImports} from '@components/ui/select';
 
 @Component({
   selector: 'app-user-details-form',
   imports: [
     FormControlWrapComponent,
     FormErrorComponent,
-    InputText,
     TranslatePipe,
-    NgClass,
-    Select,
-    Field
+    Field,
+    HlmInputImports,
+    HlmSelectImports,
   ],
   template: `
     @let form = formInput();
@@ -28,7 +27,7 @@ import {UpdateUserFormModel} from '../forms';
         <div class="grid gap-6 mb-6 md:grid-cols-2">
           <div class="mt-4">
             <label for="firstName"
-                   [ngClass]="{'app-required-label': !form().disabled()}">
+                   [class.app-required-label]="!form().disabled()">
               {{ 'USER.DETAILS.LABELS.firstName' | translate }}
             </label>
             <app-form-control-wrap
@@ -37,7 +36,7 @@ import {UpdateUserFormModel} from '../forms';
               [fetchingData]="fetchingData()">
               <input
                 id="firstName"
-                pInputText
+                hlmInput
                 type="text"
                 class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
                 [field]="form.firstName"
@@ -50,7 +49,7 @@ import {UpdateUserFormModel} from '../forms';
           </div>
           <div class="mt-4">
             <label for="lastName"
-                   [ngClass]="{'app-required-label': !form().disabled()}">
+                   [class.app-required-label]="!form().disabled()">
               {{ 'USER.DETAILS.LABELS.lastName' | translate }}
             </label>
             <app-form-control-wrap
@@ -59,7 +58,7 @@ import {UpdateUserFormModel} from '../forms';
               [fetchingData]="fetchingData()">
               <input
                 id="lastName"
-                pInputText
+                hlmInput
                 type="text"
                 class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
                 [field]="form.lastName"
@@ -72,7 +71,7 @@ import {UpdateUserFormModel} from '../forms';
           </div>
           <div class="mt-4">
             <label for="username"
-                   [ngClass]="{'app-required-label': !form().disabled()}">
+                   [class.app-required-label]="!form().disabled()">
               {{ 'USER.DETAILS.LABELS.username' | translate }}
             </label>
             <app-form-control-wrap
@@ -81,7 +80,7 @@ import {UpdateUserFormModel} from '../forms';
               [fetchingData]="fetchingData()">
               <input
                 id="username"
-                pInputText
+                hlmInput
                 type="text"
                 class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
                 [field]="form.username"
@@ -94,7 +93,7 @@ import {UpdateUserFormModel} from '../forms';
           </div>
           <div class="mt-4">
             <label for="email"
-                   [ngClass]="{'app-required-label':!form().disabled()}">
+                   [class.app-required-label]="!form().disabled()">
               {{ 'USER.DETAILS.LABELS.email' | translate }}
             </label>
             <app-form-control-wrap
@@ -103,7 +102,7 @@ import {UpdateUserFormModel} from '../forms';
               [fetchingData]="fetchingData()">
               <input
                 id="email"
-                pInputText
+                hlmInput
                 type="email"
                 class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
                 [field]="form.email"
@@ -116,15 +115,25 @@ import {UpdateUserFormModel} from '../forms';
           </div>
           <div class="mt-4">
             <label for="role"
-                   [ngClass]="{'app-required-label': !form().disabled()}">
+                   [class.app-required-label]="!form().disabled()">
               {{ 'USER.DETAILS.LABELS.role' | translate }}
             </label>
-            <p-select
-              [field]="form.role"
-              [options]="availableRoles()"
-              [checkmark]="true"
-              [showClear]="true"
-              class="border-0 !bg-white text-sm shadow w-full"/>
+            <hlm-select
+              [value]="form.role().value()"
+              (valueChange)="handleRoleChange($event)"
+              [disabled]="form().disabled()"
+              class="border-0 !bg-white text-sm shadow w-full">
+              <hlm-select-trigger class="w-full">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content *hlmSelectPortal>
+                <hlm-select-group>
+                  @for (role of availableRoles(); track role.value) {
+                    <hlm-select-item [value]="role.value">{{ role.label }}</hlm-select-item>
+                  }
+                </hlm-select-group>
+              </hlm-select-content>
+            </hlm-select>
             <app-form-error
               [displayLabels]="form.role().invalid() && form.role().touched()"
               [validationErrors]="form.role().errors()"
@@ -142,5 +151,11 @@ export class UserDetailsFormComponent  extends BaseFormComponent{
   fetchingData = input<boolean>(false);
   formInput = input.required<FieldTree<UpdateUserFormModel, string | number>>();
   availableRoles = input.required<SelectItem[]>();
+
+  protected handleRoleChange(role: RolesConstants | null | undefined): void {
+    if (role) {
+      this.formInput().role().value.set(role);
+    }
+  }
 
 }

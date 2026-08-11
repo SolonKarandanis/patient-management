@@ -1,14 +1,11 @@
 import {ChangeDetectionStrategy, Component, effect, inject, OnInit, signal, WritableSignal,} from '@angular/core';
 import {PageHeaderComponent} from '@components/page-header/page-header.component';
-import {FloatLabel} from 'primeng/floatlabel';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
-import {InputText} from 'primeng/inputtext';
 import {TranslatePipe} from '@ngx-translate/core';
-import {SelectItem} from 'primeng/api';
-import {Select} from 'primeng/select';
+import {SelectItem} from '@models/select-item.model';
 import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.component';
-import {TableLazyLoadEvent} from 'primeng/table';
 import {
+  ResultsTableStateEvent,
   SavedSearch,
   SearchRequestCriteria,
   SearchTableColumn,
@@ -18,36 +15,34 @@ import {
 import {RequiredFieldsLabelComponent} from '@components/required-fields-label/required-fields-label.component';
 import {UserService} from '../data';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
-import {FieldsetModule} from 'primeng/fieldset';
 import {ResultsTableComponent} from '@components/results-table/results-table.component';
 import {ResultsTableFilterDirective} from '@directives/results-table-filter.directive';
 import {ResultsTablePaginatorDirective} from '@directives/results-table-paginator.directive';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 import {ReactiveFormsModule} from '@angular/forms';
-import {NgClass} from "@angular/common";
 import {Field, FieldTree, submit} from '@angular/forms/signals';
 import {UserSearchFormModel} from '../forms';
 import {RolesConstants} from '@core/guards/SecurityConstants';
+import {UserAccountStatus} from '@models/user.model';
+import {HlmInputImports} from '@components/ui/input';
+import {HlmSelectImports} from '@components/ui/select';
 
 @Component({
   selector: 'app-search-users',
   imports: [
     PageHeaderComponent,
     ReactiveFormsModule,
-    FloatLabel,
     FormErrorComponent,
-    InputText,
     TranslatePipe,
-    Select,
     SearchButtonsComponent,
     RequiredFieldsLabelComponent,
-    FieldsetModule,
     ResultsTableComponent,
     ResultsTableFilterDirective,
     ResultsTablePaginatorDirective,
     FieldsetComponent,
-    NgClass,
     Field,
+    HlmInputImports,
+    HlmSelectImports,
   ],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
@@ -63,46 +58,46 @@ import {RolesConstants} from '@core/guards/SecurityConstants';
             <form>
               <div class="grid gap-6 mt-6 md:grid-cols-3">
                 <div class="mb-6">
-                  <p-float-label variant="on" class="w-full mb-3">
-                    <input
-                      id="email"
-                      pInputText
-                      type="email"
-                      class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                      [field]="form.email"
-                      autocomplete="email"/>
-                    <label for="email">{{ 'USER.SEARCH.LABELS.email' | translate }}</label>
-                  </p-float-label>
+                  <label for="email" class="block uppercase text-blueGray-600 text-xs font-bold mb-2">
+                    {{ 'USER.SEARCH.LABELS.email' | translate }}
+                  </label>
+                  <input
+                    id="email"
+                    hlmInput
+                    type="email"
+                    class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                    [field]="form.email"
+                    autocomplete="email"/>
                   <app-form-error
                     [displayLabels]="form.email().invalid() && form.email().touched()"
                     [validationErrors]="form.email().errors()"/>
                 </div>
                 <div class="mb-6">
-                  <p-float-label variant="on" class="w-full mb-3">
-                    <input
-                      id="username"
-                      pInputText
-                      type="text"
-                      class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                      [field]="form.username"
-                      autocomplete="username"/>
-                    <label for="username">{{ 'USER.SEARCH.LABELS.username' | translate }}</label>
-                  </p-float-label>
+                  <label for="username" class="block uppercase text-blueGray-600 text-xs font-bold mb-2">
+                    {{ 'USER.SEARCH.LABELS.username' | translate }}
+                  </label>
+                  <input
+                    id="username"
+                    hlmInput
+                    type="text"
+                    class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                    [field]="form.username"
+                    autocomplete="username"/>
                   <app-form-error
                     [displayLabels]="form.username().invalid() && form.username().touched()"
                     [validationErrors]="form.username().errors()"/>
                 </div>
                 <div class="mb-6">
-                  <p-float-label variant="on" class="w-full mb-3">
-                    <input
-                      id="name"
-                      pInputText
-                      type="text"
-                      class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                      [field]="form.name"
-                      autocomplete="name"/>
-                    <label for="name">{{ 'USER.SEARCH.LABELS.name' | translate }}</label>
-                  </p-float-label>
+                  <label for="name" class="block uppercase text-blueGray-600 text-xs font-bold mb-2">
+                    {{ 'USER.SEARCH.LABELS.name' | translate }}
+                  </label>
+                  <input
+                    id="name"
+                    hlmInput
+                    type="text"
+                    class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                    [field]="form.name"
+                    autocomplete="name"/>
                   <app-form-error
                     [displayLabels]="form.name().invalid() && form.name().touched()"
                     [validationErrors]="form.name().errors()"/>
@@ -110,33 +105,47 @@ import {RolesConstants} from '@core/guards/SecurityConstants';
               </div>
               <div class="grid gap-6 mt-6 md:grid-cols-2">
                 <div class="mb-6">
-                  <p-float-label variant="on" class="w-full mb-3">
-                    <p-select
-                      [field]="form.status"
-                      [options]="userStatuses"
-                      [checkmark]="true"
-                      [showClear]="true"
-                      class="border-0 !bg-white text-sm shadow w-full"/>
-                    <label class="app-required-label" for="name">
-                      {{ 'USER.SEARCH.LABELS.status' | translate }}
-                    </label>
-                  </p-float-label>
+                  <label for="status" class="app-required-label block uppercase text-blueGray-600 text-xs font-bold mb-2">
+                    {{ 'USER.SEARCH.LABELS.status' | translate }}
+                  </label>
+                  <hlm-select
+                    [value]="form.status().value()"
+                    (valueChange)="handleStatusChange($event)"
+                    class="border-0 !bg-white text-sm shadow w-full">
+                    <hlm-select-trigger class="w-full">
+                      <hlm-select-value />
+                    </hlm-select-trigger>
+                    <hlm-select-content *hlmSelectPortal>
+                      <hlm-select-group>
+                        @for (status of userStatuses; track status.value) {
+                          <hlm-select-item [value]="status.value">{{ status.label }}</hlm-select-item>
+                        }
+                      </hlm-select-group>
+                    </hlm-select-content>
+                  </hlm-select>
                   <app-form-error
                     [displayLabels]="form.status().invalid() && form.status().touched()"
                     [validationErrors]="form.status().errors()"/>
                 </div>
                 <div class="mb-6">
-                  <p-float-label variant="on" class="w-full mb-3">
-                    <p-select
-                      [field]="form.role"
-                      [options]="commonEntitiesService.rolesAsSelectItems()"
-                      [checkmark]="true"
-                      [showClear]="true"
-                      class="border-0 !bg-white text-sm shadow w-full"/>
-                    <label class="app-required-label" for="name">
-                      {{ 'USER.SEARCH.LABELS.role' | translate }}
-                    </label>
-                  </p-float-label>
+                  <label for="role" class="app-required-label block uppercase text-blueGray-600 text-xs font-bold mb-2">
+                    {{ 'USER.SEARCH.LABELS.role' | translate }}
+                  </label>
+                  <hlm-select
+                    [value]="form.role().value()"
+                    (valueChange)="handleRoleChange($event)"
+                    class="border-0 !bg-white text-sm shadow w-full">
+                    <hlm-select-trigger class="w-full">
+                      <hlm-select-value />
+                    </hlm-select-trigger>
+                    <hlm-select-content *hlmSelectPortal>
+                      <hlm-select-group>
+                        @for (role of commonEntitiesService.rolesAsSelectItems(); track role.value) {
+                          <hlm-select-item [value]="role.value">{{ role.label }}</hlm-select-item>
+                        }
+                      </hlm-select-group>
+                    </hlm-select-content>
+                  </hlm-select>
                   <app-form-error
                     [displayLabels]="form.status().invalid() && form.status().touched()"
                     [validationErrors]="form.status().errors()"/>
@@ -151,7 +160,7 @@ import {RolesConstants} from '@core/guards/SecurityConstants';
             </form>
           </app-fieldset>
           @if (resultsVisible()) {
-            <div class="mt-6" [ngClass]="{'fade-in': hasSearched(), 'fade-out': !hasSearched()}">
+            <div class="mt-6" [class.fade-in]="hasSearched()" [class.fade-out]="!hasSearched()">
               <app-results-table
                 tableFilter
                 tablePaginator
@@ -229,13 +238,23 @@ export class SearchUsersComponent implements OnInit {
     this.userService.exportUsersToCsv(this.form);
   }
 
-  protected handleTableLazyLoad(event: TableLazyLoadEvent): void {
+  protected handleTableLazyLoad(event: ResultsTableStateEvent): void {
     const {first, rows, sortField, sortOrder} = event;
     this.form.first().value.set(first??0);
     this.form.rows().value.set(rows??10);
     this.form.sortField().value.set(sortField as string);
     this.form.sortOrder().value.set(sortOrder == 1 ? "ASC" : "DESC");
     this.search();
+  }
+
+  protected handleStatusChange(status: UserAccountStatus | null | undefined): void {
+    if (status) {
+      this.form.status().value.set(status);
+    }
+  }
+
+  protected handleRoleChange(role: RolesConstants | null | undefined): void {
+    this.form.role().value.set(role ?? null);
   }
 
   protected handleLoadSavedSearch(selectedSavedSearch: SavedSearch): void {

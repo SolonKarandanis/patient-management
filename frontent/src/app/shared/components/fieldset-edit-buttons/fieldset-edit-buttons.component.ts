@@ -1,49 +1,63 @@
 import {ChangeDetectionStrategy, Component, inject, input, output, signal} from '@angular/core';
-import {ButtonDirective, ButtonIcon} from 'primeng/button';
+import {NgIcon, provideIcons} from '@ng-icons/core';
+import {lucideCircleX, lucideFileEdit, lucideSave} from '@ng-icons/lucide';
 import {TranslatePipe} from '@ngx-translate/core';
-import {Ripple} from 'primeng/ripple';
-import {Tooltip} from 'primeng/tooltip';
+import {HlmButtonImports} from '@components/ui/button';
+import {HlmTooltipImports} from '@components/ui/tooltip';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 
 @Component({
   selector: 'app-fieldset-edit-buttons',
   imports: [
     TranslatePipe,
-    Ripple,
-    Tooltip,
-    ButtonDirective
+    HlmButtonImports,
+    HlmTooltipImports,
+    NgIcon
   ],
+  providers: [provideIcons({lucideFileEdit, lucideSave, lucideCircleX})],
   template: `
     @if(!isEditMode()){
+      @let editLabel = 'GLOBAL.BUTTONS.edit' | translate;
       <button
-        pButton
-        pRipple
+        hlmBtn
+        variant="ghost"
+        size="icon"
         type="button"
-        icon="pi pi-file-edit"
-        class="rounded-4xl! bg-transparent! border-transparent!"
-        pTooltip="{{ 'GLOBAL.BUTTONS.edit' | translate }}"
+        class="rounded-4xl!"
+        [hlmTooltip]="editLabel"
+        [attr.aria-label]="editLabel"
         (click)="enterEditMode()"
-      ></button>
+      >
+        <ng-icon name="lucideFileEdit" />
+      </button>
     }
     @if(isEditMode()){
+      @let saveLabel = 'GLOBAL.BUTTONS.save' | translate;
       <button
-        pButton
-        pRipple
+        hlmBtn
+        variant="ghost"
+        size="icon"
         type="button"
-        icon="pi pi-save"
-        class="rounded-4xl! bg-transparent! border-transparent!"
-        pTooltip="{{ 'GLOBAL.BUTTONS.save' | translate }}"
+        class="rounded-4xl!"
+        [hlmTooltip]="saveLabel"
+        [attr.aria-label]="saveLabel"
         (click)="saveClickHandler()"
-      ></button>
+      >
+        <ng-icon name="lucideSave" />
+      </button>
+      @let cancelLabel = 'GLOBAL.BUTTONS.cancel' | translate;
       <button
-        pButton
-        pRipple
+        hlmBtn
+        variant="ghost"
+        size="icon"
         type="button"
-        icon="pi pi-times-circle"
-        class="rounded-4xl! bg-transparent! border-transparent!"
-        pTooltip="{{ 'GLOBAL.BUTTONS.cancel' | translate }}"
+        class="rounded-4xl!"
+        [hlmTooltip]="cancelLabel"
+        [attr.aria-label]="cancelLabel"
         (click)="exitEditMode()"
-      ></button>
+      >
+        <ng-icon name="lucideCircleX" />
+      </button>
     }
   `,
   styleUrl: './fieldset-edit-buttons.component.css',

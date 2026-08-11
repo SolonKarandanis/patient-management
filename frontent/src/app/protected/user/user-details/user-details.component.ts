@@ -10,12 +10,14 @@ import {AuthService} from '@core/services/auth.service';
 import {UserRolesEnum} from '@models/constants';
 import {UserPasswordChangeFormComponent} from '../user-password-change-form/user-password-change-form.component';
 import {UtilService} from '@core/services/util.service';
-import {SplitButton} from 'primeng/splitbutton';
-import {MenuItem, SelectItem} from 'primeng/api';
+import {SelectItem} from '@models/select-item.model';
 import {User, UserAccountStatusEnum} from '@models/user.model';
-import {ConfirmDialog} from 'primeng/confirmdialog';
 import {FieldTree} from '@angular/forms/signals';
 import {ChangePasswordFormModel, UpdateUserFormModel} from '../forms';
+import {HlmButtonImports} from '@components/ui/button';
+import {HlmDropdownMenuImports} from '@components/ui/dropdown-menu';
+import {NgIcon, provideIcons} from '@ng-icons/core';
+import {lucideBan, lucideCheck, lucideSettings, lucideTrash2} from '@ng-icons/lucide';
 
 
 
@@ -28,9 +30,11 @@ import {ChangePasswordFormModel, UpdateUserFormModel} from '../forms';
     UserDetailsFormComponent,
     FieldsetComponent,
     UserPasswordChangeFormComponent,
-    SplitButton,
-    ConfirmDialog,
+    HlmButtonImports,
+    HlmDropdownMenuImports,
+    NgIcon,
   ],
+  providers: [provideIcons({lucideBan, lucideCheck, lucideSettings, lucideTrash2})],
   template: `
     <div
       class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
@@ -71,20 +75,30 @@ import {ChangePasswordFormModel, UpdateUserFormModel} from '../forms';
             [allowEdit]="false">
             <div class="flex justify-between">
               <p class="py-2 text-xl font-semibold">{{ 'USER.DETAILS.LABELS.manage-account-status' | translate }}</p>
-              <p-splitbutton
-                label="{{ 'USER.DETAILS.LABELS.account-actions' | translate }}"
-                dropdownIcon="pi pi-cog"
+              <button
+                hlmBtn
+                variant="outline"
+                type="button"
                 [disabled]="!vm.isEditAllowed"
-                [model]="accountActions" />
+                [hlmDropdownMenuTrigger]="accountActionsMenu">
+                {{ 'USER.DETAILS.LABELS.account-actions' | translate }}
+                <ng-icon name="lucideSettings" />
+              </button>
+              <ng-template #accountActionsMenu>
+                <div hlmDropdownMenu>
+                  @for (action of accountActions; track action.label) {
+                    <button hlmDropdownMenuItem [disabled]="action.disabled" (triggered)="action.command()">
+                      <ng-icon [name]="action.icon" />
+                      {{ action.label }}
+                    </button>
+                  }
+                </div>
+              </ng-template>
             </div>
           </app-fieldset>
         }
       }
     </div>
-    <p-confirmDialog
-        icon="pi pi-exclamation-triangle"
-        defaultFocus="none">
-    </p-confirmDialog>
   `,
   styleUrl: './user-details.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -96,7 +110,7 @@ export class UserDetailsComponent  {
   private translate = inject(TranslateService);
   private utilService = inject(UtilService);
   protected changePasswordForm!: FieldTree<ChangePasswordFormModel, string | number>;
-  protected accountActions!:MenuItem[];
+  protected accountActions!: AccountAction[];
 
   protected form: FieldTree<UpdateUserFormModel, string | number>;
 
@@ -234,7 +248,7 @@ export class UserDetailsComponent  {
     this.accountActions=[
       {
         label: this.translate.instant(`${translationPrefix}.activate`),
-        icon: 'pi pi-check',
+        icon: 'lucideCheck',
         disabled: status ===UserAccountStatusEnum.ACTIVE,
         command: () => {
           this.handleUserActivation();
@@ -242,7 +256,7 @@ export class UserDetailsComponent  {
       },
       {
         label: this.translate.instant(`${translationPrefix}.deactivate`),
-        icon: 'pi pi-ban',
+        icon: 'lucideBan',
         disabled: status ===UserAccountStatusEnum.INACTIVE,
         command: () => {
           this.handleUserDeActivation();
@@ -250,7 +264,7 @@ export class UserDetailsComponent  {
       },
       {
         label: this.translate.instant(`${translationPrefix}.delete`),
-        icon: 'pi pi-times',
+        icon: 'lucideTrash2',
         disabled: status ===UserAccountStatusEnum.DELETED,
         command: () => {
           this.handleUserDeletion();
@@ -272,4 +286,11 @@ function buildUserDetailsViewModel(
   const availableRoles = isAdmin ? allRoles : allRoles.filter((r) => r.value != UserRolesEnum.ROLE_SYSTEM_ADMIN);
   const isEditAllowed = isAdmin || isCurrentUser;
   return { user, loading, availableRoles, userRoles, isEditAllowed };
+}
+
+interface AccountAction {
+  label: string;
+  icon: string;
+  disabled: boolean;
+  command: () => void;
 }

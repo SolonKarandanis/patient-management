@@ -9,7 +9,7 @@ import {pipe, switchMap, tap} from 'rxjs';
 import {tapResponse} from '@ngrx/operators';
 import {UtilService} from '@core/services/util.service';
 import {TranslateService} from '@ngx-translate/core';
-import {SelectItem} from 'primeng/api';
+import {SelectItem} from '@models/select-item.model';
 
 export const I18nLookupStore = signalStore(
   {providedIn:'root'},

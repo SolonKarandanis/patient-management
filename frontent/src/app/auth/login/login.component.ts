@@ -1,11 +1,6 @@
 import {ChangeDetectionStrategy, Component, effect, inject, signal} from '@angular/core';
 import {Router, RouterLink} from '@angular/router';
 import {SignUpWithComponent} from '../../components/sign-up-with/sign-up-with.component';
-import {InputText} from 'primeng/inputtext';
-import {FloatLabel} from 'primeng/floatlabel';
-import {Password} from 'primeng/password';
-import {ButtonDirective} from 'primeng/button';
-import {Ripple} from 'primeng/ripple';
 import {AuthService} from '@core/services/auth.service';
 import {ReactiveFormsModule} from '@angular/forms';
 import {SubmitCredentialsDTO} from '@models/auth.model';
@@ -14,22 +9,27 @@ import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {LoginFormModel} from '../forms';
 import {form, Field, required, email, submit} from '@angular/forms/signals';
 import {UtilService} from '@core/services/util.service';
+import {HlmInputImports} from '@components/ui/input';
+import {HlmButtonImports} from '@components/ui/button';
+import {HlmSpinnerImports} from '@components/ui/spinner';
+import {NgIcon, provideIcons} from '@ng-icons/core';
+import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
 
 @Component({
   selector: 'app-login',
   imports: [
     RouterLink,
     SignUpWithComponent,
-    InputText,
-    FloatLabel,
-    Password,
-    ButtonDirective,
-    Ripple,
     TranslatePipe,
     ReactiveFormsModule,
     FormErrorComponent,
-    Field
+    Field,
+    HlmInputImports,
+    HlmButtonImports,
+    HlmSpinnerImports,
+    NgIcon,
   ],
+  providers: [provideIcons({lucideEye, lucideEyeOff})],
   template: `
     <div class="container mx-auto px-4 h-full">
       <div class="flex content-center items-center justify-center h-full">
@@ -44,44 +44,55 @@ import {UtilService} from '@core/services/util.service';
               </div>
               <form>
                 <div class="mb-6">
-                  <p-float-label variant="on" class="w-full mb-3">
-                    <input
-                      id="email"
-                      pInputText
-                      type="email"
-                      class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                      [field]="loginForm.email"
-                      autocomplete="email"/>
-                    <label for="email">{{ 'LOGIN.LABELS.email' | translate }}</label>
-                  </p-float-label>
+                  <label for="email" class="block uppercase text-blueGray-600 text-xs font-bold mb-2">
+                    {{ 'LOGIN.LABELS.email' | translate }}
+                  </label>
+                  <input
+                    id="email"
+                    hlmInput
+                    type="email"
+                    class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                    [field]="loginForm.email"
+                    autocomplete="email"/>
                   <app-form-error
                     [displayLabels]="loginForm.email().invalid() && loginForm.email().touched()"
                     [validationErrors]="loginForm.email().errors()" />
                 </div>
                 <div class="mb-6">
-                  <p-float-label variant="on" class="w-full mb-3">
-                    <p-password
+                  <label for="password" class="block uppercase text-blueGray-600 text-xs font-bold mb-2">
+                    {{ 'LOGIN.LABELS.password' | translate }}
+                  </label>
+                  <div class="relative">
+                    <input
                       id="password"
-                      inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
+                      hlmInput
+                      [type]="showPassword() ? 'text' : 'password'"
+                      class="border-0 px-3 py-3 pr-10 !bg-white text-sm shadow w-full !text-black"
                       [field]="loginForm.password"
-                      [feedback]="false"
-                      [toggleMask]="true" />
-                    <label for="password">{{ 'LOGIN.LABELS.password' | translate }}</label>
-                  </p-float-label>
+                      autocomplete="current-password"/>
+                    <button
+                      type="button"
+                      class="absolute inset-y-0 right-2 flex items-center text-blueGray-600"
+                      (click)="showPassword.set(!showPassword())"
+                      [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+                      <ng-icon [name]="showPassword() ? 'lucideEyeOff' : 'lucideEye'" />
+                    </button>
+                  </div>
                   <app-form-error
                     [displayLabels]="loginForm.password().invalid() && loginForm.password().touched()"
                     [validationErrors]="loginForm.password().errors()" />
                 </div>
                 <div class="text-center mt-6">
                   <button
-                    pButton
-                    pRipple
-                    severity="secondary"
-                    class=" font-bold uppercase px-6 py-3 rounded shadow mr-1 mb-1 w-full "
+                    hlmBtn
+                    variant="secondary"
+                    class="font-bold uppercase px-6 py-3 rounded shadow mr-1 mb-1 w-full"
                     type="button"
                     (click)="login()"
-                    [loading]="isLoading()"
                     [disabled]="isLoading()">
+                    @if (isLoading()) {
+                      <hlm-spinner class="mr-2" />
+                    }
                     {{ "LOGIN.BUTTONS.login" | translate }}
                   </button>
                 </div>
@@ -113,6 +124,8 @@ export class LoginComponent{
   private router= inject(Router);
 
   public isLoading = this.authService.isLoading;
+
+  protected showPassword = signal(false);
 
   private loginModel = signal<LoginFormModel>({
     email:'',

@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core';
 import {DatePipe} from '@angular/common';
-import {Confirmation, ConfirmationService, MessageService, SelectItem} from 'primeng/api';
+import {SelectItem} from '@models/select-item.model';
 import {TranslateService} from '@ngx-translate/core';
 import {FormGroup} from '@angular/forms';
 import {NotificationEvent, NotificationEventTypeEnum} from '@models/notification.model';
+import {ToastService} from '@core/services/toast.service';
+import {ConfirmOptions, ConfirmService} from '@core/services/confirm.service';
 
 @Injectable({
   providedIn: 'root'
@@ -23,9 +25,9 @@ export class UtilService{
   private readonly datePipe = new DatePipe('en');
 
   constructor(
-    private readonly messageService:MessageService,
+    private readonly toastService:ToastService,
     private readonly translate:TranslateService,
-    private readonly confirmationService:ConfirmationService,
+    private readonly confirmService:ConfirmService,
   ) {}
 
   public get emailRegex():string{
@@ -233,35 +235,23 @@ export class UtilService{
     for(const detail of details){
       switch(severity){
         case 'error':{
-          this.messageService.add({
-            severity:'error',
-            summary: summary ? summary: this.translate.instant('GLOBAL.ERRORS.summary'),
-            detail
-          });
+          this.toastService.error(detail, summary ? summary: this.translate.instant('GLOBAL.ERRORS.summary'));
           break;
         }
         case 'success':{
-          this.messageService.add({
-            severity:'success',
-            summary: summary ? summary: this.translate.instant('GLOBAL.SUCCESS.summary'),
-            detail
-          });
+          this.toastService.success(detail, summary ? summary: this.translate.instant('GLOBAL.SUCCESS.summary'));
           break;
         }
         case 'warn':{
-          this.messageService.add({
-            severity:'warn',
-            summary: summary ? summary: this.translate.instant('GLOBAL.WARNING.summary'),
-            detail
-          });
+          this.toastService.warn(detail, summary ? summary: this.translate.instant('GLOBAL.WARNING.summary'));
           break;
         }
       }
     }
   }
 
-  showConfirmation(confirmation: Confirmation):void{
-    this.confirmationService.confirm(confirmation);
+  showConfirmation(confirmation: ConfirmOptions):void{
+    this.confirmService.confirm(confirmation);
   }
 
   /**

@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {MessageService} from 'primeng/api';
+import {ToastService} from '@core/services/toast.service';
 import {TranslateService} from '@ngx-translate/core';
 import {HttpErrorResponse} from '@angular/common/http';
 
@@ -8,7 +8,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 })
 export class ErrorService{
 
-  private readonly messageService = inject(MessageService);
+  private readonly toastService = inject(ToastService);
   private readonly translate = inject(TranslateService);
 
   /**
@@ -17,14 +17,10 @@ export class ErrorService{
    * @param errorMessage The message to display
    */
   public showErrorMessage(error: HttpErrorResponse, errorMessage?: string): void {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: errorMessage ?? this.getErrorMessage(error),
+    this.toastService.error(errorMessage ?? this.getErrorMessage(error), 'Error', {
       sticky: this.isSticky(error),
       closable: true,
       life: 10000,
-      // key: 'requestError'
     });
   }
 

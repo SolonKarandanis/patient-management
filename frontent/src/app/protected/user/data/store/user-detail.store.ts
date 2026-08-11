@@ -9,7 +9,7 @@ import {rxMethod} from '@ngrx/signals/rxjs-interop';
 import {Observable, pipe, switchMap, tap} from 'rxjs';
 import {tapResponse} from '@ngrx/operators';
 import {TranslateService} from '@ngx-translate/core';
-import {SelectItem} from 'primeng/api';
+import {SelectItem} from '@models/select-item.model';
 
 export const UserDetailStore = signalStore(
   {providedIn:'root'},

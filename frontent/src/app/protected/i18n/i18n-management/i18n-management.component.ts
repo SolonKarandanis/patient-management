@@ -5,19 +5,20 @@ import {PageHeaderComponent} from '@components/page-header/page-header.component
 import {TranslatePipe} from '@ngx-translate/core';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {FloatLabel} from 'primeng/floatlabel';
-import {InputText} from 'primeng/inputtext';
-import {Select} from 'primeng/select';
 import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.component';
-import {SearchType, SearchTypeEnum} from '@models/search.model';
-import {TableLazyLoadEvent, TableModule} from 'primeng/table';
+import {SearchType, SearchTypeEnum, SortDirectionEnum} from '@models/search.model';
 import {I18nResource, UpdateI18nResource} from '@models/i18n-resource.model';
-import {NgClass} from '@angular/common';
-import {Textarea} from 'primeng/textarea';
-import {ButtonDirective} from 'primeng/button';
-import {Ripple} from 'primeng/ripple';
 import {I18nResourceSearchFormModel} from '../forms';
 import {Field, FieldTree} from '@angular/forms/signals';
+import {HlmInputImports} from '@components/ui/input';
+import {HlmSelectImports} from '@components/ui/select';
+import {HlmTableImports} from '@components/ui/table';
+import {HlmPaginationImports} from '@components/ui/pagination';
+import {HlmTextareaImports} from '@components/ui/textarea';
+import {HlmButtonImports} from '@components/ui/button';
+import {HlmSpinnerImports} from '@components/ui/spinner';
+import {NgIcon, provideIcons} from '@ng-icons/core';
+import {lucideArrowDown, lucideArrowUp, lucideArrowUpDown, lucideCheck, lucidePencil, lucideX} from '@ng-icons/lucide';
 
 @Component({
   selector: 'app-i18n-management',
@@ -27,17 +28,18 @@ import {Field, FieldTree} from '@angular/forms/signals';
     FieldsetComponent,
     FormsModule,
     ReactiveFormsModule,
-    FloatLabel,
-    InputText,
-    Select,
     SearchButtonsComponent,
-    NgClass,
-    TableModule,
-    Textarea,
-    ButtonDirective,
-    Ripple,
     Field,
+    HlmInputImports,
+    HlmSelectImports,
+    HlmTableImports,
+    HlmPaginationImports,
+    HlmTextareaImports,
+    HlmButtonImports,
+    HlmSpinnerImports,
+    NgIcon,
   ],
+  providers: [provideIcons({lucideArrowDown, lucideArrowUp, lucideArrowUpDown, lucideCheck, lucidePencil, lucideX})],
   template: `
     <div class="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0 text-black">
       <app-page-header>
@@ -51,42 +53,56 @@ import {Field, FieldTree} from '@angular/forms/signals';
             <form >
               <div class="grid gap-6 mt-6 md:grid-cols-3">
                 <div class="mb-6">
-                  <p-float-label variant="on" class="w-full mb-3">
-                    <p-select
-                      [field]="form.module"
-                      [options]="modules()"
-                      [checkmark]="true"
-                      [showClear]="true"
-                      class="border-0 !bg-white text-sm shadow w-full"/>
-                    <label class="app-required-label" for="name">
-                      {{ 'ADMINISTRATION.I18N-MANAGEMENT.search-module' | translate }}
-                    </label>
-                  </p-float-label>
+                  <label class="app-required-label block uppercase text-blueGray-600 text-xs font-bold mb-2" for="module">
+                    {{ 'ADMINISTRATION.I18N-MANAGEMENT.search-module' | translate }}
+                  </label>
+                  <hlm-select
+                    [value]="form.module().value()"
+                    (valueChange)="form.module().value.set($event ?? null)"
+                    class="border-0 !bg-white text-sm shadow w-full">
+                    <hlm-select-trigger class="w-full">
+                      <hlm-select-value />
+                    </hlm-select-trigger>
+                    <hlm-select-content *hlmSelectPortal>
+                      <hlm-select-group>
+                        @for (module of modules(); track module.value) {
+                          <hlm-select-item [value]="module.value">{{ module.label }}</hlm-select-item>
+                        }
+                      </hlm-select-group>
+                    </hlm-select-content>
+                  </hlm-select>
                 </div>
                 <div class="mb-6">
-                  <p-float-label variant="on" class="w-full mb-3">
-                    <p-select
-                      [field]="form.language"
-                      [options]="languages()"
-                      [checkmark]="true"
-                      [showClear]="true"
-                      class="border-0 !bg-white text-sm shadow w-full"/>
-                    <label class="app-required-label" for="name">
-                      {{ 'ADMINISTRATION.I18N-MANAGEMENT.search-language' | translate }}
-                    </label>
-                  </p-float-label>
+                  <label class="app-required-label block uppercase text-blueGray-600 text-xs font-bold mb-2" for="language">
+                    {{ 'ADMINISTRATION.I18N-MANAGEMENT.search-language' | translate }}
+                  </label>
+                  <hlm-select
+                    [value]="form.language().value()"
+                    (valueChange)="form.language().value.set($event ?? null)"
+                    class="border-0 !bg-white text-sm shadow w-full">
+                    <hlm-select-trigger class="w-full">
+                      <hlm-select-value />
+                    </hlm-select-trigger>
+                    <hlm-select-content *hlmSelectPortal>
+                      <hlm-select-group>
+                        @for (language of languages(); track language.value) {
+                          <hlm-select-item [value]="language.value">{{ language.label }}</hlm-select-item>
+                        }
+                      </hlm-select-group>
+                    </hlm-select-content>
+                  </hlm-select>
                 </div>
                 <div class="mb-6">
-                  <p-float-label variant="on" class="w-full mb-3">
-                    <input
-                      id="text"
-                      pInputText
-                      type="text"
-                      class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                      [field]="form.term"
-                      autocomplete="term"/>
-                    <label for="term">{{ 'ADMINISTRATION.I18N-MANAGEMENT.search-term' | translate }}</label>
-                  </p-float-label>
+                  <label class="block uppercase text-blueGray-600 text-xs font-bold mb-2" for="term">
+                    {{ 'ADMINISTRATION.I18N-MANAGEMENT.search-term' | translate }}
+                  </label>
+                  <input
+                    id="term"
+                    hlmInput
+                    type="text"
+                    class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
+                    [field]="form.term"
+                    autocomplete="term"/>
                 </div>
               </div>
               <app-search-buttons #searchBtns
@@ -98,99 +114,96 @@ import {Field, FieldTree} from '@angular/forms/signals';
             </form>
           </app-fieldset>
           @if (resultsVisible()) {
-            <div class="mt-6" [ngClass]="{'fade-in': hasSearched(), 'fade-out': !hasSearched()}">
-              <p-table
-                [value]="results()"
-                dataKey="id"
-                editMode="row"
-                [paginator]="true"
-                [totalRecords]="totalCount()"
-                [first]="form.first().value()"
-                [rows]="form.rows().value()"
-                [rowsPerPageOptions]="[10, 20, 50]"
-                [lazy]="true"
-                [loading]="loading()"
-                (onLazyLoad)="handleTableLazyLoad($event)"
-              >
-                <ng-template pTemplate="header">
-                  <tr class="">
-                    <th [pSortableColumn]="'key'"  scope="col" class="flex-initial w-[16%] bg-blueGray-100">
-                      {{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-key' | translate }}
-                    </th>
-                    <th [pSortableColumn]="'value'" scope="col" class="flex-initial w-[58%]  bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-value' | translate }}</th>
-                    <th [pSortableColumn]="'action'" scope="col" class="flex-initial w-[8%]  bg-blueGray-100">{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.action' | translate }}</th>
-                  </tr>
-                </ng-template>
-                <ng-template pTemplate="emptymessage" let-columns>
-                  <tr>
-                    <td [attr.colspan]="3">
-                      {{ 'GLOBAL.TABLES.no-results' | translate }}
-                    </td>
-                  </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
-                  <tr class="">
-                    <td class="">{{row.key}}</td>
-                    <td class="">
-                      @for(translation of row.translationList; track translation.value;  let idx = $index){
-                        <tr class="">
-                          <td class="">{{ (getLanguageLabel(translation.lang)) }}</td>
-                          <td class="">
-                            @if(row.editing){
-                              <textarea
-                                [(ngModel)]="translation.value"
-                                class="w-full"
-                                name="translationValue{{ idx}}"
-                                [rows]="3"
-                                pInputTextarea
-                              ></textarea>
+            <div class="mt-6" [class.fade-in]="hasSearched()" [class.fade-out]="!hasSearched()">
+              <div class="relative">
+                <table hlmTable>
+                  <thead hlmTHead>
+                    <tr hlmTr>
+                      <th hlmTh scope="col" class="w-[16%] bg-blueGray-100">
+                        <button type="button" class="inline-flex items-center gap-1 font-medium" (click)="handleSort('key')">
+                          <span>{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-key' | translate }}</span>
+                          <ng-icon [name]="sortIconName('key')" />
+                        </button>
+                      </th>
+                      <th hlmTh scope="col" class="w-[58%] bg-blueGray-100">
+                        <button type="button" class="inline-flex items-center gap-1 font-medium" (click)="handleSort('value')">
+                          <span>{{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.resource-value' | translate }}</span>
+                          <ng-icon [name]="sortIconName('value')" />
+                        </button>
+                      </th>
+                      <th hlmTh scope="col" class="w-[8%] bg-blueGray-100">
+                        {{ 'ADMINISTRATION.I18N-MANAGEMENT.TABLE.action' | translate }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody hlmTBody>
+                    @for (row of results(); track row.id) {
+                      <tr hlmTr>
+                        <td hlmTd>{{ row.key }}</td>
+                        <td hlmTd>
+                          <table class="w-full">
+                            <tbody>
+                              @for (translation of row.translationList; track translation.value; let idx = $index) {
+                                <tr>
+                                  <td class="align-top pr-2 py-1">{{ getLanguageLabel(translation.lang) }}</td>
+                                  <td class="py-1">
+                                    @if (row.editing) {
+                                      <textarea
+                                        hlmTextarea
+                                        [(ngModel)]="translation.value"
+                                        class="w-full"
+                                        name="translationValue{{ idx }}"
+                                        rows="3"
+                                      ></textarea>
+                                    } @else {
+                                      {{ translation.value }}
+                                    }
+                                  </td>
+                                </tr>
+                              }
+                            </tbody>
+                          </table>
+                        </td>
+                        <td hlmTd>
+                          <div class="flex items-center justify-center gap-2">
+                            @if (!row.editing) {
+                              <button hlmBtn variant="ghost" size="icon" type="button" (click)="onRowEditInit(row)">
+                                <ng-icon name="lucidePencil" />
+                              </button>
                             } @else {
-                              {{ translation.value }}
+                              <button hlmBtn variant="ghost" size="icon" type="button" (click)="onRowEditSave(row)">
+                                <ng-icon name="lucideCheck" />
+                              </button>
+                              <button hlmBtn variant="ghost" size="icon" type="button" (click)="onRowEditCancel(row, row.id)">
+                                <ng-icon name="lucideX" />
+                              </button>
                             }
-                          </td>
-                        </tr>
-                      }
-                    </td>
-                    <td class="">
-                      <div class="flex items-center justify-center gap-2">
-                        @if(!row.editing){
-                          <button
-                            pButton
-                            pRipple
-                            type="button"
-                            icon="pi pi-pencil"
-                            (click)="onRowEditInit(row)"
-                            text
-                            rounded
-                            severity="secondary"
-                          ></button>
-                        } @else {
-                          <button
-                            pButton
-                            pRipple
-                            type="button"
-                            icon="pi pi-save"
-                            (click)="onRowEditSave(row)"
-                            text
-                            rounded
-                            severity="secondary"
-                          ></button>
-                          <button
-                            pButton
-                            pRipple
-                            type="button"
-                            icon="pi pi-times"
-                            (click)="onRowEditCancel(row, row?.id)"
-                            text
-                            rounded
-                            severity="secondary"
-                          ></button>
-                        }
-                      </div>
-                    </td>
-                  </tr>
-                </ng-template>
-              </p-table>
+                          </div>
+                        </td>
+                      </tr>
+                    } @empty {
+                      <tr>
+                        <td [attr.colspan]="3" hlmTd>
+                          {{ 'GLOBAL.TABLES.no-results' | translate }}
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+                @if (loading()) {
+                  <div class="absolute inset-0 z-10 flex items-center justify-center bg-background/60">
+                    <hlm-spinner class="text-4xl" />
+                  </div>
+                }
+              </div>
+              <hlm-numbered-pagination
+                [currentPage]="currentPageNumber()"
+                (currentPageChange)="handlePageNumberChange($event)"
+                [itemsPerPage]="form.rows().value()"
+                (itemsPerPageChange)="handleItemsPerPageChange($event)"
+                [totalItems]="totalCount()"
+                [pageSizes]="[10, 20, 50]"
+              />
             </div>
           }
         </div>
@@ -244,12 +257,33 @@ export class I18nManagementComponent {
     this.search();
   }
 
-  protected handleTableLazyLoad(event: TableLazyLoadEvent): void {
-    const {first, rows, sortField, sortOrder} = event;
-    this.form.first().value.set(first??0);
-    this.form.rows().value.set(rows??10);
-    this.form.sortField().value.set(sortField as string);
-    this.form.sortOrder().value.set(sortOrder == 1 ? "ASC" : "DESC");
+  protected handleSort(field: string): void {
+    const isSameFieldAscending = this.form.sortField().value() === field && this.form.sortOrder().value() === SortDirectionEnum.ASC;
+    this.form.sortField().value.set(field);
+    this.form.sortOrder().value.set(isSameFieldAscending ? SortDirectionEnum.DESC : SortDirectionEnum.ASC);
+    this.search();
+  }
+
+  protected sortIconName(field: string): string {
+    if (this.form.sortField().value() !== field) {
+      return 'lucideArrowUpDown';
+    }
+    return this.form.sortOrder().value() === SortDirectionEnum.ASC ? 'lucideArrowUp' : 'lucideArrowDown';
+  }
+
+  protected currentPageNumber(): number {
+    const rows = this.form.rows().value();
+    return rows > 0 ? Math.floor(this.form.first().value() / rows) + 1 : 1;
+  }
+
+  protected handlePageNumberChange(page: number): void {
+    this.form.first().value.set((page - 1) * this.form.rows().value());
+    this.search();
+  }
+
+  protected handleItemsPerPageChange(pageSize: number): void {
+    this.form.first().value.set(0);
+    this.form.rows().value.set(pageSize);
     this.search();
   }
 

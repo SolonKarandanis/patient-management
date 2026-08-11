@@ -1,21 +1,21 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject,} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, effect, inject, signal,} from '@angular/core';
 import {SignUpWithComponent} from '../../components/sign-up-with/sign-up-with.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {ReactiveFormsModule} from '@angular/forms';
 import {UserService, CreateUserFormModel} from '../../protected/user';
 import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
-import {InputText} from 'primeng/inputtext';
-import {NgClass} from '@angular/common';
-import {Password} from 'primeng/password';
 import {Router, RouterLink} from '@angular/router';
-import {ButtonDirective} from 'primeng/button';
-import {Ripple} from 'primeng/ripple';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {UserRolesEnum} from '@models/constants';
-import {Select} from 'primeng/select';
 import {Field, FieldTree, submit} from '@angular/forms/signals';
-import {SelectItem} from 'primeng/api';
+import {SelectItem} from '@models/select-item.model';
+import {HlmInputImports} from '@components/ui/input';
+import {HlmButtonImports} from '@components/ui/button';
+import {HlmSpinnerImports} from '@components/ui/spinner';
+import {HlmSelectImports} from '@components/ui/select';
+import {NgIcon, provideIcons} from '@ng-icons/core';
+import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
 
 @Component({
   selector: 'app-register',
@@ -25,15 +25,15 @@ import {SelectItem} from 'primeng/api';
     ReactiveFormsModule,
     FormControlWrapComponent,
     FormErrorComponent,
-    InputText,
-    NgClass,
-    Password,
     RouterLink,
-    ButtonDirective,
-    Ripple,
-    Select,
-    Field
+    Field,
+    HlmInputImports,
+    HlmButtonImports,
+    HlmSpinnerImports,
+    HlmSelectImports,
+    NgIcon,
   ],
+  providers: [provideIcons({lucideEye, lucideEyeOff})],
   template: `
     <div class="container mx-auto px-4 h-full">
       <div class="flex content-center items-center justify-center h-full">
@@ -51,7 +51,7 @@ import {SelectItem} from 'primeng/api';
                   <div class="mt-4">
                     <label for="email"
                            class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                           [ngClass]="{'app-required-label': !form().disabled()}">
+                           [class.app-required-label]="!form().disabled()">
                       {{ 'USER.DETAILS.LABELS.email' | translate }}
                     </label>
                     <app-form-control-wrap
@@ -59,7 +59,7 @@ import {SelectItem} from 'primeng/api';
                       [displayValue]="form.email().value()">
                       <input
                         id="email"
-                        pInputText
+                        hlmInput
                         type="text"
                         class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
                         [field]="form.email"
@@ -73,7 +73,7 @@ import {SelectItem} from 'primeng/api';
                   <div class="mt-4">
                     <label for="username"
                            class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                           [ngClass]="{'app-required-label': !form().disabled()}">
+                           [class.app-required-label]="!form().disabled()">
                       {{ 'USER.DETAILS.LABELS.username' | translate }}
                     </label>
                     <app-form-control-wrap
@@ -81,7 +81,7 @@ import {SelectItem} from 'primeng/api';
                       [displayValue]="form.username().value()">
                       <input
                         id="username"
-                        pInputText
+                        hlmInput
                         type="text"
                         class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
                         [field]="form.username"
@@ -95,7 +95,7 @@ import {SelectItem} from 'primeng/api';
                   <div class="mt-4">
                     <label for="firstName"
                            class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                           [ngClass]="{'app-required-label': !form().disabled()}">
+                           [class.app-required-label]="!form().disabled()">
                       {{ 'USER.DETAILS.LABELS.firstName' | translate }}
                     </label>
                     <app-form-control-wrap
@@ -103,7 +103,7 @@ import {SelectItem} from 'primeng/api';
                       [displayValue]="form.firstName().value()">
                       <input
                         id="firstName"
-                        pInputText
+                        hlmInput
                         type="text"
                         class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
                         [field]="form.firstName"
@@ -117,7 +117,7 @@ import {SelectItem} from 'primeng/api';
                   <div class="mt-4">
                     <label for="lastName"
                            class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                           [ngClass]="{'app-required-label': !form().disabled()}">
+                           [class.app-required-label]="!form().disabled()">
                       {{ 'USER.DETAILS.LABELS.lastName' | translate }}
                     </label>
                     <app-form-control-wrap
@@ -125,7 +125,7 @@ import {SelectItem} from 'primeng/api';
                       [displayValue]="form.lastName().value()">
                       <input
                         id="lastName"
-                        pInputText
+                        hlmInput
                         type="text"
                         class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
                         [field]="form.lastName"
@@ -139,31 +139,49 @@ import {SelectItem} from 'primeng/api';
                   <div class="mt-4">
                     <label for="role"
                            class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                           [ngClass]="{'app-required-label': !form().disabled()}">
+                           [class.app-required-label]="!form().disabled()">
                       {{ 'USER.DETAILS.LABELS.role' | translate }}
                     </label>
-                    <p-select
-                      [field]="form.role"
-                      [options]="vm.availableRoles"
-                      [checkmark]="true"
-                      [showClear]="true"
-                      class="border-0 !bg-white text-sm shadow w-full"/>
+                    <hlm-select
+                      [value]="form.role().value()"
+                      (valueChange)="form.role().value.set($event ?? null)"
+                      class="border-0 !bg-white text-sm shadow w-full">
+                      <hlm-select-trigger class="w-full">
+                        <hlm-select-value />
+                      </hlm-select-trigger>
+                      <hlm-select-content *hlmSelectPortal>
+                        <hlm-select-group>
+                          @for (role of vm.availableRoles; track role.value) {
+                            <hlm-select-item [value]="role.value">{{ role.label }}</hlm-select-item>
+                          }
+                        </hlm-select-group>
+                      </hlm-select-content>
+                    </hlm-select>
                   </div>
                   <div class="mt-4">
                     <label for="password"
                            class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                           [ngClass]="{'app-required-label': !form().disabled()}">
+                           [class.app-required-label]="!form().disabled()">
                       {{ 'USER.DETAILS.LABELS.password' | translate }}
                     </label>
                     <app-form-control-wrap
                       [editMode]="!form().disabled()">
-                      <p-password
-                        id="password"
-                        inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
-                        class="w-full"
-                        [field]="form.password"
-                        [feedback]="true"
-                        [toggleMask]="true" />
+                      <div class="relative">
+                        <input
+                          id="password"
+                          hlmInput
+                          [type]="showPassword() ? 'text' : 'password'"
+                          class="border-0 px-3 py-3 pr-10 !bg-white text-sm shadow w-full !text-black"
+                          [field]="form.password"
+                          autocomplete="new-password"/>
+                        <button
+                          type="button"
+                          class="absolute inset-y-0 right-2 flex items-center text-blueGray-600"
+                          (click)="showPassword.set(!showPassword())"
+                          [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+                          <ng-icon [name]="showPassword() ? 'lucideEyeOff' : 'lucideEye'" />
+                        </button>
+                      </div>
                     </app-form-control-wrap>
                     <app-form-error
                       [displayLabels]="form.password().invalid() && form.password().touched()"
@@ -171,20 +189,29 @@ import {SelectItem} from 'primeng/api';
                       validationErrorsTranslationPrefix="REGISTER.MESSAGES.ERROR."/>
                   </div>
                   <div class="mt-4">
-                    <label for="password"
+                    <label for="confirmPassword"
                            class="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                           [ngClass]="{'app-required-label': !form().disabled()}">
+                           [class.app-required-label]="!form().disabled()">
                       {{ 'USER.DETAILS.LABELS.confirm-password' | translate }}
                     </label>
                     <app-form-control-wrap
                       [editMode]="!form().disabled()">
-                      <p-password
-                        id="confirmPassword"
-                        inputStyleClass="border-0 !bg-white text-sm shadow w-full !text-black"
-                        class="w-full"
-                        [field]="form.confirmPassword"
-                        [feedback]="true"
-                        [toggleMask]="true" />
+                      <div class="relative">
+                        <input
+                          id="confirmPassword"
+                          hlmInput
+                          [type]="showConfirmPassword() ? 'text' : 'password'"
+                          class="border-0 px-3 py-3 pr-10 !bg-white text-sm shadow w-full !text-black"
+                          [field]="form.confirmPassword"
+                          autocomplete="new-password"/>
+                        <button
+                          type="button"
+                          class="absolute inset-y-0 right-2 flex items-center text-blueGray-600"
+                          (click)="showConfirmPassword.set(!showConfirmPassword())"
+                          [attr.aria-label]="showConfirmPassword() ? 'Hide password' : 'Show password'">
+                          <ng-icon [name]="showConfirmPassword() ? 'lucideEyeOff' : 'lucideEye'" />
+                        </button>
+                      </div>
                     </app-form-control-wrap>
                     <app-form-error
                       [displayLabels]="form.confirmPassword().invalid() && form.confirmPassword().touched()"
@@ -194,14 +221,15 @@ import {SelectItem} from 'primeng/api';
 
                   <div class="text-center mt-6">
                     <button
-                      pButton
-                      pRipple
-                      severity="secondary"
+                      hlmBtn
+                      variant="secondary"
                       class="font-bold uppercase px-6 py-3 rounded shadow mr-1 mb-1 w-full"
                       type="button"
                       (click)="registerUser()"
-                      [loading]="vm.loading"
                       [disabled]="vm.loading">
+                      @if (vm.loading) {
+                        <hlm-spinner class="mr-2" />
+                      }
                       {{ "REGISTER.BUTTONS.create-account" | translate }}
                     </button>
                   </div>
@@ -229,6 +257,9 @@ export class RegisterComponent{
   private router= inject(Router);
 
   form!: FieldTree<CreateUserFormModel, string | number>;
+
+  protected showPassword = signal(false);
+  protected showConfirmPassword = signal(false);
 
   constructor() {
     this.initForm();

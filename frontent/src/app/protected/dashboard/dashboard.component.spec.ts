@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { ConfirmationService, MessageService } from 'primeng/api';
 import { TranslateLoader, TranslateModule, TranslateNoOpLoader } from '@ngx-translate/core';
 
 import { DashboardComponent } from './dashboard.component';
@@ -22,12 +21,11 @@ describe('DashboardComponent', () => {
       providers: [
         // AnalyticsStore's resources load eagerly as soon as it's first
         // injected, which pulls in the real HttpClient (for the analytics
-        // requests) and UtilService's MessageService/ConfirmationService
-        // (for the error-toast effect) as soon as this component is created.
+        // requests) as soon as this component is created. UtilService's
+        // ToastService/ConfirmService dependencies (for the error-toast
+        // effect) are providedIn: 'root' and resolve without extra setup.
         provideHttpClient(),
         provideHttpClientTesting(),
-        MessageService,
-        ConfirmationService,
       ],
     })
     .compileComponents();

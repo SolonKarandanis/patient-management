@@ -1,7 +1,7 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
@@ -20,12 +20,90 @@
     "target": "ES2022",
     "module": "ES2022",
     "paths": {
-      "@models/*" : ["src/app/core/models/*"],
-      "@shared/*": ["src/app/shared/*"],
-      "@components/*": ["src/app/shared/components/*"],
-      "@directives/*": ["src/app/shared/directives/*"],
-      "@core/*": ["src/app/core/*"],
-      "@testing/*": ["testing/*"]
+      "@models/*": [
+        "src/app/core/models/*"
+      ],
+      "@shared/*": [
+        "src/app/shared/*"
+      ],
+      "@components/*": [
+        "src/app/shared/components/*"
+      ],
+      "@directives/*": [
+        "src/app/shared/directives/*"
+      ],
+      "@core/*": [
+        "src/app/core/*"
+      ],
+      "@testing/*": [
+        "testing/*"
+      ],
+      "@components/ui/button": [
+        "./src/app/shared/components/ui/button/src/index.ts"
+      ],
+      "@components/ui/utils": [
+        "./src/app/shared/components/ui/utils/src/index.ts"
+      ],
+      "@components/ui/tooltip": [
+        "./src/app/shared/components/ui/tooltip/src/index.ts"
+      ],
+      "@components/ui/skeleton": [
+        "./src/app/shared/components/ui/skeleton/src/index.ts"
+      ],
+      "@components/ui/separator": [
+        "./src/app/shared/components/ui/separator/src/index.ts"
+      ],
+      "@components/ui/collapsible": [
+        "./src/app/shared/components/ui/collapsible/src/index.ts"
+      ],
+      "@components/ui/spinner": [
+        "./src/app/shared/components/ui/spinner/src/index.ts"
+      ],
+      "@components/ui/alert-dialog": [
+        "./src/app/shared/components/ui/alert-dialog/src/index.ts"
+      ],
+      "@components/ui/sonner": [
+        "./src/app/shared/components/ui/sonner/src/index.ts"
+      ],
+      "@components/ui/table": [
+        "./src/app/shared/components/ui/table/src/index.ts"
+      ],
+      "@components/ui/pagination": [
+        "./src/app/shared/components/ui/pagination/src/index.ts"
+      ],
+      "@components/ui/select": [
+        "./src/app/shared/components/ui/select/src/index.ts"
+      ],
+      "@components/ui/checkbox": [
+        "./src/app/shared/components/ui/checkbox/src/index.ts"
+      ],
+      "@components/ui/radio-group": [
+        "./src/app/shared/components/ui/radio-group/src/index.ts"
+      ],
+      "@components/ui/input": [
+        "./src/app/shared/components/ui/input/src/index.ts"
+      ],
+      "@components/ui/date-picker": [
+        "./src/app/shared/components/ui/date-picker/src/index.ts"
+      ],
+      "@components/ui/calendar": [
+        "./src/app/shared/components/ui/calendar/src/index.ts"
+      ],
+      "@components/ui/popover": [
+        "./src/app/shared/components/ui/popover/src/index.ts"
+      ],
+      "@components/ui/input-group": [
+        "./src/app/shared/components/ui/input-group/src/index.ts"
+      ],
+      "@components/ui/textarea": [
+        "./src/app/shared/components/ui/textarea/src/index.ts"
+      ],
+      "@components/ui/dropdown-menu": [
+        "./src/app/shared/components/ui/dropdown-menu/src/index.ts"
+      ],
+      "@components/ui/sheet": [
+        "./src/app/shared/components/ui/sheet/src/index.ts"
+      ]
     }
   },
   "angularCompilerOptions": {

@@ -1,395 +1,403 @@
-import {ChangeDetectionStrategy, Component, inject, input, output} from '@angular/core';
-import {TableLazyLoadEvent, TableModule} from 'primeng/table';
+import {ChangeDetectionStrategy, Component, computed, inject, input, output, signal} from '@angular/core';
+import {
+  injectTable,
+  rowPaginationFeature,
+  rowSelectionFeature,
+  rowSortingFeature,
+  tableFeatures,
+  type ColumnDef,
+  type PaginationState,
+  type RowSelectionState,
+  type SortingState,
+  type Updater,
+} from '@tanstack/angular-table';
 import {BaseModel} from '@models/base.model';
-import {SearchModes, SearchTableColumn} from '@models/search.model';
-import {UtilService} from '@core/services/util.service';
-import {PaginatorModule} from 'primeng/paginator';
+import {ResultsTableStateEvent, SearchModes, SearchTableColumn} from '@models/search.model';
 import {TranslatePipe} from '@ngx-translate/core';
-import {ButtonModule} from 'primeng/button';
 import {LinkComponent} from '@components/link/link.component';
-import {DatePipe, DecimalPipe, NgClass, NgTemplateOutlet} from '@angular/common';
-import {ImageModule} from 'primeng/image';
+import {DatePipe, DecimalPipe, NgTemplateOutlet} from '@angular/common';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
-import {CheckboxModule} from 'primeng/checkbox';
 import {FormsModule} from '@angular/forms';
 import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
-import {InputText} from 'primeng/inputtext';
-import {InputNumberModule} from 'primeng/inputnumber';
-import {DatePickerModule} from 'primeng/datepicker';
+import {HlmTableImports} from '@components/ui/table';
+import {HlmPaginationImports} from '@components/ui/pagination';
+import {HlmCheckboxImports} from '@components/ui/checkbox';
+import {HlmRadioGroupImports} from '@components/ui/radio-group';
+import {HlmInputImports} from '@components/ui/input';
+import {HlmDatePickerImports} from '@components/ui/date-picker';
+import {HlmButtonImports} from '@components/ui/button';
+import {HlmSpinnerImports} from '@components/ui/spinner';
+import {NgIcon, provideIcons} from '@ng-icons/core';
+import {lucideArrowDown, lucideArrowUp, lucideArrowUpDown, lucideCheck, lucideDownload, lucidePlus, lucideSearch} from '@ng-icons/lucide';
+
+const tableFeatureSet = tableFeatures({
+  rowSortingFeature,
+  rowPaginationFeature,
+  rowSelectionFeature,
+});
 
 @Component({
   selector: 'app-results-table',
   imports: [
-    TableModule,
-    PaginatorModule,
     TranslatePipe,
-    ButtonModule,
     LinkComponent,
-    NgClass,
     DatePipe,
     NgTemplateOutlet,
-    ImageModule,
     DecimalPipe,
     FormsModule,
     FormControlWrapComponent,
-    InputText,
-    DatePickerModule,
-    InputNumberModule,
-    CheckboxModule,
+    HlmTableImports,
+    HlmPaginationImports,
+    HlmCheckboxImports,
+    HlmRadioGroupImports,
+    HlmInputImports,
+    HlmDatePickerImports,
+    HlmButtonImports,
+    HlmSpinnerImports,
+    NgIcon,
   ],
+  providers: [provideIcons({lucideArrowDown, lucideArrowUp, lucideArrowUpDown, lucideCheck, lucideDownload, lucidePlus, lucideSearch})],
   template: `
-    <p-table
-      #td
-      [value]="tableItems()"
-      [totalRecords]="totalRecords()"
-      [rows]="resultsPerPage()"
-      [first]="first()"
-      [columns]="colTitles()"
-      [lazy]="lazy()"
-      [lazyLoadOnInit]="false"
-      [(selection)]="selectedItems"
-      [loading]="loading()"
-      [rowTrackBy]="trackById"
-      [rowHover]="true"
-      [paginator]="showTablePaginator"
-      [rowsPerPageOptions]="rowsPerPageOptions"
-      [showCurrentPageReport]="showTablePaginator"
-      (onLazyLoad)="handleLazyLoad($event)"
-      (onRowSelect)="handleRowSelectionChange()"
-      (onRowUnselect)="handleRowSelectionChange()"
-      [selectAll]="selectAll.checked"
-      (selectAllChange)="handleSelectAllChange($event)"
-      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
-      <ng-template pTemplate="caption" >
-        <div class="flex justify-between">
-          @if(showTableFilter){
-            <div class="relative w-[30vw]">
-              <div class="search">
-                <input
-                  #searchInput type="search"
-                  class="search__input"
-                  aria-label="search"
-                  placeholder="search in results....."
-                  (input)="applyFilterGlobal($event, 'contains',td)">
-                <button class="search__submit" aria-label="submit search">
-                  <i id="icon" class="pi pi-search"></i>
-                </button>
-              </div>
-            </div>
-          }
-          @if(!showTablePaginator){
-            <p-paginator
-              [rows]="resultsPerPage()"
-              [first]="first()"
-              [totalRecords]="totalRecords()"
-              [rowsPerPageOptions]="rowsPerPageOptions"
-              [showCurrentPageReport]="true"
-              (onPageChange)="handleLazyLoad($event)">
-            </p-paginator>
-            {{ 'GLOBAL.TABLES.result-summary'  | translate: {totalRecords} }}
-          }
+    <div class="flex justify-between items-center">
+      @if (showTableFilter) {
+        <div class="relative w-[30vw]">
+          <div class="search">
+            <input
+              type="search"
+              class="search__input"
+              aria-label="search"
+              placeholder="search in results....."
+              (input)="handleFilterInput($event)">
+            <button class="search__submit" type="button" aria-label="submit search">
+              <ng-icon name="lucideSearch" id="icon" />
+            </button>
+          </div>
         </div>
-        @if(showTableToolBar){
-          <button
-            pButton
-            type="button"
-            (click)="tableToolBarAction()">
-          {{ 'GLOBAL.TABLES.ACTIONS.add' | translate }}
-          </button>
-        }
-      </ng-template>
-      <ng-template
-        pTemplate="header"
-        let-columns>
-        <tr >
-          @for(colTitle of columns; track colTitle.field){
-            <th [pSortableColumn]="colTitle.enableSorting ? colTitle.field : null"
-                [pSortableColumnDisabled]="!colTitle.enableSorting"
-                [style]="colTitle.style"
-                class="bg-blueGray-100">
-              @if (!colTitle.isCheckbox && !colTitle.headerIsIcon){
-                <span >{{ colTitle.title }}</span>
-              }
-              @if(!colTitle.isCheckbox && colTitle.headerIsIcon){
-                <span><span class="{{ colTitle.headerIcon }}"></span></span>
-              }
-              @if(colTitle.isCheckbox){
-                <span><p-tableHeaderCheckbox [disabled]="isCheckboxColumnDisabled"></p-tableHeaderCheckbox></span>
-              }
-              @if (colTitle.enableSorting){
-                <p-sortIcon field="{{ colTitle.field }}"></p-sortIcon>
-              }
-            </th>
-          }
-        </tr>
-      </ng-template>
-      <ng-template
-        pTemplate="emptymessage"
-        let-columns>
-        <tr>
-          <td [attr.colspan]="columns.length">
-            {{ 'GLOBAL.TABLES.no-results' | translate }}
-          </td>
-        </tr>
-      </ng-template>
-      <ng-template
-        pTemplate="body"
-        let-tableItem>
-        <tr>
-          @for(col of colTitles(); track col.field;){
-            <td [style]="col.style">
-              @if(!col.isCheckbox && !col.isStaticCheckbox && !col.isCurrencyValue){
-                <span>
-                  @if(col.isLink){
-                    <app-link [config]="col" [tableItem]="tableItem">
-                          @if(col.onlyIcon){
+      }
+      @if (!showTablePaginator) {
+        <hlm-numbered-pagination
+          [currentPage]="currentPageNumber()"
+          (currentPageChange)="handlePageNumberChange($event)"
+          [itemsPerPage]="resultsPerPage()"
+          (itemsPerPageChange)="handleItemsPerPageChange($event)"
+          [totalItems]="totalRecords()"
+          [pageSizes]="rowsPerPageOptions"
+        />
+      }
+    </div>
+    @if (showTableToolBar) {
+      <button hlmBtn type="button" (click)="tableToolBarAction()">
+        <ng-icon name="lucidePlus" />
+        {{ 'GLOBAL.TABLES.ACTIONS.add' | translate }}
+      </button>
+    }
+
+    <div hlmTableContainer class="relative">
+      <table hlmTable>
+        <thead hlmTHead>
+          <tr hlmTr>
+            @for (colTitle of colTitles(); track colTitle.field) {
+              <th hlmTh [style]="colTitle.style">
+                @if (!colTitle.isCheckbox && !colTitle.headerIsIcon) {
+                  @if (colTitle.enableSorting) {
+                    <button type="button" class="inline-flex items-center gap-1 font-medium" (click)="handleSortClick(colTitle.field)">
+                      <span>{{ colTitle.title }}</span>
+                      <ng-icon [name]="sortIconName(colTitle.field)" />
+                    </button>
+                  } @else {
+                    <span>{{ colTitle.title }}</span>
+                  }
+                }
+                @if (!colTitle.isCheckbox && colTitle.headerIsIcon) {
+                  <span><span class="{{ colTitle.headerIcon }}"></span></span>
+                }
+                @if (colTitle.isCheckbox) {
+                  <hlm-checkbox
+                    [checked]="table.getIsAllRowsSelected()"
+                    [indeterminate]="table.getIsSomeRowsSelected() && !table.getIsAllRowsSelected()"
+                    [disabled]="isCheckboxColumnDisabled"
+                    (checkedChange)="handleToggleAllRows($event)"
+                  />
+                }
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody hlmTBody hlmRadioGroup [value]="selectedRadioRowId()" (valueChange)="handleRadioRowSelect($event)">
+          @for (row of table.getRowModel().rows; track row.id) {
+            <tr hlmTr>
+              @for (col of colTitles(); track col.field) {
+                <td hlmTd [style]="col.style">
+                  @if (!col.isCheckbox && !col.isStaticCheckbox && !col.isCurrencyValue && !col.isRadioButton && !col.isInputText && !col.isInputNumber && !col.isInputDate && !col.isButton && !col.isButtonGroup && !col.isTableActions) {
+                    <span>
+                      @if (col.isLink) {
+                        <app-link [config]="col" [tableItem]="asRecord(row.original)">
+                          @if (col.onlyIcon) {
                             <span class="{{ col.icon }}"></span>
                           }
-                      @if(!col.onlyIcon){
-                        <span>
-                          @if(col.icon){
-                            <span class="{{ col.icon }} mr-2"></span>
+                          @if (!col.onlyIcon) {
+                            <span>
+                              @if (col.icon) {
+                                <span class="{{ col.icon }} mr-2"></span>
+                              }
+                              {{ getFieldValue(row.original, col.field) }}
+                            </span>
                           }
-                          {{ col.field ? tableItem[col.field] : '' }}
+                        </app-link>
+                      }
+                      @if (!col.isStatus && !col.isLink && !col.isDate && !col.isImage && col.isTranslatable) {
+                        <span>{{ getFieldValue(row.original, col.field) | translate }}</span>
+                      }
+                      @if (!col.isLink && !col.isDate && !col.isImage && !col.isTranslatable) {
+                        <span>{{ getFieldValue(row.original, col.field) }}</span>
+                      }
+                      @if (!col.isLink && col.isDate && !col.isImage) {
+                        <span>{{ getFieldValue(row.original, col.field) | date: 'dd/MM/yyyy' }}</span>
+                      }
+                      @if (!col.isLink && !col.isDate && !col.isImage && !col.isTranslatable && col.isStatus && statusClasses()) {
+                        <span class="badge" [class]="getClass(getFieldValue(row.original, col.field))">
+                          {{ getFieldValue(row.original, col.field) }}
                         </span>
                       }
-                      </app-link>
-                  }
-                  @if(!col.isStatus &&!col.isLink && !col.isDate && !col.isImage  && col.isTranslatable){
-                    <span>{{ col.field ? (tableItem[col.field] | translate) : '' }}</span>
-                  }
-                  @if(!col.isLink && !col.isDate && !col.isImage  && !col.isTranslatable ){
-                    <span>{{ col.field ? tableItem[col.field] : '' }}</span>
-                  }
-                  @if(!col.isLink && col.isDate && !col.isImage){
-                    <span>{{ (col.field ? tableItem[col.field] : '') | date : 'dd/MM/yyyy' }}</span>
-                  }
-                  @if(!col.isLink && !col.isDate && !col.isImage  && !col.isTranslatable && col.isStatus && statusClasses()){
-                    <span class="badge" [ngClass]="getClass(col.field ? tableItem[col.field] : '')">
-                        {{col.field ? tableItem[col.field] : '' }}
+                      @if (col.isImage) {
+                        @let field = getFieldValue(row.original, col.field);
+                        @if (field) {
+                          <img [src]="field" width="50" alt="" />
+                        }
+                      }
                     </span>
                   }
-                  @if(col.isImage){
-                    @let field= col.field ? tableItem[col.field] : '';
-                    @if(field){
-                      <p-image
-                        src="{{ field }}"
-                        width="50"
-                        [preview]="true"
-                      ></p-image>
-                      <span
-                        class="pi pi-image text-3xl"
-                      ></span>
+                  @if (col.isCurrencyValue) {
+                    <span>
+                      {{ getFieldValue(row.original, col.field) | number: currencyDecimalsFormat }}
+                    </span>
+                  }
+                  @if (col.isCheckbox) {
+                    <hlm-checkbox
+                      [checked]="row.getIsSelected()"
+                      [disabled]="isCheckboxColumnDisabled || (col.dataFieldForCheckboxDisabled && getFieldValue(row.original, col.dataFieldForCheckboxDisabled))"
+                      (checkedChange)="row.toggleSelected($event)"
+                    />
+                  }
+                  @if (col.isRadioButton) {
+                    <hlm-radio
+                      [value]="row.id"
+                      [disabled]="!!(col.dataFieldForRadioButtonDisabled && getFieldValue(row.original, col.dataFieldForRadioButtonDisabled))"
+                    />
+                  }
+                  @if (col.isStaticCheckbox) {
+                    <hlm-checkbox
+                      [checked]="!!getFieldValue(row.original, col.field)"
+                      [disabled]="true"
+                    />
+                  }
+                  @if (col.isInputText && col.inputTextModelField) {
+                    <app-form-control-wrap
+                      [editMode]="!(col.dataFieldForInputDisabled && getFieldValue(row.original, col.dataFieldForInputDisabled))"
+                      [displayValue]="getFieldValue(row.original, col.inputTextModelField)"
+                    >
+                      <input
+                        type="text"
+                        hlmInput
+                        [disabled]="!!(col.dataFieldForInputDisabled && getFieldValue(row.original, col.dataFieldForInputDisabled))"
+                        [ngModel]="getFieldValue(row.original, col.inputTextModelField)"
+                        (ngModelChange)="setFieldValue(row.original, col.inputTextModelField, $event)"
+                      />
+                    </app-form-control-wrap>
+                  }
+                  @if (col.isInputNumber && col.inputNumberModelField) {
+                    <app-form-control-wrap
+                      [editMode]="!(col.dataFieldForInputDisabled && getFieldValue(row.original, col.dataFieldForInputDisabled))"
+                      [displayValue]="getFieldValue(row.original, col.inputNumberModelField)"
+                    >
+                      <input
+                        type="number"
+                        hlmInput
+                        [disabled]="!!(col.dataFieldForInputDisabled && getFieldValue(row.original, col.dataFieldForInputDisabled))"
+                        [max]="col.inputNumberMaxModelField ? getFieldValue(row.original, col.inputNumberMaxModelField) : null"
+                        [min]="col.inputNumberMinModelField ? getFieldValue(row.original, col.inputNumberMinModelField) : 0"
+                        [ngModel]="getFieldValue(row.original, col.inputNumberModelField)"
+                        (ngModelChange)="setFieldValue(row.original, col.inputNumberModelField, $event)"
+                      />
+                    </app-form-control-wrap>
+                  }
+                  @if (col.isInputDate && col.inputDateModelField) {
+                    <app-form-control-wrap
+                      [editMode]="!(col.dataFieldForInputDateDisabled && getFieldValue(row.original, col.dataFieldForInputDateDisabled))"
+                      [displayValue]="getDateAsString(getFieldValue(row.original, col.inputDateModelField))"
+                    >
+                      <hlm-date-picker
+                        [date]="getFieldValue(row.original, col.inputDateModelField)"
+                        (dateChange)="setFieldValue(row.original, col.inputDateModelField, $event)"
+                      >
+                        <hlm-date-picker-trigger />
+                      </hlm-date-picker>
+                    </app-form-control-wrap>
+                  }
+                  @if (col.isButton && (col.fieldForButtonVisibility !== undefined ? !!getFieldValue(row.original, col.fieldForButtonVisibility) : true)) {
+                    <button
+                      hlmBtn
+                      variant="outline"
+                      size="icon"
+                      type="button"
+                      (click)="col.buttonAction(col.dataFieldForButtonAction ? getFieldValue(row.original, col.dataFieldForButtonAction) : null)"
+                    >
+                      <span class="{{ col.icon }}"></span>
+                    </button>
+                  }
+                  @if (col.isButtonGroup) {
+                    @for (groupButton of col.buttonGroup; track groupButton.icon) {
+                      <button
+                        hlmBtn
+                        variant="outline"
+                        size="icon"
+                        type="button"
+                        [disabled]="!!(groupButton.dataFieldForButtonDisabled && getFieldValue(row.original, groupButton.dataFieldForButtonDisabled))"
+                        (click)="groupButton.action(groupButton.dataFieldForButtonAction ? getFieldValue(row.original, groupButton.dataFieldForButtonAction) : null)"
+                      >
+                        <span class="{{ groupButton.icon }}"></span>
+                      </button>
                     }
                   }
-                </span>
-              }
-              @if(col.isCurrencyValue){
-                <span>
-                    {{ col.field ? (tableItem[col.field] | number: currencyDecimalsFormat) : '' }}
-                </span>
-              }
-              @if(col.isCheckbox){
-                <span>
-                    <p-tableCheckbox
-                      [value]="tableItem"
-                      [disabled]="isCheckboxColumnDisabled || (col.dataFieldForCheckboxDisabled && tableItem[col.dataFieldForCheckboxDisabled])">
-                    </p-tableCheckbox>
-                </span>
-              }
-              @if(col.isRadioButton){
-                <p-tableRadioButton
-                  [value]="tableItem"
-                  [disabled]="col.dataFieldForRadioButtonDisabled && tableItem[col.dataFieldForRadioButtonDisabled]"
-                ></p-tableRadioButton>
-              }
-              @if(col.isStaticCheckbox){
-                <p-checkbox
-                  [binary]="true"
-                  [ngModel]="col.field && tableItem[col.field]"
-                  [readonly]="true"
-                ></p-checkbox>
-              }
-              @if(col.isInputText && col.inputTextModelField){
-                <app-form-control-wrap
-                  [editMode]="!(col.dataFieldForInputDisabled && tableItem[col.dataFieldForInputDisabled])"
-                  [displayValue]="tableItem[col.inputTextModelField]"
-                >
-                  <input
-                    type="text"
-                    pInputText
-                    [disabled]="col.dataFieldForInputDisabled && tableItem[col.dataFieldForInputDisabled]"
-                    [(ngModel)]="tableItem[col.inputTextModelField]"
-                  />
-                </app-form-control-wrap>
-              }
-              @if(col.isInputNumber && col.inputNumberModelField){
-                <app-form-control-wrap
-                  [editMode]="!(col.dataFieldForInputDisabled && tableItem[col.dataFieldForInputDisabled])"
-                  [displayValue]="tableItem[col.inputNumberModelField]"
-                >
-                  <p-inputNumber
-                    [disabled]="col.dataFieldForInputDisabled && tableItem[col.dataFieldForInputDisabled]"
-                    [max]="col.inputNumberMaxModelField ? tableItem[col.inputNumberMaxModelField] : null"
-                    [min]="col.inputNumberMinModelField ? tableItem[col.inputNumberMinModelField] : 0"
-                    [(ngModel)]="tableItem[col.inputNumberModelField]"
-                  >
-                  </p-inputNumber>
-                </app-form-control-wrap>
-              }
-              @if(col.isInputDate && col.inputDateModelField){
-                <app-form-control-wrap
-                  [editMode]="!(col.dataFieldForInputDateDisabled && tableItem[col.dataFieldForInputDateDisabled])"
-                  [displayValue]="getDateAsString(tableItem[col.inputDateModelField])"
-                >
-                  <p-datepicker
-                    [(ngModel)]="tableItem[col.inputDateModelField]"
-                    dateFormat="dd/mm/yy"
-                    [showTime]="false"
-                    [readonlyInput]="true"
-                    appendTo="body"
-                  ></p-datepicker>
-                </app-form-control-wrap>
-              }
-              @if(col.isButton && (col.fieldForButtonVisibility !== undefined ? !!tableItem[col.fieldForButtonVisibility] : true)){
-                <button
-                  pButton
-                  type="button"
-                  icon="{{ col.icon }}"
-                  class="p-button-rounded p-button-outlined"
-                  (click)="col.buttonAction(col.dataFieldForButtonAction ? tableItem[col.dataFieldForButtonAction] : null)"
-                ></button>
-              }
-              @if(col.isButtonGroup){
-                @for(groupButton of  col.buttonGroup; track groupButton.icon){
-                  <button
-                    pButton
-                    type="button"
-                    icon="{{ col.icon }}"
-                    class="p-button-rounded p-button-outlined"
-                    [disabled]="groupButton.dataFieldForButtonDisabled && tableItem[groupButton.dataFieldForButtonDisabled]"
-                    (click)="groupButton.action(groupButton.dataFieldForButtonAction ? tableItem[groupButton.dataFieldForButtonAction] : null)"
-                  ></button>
-                }
-              }
-              @if(col.isTableActions){
-                <span class="text-dark fw-bolder mb-1 fs-6">
-                  @for(action of col.actions; track action.type;){
-                    @switch(action.type){
-                      @case ('VIEW'){
-                        <ng-container
-                          [ngTemplateOutlet]="viewBlock"
-                          [ngTemplateOutletContext]="{tableItem:tableItem, action:action }">
-                        </ng-container>
+                  @if (col.isTableActions) {
+                    <span class="text-dark fw-bolder mb-1 fs-6">
+                      @for (action of col.actions; track action.type) {
+                        @switch (action.type) {
+                          @case ('VIEW') {
+                            <ng-container
+                              [ngTemplateOutlet]="viewBlock"
+                              [ngTemplateOutletContext]="{tableItem: row.original, action: action}">
+                            </ng-container>
+                          }
+                          @case ('EDIT') {
+                            <ng-container
+                              [ngTemplateOutlet]="editBlock"
+                              [ngTemplateOutletContext]="{tableItem: row.original, action: action}">
+                            </ng-container>
+                          }
+                          @case ('DELETE') {
+                            <ng-container
+                              [ngTemplateOutlet]="deleteBlock"
+                              [ngTemplateOutletContext]="{tableItem: row.original, uuid: row.original.publicId, action: action}">
+                            </ng-container>
+                          }
+                          @default {}
+                        }
                       }
-                      @case ('EDIT'){
-                        <ng-container
-                          [ngTemplateOutlet]="editBlock"
-                          [ngTemplateOutletContext]="{ tableItem:tableItem,action:action }">
-                        </ng-container>
-                      }
-                      @case ('DELETE'){
-                        <ng-container
-                          [ngTemplateOutlet]="deleteBlock"
-                          [ngTemplateOutletContext]="{uuid:tableItem['uuid'] ,action:action }">
-                        </ng-container>
-                      }
-                      @default{
-
-                      }
-                    }
+                    </span>
                   }
-                </span>
+                </td>
               }
-            </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td [attr.colspan]="colTitles().length" hlmTd>
+                {{ 'GLOBAL.TABLES.no-results' | translate }}
+              </td>
+            </tr>
           }
-          <ng-template let-tableItem="tableItem" let-action="action" #viewBlock>
-            <app-link
-              [config]="action"
-              [tableItem]="tableItem">
-                    <span class="svg-icon svg-icon-3"></span>
-            </app-link>
-          </ng-template>
-          <ng-template let-tableItem="tableItem" let-action="action" #editBlock>
-            <button
-              pButton
-              data-tool-tip="Edit"
-              type="button"
-              (click)="action.callbackFn(tableItem)">
-              <span class="svg-icon svg-icon-3"></span>
-            </button>
-          </ng-template>
-          <ng-template let-uuid="uuid" let-action="action" #deleteBlock>
-            @if(action.isButton){
-              <button
-                pButton
-                data-tool-tip="Delete"
-                type="button"
-                (click)="action.callbackFn(uuid)">
-                <span class="svg-icon svg-icon-3"></span>
-              </button>
-            }
-            @if(action.isLink){
-              <app-link
-                [config]="action"
-                [tableItem]="tableItem" >
-                        <span class="svg-icon svg-icon-3"></span>
-              </app-link>
-            }
-          </ng-template>
-        </tr>
-      </ng-template>
-      <ng-template
-        pTemplate="summary">
-        @if(mode() !== 'no-buttons'){
-          <div class="flex gap-5 mt-4">
-            <button
-              pButton
-              type="button"
-              icon="pi pi-file-export"
-              severity="info"
-              (click)="overrideDefaultExport() ? exportParentFunction() : td.exportCSV()"
-              [disabled]="totalRecords() >= maxResultsCsvExport || loading() || !tableItems() || tableItems().length === 0"
-            >
-              {{ (overrideDefaultExport() ? exportLabel() : exportButtonLabel) | translate }}
-            </button>
-            @if(selectionEnabled){
-              <button
-                pButton
-                type="button"
-                icon="pi pi-check"
-                (click)="handleSelectItemsClicked()"
-                [disabled]="!selectedItems || selectedItems.length === 0"
-              >
-                {{ selectButtonLabelKey() | translate }}
-              </button>
-            }
-          </div>
+        </tbody>
+      </table>
+      @if (loading()) {
+        <div class="absolute inset-0 z-10 flex items-center justify-center bg-background/60">
+          <hlm-spinner class="text-4xl" />
+        </div>
+      }
+    </div>
+
+    @if (showTablePaginator) {
+      <hlm-numbered-pagination
+        [currentPage]="currentPageNumber()"
+        (currentPageChange)="handlePageNumberChange($event)"
+        [itemsPerPage]="resultsPerPage()"
+        (itemsPerPageChange)="handleItemsPerPageChange($event)"
+        [totalItems]="totalRecords()"
+        [pageSizes]="rowsPerPageOptions"
+      />
+    }
+
+    @if (mode() !== 'no-buttons') {
+      <div class="flex gap-5 mt-4">
+        <button
+          hlmBtn
+          type="button"
+          variant="secondary"
+          (click)="handleExportClicked()"
+          [disabled]="totalRecords() >= maxResultsCsvExport || loading() || !tableItems() || tableItems().length === 0"
+        >
+          <ng-icon name="lucideDownload" />
+          {{ (overrideDefaultExport() ? exportLabel() : exportButtonLabel) | translate }}
+        </button>
+        @if (selectionEnabled) {
+          <button
+            hlmBtn
+            type="button"
+            (click)="handleSelectItemsClicked()"
+            [disabled]="selectedItems().length === 0"
+          >
+            <ng-icon name="lucideCheck" />
+            {{ selectButtonLabelKey() | translate }}
+          </button>
         }
-      </ng-template>
-    </p-table>
+      </div>
+    }
+
+    <ng-template let-tableItem="tableItem" let-action="action" #viewBlock>
+      <app-link
+        [config]="action"
+        [tableItem]="tableItem">
+        <span class="svg-icon svg-icon-3"></span>
+      </app-link>
+    </ng-template>
+    <ng-template let-tableItem="tableItem" let-action="action" #editBlock>
+      <button
+        hlmBtn
+        variant="outline"
+        size="icon"
+        data-tool-tip="Edit"
+        type="button"
+        (click)="action.callbackFn(tableItem)">
+        <span class="svg-icon svg-icon-3"></span>
+      </button>
+    </ng-template>
+    <ng-template let-tableItem="tableItem" let-uuid="uuid" let-action="action" #deleteBlock>
+      @if (action.isButton) {
+        <button
+          hlmBtn
+          variant="outline"
+          size="icon"
+          data-tool-tip="Delete"
+          type="button"
+          (click)="action.callbackFn(uuid)">
+          <span class="svg-icon svg-icon-3"></span>
+        </button>
+      }
+      @if (action.isLink) {
+        <app-link
+          [config]="action"
+          [tableItem]="tableItem">
+          <span class="svg-icon svg-icon-3"></span>
+        </app-link>
+      }
+    </ng-template>
   `,
   styleUrl: './results-table.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResultsTableComponent {
-  private utilService= inject(UtilService);
-  private commonEntitiesService= inject(CommonEntitiesService);
+  private commonEntitiesService = inject(CommonEntitiesService);
 
-  protected selectedItems!:BaseModel[];
-  protected arrayObj = Array;
-  protected rowsPerPageOptions:number[]=[10,20,50,100];
+  protected rowsPerPageOptions: number[] = [10, 20, 50, 100];
 
   public showTablePaginator = false;
   public showTableFilter = false;
-  public showTableToolBar=false;
-  public selectionEnabled=false;
+  public showTableToolBar = false;
+  public selectionEnabled = false;
   public isCheckboxColumnDisabled = false;
   public enablePaging = false;
 
   protected exportButtonLabel: string = 'GLOBAL.BUTTONS.export-to-csv';
   protected maxResultsCsvExport = 100;
-  protected selectAll: any = this.getInitialSelectAll();
 
   mode = input<SearchModes>("normal");
   tableItems = input.required<BaseModel[]>();
@@ -400,75 +408,168 @@ export class ResultsTableComponent {
   loading = input(false);
   lazy = input(false);
   exportLabel = input(this.exportButtonLabel);
-  statusClasses = input<Map<string,string>>();
+  statusClasses = input<Map<string, string>>();
   exportFunction = input<Function>();
   callbackFunctionToolBar = input<Function>();
   selectButtonLabelKey = input('GLOBAL.BUTTONS.select');
   overrideDefaultExport = input(false);
-  selectionMode= input<PrimeNGTableSelectionMode>('multiple');
+  selectionMode = input<TableSelectionMode>('multiple');
 
-  tableStateChanged = output<TableLazyLoadEvent>();
+  tableStateChanged = output<ResultsTableStateEvent>();
   itemsSelected = output<BaseModel[]>();
   rowSelectionChanged = output<BaseModel[]>();
   rowSingleSelectionChanged = output<BaseModel[]>();
 
-  protected trackById( li: BaseModel): string| number | undefined {
-    return li ? li.publicId : undefined;
+  protected readonly filterTerm = signal('');
+  protected readonly sortingState = signal<SortingState>([]);
+  protected readonly rowSelectionState = signal<RowSelectionState>({});
+
+  protected readonly filteredTableItems = computed<BaseModel[]>(() => {
+    const term = this.filterTerm().trim().toLowerCase();
+    const items = this.tableItems();
+    if (!term) {
+      return items;
+    }
+    return items.filter(item =>
+      Object.values(item as unknown as Record<string, unknown>).some(
+        value => value != null && String(value).toLowerCase().includes(term)
+      )
+    );
+  });
+
+  protected readonly columnDefs = computed<ColumnDef<typeof tableFeatureSet, BaseModel>[]>(() =>
+    this.colTitles().map(col => ({
+      id: col.field,
+      header: col.title,
+      enableSorting: !!col.enableSorting,
+    }))
+  );
+
+  protected readonly paginationState = computed<PaginationState>(() => ({
+    pageIndex: this.resultsPerPage() > 0 ? Math.floor(this.first() / this.resultsPerPage()) : 0,
+    pageSize: this.resultsPerPage(),
+  }));
+
+  protected readonly currentPageNumber = computed(() => this.paginationState().pageIndex + 1);
+
+  protected readonly selectedItems = computed<BaseModel[]>(() => {
+    const selection = this.rowSelectionState();
+    return this.tableItems().filter(item => selection[item.publicId]);
+  });
+
+  protected readonly selectedRadioRowId = computed(() => Object.keys(this.rowSelectionState())[0]);
+
+  protected readonly table = injectTable(() => ({
+    data: this.filteredTableItems(),
+    columns: this.columnDefs(),
+    features: tableFeatureSet,
+    manualPagination: true,
+    manualSorting: true,
+    enableMultiRowSelection: this.selectionMode() !== 'single',
+    rowCount: this.totalRecords(),
+    getRowId: (row: BaseModel) => row.publicId,
+    state: {
+      pagination: this.paginationState(),
+      sorting: this.sortingState(),
+      rowSelection: this.rowSelectionState(),
+    },
+    onPaginationChange: updater => this.handlePaginationChange(updater),
+    onSortingChange: updater => this.handleSortingChange(updater),
+    onRowSelectionChange: updater => this.handleRowSelectionStateChange(updater),
+  }));
+
+  protected getFieldValue(item: BaseModel, field?: string): any {
+    return field ? (item as unknown as Record<string, unknown>)[field] : '';
   }
 
-  protected applyFilterGlobal($event:Event, stringVal:string,td:any) {
-    td.filterGlobal(($event.target as HTMLInputElement).value, 'contains');
+  protected asRecord(item: BaseModel): Record<string, unknown> {
+    return item as unknown as Record<string, unknown>;
   }
 
-  protected handleLazyLoad(event: TableLazyLoadEvent): void {
-    this.tableStateChanged.emit(event);
+  protected setFieldValue(item: BaseModel, field: string | undefined, value: unknown): void {
+    if (field) {
+      (item as unknown as Record<string, unknown>)[field] = value;
+    }
+  }
+
+  protected handleFilterInput(event: Event): void {
+    this.filterTerm.set((event.target as HTMLInputElement).value);
+  }
+
+  protected handleSortClick(field: string): void {
+    this.table.getColumn(field)?.toggleSorting();
+  }
+
+  protected sortIconName(field: string): string {
+    const sorted = this.table.getColumn(field)?.getIsSorted();
+    if (sorted === 'asc') {
+      return 'lucideArrowUp';
+    }
+    if (sorted === 'desc') {
+      return 'lucideArrowDown';
+    }
+    return 'lucideArrowUpDown';
+  }
+
+  protected handlePaginationChange(updater: Updater<PaginationState>): void {
+    const next = typeof updater === 'function' ? updater(this.paginationState()) : updater;
+    this.emitStateChange({first: next.pageIndex * next.pageSize, rows: next.pageSize});
+  }
+
+  protected handleSortingChange(updater: Updater<SortingState>): void {
+    const next = typeof updater === 'function' ? updater(this.sortingState()) : updater;
+    this.sortingState.set(next);
+    this.emitStateChange({});
+  }
+
+  protected handleRowSelectionStateChange(updater: Updater<RowSelectionState>): void {
+    const next = typeof updater === 'function' ? updater(this.rowSelectionState()) : updater;
+    this.rowSelectionState.set(next);
+    const selected = this.tableItems().filter(item => next[item.publicId]);
+    if (this.selectionMode() === 'single') {
+      this.rowSingleSelectionChanged.emit(selected);
+    } else {
+      this.rowSelectionChanged.emit(selected);
+    }
+  }
+
+  protected handleToggleAllRows(checked: boolean): void {
+    this.table.toggleAllRowsSelected(checked);
+  }
+
+  protected handleRadioRowSelect(rowId: string): void {
+    this.table.setRowSelection({[rowId]: true});
+  }
+
+  protected handlePageNumberChange(page: number): void {
+    this.table.setPagination({pageIndex: page - 1, pageSize: this.resultsPerPage()});
+  }
+
+  protected handleItemsPerPageChange(pageSize: number): void {
+    this.table.setPagination({pageIndex: 0, pageSize});
   }
 
   protected handleSelectItemsClicked(): void {
-    this.itemsSelected.emit(this.selectedItems);
+    this.itemsSelected.emit(this.selectedItems());
   }
 
-  protected handleSelectAllChange(event: any): void {
-    this.selectAll = event;
-    this.selectedItems = event.checked ? this.tableItems() : [];
-
-    this.handleRowSelectionChange();
+  protected getClass(field: string): string | undefined {
+    return this.statusClasses()?.get(field);
   }
 
-  protected handleRowSelectionChange(): void {
-    if (this.selectionMode() === 'single') {
-      this.rowSingleSelectionChanged.emit(this.selectedItems);
+  protected handleExportClicked(): void {
+    if (this.overrideDefaultExport()) {
+      this.exportParentFunction();
       return;
     }
-
-    if (this.selectAll.checked === true && this.selectedItems.length < this.tableItems.length) {
-      this.selectAll = this.getInitialSelectAll();
-    }
-
-    if (this.selectAll.checked === false && this.selectedItems.length === this.tableItems.length) {
-      this.selectAll = this.getInitialSelectAll(true);
-    }
-
-    this.rowSelectionChanged.emit(this.selectedItems);
-  }
-
-  protected getClass(field:string):string|undefined{
-    return this.statusClasses()?.get(field);
+    this.exportCurrentPageAsCsv();
   }
 
   protected exportParentFunction(): void {
     const suppliedFunction = this.exportFunction();
-    if(suppliedFunction){
+    if (suppliedFunction) {
       suppliedFunction();
     }
-  }
-
-  protected getFormattedDate(dateStr: string | null): string {
-    let retVal: string | null = '';
-    if (dateStr !== null) {
-      retVal = this.utilService.convertDateStringToCalendarFormat(dateStr);
-    }
-    return retVal !== null ? retVal : '';
   }
 
   protected getDateAsString(date: Date): string {
@@ -476,21 +577,48 @@ export class ResultsTableComponent {
     return ''
   }
 
-  protected tableToolBarAction(uuid?:string){
+  protected tableToolBarAction(uuid?: string) {
     // const fun = this.callbackFunctionToolBar(uuid);
     // console.log(fun);
-  }
-
-  private getInitialSelectAll(checked?: boolean): any {
-    return { originalEvent: null, checked: !!checked };
   }
 
   get currencyDecimalsFormat(): string {
     return this.commonEntitiesService.getBigDecimalScale();
   }
 
+  private emitStateChange(partial: Partial<ResultsTableStateEvent>): void {
+    const [sort] = this.sortingState();
+    this.tableStateChanged.emit({
+      first: this.first(),
+      rows: this.resultsPerPage(),
+      sortField: sort?.id,
+      sortOrder: sort ? (sort.desc ? -1 : 1) : undefined,
+      ...partial,
+    });
+  }
+
+  private exportCurrentPageAsCsv(): void {
+    const columns = this.colTitles().filter(col => !!col.field);
+    const header = columns.map(col => this.csvEscape(col.title)).join(',');
+    const rows = this.tableItems().map(item =>
+      columns.map(col => this.csvEscape(String(this.getFieldValue(item, col.field) ?? ''))).join(',')
+    );
+    const csvContent = [header, ...rows].join('\n');
+    const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = 'export.csv';
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
+  private csvEscape(value: string): string {
+    return /[",\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
+  }
+
 }
 
 type Function = (args?: any) => void;
 
-type PrimeNGTableSelectionMode = 'single' | 'multiple' | null | undefined;
+type TableSelectionMode = 'single' | 'multiple' | null | undefined;

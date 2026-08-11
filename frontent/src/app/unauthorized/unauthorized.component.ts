@@ -1,14 +1,18 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {TranslatePipe} from '@ngx-translate/core';
+import {NgIcon, provideIcons} from '@ng-icons/core';
+import {lucideBan} from '@ng-icons/lucide';
 
 @Component({
   selector: 'app-unauthorized',
   imports: [
-    TranslatePipe
+    TranslatePipe,
+    NgIcon
   ],
+  providers: [provideIcons({lucideBan})],
   template: `
     <div class="text-center">
-      <span class="pi pi-ban text-8xl"></span>
+      <ng-icon name="lucideBan" class="text-8xl" />
       <p class="text-3xl">{{ 'GLOBAL.UNAUTHORIZED' | translate }}</p>
     </div>
   `,

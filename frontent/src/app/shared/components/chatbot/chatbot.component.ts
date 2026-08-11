@@ -7,24 +7,27 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { DrawerModule } from 'primeng/drawer';
-import { InputTextModule } from 'primeng/inputtext';
-import { ScrollPanelModule } from 'primeng/scrollpanel';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ChatbotService } from '@core/services/chatbot.service';
+import {HlmButtonImports} from '@components/ui/button';
+import {HlmInputImports} from '@components/ui/input';
+import {HlmSheetImports} from '@components/ui/sheet';
+import {HlmSpinnerImports} from '@components/ui/spinner';
+import {NgIcon, provideIcons} from '@ng-icons/core';
+import {lucideMessageCircle, lucideSend, lucideTrash2} from '@ng-icons/lucide';
+import type {BrnDialogState} from '@spartan-ng/brain/dialog';
 
 @Component({
   selector: 'app-chatbot',
   standalone: true,
   imports: [
     FormsModule,
-    ButtonModule,
-    DrawerModule,
-    InputTextModule,
-    ScrollPanelModule,
-    ProgressSpinnerModule,
+    HlmButtonImports,
+    HlmInputImports,
+    HlmSheetImports,
+    HlmSpinnerImports,
+    NgIcon,
   ],
+  providers: [provideIcons({lucideMessageCircle, lucideSend, lucideTrash2})],
   templateUrl: './chatbot.component.html',
   styleUrls: ['./chatbot.component.css'],
 })
@@ -42,6 +45,12 @@ export class ChatbotComponent implements AfterViewChecked {
     this.chatbotService.togglePanel();
     if (this.chatbotService.messages().length === 0) {
       this.chatbotService.loadHistory();
+    }
+  }
+
+  protected handleSheetStateChanged(state: BrnDialogState): void {
+    if (state === 'closed' && this.chatbotService.isOpen()) {
+      this.chatbotService.closePanel();
     }
   }
 

@@ -1,10 +1,10 @@
 import {ChangeDetectionStrategy, Component, input} from '@angular/core';
-import {Skeleton} from 'primeng/skeleton';
+import {HlmSkeletonImports} from '@components/ui/skeleton';
 
 @Component({
   selector: 'app-form-control-wrap',
   imports: [
-    Skeleton
+    HlmSkeletonImports
   ],
   template: `
     @if(!editMode() && !fetchingData()){
@@ -13,8 +13,7 @@ import {Skeleton} from 'primeng/skeleton';
       </div>
     }
     @if(fetchingData()){
-      <p-skeleton height="{{skeletonHeightClass()}}">
-      </p-skeleton>
+      <hlm-skeleton class="w-full" [style.height]="skeletonHeightClass()" />
     }
     @if(editMode() && !fetchingData()){
       <ng-content></ng-content>

@@ -7,9 +7,6 @@ import {
 import { provideOAuthClient } from 'angular-oauth2-oidc';
 import { appInitializer } from '@core/initializers/app-initializer';
 import {provideRouter, withComponentInputBinding} from '@angular/router';
-import { providePrimeNG } from 'primeng/config';
-import {ConfirmationService, MessageService} from 'primeng/api';
-import Aura from '@primeng/themes/aura';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { routes } from './app.routes';
 import {
@@ -47,19 +44,12 @@ export const provideTranslation = () => ({
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    MessageService,
     ErrorService,
-    ConfirmationService,
     provideZonelessChangeDetection(),
     provideSignalFormsConfig({
       classes:NG_STATUS_CLASSES
     }),
     provideRouter(routes,withComponentInputBinding()),
-    providePrimeNG({
-      theme: {
-        preset: Aura
-      }
-    }),
     {
       provide: HTTP_INTERCEPTORS,
       useClass: BaseUrlInterceptor,

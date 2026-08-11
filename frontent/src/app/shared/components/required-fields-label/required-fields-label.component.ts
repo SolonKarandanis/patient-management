@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {TranslatePipe} from '@ngx-translate/core';
-import {Divider} from 'primeng/divider';
+import {HlmSeparatorImports} from '@components/ui/separator';
 
 @Component({
   selector: 'app-required-fields-label',
   imports: [
     TranslatePipe,
-    Divider
+    HlmSeparatorImports
   ],
   template: `
     <div class="p-2 m-2 text-black">
@@ -20,7 +20,7 @@ import {Divider} from 'primeng/divider';
         {{ 'REQUIRED-FIELDS-LABEL.part2' | translate }}
       </span>
     </div>
-    <p-divider></p-divider>
+    <hlm-separator></hlm-separator>
   `,
   styleUrl: './required-fields-label.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

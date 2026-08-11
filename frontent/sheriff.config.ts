@@ -9,6 +9,7 @@ export const config: SheriffConfig = {
     'src/app/auth': ['domain:auth'],
     'src/app/core': ['core'],
     'src/app/shared/components': ['shared', 'type:ui'],
+    'src/app/shared/components/ui/<component>/src': ['shared', 'type:ui'],
     'src/app/shared/directives': ['shared', 'type:ui'],
     'src/app/shared/animations': ['shared', 'type:ui'],
     'src/app/shared/utils': ['shared', 'type:util'],

@@ -6,6 +6,13 @@ export type SearchResult<T>={
   countRows:number
 }
 
+export interface ResultsTableStateEvent {
+  first?: number;
+  rows?: number;
+  sortField?: string;
+  sortOrder?: number;
+}
+
 export interface SearchTableColumn {
   title: string;
   field: string;
@@ -25,6 +32,8 @@ export interface SearchTableColumn {
   isImage?: boolean;
   isTranslatable?:boolean;
   onlyIcon?:boolean;
+  headerIsIcon?:boolean;
+  headerIcon?:string;
   isStatus?:boolean;
   isTableActions?:boolean;
   isInputText?: boolean;

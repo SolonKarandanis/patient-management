@@ -7,7 +7,7 @@ import {Role} from '@models/user.model';
 import {rxMethod} from '@ngrx/signals/rxjs-interop';
 import {delay, forkJoin, pipe, switchMap, tap} from 'rxjs';
 import {tapResponse} from '@ngrx/operators';
-import {SelectItem} from 'primeng/api';
+import {SelectItem} from '@models/select-item.model';
 import {UiService} from '@core/services/ui.service';
 import {ApplicationConfig} from '@models/application-config.model';
 

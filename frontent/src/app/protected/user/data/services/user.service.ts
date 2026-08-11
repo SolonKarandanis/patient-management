@@ -17,7 +17,7 @@ import {
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SearchTableColumn} from '@models/search.model';
 import {User, UserAccountStatusEnum} from '@models/user.model';
-import {SelectItem} from 'primeng/api';
+import {SelectItem} from '@models/select-item.model';
 import {FieldTree, form} from '@angular/forms/signals';
 import {SearchTypes, SearchTypesEnum} from '@models/constants';
 import {Observable} from 'rxjs';

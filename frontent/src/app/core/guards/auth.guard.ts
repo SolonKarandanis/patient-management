@@ -4,26 +4,33 @@ import {
   ActivatedRouteSnapshot,
   GuardResult,
   MaybeAsync,
-  Router,
   RouterStateSnapshot,
   CanActivate
 } from '@angular/router';
+import {toObservable} from '@angular/core/rxjs-interop';
+import {filter, map, take} from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
   private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
-    const isAuthenticated = this.authService.isAuthenticated();
-    if(!isAuthenticated){
-      this.navigateToLogin();
+    if (this.authService.isAuthenticated()) {
+      return true;
     }
-    return isAuthenticated;
-  }
 
-  private navigateToLogin():void{
-    this.router.createUrlTree(['/auth/login']);
+    // Auth state may still be resolving (e.g. right after an OAuth2 redirect back
+    // from Keycloak: the token exchange has completed, but authStore.isLoggedIn()
+    // only flips to true once the follow-up user/permissions calls resolve).
+    // Wait for status to settle instead of sampling isAuthenticated() once.
+    // If it settles to "still not authenticated", AuthService's own effect
+    // (constructor) already redirects appropriately per auth mode — this guard
+    // only needs to block the route, not navigate itself.
+    return toObservable(this.authService.status).pipe(
+      filter(status => status === 'loaded' || status === 'error'),
+      take(1),
+      map(() => this.authService.isAuthenticated()),
+    );
   }
 
 }

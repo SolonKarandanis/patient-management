@@ -21,8 +21,9 @@ export class NotificationService {
   private userId = this.authService.loggedUserId;
 
   constructor() {
-    this.connect();
-
+    // Connection lifecycle is driven externally by app.component.ts's effect,
+    // gated on isWebsocketsEnabled() — calling connect() unconditionally here
+    // ignored that flag and always attempted a connection regardless of it.
     effect(() => {
       const userId = this.userId();
       if (this.isConnected && this.stompClient) {

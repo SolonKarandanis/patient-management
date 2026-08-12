@@ -50,12 +50,26 @@ export class AppComponent implements OnInit, OnDestroy, AfterViewInit {
   protected isLoggedIn = this.authService.isLoggedIn;
   private isWebsocketsEnabled = this.commonEntitiesService.isWebSocketsEnabled;
 
+  // appInitializer (app-initializer.ts) already awaits initializePublicApplicationConfig()
+  // to completion before the app bootstraps. This effect's first run always sees
+  // isLoggedIn() as false (the OAuth2/JWT check is still async at that point), so calling
+  // initializePublicApplicationConfig() unconditionally on that first run re-triggers the
+  // same call redundantly, right as the login check resolves and fires
+  // initializeCommonEntities() a moment later. Both rxMethods hit the same
+  // CommonEntitiesLookupStore concurrently in that window, and the resulting forkJoin never
+  // resolves (reproduced: every constituent HTTP call completes individually, but forkJoin's
+  // own next/complete never fires) — leaving the full-screen loader stuck on. Only call
+  // initializePublicApplicationConfig() for a genuine post-login logout (session expiry),
+  // not on the initial not-yet-authenticated state app-initializer already handled.
+  private hasEverBeenLoggedIn = false;
+
   constructor() {
     this.authService.initAuth();
     effect(() => {
       if (this.isLoggedIn()) {
+        this.hasEverBeenLoggedIn = true;
         this.commonEntitiesService.initializeCommonEntities();
-      } else {
+      } else if (this.hasEverBeenLoggedIn) {
         this.commonEntitiesService.initializePublicApplicationConfig();
       }
     });

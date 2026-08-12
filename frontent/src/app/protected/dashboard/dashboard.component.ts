@@ -9,9 +9,21 @@ import {PaymentsDailySummaryComponent} from '@components/payments-daily-summary/
   template: `
     <div class="flex flex-wrap">
       <div class="w-full xl:w-8/12 mb-12 xl:mb-0 px-4 text-black">
-        <app-users-daily-summary [userDailySummary]="userDailySummary()"/>
-        <app-patients-daily-summary [patientsDailySummary]="patientsDailySummary()" />
-        <app-payments-daily-summary [paymentDailySummary]="paymentDailySummary()" />
+        <app-users-daily-summary
+          [userDailySummary]="userDailySummary()"
+          [loading]="userDailySummaryLoading()"
+          [error]="userDailySummaryError()"
+          (retry)="analyticsService.refreshUserDailySummary()"/>
+        <app-patients-daily-summary
+          [patientsDailySummary]="patientsDailySummary()"
+          [loading]="patientsDailySummaryLoading()"
+          [error]="patientsDailySummaryError()"
+          (retry)="analyticsService.refreshPatientsDailySummary()"/>
+        <app-payments-daily-summary
+          [paymentDailySummary]="paymentDailySummary()"
+          [loading]="paymentDailySummaryLoading()"
+          [error]="paymentDailySummaryError()"
+          (retry)="analyticsService.refreshPaymentDailySummary()"/>
       </div>
     </div>
   `,
@@ -24,11 +36,18 @@ import {PaymentsDailySummaryComponent} from '@components/payments-daily-summary/
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent {
-  private analyticsService = inject(AnalyticsService);
+  protected analyticsService = inject(AnalyticsService);
 
   // AnalyticsStore's resources load as soon as the store is first injected
   // (i.e. right here), so no explicit trigger call is needed on init.
   public patientsDailySummary = this.analyticsService.patientsDailySummary;
   public userDailySummary = this.analyticsService.userDailySummary;
   public paymentDailySummary = this.analyticsService.paymentDailySummary;
+
+  public patientsDailySummaryLoading = this.analyticsService.patientsDailySummaryLoading;
+  public patientsDailySummaryError = this.analyticsService.patientsDailySummaryError;
+  public userDailySummaryLoading = this.analyticsService.userDailySummaryLoading;
+  public userDailySummaryError = this.analyticsService.userDailySummaryError;
+  public paymentDailySummaryLoading = this.analyticsService.paymentDailySummaryLoading;
+  public paymentDailySummaryError = this.analyticsService.paymentDailySummaryError;
 }

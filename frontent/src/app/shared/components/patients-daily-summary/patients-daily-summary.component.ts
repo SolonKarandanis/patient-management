@@ -1,18 +1,39 @@
-import {AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, input, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, input, output, ViewChild} from '@angular/core';
 import {DailyEventCount} from '@models/analytics.model';
 import * as d3 from 'd3';
+import {TranslatePipe} from '@ngx-translate/core';
+import {HlmButtonImports} from '@components/ui/button';
+import {HlmSpinnerImports} from '@components/ui/spinner';
 
 @Component({
   selector: 'app-patients-daily-summary',
-  imports: [],
+  imports: [TranslatePipe, HlmButtonImports, HlmSpinnerImports],
   template: `
-    <div #patientsChart></div>
+    <div class="relative">
+      <div #patientsChart></div>
+      @if (loading()) {
+        <div class="absolute inset-0 z-10 flex items-center justify-center bg-background/60">
+          <hlm-spinner class="text-4xl" />
+        </div>
+      }
+      @if (!loading() && error()) {
+        <div class="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-background/60">
+          <p>{{ 'GLOBAL.ERRORS.generic' | translate }}</p>
+          <button hlmBtn variant="outline" type="button" (click)="retry.emit()">
+            {{ 'GLOBAL.BUTTONS.retry' | translate }}
+          </button>
+        </div>
+      }
+    </div>
   `,
   styleUrl: './patients-daily-summary.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PatientsDailySummaryComponent implements AfterViewInit{
   patientsDailySummary = input<DailyEventCount[]>([]);
+  loading = input(false);
+  error = input<string | null>(null);
+  retry = output<void>();
 
   @ViewChild('patientsChart') private patientsChartContainer!: ElementRef;
 

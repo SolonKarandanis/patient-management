@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, tick, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TranslateLoader, TranslateModule, TranslateNoOpLoader } from '@ngx-translate/core';
@@ -47,4 +47,23 @@ describe('DashboardComponent', () => {
     httpTesting.expectOne('analytics/users/daily-summary').flush([]);
     httpTesting.expectOne('analytics/payments/daily-summary').flush([]);
   });
+
+  it('settles into an error state without hanging when analytics requests 500', fakeAsync(() => {
+    httpTesting.expectOne('analytics/patients/daily-summary')
+      .flush('boom', { status: 500, statusText: 'Internal Server Error' });
+    httpTesting.expectOne('analytics/users/daily-summary')
+      .flush('boom', { status: 500, statusText: 'Internal Server Error' });
+    httpTesting.expectOne('analytics/payments/daily-summary')
+      .flush('boom', { status: 500, statusText: 'Internal Server Error' });
+
+    // If AnalyticsStore's error-toast effect enters a synchronous re-trigger
+    // loop, this tick() (and the whole test) hangs instead of returning —
+    // that hang is itself the repro signal, not just the assertions below.
+    tick(1000);
+    fixture.detectChanges();
+
+    expect(component.patientsDailySummaryError()).toBeTruthy();
+    expect(component.userDailySummaryError()).toBeTruthy();
+    expect(component.paymentDailySummaryError()).toBeTruthy();
+  }));
 });

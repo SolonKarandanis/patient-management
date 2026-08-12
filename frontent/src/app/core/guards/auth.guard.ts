@@ -14,6 +14,12 @@ import {filter, map, take} from 'rxjs';
 export class AuthGuard implements CanActivate {
   private readonly authService = inject(AuthService);
 
+  // Must be created here (a field initializer, run during DI construction —
+  // an injection context) rather than inside canActivate(), which the Router
+  // invokes as a plain method call: toObservable() asserts an injection
+  // context and throws NG0203 otherwise.
+  private readonly status$ = toObservable(this.authService.status);
+
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): MaybeAsync<GuardResult> {
     if (this.authService.isAuthenticated()) {
       return true;
@@ -26,7 +32,7 @@ export class AuthGuard implements CanActivate {
     // If it settles to "still not authenticated", AuthService's own effect
     // (constructor) already redirects appropriately per auth mode — this guard
     // only needs to block the route, not navigate itself.
-    return toObservable(this.authService.status).pipe(
+    return this.status$.pipe(
       filter(status => status === 'loaded' || status === 'error'),
       take(1),
       map(() => this.authService.isAuthenticated()),

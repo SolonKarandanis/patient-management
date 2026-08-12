@@ -34,8 +34,7 @@
       "update": "Update",
       "finalize": "Finalize",
       "remove-items": "Remove Items",
-      "upload-file": "Upload File",
-      "retry": "Retry"
+      "upload-file": "Upload File"
     },
     "FORMS": {
       "ERRORS": {

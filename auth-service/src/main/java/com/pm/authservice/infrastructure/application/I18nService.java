@@ -47,4 +47,6 @@ public interface I18nService {
     List<I18nLabel> importI18nLabels(Integer moduleId, List<String> labelResKeys);
 
     int deleteI18nLabelsWithNoTranslationsByModuleId(Integer moduleId);
+
+    int releaseStaleModuleLocks();
 }

@@ -1,5 +1,6 @@
 package com.pm.authservice.infrastructure.web.controller;
 
+import com.pm.authservice.infrastructure.application.I18nInitTriggerBean;
 import com.pm.authservice.infrastructure.web.dto.*;
 import com.pm.authservice.infrastructure.web.exception.BusinessException;
 import com.pm.authservice.infrastructure.web.dto.I18nResourceManagementRequestDTO;
@@ -43,14 +44,18 @@ public class I18nController {
 
     private final I18nService i18nService;
     private final I18nResourceManagementService i18nResourceManagementService;
+    private final I18nInitTriggerBean i18nInitTriggerBean;
+
     private final SearchService  searchService;
 
     public I18nController(
             @Lazy I18nService i18nService,
             I18nResourceManagementService i18nResourceManagementService,
+            I18nInitTriggerBean i18nInitTriggerBean,
             SearchService searchService) {
         this.i18nService = i18nService;
         this.i18nResourceManagementService = i18nResourceManagementService;
+        this.i18nInitTriggerBean = i18nInitTriggerBean;
         this.searchService = searchService;
     }
 
@@ -126,6 +131,26 @@ public class I18nController {
         SearchResults<I18nResourceManagementResponseDTO> searchResults = i18nResourceManagementService.searchI18nResources(searchRequest, pageRequest);
         return ResponseEntity.ok(searchResults);
     }
+
+
+
+    @PreAuthorize("isSystemAdmin()")
+    @PostMapping(value = "/trigger-init")
+    public ResponseEntity<Void> triggerI18nInit() {
+        log.info(" TRIGGER: i18n init requested ");
+        i18nInitTriggerBean.triggerInitAsync();
+        return ResponseEntity.accepted().build();
+    }
+
+    @PreAuthorize("isSystemAdmin()")
+    @PostMapping(value = "/release-stale-locks")
+    public ResponseEntity<Integer> releaseStaleModuleLocks() {
+        int count = i18nService.releaseStaleModuleLocks();
+        log.info(" releaseStaleModuleLocks: {} module(s) updated ", count);
+        return ResponseEntity.ok(count);
+    }
+
+
 
     /**
      * @param language

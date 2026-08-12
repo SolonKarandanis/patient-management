@@ -26,4 +26,8 @@ public interface I18nModuleRepository extends JpaRepository<I18nModule, Integer>
     @Modifying
     @Query(name = I18nModule.UNLOCK_UPDATE_MODULE_BY_ID)
     int unlockUpdateModuleById(@Param("moduleId") Integer moduleId, @Param("updateId") String updateId, @Param("updEndTime") Date updEndTime);
+
+    @Modifying
+    @Query(value = "UPDATE i18n_modules SET update_end_time = now() WHERE is_active = true", nativeQuery = true)
+    public int releaseStaleModuleLocks();
 }

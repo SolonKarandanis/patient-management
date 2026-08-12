@@ -253,6 +253,12 @@ public class I18nServiceBean implements I18nService{
         return iLabelsDeleted;
     }
 
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public int releaseStaleModuleLocks() {
+        return i18nModuleRepository.releaseStaleModuleLocks();
+    }
+
     private Predicate<I18nTranslation> filterByLanguageAndResource(final Integer languageId, final Integer resourceId) {
         return tr-> tr.getLanguageId().equals(languageId) && tr.getI18nLabelId().equals(resourceId);
     }

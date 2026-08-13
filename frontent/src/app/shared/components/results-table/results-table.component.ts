@@ -123,7 +123,7 @@ const tableFeatureSet = tableFeatures({
             }
           </tr>
         </thead>
-        <tbody hlmTBody hlmRadioGroup [value]="selectedRadioRowId()" (valueChange)="handleRadioRowSelect($event)">
+        <tbody hlmTBody hlmRadioGroup class="table-row-group gap-0" [value]="selectedRadioRowId()" (valueChange)="handleRadioRowSelect($event)">
           @for (row of table.getRowModel().rows; track row.id) {
             <tr hlmTr>
               @for (col of colTitles(); track col.field) {

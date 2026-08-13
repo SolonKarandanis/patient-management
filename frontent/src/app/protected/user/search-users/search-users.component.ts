@@ -110,6 +110,7 @@ import {HlmSelectImports} from '@components/ui/select';
                   </label>
                   <hlm-select
                     [value]="form.status().value()"
+                    [itemToString]="statusItemToString"
                     (valueChange)="handleStatusChange($event)"
                     class="border-0 !bg-white text-sm shadow w-full">
                     <hlm-select-trigger class="w-full">
@@ -133,6 +134,7 @@ import {HlmSelectImports} from '@components/ui/select';
                   </label>
                   <hlm-select
                     [value]="form.role().value()"
+                    [itemToString]="roleItemToString"
                     (valueChange)="handleRoleChange($event)"
                     class="border-0 !bg-white text-sm shadow w-full">
                     <hlm-select-trigger class="w-full">
@@ -256,6 +258,12 @@ export class SearchUsersComponent implements OnInit {
   protected handleRoleChange(role: RolesConstants | null | undefined): void {
     this.form.role().value.set(role ?? null);
   }
+
+  protected statusItemToString = (value: UserAccountStatus): string =>
+    this.userService.getSelectItemLabel(this.userStatuses, value);
+
+  protected roleItemToString = (value: RolesConstants): string =>
+    this.userService.getSelectItemLabel(this.commonEntitiesService.rolesAsSelectItems(), value);
 
   protected handleLoadSavedSearch(selectedSavedSearch: SavedSearch): void {
     const {criteria} = selectedSavedSearch;

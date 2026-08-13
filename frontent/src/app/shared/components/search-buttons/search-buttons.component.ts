@@ -34,6 +34,7 @@ import {lucideRefreshCw, lucideSave, lucideSearch} from '@ng-icons/lucide';
             class="w-full"
             hlmBtn
             type="button"
+            variant="default"
             (click)="handleSearchClick($event)"
             [disabled]="isDisabled() || isLoading()">
           @if (isLoading()) {

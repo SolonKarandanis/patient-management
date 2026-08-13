@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, input} from '@angular/core';
 import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {TranslatePipe} from '@ngx-translate/core';
@@ -9,6 +9,7 @@ import {UpdateUserFormModel} from '../forms';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {HlmInputImports} from '@components/ui/input';
 import {HlmSelectImports} from '@components/ui/select';
+import {UserService} from '../data';
 
 @Component({
   selector: 'app-user-details-form',
@@ -120,6 +121,7 @@ import {HlmSelectImports} from '@components/ui/select';
             </label>
             <hlm-select
               [value]="form.role().value()"
+              [itemToString]="roleItemToString"
               (valueChange)="handleRoleChange($event)"
               [disabled]="form().disabled()"
               class="border-0 !bg-white text-sm shadow w-full">
@@ -148,6 +150,8 @@ import {HlmSelectImports} from '@components/ui/select';
 })
 export class UserDetailsFormComponent  extends BaseFormComponent{
 
+  private userService = inject(UserService);
+
   fetchingData = input<boolean>(false);
   formInput = input.required<FieldTree<UpdateUserFormModel, string | number>>();
   availableRoles = input.required<SelectItem[]>();
@@ -157,5 +161,8 @@ export class UserDetailsFormComponent  extends BaseFormComponent{
       this.formInput().role().value.set(role);
     }
   }
+
+  protected roleItemToString = (value: RolesConstants): string =>
+    this.userService.getSelectItemLabel(this.availableRoles(), value);
 
 }

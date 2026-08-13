@@ -323,4 +323,14 @@ export class UserService extends GenericService{
       }
     ];
   }
+
+  /**
+   * Resolve the label of a select item from its value, e.g. for a hlm-select's itemToString
+   * @param items The select items to search
+   * @param value The value to resolve to a label
+   * @returns The matching label, or an empty string if none match
+   */
+  public getSelectItemLabel(items: SelectItem[], value: unknown): string {
+    return items.find((item) => item.value === value)?.label ?? '';
+  }
 }

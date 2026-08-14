@@ -17,7 +17,7 @@ import {FieldsetEditButtonsComponent} from '@components/fieldset-edit-buttons/fi
   ],
   providers: [provideIcons({lucideChevronDown})],
   template: `
-    <div hlmCollapsible [(expanded)]="expanded" class="bg-slate-100 text-black rounded-md p-2">
+    <div hlmCollapsible [(expanded)]="expanded" class="bg-slate-100 text-black rounded-md px-4 py-2">
       <app-fieldset-header-with-buttons>
         <span titleText class="font-semibold">{{legend()}}</span>
         @if(allowEdit()){

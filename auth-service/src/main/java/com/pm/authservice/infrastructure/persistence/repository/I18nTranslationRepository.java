@@ -33,11 +33,11 @@ public interface I18nTranslationRepository extends JpaRepository<I18nTranslation
         return outputAsMap;
     }
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query(name = I18nTranslation.DELETE_I18N_TRANSLATION_BY_ID)
     int deleteI18nTranslationById(@Param("translationId") Integer translationId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query(name = I18nTranslation.DELETE_I18N_TRANSLATION_BY_IDS)
     int deleteI18nTranslationByIds(@Param("translationIds") List<Integer> translationIds);
 

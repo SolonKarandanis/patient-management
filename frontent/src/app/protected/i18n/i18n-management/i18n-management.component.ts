@@ -9,7 +9,7 @@ import {SearchButtonsComponent} from '@components/search-buttons/search-buttons.
 import {SearchType, SearchTypeEnum, SortDirectionEnum} from '@models/search.model';
 import {I18nResource, UpdateI18nResource} from '@models/i18n-resource.model';
 import {I18nResourceSearchFormModel} from '../forms';
-import {Field, FieldTree} from '@angular/forms/signals';
+import {FormField, FieldTree} from '@angular/forms/signals';
 import {HlmInputImports} from '@components/ui/input';
 import {HlmSelectImports} from '@components/ui/select';
 import {HlmTableImports} from '@components/ui/table';
@@ -29,7 +29,7 @@ import {lucideArrowDown, lucideArrowUp, lucideArrowUpDown, lucideCheck, lucidePe
     FormsModule,
     ReactiveFormsModule,
     SearchButtonsComponent,
-    Field,
+    FormField,
     HlmInputImports,
     HlmSelectImports,
     HlmTableImports,
@@ -101,7 +101,7 @@ import {lucideArrowDown, lucideArrowUp, lucideArrowUpDown, lucideCheck, lucidePe
                     hlmInput
                     type="text"
                     class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                    [field]="form.term"
+                    [formField]="form.term"
                     autocomplete="term"/>
                 </div>
               </div>

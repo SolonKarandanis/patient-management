@@ -20,7 +20,7 @@ import {ResultsTableFilterDirective} from '@directives/results-table-filter.dire
 import {ResultsTablePaginatorDirective} from '@directives/results-table-paginator.directive';
 import {FieldsetComponent} from '@components/fieldset/fieldset.component';
 import {ReactiveFormsModule} from '@angular/forms';
-import {Field, FieldTree, submit} from '@angular/forms/signals';
+import {FormField, FieldTree, submit} from '@angular/forms/signals';
 import {UserSearchFormModel} from '../forms';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {UserAccountStatus} from '@models/user.model';
@@ -40,7 +40,7 @@ import {HlmSelectImports} from '@components/ui/select';
     ResultsTableFilterDirective,
     ResultsTablePaginatorDirective,
     FieldsetComponent,
-    Field,
+    FormField,
     HlmInputImports,
     HlmSelectImports,
   ],
@@ -66,7 +66,7 @@ import {HlmSelectImports} from '@components/ui/select';
                     hlmInput
                     type="email"
                     class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                    [field]="form.email"
+                    [formField]="form.email"
                     autocomplete="email"/>
                   <app-form-error
                     [displayLabels]="form.email().invalid() && form.email().touched()"
@@ -81,7 +81,7 @@ import {HlmSelectImports} from '@components/ui/select';
                     hlmInput
                     type="text"
                     class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                    [field]="form.username"
+                    [formField]="form.username"
                     autocomplete="username"/>
                   <app-form-error
                     [displayLabels]="form.username().invalid() && form.username().touched()"
@@ -96,7 +96,7 @@ import {HlmSelectImports} from '@components/ui/select';
                     hlmInput
                     type="text"
                     class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                    [field]="form.name"
+                    [formField]="form.name"
                     autocomplete="name"/>
                   <app-form-error
                     [displayLabels]="form.name().invalid() && form.name().touched()"

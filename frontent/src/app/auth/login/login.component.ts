@@ -7,7 +7,7 @@ import {SubmitCredentialsDTO} from '@models/auth.model';
 import {TranslatePipe} from '@ngx-translate/core';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {LoginFormModel} from '../forms';
-import {form, Field, required, email, submit} from '@angular/forms/signals';
+import {form, FormField, required, email, submit} from '@angular/forms/signals';
 import {UtilService} from '@core/services/util.service';
 import {HlmInputImports} from '@components/ui/input';
 import {HlmButtonImports} from '@components/ui/button';
@@ -23,7 +23,7 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
     TranslatePipe,
     ReactiveFormsModule,
     FormErrorComponent,
-    Field,
+    FormField,
     HlmInputImports,
     HlmButtonImports,
     HlmSpinnerImports,
@@ -52,7 +52,7 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
                     hlmInput
                     type="email"
                     class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                    [field]="loginForm.email"
+                    [formField]="loginForm.email"
                     autocomplete="email"/>
                   <app-form-error
                     [displayLabels]="loginForm.email().invalid() && loginForm.email().touched()"
@@ -68,7 +68,7 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
                       hlmInput
                       [type]="showPassword() ? 'text' : 'password'"
                       class="border-0 px-3 py-3 pr-10 !bg-white text-sm shadow w-full !text-black"
-                      [field]="loginForm.password"
+                      [formField]="loginForm.password"
                       autocomplete="current-password"/>
                     <button
                       type="button"

@@ -4,7 +4,7 @@ import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {TranslatePipe} from '@ngx-translate/core';
 import {SelectItem} from '@models/select-item.model';
 import {BaseFormComponent} from '@shared/abstract/BaseFormComponent';
-import {Field, FieldTree} from '@angular/forms/signals';
+import {FormField, FieldTree} from '@angular/forms/signals';
 import {UpdateUserFormModel} from '../forms';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {HlmInputImports} from '@components/ui/input';
@@ -17,7 +17,7 @@ import {UserService} from '../data';
     FormControlWrapComponent,
     FormErrorComponent,
     TranslatePipe,
-    Field,
+    FormField,
     HlmInputImports,
     HlmSelectImports,
   ],
@@ -40,7 +40,7 @@ import {UserService} from '../data';
                 hlmInput
                 type="text"
                 class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                [field]="form.firstName"
+                [formField]="form.firstName"
                 autocomplete="firstName"/>
             </app-form-control-wrap>
             <app-form-error
@@ -62,7 +62,7 @@ import {UserService} from '../data';
                 hlmInput
                 type="text"
                 class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                [field]="form.lastName"
+                [formField]="form.lastName"
                 autocomplete="lastName"/>
             </app-form-control-wrap>
             <app-form-error
@@ -84,7 +84,7 @@ import {UserService} from '../data';
                 hlmInput
                 type="text"
                 class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                [field]="form.username"
+                [formField]="form.username"
                 autocomplete="username"/>
             </app-form-control-wrap>
             <app-form-error
@@ -106,7 +106,7 @@ import {UserService} from '../data';
                 hlmInput
                 type="email"
                 class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                [field]="form.email"
+                [formField]="form.email"
                 autocomplete="email"/>
             </app-form-control-wrap>
             <app-form-error

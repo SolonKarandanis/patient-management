@@ -307,11 +307,14 @@ export class UtilService{
 
   handleNotification(event: NotificationEvent): void {
     if (event.eventType === NotificationEventTypeEnum.I18N_RESOURCES_EDITED) {
-      this.translate.reloadLang(this.translate.getCurrentLang()).subscribe(() => {
-        this.translate.get(this.translate.getCurrentLang()).subscribe((translations) => {
-          this.translate.setTranslation(this.translate.getCurrentLang(), translations, true);
+      const currentLang = this.translate.getCurrentLang();
+      if (currentLang) {
+        this.translate.reloadLang(currentLang).subscribe(() => {
+          this.translate.get(currentLang).subscribe((translations) => {
+            this.translate.setTranslation(currentLang, translations, true);
+          });
         });
-      });
+      }
     }
     if (event.eventType === NotificationEventTypeEnum.USER_UPDATED_NOTIFICATION){
       this.showMessage("warn",event.message,event.title)

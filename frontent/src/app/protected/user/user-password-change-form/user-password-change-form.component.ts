@@ -3,7 +3,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {BaseFormComponent} from '@shared/abstract/BaseFormComponent';
-import {Field, FieldTree} from '@angular/forms/signals';
+import {FormField, FieldTree} from '@angular/forms/signals';
 import {ChangePasswordFormModel} from '../forms';
 import {HlmInputImports} from '@components/ui/input';
 import {NgIcon, provideIcons} from '@ng-icons/core';
@@ -15,7 +15,7 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
     TranslatePipe,
     FormControlWrapComponent,
     FormErrorComponent,
-    Field,
+    FormField,
     HlmInputImports,
     NgIcon,
   ],
@@ -38,7 +38,7 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
                   hlmInput
                   [type]="showPassword() ? 'text' : 'password'"
                   class="border-0 px-3 py-3 pr-10 !bg-white text-sm shadow w-full !text-black"
-                  [field]="form.password"
+                  [formField]="form.password"
                   autocomplete="new-password"/>
                 <button
                   type="button"
@@ -67,7 +67,7 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
                   hlmInput
                   [type]="showConfirmPassword() ? 'text' : 'password'"
                   class="border-0 px-3 py-3 pr-10 !bg-white text-sm shadow w-full !text-black"
-                  [field]="form.confirmPassword"
+                  [formField]="form.confirmPassword"
                   autocomplete="new-password"/>
                 <button
                   type="button"

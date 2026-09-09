@@ -7,7 +7,7 @@ import {
 import { provideOAuthClient } from 'angular-oauth2-oidc';
 import { appInitializer } from '@core/initializers/app-initializer';
 import {provideRouter, withComponentInputBinding} from '@angular/router';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader, provideTranslateService } from '@ngx-translate/core';
 import { routes } from './app.routes';
 import {
   HTTP_INTERCEPTORS,
@@ -72,7 +72,7 @@ export const appConfig: ApplicationConfig = {
       ]),
       withInterceptorsFromDi(),
     ),
-    importProvidersFrom(TranslateModule.forRoot(provideTranslation())),
+    provideTranslateService(provideTranslation()),
     importProvidersFrom(NgxPermissionsModule.forRoot()),
     provideOAuthClient(),
     provideAppInitializer(appInitializer),

@@ -2,11 +2,17 @@ import { FormControl } from "@angular/forms";
 import {UserAccountStatus} from '@models/user.model';
 import {RolesConstants} from '@core/guards/SecurityConstants';
 import {SortDirection} from '@models/search.model';
-import {customError, disabled, email, minLength, required, schema, validate} from '@angular/forms/signals';
+import {BaseNgValidationError, disabled, email, minLength, required, schema, validate, ValidationErrorOptions, WithoutFieldTree} from '@angular/forms/signals';
 import {Signal} from '@angular/core';
 import {SearchTypes} from '@models/constants';
 
+class PasswordMismatchError extends BaseNgValidationError {
+  override readonly kind = 'passwordMismatch';
+}
 
+function passwordMismatchError(options?: ValidationErrorOptions): WithoutFieldTree<PasswordMismatchError> {
+  return new PasswordMismatchError(options) as WithoutFieldTree<PasswordMismatchError>;
+}
 
 export interface UserSearchFormModel{
   searchMethod:SearchTypes;
@@ -85,7 +91,7 @@ export const changePasswordFormSchema= (isDisabled: Signal<boolean>) => schema<C
     const confirmPassword = context.valueOf(field.confirmPassword);
 
     const samePass: boolean = password === confirmPassword;
-    return samePass? null : customError({message:"passwordMismatch",kind:'passwordMismatch'});
+    return samePass? null : passwordMismatchError({message:"passwordMismatch"});
   });
 
   disabled(field, () => isDisabled());
@@ -131,6 +137,6 @@ export const createUserFormSchema = schema<CreateUserFormModel>((field) => {
     const confirmPassword = context.valueOf(field.confirmPassword);
 
     const samePass: boolean = password === confirmPassword;
-    return samePass? null : customError({message:"passwordMismatch",kind:'passwordMismatch'});
+    return samePass? null : passwordMismatchError({message:"passwordMismatch"});
   })
 })

@@ -8,7 +8,7 @@ import {FormErrorComponent} from '@components/form-error/form-error.component';
 import {Router, RouterLink} from '@angular/router';
 import {CommonEntitiesService} from '@core/services/common-entities.service';
 import {UserRolesEnum} from '@models/constants';
-import {Field, FieldTree, submit} from '@angular/forms/signals';
+import {FormField, FieldTree, submit} from '@angular/forms/signals';
 import {SelectItem} from '@models/select-item.model';
 import {HlmInputImports} from '@components/ui/input';
 import {HlmButtonImports} from '@components/ui/button';
@@ -26,7 +26,7 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
     FormControlWrapComponent,
     FormErrorComponent,
     RouterLink,
-    Field,
+    FormField,
     HlmInputImports,
     HlmButtonImports,
     HlmSpinnerImports,
@@ -62,7 +62,7 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
                         hlmInput
                         type="text"
                         class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                        [field]="form.email"
+                        [formField]="form.email"
                         autocomplete="email"/>
                     </app-form-control-wrap>
                     <app-form-error
@@ -84,7 +84,7 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
                         hlmInput
                         type="text"
                         class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                        [field]="form.username"
+                        [formField]="form.username"
                         autocomplete="username"/>
                     </app-form-control-wrap>
                     <app-form-error
@@ -106,7 +106,7 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
                         hlmInput
                         type="text"
                         class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                        [field]="form.firstName"
+                        [formField]="form.firstName"
                         autocomplete="firstName"/>
                     </app-form-control-wrap>
                     <app-form-error
@@ -128,7 +128,7 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
                         hlmInput
                         type="text"
                         class="border-0 px-3 py-3 !bg-white text-sm shadow w-full !text-black"
-                        [field]="form.lastName"
+                        [formField]="form.lastName"
                         autocomplete="lastName"/>
                     </app-form-control-wrap>
                     <app-form-error
@@ -172,7 +172,7 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
                           hlmInput
                           [type]="showPassword() ? 'text' : 'password'"
                           class="border-0 px-3 py-3 pr-10 !bg-white text-sm shadow w-full !text-black"
-                          [field]="form.password"
+                          [formField]="form.password"
                           autocomplete="new-password"/>
                         <button
                           type="button"
@@ -202,7 +202,7 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
                           hlmInput
                           [type]="showConfirmPassword() ? 'text' : 'password'"
                           class="border-0 px-3 py-3 pr-10 !bg-white text-sm shadow w-full !text-black"
-                          [field]="form.confirmPassword"
+                          [formField]="form.confirmPassword"
                           autocomplete="new-password"/>
                         <button
                           type="button"

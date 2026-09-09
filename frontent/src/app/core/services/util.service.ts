@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {inject, Service} from '@angular/core';
 import {DatePipe} from '@angular/common';
 import {SelectItem} from '@models/select-item.model';
 import {TranslateService} from '@ngx-translate/core';
@@ -7,9 +7,7 @@ import {NotificationEvent, NotificationEventTypeEnum} from '@models/notification
 import {ToastService} from '@core/services/toast.service';
 import {ConfirmOptions, ConfirmService} from '@core/services/confirm.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class UtilService{
 
   // usefull regexes
@@ -23,12 +21,9 @@ export class UtilService{
 
 
   private readonly datePipe = new DatePipe('en');
-
-  constructor(
-    private readonly toastService:ToastService,
-    private readonly translate:TranslateService,
-    private readonly confirmService:ConfirmService,
-  ) {}
+  private readonly toastService = inject(ToastService);
+  private readonly translate = inject(TranslateService);
+  private readonly confirmService = inject(ConfirmService);
 
   public get emailRegex():string{
     return this.emailPattern;

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Service} from '@angular/core';
 import {toast} from '@spartan-ng/brain/sonner';
 
 export interface ToastOptions {
@@ -7,9 +7,7 @@ export interface ToastOptions {
   life?: number;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ToastService {
 
   success(detail: string, summary: string, options?: ToastOptions): void {

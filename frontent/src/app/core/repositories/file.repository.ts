@@ -1,12 +1,10 @@
-import {Injectable} from '@angular/core';
+import {Service} from '@angular/core';
 import {BaseRepository} from './BaseRepository';
 import {Observable} from 'rxjs';
 import {HttpResponse} from '@angular/common/http';
 import {ApiRepositories} from './ApiRepositories';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class FilesRepository extends BaseRepository{
 
   /**

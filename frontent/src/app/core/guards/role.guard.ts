@@ -1,4 +1,4 @@
-import {inject, Injectable, Signal} from '@angular/core';
+import {inject, Service, Signal} from '@angular/core';
 import {AuthService} from '@core/services/auth.service';
 import {TranslateService} from '@ngx-translate/core';
 import {ToastService} from '@core/services/toast.service';
@@ -10,9 +10,7 @@ import {
   RouterStateSnapshot
 } from '@angular/router';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class RoleGuard implements CanActivate {
   private readonly authService = inject(AuthService);
   private readonly toastService = inject(ToastService);

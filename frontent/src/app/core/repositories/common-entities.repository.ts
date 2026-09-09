@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Service} from '@angular/core';
 import {BaseRepository} from '@core/repositories/BaseRepository';
 import {Observable} from 'rxjs';
 import {Role} from '@models/user.model';
@@ -7,9 +7,7 @@ import {HttpContext} from '@angular/common/http';
 import {AUTHENTICATE_REQUEST} from '@core/guards/SecurityConstants';
 import {ApplicationConfig} from '@models/application-config.model';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class CommonEntitiesRepository extends BaseRepository{
 
   /**

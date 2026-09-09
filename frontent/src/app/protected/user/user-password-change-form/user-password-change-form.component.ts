@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, input, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, input, signal} from '@angular/core';
 import {TranslatePipe} from '@ngx-translate/core';
 import {FormControlWrapComponent} from '@components/form-control-wrap/form-control-wrap.component';
 import {FormErrorComponent} from '@components/form-error/form-error.component';
@@ -7,7 +7,7 @@ import {FormField, FieldTree} from '@angular/forms/signals';
 import {ChangePasswordFormModel} from '../forms';
 import {HlmInputImports} from '@components/ui/input';
 import {NgIcon, provideIcons} from '@ng-icons/core';
-import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
+import {lucideCheck, lucideEye, lucideEyeOff} from '@ng-icons/lucide';
 
 @Component({
   selector: 'app-user-password-change-form',
@@ -19,7 +19,7 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
     HlmInputImports,
     NgIcon,
   ],
-  providers: [provideIcons({lucideEye, lucideEyeOff})],
+  providers: [provideIcons({lucideEye, lucideEyeOff, lucideCheck})],
   template: `
     @let form = formInput();
     <form>
@@ -82,6 +82,12 @@ import {lucideEye, lucideEyeOff} from '@ng-icons/lucide';
               [displayLabels]="form.confirmPassword().invalid() && form.confirmPassword().touched()"
               [validationErrors]="form.confirmPassword().errors()"
               validationErrorsTranslationPrefix="REGISTER.MESSAGES.ERROR."/>
+            @if (passwordsMatch()) {
+              <p class="mt-2 text-sm text-green-600 dark:text-green-500 flex items-center gap-1">
+                <ng-icon name="lucideCheck" size="16" />
+                {{ 'USER.DETAILS.MESSAGES.passwords-match' | translate }}
+              </p>
+            }
           </div>
         </div>
       </div>
@@ -95,4 +101,11 @@ export class UserPasswordChangeFormComponent extends BaseFormComponent{
 
   protected showPassword = signal(false);
   protected showConfirmPassword = signal(false);
+
+  protected passwordsMatch = computed(() => {
+    const confirmPassword = this.formInput().confirmPassword();
+    return confirmPassword.touched()
+      && !!confirmPassword.value()
+      && !confirmPassword.getError('passwordMismatch');
+  });
 }

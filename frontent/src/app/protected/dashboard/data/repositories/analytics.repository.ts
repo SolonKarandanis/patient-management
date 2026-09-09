@@ -1,11 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { httpResource, HttpResourceRef } from '@angular/common/http';
 import { DailyEventCount, DailyPaymentSummary } from '@models/analytics.model';
 import { ApiRepositories } from '@core/repositories/ApiRepositories';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class AnalyticsRepository {
 
   /**

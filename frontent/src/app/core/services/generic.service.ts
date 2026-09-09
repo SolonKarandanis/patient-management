@@ -1,9 +1,7 @@
-import { inject, Injectable, Injector } from "@angular/core";
+import { inject, Service, Injector } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class GenericService{
 
   protected formBuilder = inject(FormBuilder);

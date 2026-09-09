@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Service} from '@angular/core';
 import {BaseRepository} from './BaseRepository';
 import {JwtDTO, SubmitCredentialsDTO} from '@models/auth.model';
 import { Observable } from 'rxjs';
@@ -7,9 +7,7 @@ import {AUTHENTICATE_REQUEST} from '../guards/SecurityConstants';
 import { HttpContext } from '@angular/common/http';
 import {User} from '@models/user.model';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AuthRepository extends BaseRepository{
 
   /**

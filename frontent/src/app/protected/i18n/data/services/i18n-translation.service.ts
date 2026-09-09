@@ -1,4 +1,4 @@
-import {inject, Injectable, signal} from '@angular/core';
+import {inject, Service, signal} from '@angular/core';
 import {I18nLookupStore} from '../store/i18n-lookup.store';
 import {I18nResourceSearchStore} from '../store/i18n-resource-search.store';
 import {I18nResourceDetailStore} from '../store/i18n-resource-detail.store';
@@ -11,9 +11,7 @@ import {FieldTree, form} from '@angular/forms/signals';
 import {SearchTypesEnum} from '@models/constants';
 
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class I18nTranslationService extends GenericService{
 
   private i18nLookupStore = inject(I18nLookupStore);

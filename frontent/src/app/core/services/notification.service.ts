@@ -1,13 +1,11 @@
-import {effect, inject, Injectable} from '@angular/core';
+import {effect, inject, Service} from '@angular/core';
 import type {Client, StompSubscription} from '@stomp/stompjs';
 import {NotificationEvent} from '@models/notification.model';
 import {UtilService} from '@core/services/util.service';
 import {WS_BASE_URL} from '@core/token';
 import {AuthService} from '@core/services/auth.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class NotificationService {
   private stompClient: Client | undefined;
   private isConnected = false;

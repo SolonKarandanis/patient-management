@@ -1,14 +1,12 @@
-import {Inject, Injectable} from '@angular/core';
+import {inject, Service} from '@angular/core';
 import {HttpErrorResponse, HttpHeaders, HttpStatusCode} from '@angular/common/http';
 import {API_BASE_URL} from '../token';
 import {ApiRepositories} from '@core/repositories/ApiRepositories';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class HttpUtil{
 
-  constructor(@Inject(API_BASE_URL) private readonly baseUrl:string) {}
+  private readonly baseUrl = inject(API_BASE_URL);
 
   private readonly HttpErrorMessageExceptions: HttpErrorMessageException[] = [
     {

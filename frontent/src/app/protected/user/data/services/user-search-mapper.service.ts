@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Service} from '@angular/core';
 import {ChangePasswordRequest, CreateUserRequest, UpdateUserRequest} from '@models/user.model';
 import {
   ChangePasswordFormModel,
@@ -9,9 +9,7 @@ import {
 import {UserSearchRequest} from '@models/search.model';
 import {FieldTree} from '@angular/forms/signals';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class UserSearchMapperService {
 
   public toUpdateUserRequest(form: FieldTree<UpdateUserFormModel, string | number>):UpdateUserRequest{

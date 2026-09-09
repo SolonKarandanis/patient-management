@@ -1,4 +1,4 @@
-import {inject, Injectable, signal} from '@angular/core';
+import {inject, Service, signal} from '@angular/core';
 import {GenericService} from '@core/services/generic.service';
 import {UserSearchStore} from '../store/user-search.store';
 import {UserDetailStore} from '../store/user-detail.store';
@@ -22,9 +22,7 @@ import {FieldTree, form} from '@angular/forms/signals';
 import {SearchTypes, SearchTypesEnum} from '@models/constants';
 import {Observable} from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class UserService extends GenericService{
 
   private isUpdateFormDisabled = signal(true);

@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import {ApplicationLanguageStorageKey, DefaultApplicationLanguage} from '@models/constants';
 import {LangChangeEvent, TranslateService} from '@ngx-translate/core';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class LanguageService {
+  private readonly translateService = inject(TranslateService);
+
   selectedLanguageIso:string = DefaultApplicationLanguage;
-  constructor(private readonly translateService: TranslateService) {
+  constructor() {
     this.translateService.onLangChange.subscribe((event:LangChangeEvent)=>{
       this.selectedLanguageIso=event.lang;
       localStorage.setItem(ApplicationLanguageStorageKey,this.selectedLanguageIso);

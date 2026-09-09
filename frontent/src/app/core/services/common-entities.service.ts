@@ -1,10 +1,8 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Service} from '@angular/core';
 import {GenericService} from '@core/services/generic.service';
 import {CommonEntitiesLookupStore} from '@core/store/common-entities/common-entities-lookup.store';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class CommonEntitiesService extends GenericService{
   private commonEntitiesLookupStore = inject(CommonEntitiesLookupStore);
 

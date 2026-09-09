@@ -1,10 +1,8 @@
 import {GenericService} from '@core/services/generic.service';
-import {inject, Injectable} from '@angular/core';
+import {inject, Service} from '@angular/core';
 import {AnalyticsStore} from '../store/analytics.store';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class AnalyticsService extends GenericService{
   private analyticsStore = inject(AnalyticsStore);
 

@@ -1,13 +1,11 @@
-import {Injectable} from '@angular/core';
+import {Service} from '@angular/core';
 import {BaseRepository} from '@core/repositories/BaseRepository';
 import {Observable} from 'rxjs';
 import {ApiRepositories} from '@core/repositories/ApiRepositories';
 import { HttpParams } from '@angular/common/http';
 
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class TranslationRepository extends BaseRepository{
   getTranslations(languageIsoCode: string): Observable<any> {
     let params: HttpParams = new HttpParams();

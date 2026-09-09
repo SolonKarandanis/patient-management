@@ -1,11 +1,9 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Service} from '@angular/core';
 import {ToastService} from '@core/services/toast.service';
 import {TranslateService} from '@ngx-translate/core';
 import {HttpErrorResponse} from '@angular/common/http';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ErrorService{
 
   private readonly toastService = inject(ToastService);

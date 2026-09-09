@@ -1,10 +1,8 @@
-import {Injectable} from '@angular/core';
+import {Service} from '@angular/core';
 import { JwtPayload } from "jsonwebtoken";
 import {User} from '@models/user.model';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class JwtUtil{
   private readonly ID_TOKEN_KEY = "token" as string;
   private readonly PERMISSIONS_KEY = "permissions" as string;

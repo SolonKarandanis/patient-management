@@ -1,6 +1,6 @@
 
 import { AuthStore } from '../store/auth/auth.store';
-import {effect, Injectable, Signal, untracked} from '@angular/core';
+import {effect, inject, Service, Signal, untracked} from '@angular/core';
 import {GenericService} from './generic.service';
 import {Router} from '@angular/router';
 import {User} from '@models/user.model';
@@ -11,9 +11,7 @@ import {OAuthConfigService} from '@core/services/oauth-config.service';
 
 type AuthStore = InstanceType<typeof AuthStore>;
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AuthService extends GenericService{
 
   public isLoading:Signal<boolean>;
@@ -23,12 +21,12 @@ export class AuthService extends GenericService{
   public loggedInUserRoleIds:Signal<number[]>;
   public status: Signal<'pending' | 'loading' | 'loaded' | 'error'>;
 
-  constructor(
-    private readonly authStore:AuthStore,
-    private readonly router:Router,
-    private readonly authModeService:AuthModeService,
-    private readonly oauthConfigService:OAuthConfigService,
-  ){
+  private readonly authStore = inject(AuthStore);
+  private readonly router = inject(Router);
+  private readonly authModeService = inject(AuthModeService);
+  private readonly oauthConfigService = inject(OAuthConfigService);
+
+  constructor(){
     super()
     this.isLoading = this.authStore.loading;
     this.isLoggedIn = this.authStore.isLoggedIn;

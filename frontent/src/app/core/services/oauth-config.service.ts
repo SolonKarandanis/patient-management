@@ -1,8 +1,8 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { AuthConfig, OAuthService } from 'angular-oauth2-oidc';
 import {KEYCLOAK_CLIENT_ID, KEYCLOAK_ISSUER, IS_PRODUCTION} from '@core/token';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class OAuthConfigService {
   private readonly oauthService = inject(OAuthService);
   private readonly keycloakUrl = inject(KEYCLOAK_ISSUER);

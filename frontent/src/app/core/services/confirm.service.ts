@@ -1,4 +1,4 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Service} from '@angular/core';
 import {BrnDialogService} from '@spartan-ng/brain/dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {ConfirmDialogComponent} from '@components/confirm-dialog/confirm-dialog.component';
@@ -19,9 +19,7 @@ export interface ConfirmOptions {
   rejectLabel?: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class ConfirmService {
 
   private readonly dialogService = inject(BrnDialogService);

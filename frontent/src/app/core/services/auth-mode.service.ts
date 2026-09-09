@@ -1,6 +1,6 @@
-import { Injectable, signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class AuthModeService {
   private readonly _authMode = signal<'jwt' | 'oauth2'>('jwt');
   readonly authMode = this._authMode.asReadonly();

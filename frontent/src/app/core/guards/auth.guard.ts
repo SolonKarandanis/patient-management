@@ -1,4 +1,4 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Service} from '@angular/core';
 import {AuthService} from '@core/services/auth.service';
 import {
   ActivatedRouteSnapshot,
@@ -10,7 +10,7 @@ import {
 import {toObservable} from '@angular/core/rxjs-interop';
 import {filter, map, take} from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class AuthGuard implements CanActivate {
   private readonly authService = inject(AuthService);
 

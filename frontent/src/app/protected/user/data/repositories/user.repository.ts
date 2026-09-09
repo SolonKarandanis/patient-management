@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Service} from '@angular/core';
 import {BaseRepository} from '@core/repositories/BaseRepository';
 import {SearchResult, UserSearchRequest} from '@models/search.model';
 import {Observable} from 'rxjs';
@@ -7,9 +7,7 @@ import {ApiRepositories} from '@core/repositories/ApiRepositories';
 import {HttpContext, HttpResponse} from '@angular/common/http';
 import {AUTHENTICATE_REQUEST} from '@core/guards/SecurityConstants';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class UserRepository extends BaseRepository{
 
   /**

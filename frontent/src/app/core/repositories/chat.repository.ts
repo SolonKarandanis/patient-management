@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Service } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseRepository } from './BaseRepository';
 import { ApiRepositories } from './ApiRepositories';
 import { ChatHistory, ChatRequest, ChatResponse } from '@models/chat.model';
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class ChatRepository extends BaseRepository {
 
   sendMessage(message: string): Observable<ChatResponse> {

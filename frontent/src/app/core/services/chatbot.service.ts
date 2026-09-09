@@ -1,10 +1,8 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { ChatbotUiStore } from '@core/store/chatbot/chatbot-ui.store';
 import { ChatbotDetailStore } from '@core/store/chatbot/chatbot-detail.store';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ChatbotService {
 
   private chatbotUiStore = inject(ChatbotUiStore);

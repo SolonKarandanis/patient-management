@@ -3,7 +3,9 @@
   <router-outlet #outlet="outlet"></router-outlet>
   <app-loader></app-loader>
   @if (isLoggedIn()) {
-    <app-chatbot></app-chatbot>
+    @defer (on idle) {
+      <app-chatbot></app-chatbot>
+    }
   }
 </div>
 
